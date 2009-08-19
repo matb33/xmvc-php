@@ -1,0 +1,16 @@
+<IfModule !mod_rewrite.c>
+	<Files index.php>
+		order allow,deny
+		deny from all
+	</Files>
+	
+	ErrorDocument 403 http://code.mcmillanlabs.com/errors/403
+	ErrorDocument 404 http://code.mcmillanlabs.com/errors/404
+</IfModule>
+
+<IfModule mod_rewrite.c>
+	RewriteEngine on
+
+	RewriteCond $1 !^(index\.php|inc|robots\.txt)
+	RewriteRule ^(.*)$ /index.php/$1
+</IfModule>
