@@ -1,0 +1,19 @@
+<lang:languages xmlns:lang="http://www.whateverthelinkis.ca/ns/lang/1.0" xmlns="http://www.w3.org/1999/xhtml">
+
+	<lang:config>
+		<lang:get-variable>lang</lang:get-variable>
+		<lang:default>en</lang:default>
+	</lang:config>
+
+	<lang:language-list>
+		<lang:language lang:id="en">
+			<lang:title>English</lang:title>	
+			<lang:host-match>whateverlink.com</lang:host-match>
+		</lang:language>
+		<lang:language lang:id="fr">
+			<lang:title>Francais</lang:title>
+			<lang:host-match>lewhateverlink.com</lang:host-match>
+		</lang:language>
+	</lang:language-list>
+		
+</lang:languages>
