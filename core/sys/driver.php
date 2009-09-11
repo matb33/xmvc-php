@@ -14,8 +14,6 @@ class ModelDriver extends DOMDocument
 		$this->formatOutput				= true;
 		$this->autoXPath				= true;
 		$this->autoRegisterNamespaces	= true;
-
-		$this->registerNodeClass( "DOMElement", "xMVCDOMElement" );
 	}
 
 	// DOMDocument method overrides
@@ -117,14 +115,6 @@ class ModelDriver extends DOMDocument
 		$xmlString = xMVC::StripRootTags( $xmlString );
 
 		return( $xmlString );
-	}
-}
-
-class xMVCDOMElement extends DOMElement
-{
-	public function __construct()
-	{
-		parent::__construct();
 	}
 }
 
