@@ -31,15 +31,10 @@
 	<xsl:template match="//xmvc:error" />
 
 	<xsl:template match="//xmvc:error[ @xmvc:code = '<?php echo( $errorCode ); ?>' ]">
-		<h1>
-			<xsl:value-of select="@xmvc:type" /> - <xsl:value-of select="@xmvc:code" />
-		</h1>
-		<p>
-			<xsl:apply-templates />
-		</p>
-		<em>
-			<?php echo( $controllerFile ); ?>
-		</em>
+		<h1><xsl:value-of select="@xmvc:type" /> - <xsl:value-of select="@xmvc:code" /></h1>
+		<p><xsl:apply-templates /></p>
+		<p><em>Controller File: <?php echo( $controllerFile ); ?></em></p>
+		<p><em>Method: <?php echo( $method ); ?></em></p>
 	</xsl:template>
 
 </xsl:stylesheet>

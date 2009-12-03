@@ -62,6 +62,17 @@ class FileSystem
 			$meta[ "is_readable" ]		= @is_readable( $file );
 			$meta[ "is_uploaded_file" ]	= @is_uploaded_file( $file );
 			$meta[ "is_writable" ]		= @is_writable( $file );
+
+			$pathParts					= @pathinfo( $file );
+			$meta[ "dirname" ]			= $pathParts[ "dirname" ];
+			$meta[ "basename" ]			= $pathParts[ "basename" ];
+			$meta[ "extension" ]		= $pathParts[ "extension" ];
+			$meta[ "filename" ]			= $pathParts[ "filename" ];
+
+			$meta[ "fileatime-nice" ]	= date( "Y-m-d H:i:s", $meta[ "fileatime" ] );
+			$meta[ "filectime-nice" ]	= date( "Y-m-d H:i:s", $meta[ "filectime" ] );
+			$meta[ "filemtime-nice" ]	= date( "Y-m-d H:i:s", $meta[ "filemtime" ] );
+			$meta[ "filesize-nice" ]	= number_format( $meta[ "filesize" ] );
 		}
 
 		return( $meta );

@@ -112,7 +112,10 @@ class ModelDriver extends DOMDocument
 	{
 		$xmlString = $this->saveXML( $this->documentElement );
 
-		$xmlString = xMVC::StripRootTags( $xmlString );
+		if( $stripRootTags )
+		{
+			$xmlString = xMVC::StripRootTags( $xmlString );
+		}
 
 		return( $xmlString );
 	}

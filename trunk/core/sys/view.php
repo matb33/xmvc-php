@@ -204,7 +204,7 @@ class View extends Root
 
 	function ProcessView( $return, $outputType )
 	{
-		if( ( xMVC::IsClientSideXSLTSupported() && $return === false ) || ( !xMVC::IsClientSideXSLTSupported() && isset( $_GET[ xMVC::SourceViewKey() ] ) && xMVC::SourceViewEnabled() ) )
+		if( ( xMVC::IsClientSideXSLTSupported() || ( !xMVC::IsClientSideXSLTSupported() && isset( $_GET[ xMVC::SourceViewKey() ] ) && xMVC::SourceViewEnabled() ) ) && $return === false )
 		{
 			xMVC::OutputXMLHeaders();
 

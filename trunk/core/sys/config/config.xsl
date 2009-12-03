@@ -28,11 +28,11 @@
 		<xsl:choose>
 
 			<xsl:when test="not(xmvc:item)">
-				$config[ "<xsl:value-of select="@name" />" ] = "<xsl:value-of select="." />";
+				$config[ "<xsl:value-of select="@xmvc:name" />" ] = "<xsl:value-of select="." />";
 			</xsl:when>
 
 			<xsl:otherwise>
-				$config[ "<xsl:value-of select="@name" />" ] = array( <xsl:apply-templates select="xmvc:item" /> );
+				$config[ "<xsl:value-of select="@xmvc:name" />" ] = array( <xsl:apply-templates select="xmvc:item" /> );
 			</xsl:otherwise>
 
 		</xsl:choose>
