@@ -19,11 +19,9 @@ class FileSystemModelDriver extends ModelDriver
 
 		$query->xml->Load( "filesystem", array( "listing" => $listing ) );
 
-		$xmlData = $query->xml->LoadModelXML();
+		$this->SetXML( $query->xml->GetXML( true ) );
 
-		$this->SetXML( $this->GetXML( true ) . $xmlData );
-
-		return( $xmlData );
+		return( $this->GetXML( false ) );
 	}
 
 	function GetFolderList( $rootFolder, $match = "/./", $getMeta = true )

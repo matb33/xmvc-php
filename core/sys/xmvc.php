@@ -369,6 +369,11 @@ class xMVC
 
 		if( isset( $routes ) && is_array( $routes ) )
 		{
+			if( Config::Value( "useQueryInRoutes" ) === "false" )
+			{
+				$routedURI = preg_replace( "/\?.*$/", "", $routedURI );
+			}
+
 			foreach( $routes as $preg => $replace )
 			{
 				if( preg_match( $preg, $routedURI, $routeMatches ) )
@@ -376,6 +381,8 @@ class xMVC
 					xMVC::__RouteMatches( $routeMatches );
 
 					$routedURI = preg_replace_callback( "/\\$([0-9]+)/", array( xMVC, "__RouteReplaceCallback" ), $replace );
+
+					break;
 				}
 			}
 		}

@@ -53,6 +53,7 @@ require_once( SYS_PATH . "controller.php" );
 require_once( SYS_PATH . "model.php" );
 require_once( SYS_PATH . "view.php" );
 require_once( SYS_PATH . "driver.php" );
+require_once( SYS_PATH . "libraries.php" );
 require_once( SYS_PATH . "error.php" );
 
 xMVC::URI();
