@@ -2,9 +2,13 @@
 
 class DB
 {
-	static private $link = null;
+	private $link = null;
 
-	public static function ExecutePreparedStatement( $sql, $parameters = null )
+	public function __construct()
+	{
+	}
+
+	public function ExecutePreparedStatement( $sql, $parameters = null )
 	{
 		$rowList = null;
 
@@ -59,7 +63,7 @@ class DB
 
 			case "mysqli":
 
-				if( $stmt = mysqli_prepare( self::$link, $sql ) )
+				if( $stmt = mysqli_prepare( $this->link, $sql ) )
 				{
 					if( is_array( $parameters ) )
 					{
@@ -156,7 +160,7 @@ class DB
 		return( $returnValue );
 	}
 
-	public static function ExecuteMultiQuery( $sql )
+	public function ExecuteMultiQuery( $sql )
 	{
 		$rowLists = null;
 
@@ -164,13 +168,13 @@ class DB
 		{
 			case "mysqli":
 
-				if( mysqli_multi_query( self::$link, $sql ) )
+				if( mysqli_multi_query( $this->link, $sql ) )
 				{
 					$rowLists = array();
 
 					for( ; ; )
 					{
-						$result = mysqli_use_result( self::$link );
+						$result = mysqli_use_result( $this->link );
 
 						if( is_object( $result ) )
 						{
@@ -193,17 +197,17 @@ class DB
 
 						$rowLists[] = $rowList;
 
-						if( ! mysqli_more_results( self::$link ) )
+						if( ! mysqli_more_results( $this->link ) )
 						{
 							break;
 						}
 
-						mysqli_next_result( self::$link );
+						mysqli_next_result( $this->link );
 					}
 				}
 				else
 				{
-					trigger_error( "Could not execute query " . $sql . ": " . mysqli_error( self::$link ), E_USER_ERROR );
+					trigger_error( "Could not execute query " . $sql . ": " . mysqli_error( $this->link ), E_USER_ERROR );
 				}
 
 			break;
@@ -212,21 +216,21 @@ class DB
 		return( $rowLists );
 	}
 
-	public static function Connect()
+	public function Connect()
 	{
 		switch( Config::$data[ "databaseType" ] )
 		{
 			case "mysql":
 
-				self::$link = mysql_connect( Config::$data[ "databaseHost" ], Config::$data[ "databaseUser" ], Config::$data[ "databasePass" ] ) or trigger_error( "Could not connect: " . mysql_error(), E_USER_ERROR );
+				$this->link = mysql_connect( Config::$data[ "databaseHost" ], Config::$data[ "databaseUser" ], Config::$data[ "databasePass" ] ) or trigger_error( "Could not connect: " . mysql_error(), E_USER_ERROR );
 
 			break;
 
 			case "mysqli":
 
-				self::$link = mysqli_init();
+				$this->link = mysqli_init();
 
-				mysqli_real_connect( self::$link, Config::$data[ "databaseHost" ], Config::$data[ "databaseUser" ], Config::$data[ "databasePass" ], Config::$data[ "databaseName" ] );
+				mysqli_real_connect( $this->link, Config::$data[ "databaseHost" ], Config::$data[ "databaseUser" ], Config::$data[ "databasePass" ], Config::$data[ "databaseName" ] );
 
 				if( mysqli_connect_errno() )
 				{
@@ -237,7 +241,7 @@ class DB
 		}
 	}
 
-	public static function SelectDB()
+	public function SelectDB()
 	{
 		switch( Config::$data[ "databaseType" ] )
 		{
@@ -252,7 +256,7 @@ class DB
 		}
 	}
 
-	public static function Query( $sql )
+	public function Query( $sql )
 	{
 		switch( Config::$data[ "databaseType" ] )
 		{
@@ -264,7 +268,7 @@ class DB
 
 			case "mysqli":
 
-				$result = mysqli_query( self::$link, $sql ) or trigger_error( "Could not execute query " . $sql . ": " . mysqli_error( self::$link ), E_USER_ERROR );
+				$result = mysqli_query( $this->link, $sql ) or trigger_error( "Could not execute query " . $sql . ": " . mysqli_error( $this->link ), E_USER_ERROR );
 
 			break;
 		}
@@ -272,7 +276,7 @@ class DB
 		return( $result );
 	}
 
-	public static function FetchArray( $result, $resultType = null )
+	public function FetchArray( $result, $resultType = null )
 	{
 		switch( Config::$data[ "databaseType" ] )
 		{
@@ -296,19 +300,19 @@ class DB
 		return( $row );
 	}
 
-	public static function Close()
+	public function Close()
 	{
 		switch( Config::$data[ "databaseType" ] )
 		{
 			case "mysql":
 
-				mysql_close( self::$link );
+				mysql_close( $this->link );
 
 			break;
 
 			case "mysqli":
 
-				mysqli_close( self::$link );
+				mysqli_close( $this->link );
 
 			break;
 		}

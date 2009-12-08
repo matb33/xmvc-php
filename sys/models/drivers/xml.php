@@ -46,6 +46,12 @@ class XmlModelDriver extends ModelDriver
 					}
 				}
 
+				if( is_null( $xmlModelFile ) )
+				{
+					// Allow error messaging to see what model file was attempted
+					$xmlModelFile = $parameter;
+				}
+
 				$xmlData = $this->LoadModelXML( $xmlModelFile, $data );
 			}
 		}

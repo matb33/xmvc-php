@@ -17,16 +17,14 @@ class ModelDriver extends DOMDocument
 		$this->autoRegisterNamespaces	= true;
 	}
 
-	// DOMDocument method overrides
-
 	public function loadXML( $source, $options = 0 )
 	{
+		// DOMDocument method override
+
 		parent::loadXML( $source, $options );
 
 		$this->RefreshXPath( $source );
 	}
-
-	// Model driver methods
 
 	private function RefreshXPath( $source = null )
 	{

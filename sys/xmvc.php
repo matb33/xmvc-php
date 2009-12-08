@@ -93,13 +93,13 @@ class xMVC
 				}
 				else
 				{
-					ErrorHandler::InvokeError( "error.http", "en.errors.http", array( "errorCode" => "404", "controllerFile" => $controllerFile, "method" => $method ) );
+					ErrorHandler::InvokeError( "http-error", "http-errors", array( "errorCode" => "404", "controllerFile" => $controllerFile, "method" => $method ) );
 				}
 			}
 		}
 		else
 		{
-			ErrorHandler::InvokeError( "error.http", "en.errors.http", array( "errorCode" => "404", "controllerFile" => $controllerFile ) );
+			ErrorHandler::InvokeError( "http-error", "http-errors", array( "errorCode" => "404", "controllerFile" => $controllerFile ) );
 		}
 	}
 

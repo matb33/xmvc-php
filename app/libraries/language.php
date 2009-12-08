@@ -2,90 +2,123 @@
 
 class Language
 {
+	private static $languages = null;
+	private static $language = null;
+	private static $data = null;
+
 	public static function GetLang()
 	{
-		$language = null;
+		self::LoadLanguageModel();
+		self::LoadLanguageData();
+		self::VerifyDefaultLanguage();
 
-		$languages = new Model( "xml" );
-		$languages->xml->Load( "languages" );
-
-		$defaultLanguage = $languages->xml->xPath->query( "//lang:languages/lang:config/lang:default" )->item( 0 )->nodeValue;
-
-		foreach( $languages->xml->xPath->query( "//lang:languages/lang:language-list/lang:language" ) as $node )
+		if( ! self::FindLanguageBasedOnHost() )
 		{
-			$id			 = $node->getAttribute( "lang:id" );
-			$hostMatch	 = $languages->xml->xPath->query( "lang:host-match", $node )->item( 0 )->nodeValue;
-
-			$data[ $id ] = array(
-				"host-match" => $hostMatch
-			);
-		}
-
-		if( !in_array( $defaultLanguage, array_keys( $data ) ) )
-		{
-			$language = $languages->xml->xPath->query( "//lang:languages/lang:language-list/lang:language[ 1 ]/@lang:id" )->item( 0 )->nodeValue;
-		}
-
-		$language = self::FindLanguageBasedOnHostMatch( $data, $info[ "host-match" ] );
-
-		if( is_null( $language ) )
-		{
-			$language = self::FindLanguageBasedOnGET( $data );
-		}
-
-		if( is_null( $language ) )
-		{
-			$language = self::FindLanguageBasedOnSession( $data );
-		}
-
-		if( is_null( $language ) )
-		{
-			$language = $defaultLanguage;
-		}
-
-		$_SESSION[ "lang" ] = $language;
-
-		return( $language );
-	}
-
-	private static function FindLanguageBasedOnHostMatch( $data, $hostMatch )
-	{
-		foreach( $data as $key => $info )
-		{
-			if( strpos( $_SERVER[ "HTTP_HOST" ], $hostMatch ) !== false )
+			if( ! self::FindLanguageBasedOnGET() )
 			{
-				$language = $key;
-				break;
+				if( ! self::FindLanguageBasedOnSession() )
+				{
+					self::SetLanguageToDefault();
+				}
 			}
 		}
 
-		return( $language );
+		self::SetLanguageSession();
+
+		return( self::$language );
 	}
 
-	private static function FindLanguageBasedOnGET( $data )
+	private static function LoadLanguageModel()
+	{
+		if( is_null( self::$languages ) )
+		{
+			self::$languages = new Model( "xml" );
+			self::$languages->xml->Load( "languages" );
+		}
+	}
+
+	private static function LoadLanguageData()
+	{
+		if( is_null( self::$data ) )
+		{
+			foreach( self::$languages->xml->xPath->query( "//lang:languages/lang:language-list/lang:language" ) as $node )
+			{
+				$id			 = $node->getAttribute( "lang:id" );
+				$hostMatch	 = self::$languages->xml->xPath->query( "lang:host-match", $node )->item( 0 )->nodeValue;
+
+				self::$data[ $id ] = array(
+					"host-match" => $hostMatch
+				);
+			}
+		}
+	}
+
+	private static function VerifyDefaultLanguage()
+	{
+		if( ! in_array( self::GetDefaultLanguage(), array_keys( self::$data ) ) )
+		{
+			self::$language = self::$languages->xml->xPath->query( "//lang:languages/lang:language-list/lang:language[ 1 ]/@lang:id" )->item( 0 )->nodeValue;
+		}
+	}
+
+	private static function GetDefaultLanguage()
+	{
+		return( self::$languages->xml->xPath->query( "//lang:languages/lang:config/lang:default" )->item( 0 )->nodeValue );
+	}
+
+	private static function FindLanguageBasedOnHost()
+	{
+		foreach( self::$data as $key => $info )
+		{
+			if( strpos( $_SERVER[ "HTTP_HOST" ], $info[ "host-match" ] ) !== false )
+			{
+				self::$language = $key;
+
+				return( true );
+			}
+		}
+
+		return( false );
+	}
+
+	private static function FindLanguageBasedOnGET()
 	{
 		if( isset( $_GET[ "lang" ] ) )
 		{
-			if( in_array( $_GET[ "lang" ], array_keys( $data ) ) )
+			if( in_array( $_GET[ "lang" ], array_keys( self::$data ) ) )
 			{
-				$language = $_GET[ "lang" ];
+				self::$language = $_GET[ "lang" ];
+
+				return( true );
 			}
 		}
 
-		return( $language );
+		return( false );
 	}
 
-	private static function FindLanguageBasedOnSession( $data )
+	private static function FindLanguageBasedOnSession()
 	{
 		if( isset( $_SESSION[ "lang" ] ) )
 		{
-			if( in_array( $_SESSION[ "lang" ], array_keys( $data ) ) )
+			if( in_array( $_SESSION[ "lang" ], array_keys( self::$data ) ) )
 			{
-				$language = $_SESSION[ "lang" ];
+				self::$language = $_SESSION[ "lang" ];
+
+				return( true );
 			}
 		}
 
-		return( $language );
+		return( false );
+	}
+
+	private static function SetLanguageToDefault()
+	{
+		self::$language = self::GetDefaultLanguage();
+	}
+
+	private static function SetLanguageSession()
+	{
+		$_SESSION[ "lang" ] = self::$language;
 	}
 }
 
