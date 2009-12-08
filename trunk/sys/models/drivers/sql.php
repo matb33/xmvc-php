@@ -4,9 +4,8 @@ require_once( SYS_PATH . "libraries/db.php" );
 
 class SqlModelDriver extends ModelDriver
 {
-	private $currentQueryName	= null;
-	private $currentParameters	= null;
-
+	private $currentQueryName = null;
+	private $currentParameters = null;
 	private $DB;
 
 	public function __construct()
@@ -14,7 +13,6 @@ class SqlModelDriver extends ModelDriver
 		parent::__construct();
 
 		$this->DB = new DB();
-
 		$this->DB->Connect();
 		$this->DB->SelectDB();
 	}
@@ -23,7 +21,14 @@ class SqlModelDriver extends ModelDriver
 	{
 		$xmlModelFile = Loader::Prioritize( "models/" . $xmlModelName . ".sql.xml" );
 
+		if( is_null( $xmlModelFile ) )
+		{
+			// Allow error messaging to see what model file was attempted
+			$xmlModelFile = $xmlModelName;
+		}
+
 		$xmlData = $this->LoadModelXML( $xmlModelFile, $data );
+
 		$this->SetXML( $xmlData );
 
 		return( $xmlData );
@@ -42,11 +47,10 @@ class SqlModelDriver extends ModelDriver
 	public function IsSuccessful()
 	{
 		$result = new Model( "xml" );
-
 		$result->xml->Load( $this->GetXML() );
 
-		$query		= $result->xml->xPath->query( "//xmvc:query[@name='" . $this->currentQueryName . "']/xmvc:result/xmvc:success[1]" );
-		$success	= ( $query->item( 0 )->nodeValue == "true" );
+		$query = $result->xml->xPath->query( "//xmvc:query[@name='" . $this->currentQueryName . "']/xmvc:result/xmvc:success[1]" );
+		$success = ( $query->item( 0 )->nodeValue == "true" );
 
 		unset( $result );
 
@@ -56,7 +60,6 @@ class SqlModelDriver extends ModelDriver
 	public function GetSingleRowValue( $field )
 	{
 		$result = new Model( "xml" );
-
 		$result->xml->Load( $this->GetXML() );
 
 		$query = $result->xml->xPath->query( "//xmvc:query[@name='" . $this->currentQueryName . "']/xmvc:result/xmvc:row/xmvc:" . $field . "[1]" );
@@ -77,7 +80,6 @@ class SqlModelDriver extends ModelDriver
 		);
 
 		$query = new Model( "xml" );
-
 		$query->xml->Load( $model, $data );
 
 		// Instead of passing our XML through an XSL view, we are returning the results of the query
@@ -92,8 +94,8 @@ class SqlModelDriver extends ModelDriver
 
 	private function GetSQL()
 	{
-		$query	= $this->xPath->query( "//xmvc:query[@name='" . $this->currentQueryName . "']/xmvc:sql[1]" );
-		$sql	= trim( $query->item( 0 )->nodeValue );
+		$query = $this->xPath->query( "//xmvc:query[@name='" . $this->currentQueryName . "']/xmvc:sql[1]" );
+		$sql = trim( $query->item( 0 )->nodeValue );
 
 		return( $sql );
 	}

@@ -32,7 +32,7 @@ class ErrorHandler
 		);
 	}
 
-	public static function InvokeError( $viewName = "error.http", $modelName = "en.errors.http", $data = array() )
+	public static function InvokeError( $viewName = "http-error", $modelName = "http-errors", $data = array() )
 	{
 		$model = new Model( "xml" );
 		$model->xml->Load( $modelName );
