@@ -4,7 +4,7 @@ if( ! is_null( $queryName ) )
 {
 	?><xmvc:database><?php
 
-	$rowLists = $DB->ExecuteMultiQuery( $sqlQuery );
+	$rowLists = DB::ExecuteMultiQuery( $sqlQuery );
 
 	?><xmvc:query name="<?php echo( $queryName ); ?>"><?php
 

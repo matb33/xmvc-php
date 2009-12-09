@@ -4,7 +4,7 @@ if( ! is_null( $queryName ) )
 {
 	?><xmvc:database><?php
 
-	$rowList = $DB->ExecutePreparedStatement( $sqlQuery, $parameters );
+	$rowList = DB::ExecutePreparedStatement( $sqlQuery, $parameters );
 
 	?><xmvc:query name="<?php echo( $queryName ); ?>"><?php
 

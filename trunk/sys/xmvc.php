@@ -4,6 +4,11 @@ class xMVC
 {
 	public static $namespace = "http://www.xmvc.org/ns/xmvc/1.0";
 
+	private static $useRoutes;
+	private static $controllerName;
+	private static $controllerFile;
+	private static $controllerInstance;
+
 	public static function Load()
 	{
 		require( SYS_PATH . "libraries/normalize.php" );
@@ -28,78 +33,120 @@ class xMVC
 
 	public static function InstantiateRootController()
 	{
-		$controllerNameOriginal = self::GetOriginalController();
-		$controllerNameRouted	= self::GetRoutedController();
-
-		// Check to see if the original non-routed controller is available as a sys controller.  If it exists, it should load above all else.
-
-		$systemControllerFile = SYS_PATH . "controllers/" . Normalize::Filename( $controllerNameOriginal ) . ".php";
-
-		if( file_exists( $systemControllerFile ) )
+		if( self::UnroutedSystemControllerExists() )
 		{
-			// Priority sys controller
-
-			$useRoutes		= false;
-			$controllerName	= $controllerNameOriginal;
-			$controllerFile = $systemControllerFile;
+			self::LoadUnroutedSystemController();
 		}
 		else
 		{
-			// Routed controller, normal operation
-
-			$controllerName	= $controllerNameRouted;
-
-			$applicationControllerFile	= APP_PATH . "controllers/" . Normalize::Filename( $controllerName ) . ".php";
-			$systemControllerFile		= SYS_PATH . "controllers/" . Normalize::Filename( $controllerName ) . ".php";
-
-			if( file_exists( $applicationControllerFile ) )
-			{
-				$controllerFile = $applicationControllerFile;
-				$useRoutes		= true;
-			}
-			else
-			{
-				$controllerFile = $systemControllerFile;
-				$useRoutes		= false;
-			}
+			self::LoadRoutedController();
 		}
 
-		if( file_exists( $controllerFile ) )
+		if( self::ControllerExists() )
 		{
-			require_once( $controllerFile );
+			self::LoadControllerClass();
 
-			$controllerClassName = Normalize::ObjectName( $controllerName );
-
-			$controllerInstance = new $controllerClassName;
-
-			$pathData	= Routing::PathData();
-			$pathParts	= $useRoutes ? $pathData[ "pathParts" ] : $pathData[ "pathPartsOriginal" ];
-
-			if( count( $pathParts ) <= 1 )
+			if( self::IsIndex() )
 			{
-				$controllerInstance->Index();
+				self::InvokeIndex();
 			}
 			else
 			{
-				$method = Normalize::ObjectName( $pathParts[ 1 ] );
-
-				if( method_exists( $controllerInstance, $method ) )
-				{
-					$args = array_slice( $pathParts, 2 );
-
-					array_walk( $args, create_function( '&$value, $key', '$value = ( "\"" . $value . "\"" );' ) );
-
-					eval( "\$controllerInstance->\$method( " . implode( ", ", $args ) . " );" );
-				}
-				else
-				{
-					ErrorHandler::InvokeError( "http-error", "http-errors", array( "errorCode" => "404", "controllerFile" => $controllerFile, "method" => $method ) );
-				}
+				self::InvokeMethod();
 			}
+		}
+	}
+
+	private static function UnroutedSystemControllerExists()
+	{
+		if( file_exists( SYS_PATH . "controllers/" . Normalize::Filename( self::GetOriginalController() ) . ".php" ) )
+		{
+			return( true );
+		}
+
+		return( false );
+	}
+
+	private static function LoadUnroutedSystemController()
+	{
+		self::$useRoutes		= false;
+		self::$controllerName	= self::GetOriginalController();
+		self::$controllerFile	= SYS_PATH . "controllers/" . Normalize::Filename( self::GetOriginalController() ) . ".php";
+	}
+
+	private static function LoadRoutedController()
+	{
+		self::$controllerName		= self::GetRoutedController();
+
+		$applicationControllerFile	= APP_PATH . "controllers/" . Normalize::Filename( self::$controllerName ) . ".php";
+		$systemControllerFile		= SYS_PATH . "controllers/" . Normalize::Filename( self::$controllerName ) . ".php";
+
+		if( file_exists( $applicationControllerFile ) )
+		{
+			self::$controllerFile	= $applicationControllerFile;
+			self::$useRoutes		= true;
 		}
 		else
 		{
-			ErrorHandler::InvokeError( "http-error", "http-errors", array( "errorCode" => "404", "controllerFile" => $controllerFile ) );
+			self::$controllerFile	= $systemControllerFile;
+			self::$useRoutes		= false;
+		}
+	}
+
+	private static function ControllerExists()
+	{
+		if( file_exists( self::$controllerFile ) )
+		{
+			return( true );
+		}
+		else
+		{
+			ErrorHandler::InvokeHTTPError( array( "errorCode" => "404", "controllerFile" => self::$controllerFile ) );
+
+			return( false );
+		}
+	}
+
+	private static function LoadControllerClass()
+	{
+		require_once( self::$controllerFile );
+
+		$controllerClassName = Normalize::ObjectName( self::$controllerName );
+
+		self::$controllerInstance = new $controllerClassName;
+	}
+
+	private static function IsIndex()
+	{
+		$pathData	= Routing::PathData();
+		$pathParts	= self::$useRoutes ? $pathData[ "pathParts" ] : $pathData[ "pathPartsOriginal" ];
+
+		return( count( $pathParts ) <= 1 );
+	}
+
+	private static function InvokeIndex()
+	{
+		self::$controllerInstance->Index();
+	}
+
+	private static function InvokeMethod()
+	{
+		$pathData	= Routing::PathData();
+		$pathParts	= self::$useRoutes ? $pathData[ "pathParts" ] : $pathData[ "pathPartsOriginal" ];
+
+		$method		= Normalize::ObjectName( $pathParts[ 1 ] );
+
+		if( method_exists( self::$controllerInstance, $method ) )
+		{
+			$args = array_slice( $pathParts, 2 );
+
+			array_walk( $args, create_function( '&$value, $key', '$value = ( "\"" . $value . "\"" );' ) );
+
+			eval( "self::\$controllerInstance->\$method( " . implode( ", ", $args ) . " );" );
+		}
+		else
+		{
+			ErrorHandler::InvokeHTTPError( array( "errorCode" => "404", "controllerFile" => self::$controllerFile, "method" => $method ) );
 		}
 	}
 

@@ -4,21 +4,21 @@ class Loader
 {
 	public static function Prioritize( $filename )
 	{
-		$applicationFilename	= APP_PATH . $filename;
-		$systemFilename			= SYS_PATH . $filename;
-
-		$priorityFilename = null;
+		$applicationFilename = APP_PATH . $filename;
+		$systemFilename	 = SYS_PATH . $filename;
 
 		if( file_exists( $applicationFilename ) )
 		{
-			$priorityFilename = $applicationFilename;
+			return( $applicationFilename );
 		}
 		else if( file_exists( $systemFilename ) )
 		{
-			$priorityFilename = $systemFilename;
+			return( $systemFilename );
 		}
-
-		return( $priorityFilename );
+		else
+		{
+			return( false );
+		}
 	}
 
 	public static function ReadExternal( $filename, $data )

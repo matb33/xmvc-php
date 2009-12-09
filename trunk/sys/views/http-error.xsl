@@ -1,7 +1,3 @@
-<?php
-	$headerType = $model->xml->xPath->query( "//xmvc:error[ @xmvc:code = '" . $errorCode . "' ]/@xmvc:type" )->item( 0 )->nodeValue;
-	header( "HTTP/1.0 " . $errorCode . " " . $headerType );
-?>
 <xsl:stylesheet version="1.0"
 	exclude-result-prefixes="xmvc"
 	xmlns="http://www.w3.org/1999/xhtml"
@@ -18,9 +14,9 @@
 	/>
 
 	<xsl:template match="/xmvc:root">
-		<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?php echo( "en" ); ?>" lang="<?php echo( "en" ); ?>">
+		<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 			<head>
-				<title>Error <?php echo( $errorCode ); ?></title>
+				<title>Error <xsl:value-of select="//xmvc:strings/xmvc:error-code" /></title>
 			</head>
 			<body>
 				<xsl:apply-templates />
@@ -29,12 +25,13 @@
 	</xsl:template>
 
 	<xsl:template match="//xmvc:error" />
+	<xsl:template match="//xmvc:strings" />
 
-	<xsl:template match="//xmvc:error[ @xmvc:code = '<?php echo( $errorCode ); ?>' ]">
+	<xsl:template match="//xmvc:error[ @xmvc:code = //xmvc:strings/xmvc:error-code ]">
 		<h1><xsl:value-of select="@xmvc:type" /> - <xsl:value-of select="@xmvc:code" /></h1>
 		<p><xsl:apply-templates /></p>
-		<p><em>Controller File: <?php echo( $controllerFile ); ?></em></p>
-		<p><em>Method: <?php echo( $method ); ?></em></p>
+		<p><em>Controller File: <xsl:value-of select="//xmvc:strings/xmvc:controller-file" /></em></p>
+		<p><em>Method: <xsl:value-of select="//xmvc:strings/xmvc:method" /></em></p>
 	</xsl:template>
 
 </xsl:stylesheet>

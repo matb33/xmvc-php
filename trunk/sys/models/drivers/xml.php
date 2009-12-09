@@ -1,6 +1,6 @@
 <?php
 
-class XmlModelDriver extends ModelDriver
+class XmlModelDriver extends ModelDriver implements ModelDriverInterface
 {
 	public function __construct()
 	{
@@ -9,12 +9,20 @@ class XmlModelDriver extends ModelDriver
 
 	public function Load( $parameter, $data = null )
 	{
+		$this->TransformForeignToXML( $parameter, $data );
+	}
+
+	public function TransformForeignToXML()
+	{
+		$parameter = func_get_arg( 0 );
+		$data = func_get_arg( 1 );
+
 		if( is_a( $parameter, "Model" ) )
 		{
 			// Treat parameter as an instance of a model
 
-			$driver		= &$parameter->GetDriverInstance();
-			$xmlData	= $driver->GetXML( true );
+			$driver = &$parameter->GetDriverInstance();
+			$xmlData = $driver->GetXMLForStacking();
 		}
 		else
 		{
@@ -23,36 +31,20 @@ class XmlModelDriver extends ModelDriver
 				// Treat parameter as raw XML.  However, we must strip out the xml declaration and xmvc:root tag if present.
 				// Otherwise this model won't play nice with other models.
 
-				$xmlData = $parameter;
-
-				$xmlData = $this->StripRootTags( $xmlData );
+				$xmlData = $this->StripRootTags( $parameter );
 			}
 			else
 			{
 				// Treat parameter as XML model name
 
-				$modelPaths = array();
-
-				$modelPaths[ 0 ] = "models/" . $parameter . ".xml";
-				$modelPaths[ 1 ] = "models/" . $parameter . ".xml.php";
-
-				foreach( $modelPaths as $modelPath )
+				if( ( $xmlModelFile = Loader::Prioritize( "models/" . $parameter . ".xml" ) ) !== false )
 				{
-					$xmlModelFile = Loader::Prioritize( $modelPath );
-
-					if( ! is_null( $xmlModelFile ) )
-					{
-						break;
-					}
+					$xmlData = $this->LoadModelXML( $xmlModelFile, $data );
 				}
-
-				if( is_null( $xmlModelFile ) )
+				else
 				{
-					// Allow error messaging to see what model file was attempted
-					$xmlModelFile = $parameter;
+					trigger_error( "XML model [" . $parameter . "] not found", E_USER_ERROR );
 				}
-
-				$xmlData = $this->LoadModelXML( $xmlModelFile, $data );
 			}
 		}
 

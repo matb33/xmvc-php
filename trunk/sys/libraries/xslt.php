@@ -59,12 +59,12 @@ class XSL
 				}
 
 				$err .= trim( $error->message ) . "<br/ >";
-				$err .= "Line: " . $error->line . "<br/ >";
-				$err .= "Column: " . $error->column . "<br/ >";
+				$err .= "Line: [" . $error->line . "]<br/ >";
+				$err .= "Column: [" . $error->column . "]<br/ >";
 
 				if( $error->file )
 				{
-					$err .= "File: " . $error->file . "<br />";
+					$err .= "File: [" . $error->file . "]<br />";
 				}
 
 				$err .=  "<hr />";

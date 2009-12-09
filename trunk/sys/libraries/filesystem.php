@@ -1,39 +1,39 @@
 <?php
 
-define( "FS_FILE",	1 );
-define( "FS_DIR",	2 );
-
 class FileSystem
 {
-	public function GetFolderList( $rootFolder, $match = "/./", $getMeta = true )
-	{
-		$list[ $rootFolder ] = $this->GetMeta( $rootFolder, $getMeta );
+	const FS_FILE = 1;
+	const FS_DIR = 2;
 
-		$folders = $this->GetList( $rootFolder, $match, $getMeta, FS_DIR );
+	public static function GetFolderList( $rootFolder, $match = "/./", $getMeta = true )
+	{
+		$list[ $rootFolder ] = self::GetMeta( $rootFolder, $getMeta );
+
+		$folders = self::GetList( $rootFolder, $match, $getMeta, self::FS_DIR );
 
 		$list[ $rootFolder ][ ":FOLDERS:" ] = $folders;
 
 		return( $list );
 	}
 
-	public function GetFolderListRecursive( $rootFolder, $match = "/./", $getMeta = true, $maxDepth = null, $currentDepth = 0 )
+	public static function GetFolderListRecursive( $rootFolder, $match = "/./", $getMeta = true, $maxDepth = null, $currentDepth = 0 )
 	{
 		$list = array();
 
-		$list[ $rootFolder ] = $this->GetMeta( $rootFolder, $getMeta );
+		$list[ $rootFolder ] = self::GetMeta( $rootFolder, $getMeta );
 
-		$folderList = $this->GetFolderListRecursively( $rootFolder, $match, $getMeta, $maxDepth, $currentDepth + 1 );
+		$folderList = self::GetFolderListRecursively( $rootFolder, $match, $getMeta, $maxDepth, $currentDepth + 1 );
 
 		$list[ $rootFolder ][ ":FOLDERS:" ] = $folderList[ ":FOLDERS:" ];
 
 		return( $list );
 	}
 
-	private function GetFolderListRecursively( $rootFolder, $match = "/./", $getMeta = true, $maxDepth = null, $currentDepth = 0 )
+	private static function GetFolderListRecursively( $rootFolder, $match = "/./", $getMeta = true, $maxDepth = null, $currentDepth = 0 )
 	{
 		$list = array();
 
-		$folders = $this->GetFolderList( $rootFolder, $match, $getMeta );
+		$folders = self::GetFolderList( $rootFolder, $match, $getMeta );
 
 		$list[ ":FOLDERS:" ] = $folders[ $rootFolder ][ ":FOLDERS:" ];
 
@@ -43,7 +43,7 @@ class FileSystem
 			{
 				foreach( array_keys( $list[ ":FOLDERS:" ] ) as $subFolder )
 				{
-					$subFolders = $this->GetFolderListRecursively( $subFolder, $match, $getMeta, $maxDepth, $currentDepth + 1 );
+					$subFolders = self::GetFolderListRecursively( $subFolder, $match, $getMeta, $maxDepth, $currentDepth + 1 );
 
 					$list[ ":FOLDERS:" ][ $subFolder ][ ":FOLDERS:" ] = $subFolders[ ":FOLDERS:" ];
 				}
@@ -53,25 +53,25 @@ class FileSystem
 		return( $list );
 	}
 
-	public function GetFileList( $rootFolder, $match = "/./", $getMeta = true )
+	public static function GetFileList( $rootFolder, $match = "/./", $getMeta = true )
 	{
-		$list[ $rootFolder ] = $this->GetMeta( $rootFolder, $getMeta );
+		$list[ $rootFolder ] = self::GetMeta( $rootFolder, $getMeta );
 
-		$files = $this->GetList( $rootFolder, $match, $getMeta, FS_FILE );
+		$files = self::GetList( $rootFolder, $match, $getMeta, self::FS_FILE );
 
 		$list[ $rootFolder ][ ":FILES:" ] = $files;
 
 		return( $list );
 	}
 
-	public function GetDirList( $rootFolder, $match = "/./", $getMeta = true )
+	public static function GetDirList( $rootFolder, $match = "/./", $getMeta = true )
 	{
 		$list = array();
 
-		$list[ $rootFolder ] = $this->GetMeta( $rootFolder, $getMeta );
+		$list[ $rootFolder ] = self::GetMeta( $rootFolder, $getMeta );
 
-		$files		= $this->GetFileList( $rootFolder, $match, $getMeta );
-		$folders	= $this->GetFolderList( $rootFolder, $match, $getMeta );
+		$files		= self::GetFileList( $rootFolder, $match, $getMeta );
+		$folders	= self::GetFolderList( $rootFolder, $match, $getMeta );
 
 		$list[ $rootFolder ][ ":FILES:" ]	= $files[ $rootFolder ][ ":FILES:" ];
 		$list[ $rootFolder ][ ":FOLDERS:" ]	= $folders[ $rootFolder ][ ":FOLDERS:" ];
@@ -79,13 +79,13 @@ class FileSystem
 		return( $list );
 	}
 
-	public function GetDirListRecursive( $rootFolder, $match = "/./", $getMeta = true, $maxDepth = null, $currentDepth = 0 )
+	public static function GetDirListRecursive( $rootFolder, $match = "/./", $getMeta = true, $maxDepth = null, $currentDepth = 0 )
 	{
 		$list = array();
 
-		$list[ $rootFolder ] = $this->GetMeta( $rootFolder, $getMeta );
+		$list[ $rootFolder ] = self::GetMeta( $rootFolder, $getMeta );
 
-		$fileList = $this->GetDirListRecursively( $rootFolder, $match, $getMeta, $maxDepth, $currentDepth + 1 );
+		$fileList = self::GetDirListRecursively( $rootFolder, $match, $getMeta, $maxDepth, $currentDepth + 1 );
 
 		$list[ $rootFolder ][ ":FILES:" ]	= $fileList[ ":FILES:" ];
 		$list[ $rootFolder ][ ":FOLDERS:" ]	= $fileList[ ":FOLDERS:" ];
@@ -93,12 +93,12 @@ class FileSystem
 		return( $list );
 	}
 
-	private function GetDirListRecursively( $rootFolder, $match = "/./", $getMeta = true, $maxDepth = null, $currentDepth = 0 )
+	private static function GetDirListRecursively( $rootFolder, $match = "/./", $getMeta = true, $maxDepth = null, $currentDepth = 0 )
 	{
 		$list = array();
 
-		$files		= $this->GetFileList( $rootFolder, $match, $getMeta );
-		$folders	= $this->GetFolderList( $rootFolder, $match, $getMeta );
+		$files		= self::GetFileList( $rootFolder, $match, $getMeta );
+		$folders	= self::GetFolderList( $rootFolder, $match, $getMeta );
 
 		$list[ ":FILES:" ]		= $files[ $rootFolder ][ ":FILES:" ];
 		$list[ ":FOLDERS:" ]	= $folders[ $rootFolder ][ ":FOLDERS:" ];
@@ -109,7 +109,7 @@ class FileSystem
 			{
 				foreach( array_keys( $list[ ":FOLDERS:" ] ) as $subFolder )
 				{
-					$subFolderFiles = $this->GetDirListRecursively( $subFolder, $match, $getMeta, $maxDepth, $currentDepth + 1 );
+					$subFolderFiles = self::GetDirListRecursively( $subFolder, $match, $getMeta, $maxDepth, $currentDepth + 1 );
 
 					$list[ ":FOLDERS:" ][ $subFolder ][ ":FILES:" ]		= $subFolderFiles[ ":FILES:" ];
 					$list[ ":FOLDERS:" ][ $subFolder ][ ":FOLDERS:" ]	= $subFolderFiles[ ":FOLDERS:" ];
@@ -120,11 +120,11 @@ class FileSystem
 		return( $list );
 	}
 
-	private function GetList( $rootFolder, $match = "/./", $getMeta = true, $type = FS_FILE )
+	private static function GetList( $rootFolder, $match = "/./", $getMeta = true, $type = self::FS_FILE )
 	{
 		$list = array();
 
-		$rootFolder = $this->NormalizeFolder( $rootFolder );
+		$rootFolder = self::NormalizeFolder( $rootFolder );
 
 		$dir = dir( $rootFolder );
 
@@ -136,9 +136,9 @@ class FileSystem
 				{
 					$file = $rootFolder . $entry;
 
-					$meta = $this->GetMeta( $file, $getMeta );
+					$meta = self::GetMeta( $file, $getMeta );
 
-					if( ( $meta[ "is_dir" ] && $type == FS_DIR ) || ( $meta[ "is_file" ] && $type == FS_FILE ) )
+					if( ( $meta[ "is_dir" ] && $type == self::FS_DIR ) || ( $meta[ "is_file" ] && $type == self::FS_FILE ) )
 					{
 						$list[ $file ] = $meta;
 					}
@@ -151,7 +151,7 @@ class FileSystem
 		return( $list );
 	}
 
-	private function GetMeta( $file, $getMeta = true )
+	private static function GetMeta( $file, $getMeta = true )
 	{
 		$meta = array();
 
@@ -189,7 +189,7 @@ class FileSystem
 		return( $meta );
 	}
 
-	private function NormalizeFolder( $path )
+	private static function NormalizeFolder( $path )
 	{
 		$path = str_replace( "\\", "/", $path );
 		$path = ( substr( $path, -1 ) != "/" ) ? ( $path . "/" ) : $path;
