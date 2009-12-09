@@ -1,10 +1,11 @@
 <?php
 
+// TO-DO: Refactor so that Process, Render, etc are even more abstracted so that there is a minimum of arguments passed to each
+
 class View
 {
 	private $xmlData;
 	private $xslData;
-
 	private $models;
 
 	public function __construct()
@@ -70,9 +71,9 @@ class View
 		return( $result );
 	}
 
-	private function PrepareData( $xslViewName, $data, $omitRoot )
+	public function PrepareData( $xslViewName, $data, $omitRoot )
 	{
-		// If not xslViewName is specified, we assume that xslData and xmlData are already set from a previous call to Load, Render or Process.
+		// If xslViewName is not specified, we assume that xslData and xmlData are already set from a previous call to Load, Render or Process.
 		// This allows us to call Process on an view instance, and later on run a Render elsewhere without parameters.
 
 		if( ! is_null( $xslViewName ) )
@@ -81,7 +82,7 @@ class View
 
 			if( ! is_null( $this->xslData ) )
 			{
-				$this->xmlData = $this->ApplyViewToModels( $xslViewName, $data, $omitRoot );
+				$this->xmlData = $this->StackModelsForView( $xslViewName, $data, $omitRoot );
 			}
 		}
 	}
@@ -96,67 +97,42 @@ class View
 		return( $this->Load( $xslViewName, $data, true, $outputType, $omitRoot ) );
 	}
 
-	public function ImportXSL( $xslViewName, $data = null, $xslViewFile = null, $preservePHP = false )
+	public function ImportXSL( $xslViewName, $data = null, $xslViewFile = null )
 	{
 		$result = null;
 
 		if( is_null( $xslViewFile ) )
 		{
-			$viewPaths = array();
-
-			$viewPaths[ 0 ] = "views/" . $xslViewName . ".xsl";
-			$viewPaths[ 1 ] = "views/" . $xslViewName . ".xsl.php";
-
-			foreach( $viewPaths as $viewPath )
-			{
-				$xslViewFile = Loader::Prioritize( $viewPath );
-
-				if( ! is_null( $xslViewFile ) )
-				{
-					break;
-				}
-			}
+			$xslViewFile = Loader::Prioritize( "views/" . $xslViewName . ".xsl" );
 		}
 
 		if( file_exists( $xslViewFile ) )
 		{
-			if( $preservePHP )
+			if( Config::$data[ "enableInlinePHPInViews" ] )
 			{
-				$result = Loader::ReadExternal( $xslViewFile, $data );
+				$result = Loader::ParseExternal( $xslViewFile, $data );
 			}
 			else
 			{
-				$result = Loader::ParseExternal( $xslViewFile, $data );
+				$result = Loader::ReadExternal( $xslViewFile, $data );
 			}
 		}
 		else
 		{
-			trigger_error( "XSL view file '" . $xslViewFile . "' not found", E_USER_ERROR );
+			trigger_error( "XSL view [" . $xslViewName . "] not found", E_USER_ERROR );
 		}
 
 		return( $result );
 	}
 
-	private function ApplyViewToModels( $xslViewName, $data, $omitRoot )
+	private function StackModelsForView( $xslViewName, $data, $omitRoot )
 	{
 		$result = null;
-
-		$xmlHead = "";
 		$xmlBody = "";
-		$xmlFoot = "";
 
 		$xmlHead = $this->GetXMLHead( $xslViewName, $data, $omitRoot );
 		$xmlFoot = $this->GetXMLFoot( $omitRoot );
-
-		if( is_array( $this->models ) )
-		{
-			foreach( array_keys( $this->models ) as $key )
-			{
-				$model		= $this->models[ $key ];
-				$driver		= &$model->GetDriverInstance();
-				$xmlBody	.= ( $driver->GetXML( true ) );
-			}
-		}
+		$xmlBody = $this->GetStackedModels();
 
 		if( Config::$data[ "handleErrors" ] )
 		{
@@ -194,17 +170,8 @@ class View
 	public function PassThru( $data = null, $return = false, $omitRoot = true )
 	{
 		$xmlHead = "";
-		$xmlBody = "";
 		$xmlFoot = "";
-
-		if( is_array( $this->models ) )
-		{
-			foreach( $this->models as $model )
-			{
-				$driver = &$model->GetDriverInstance();
-				$xmlBody .= ( $driver->GetXML( true ) );
-			}
-		}
+		$xmlBody = $this->GetStackedModels();
 
 		if( $return )
 		{
@@ -236,31 +203,52 @@ class View
 
 		$xmlHead = "<" . "?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\" ?" . ">\n";
 
-		$nameSpaces = "xmlns:xmvc=\"" . xMVC::$namespace . "\"";
-
 		if( isset( $_GET[ Config::$data[ "sourceViewKey" ] ] ) && Config::$data[ "sourceViewEnabled" ] )
 		{
-			$xmlHead .= "<" . "?xml-stylesheet type=\"text/xsl\" href=\"http://" . $_SERVER[ "HTTP_HOST" ] . "/load/view/mcc.xsl" . $encodedData . "\" ?" . ">\n";
+			$xmlHead .= "<" . "?xml-stylesheet type=\"text/xsl\" href=\"" . Routing::URIProtocol() . "://" . $_SERVER[ "HTTP_HOST" ] . "/load/view/mcc.xsl\" ?" . ">\n";
 
 			if( ! $omitRoot )
 			{
-				$xmlHead .= "<xmvc:root " . trim( $nameSpaces ) . " xmvc:mcc=\"true\">\n";
+				$xmlHead .= "<xmvc:root xmlns:xmvc=\"" . xMVC::$namespace . "\" xmvc:mcc=\"true\">\n";
 			}
 		}
 		else
 		{
 			if( $xslViewName != "" )
 			{
-				$xmlHead .= "<" . "?xml-stylesheet type=\"text/xsl\" href=\"http://" . $_SERVER[ "HTTP_HOST" ] . "/load/view/" . $xslViewName . $encodedData . "\" ?" . ">\n";
+				if( Config::$data[ "enableInlinePHPInViews" ] )
+				{
+					$xmlHead .= "<" . "?xml-stylesheet type=\"text/xsl\" href=\"" . Routing::URIProtocol() . "://" . $_SERVER[ "HTTP_HOST" ] . "/load/view/" . $xslViewName . $encodedData . "\" ?" . ">\n";
+				}
+				else
+				{
+					$xmlHead .= "<" . "?xml-stylesheet type=\"text/xsl\" href=\"app/views/" . $xslViewName . ".xsl\" ?" . ">\n";
+				}
 			}
 
 			if( ! $omitRoot )
 			{
-				$xmlHead .= "<xmvc:root " . trim( $nameSpaces ) . ">\n";
+				$xmlHead .= "<xmvc:root xmlns:xmvc=\"" . xMVC::$namespace . "\">\n";
 			}
 		}
 
 		return( $xmlHead );
+	}
+
+	public function GetStackedModels()
+	{
+		$stack = "";
+
+		if( is_array( $this->models ) )
+		{
+			foreach( $this->models as $model )
+			{
+				$driver = &$model->GetDriverInstance();
+				$stack .= $driver->GetXMLForStacking();
+			}
+		}
+
+		return( $stack );
 	}
 
 	public function GetXMLFoot( $omitRoot )

@@ -11,8 +11,12 @@ class OutputHeaders
 			break;
 
 			case "xml":
-			default:
 				self::XML();
+			break;
+
+			default:
+				self::Custom( $outputType );
+
 		}
 	}
 
@@ -28,6 +32,11 @@ class OutputHeaders
 		header( "Content-type: text/html; charset=UTF-8" );					// ideally the Content-type would be application/xhtml+xml
 
 		self::NoCache();
+	}
+
+	public static function Custom( $header )
+	{
+		header( $header );
 	}
 
 	private static function NoCache()

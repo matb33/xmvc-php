@@ -11,11 +11,11 @@
 			{
 				font-family: Arial, Helvetica, sans-serif;
 				font-size: 13px;
-				margin:1em auto;
-				width:80%;
+				margin: 1em auto;
+				padding: 12px;
+				width: 80%;
 				border: 1px dashed #ff3333;
 				background-color: #ffeeee;
-				padding: 12px;
 			}
 
 			#errors h1
@@ -35,29 +35,34 @@
 				list-style-type: disc;
 			}
 
-			#errors ul li span.datetime
+			#errors span.datetime
 			{
 				color: #777777;
 			}
 
-			#errors ul li span.errortype
+			#errors span.errortype
 			{
 				font-weight: bold;
 			}
 
-			#errors ul li span.errormsg
+			#errors span.errormsg
 			{
 				color: #3333aa;
 			}
 
-			#errors ul li span.scriptlinenum
+			#errors span.scriptlinenum
 			{
 				font-weight: bold;
 			}
 
-			#errors ul li span.scriptname
+			#errors span.scriptname
 			{
 				color: #33aa33;
+			}
+
+			#errors pre.stack-trace
+			{
+				color: #333333;
 			}
 
 		</style>
@@ -79,17 +84,15 @@
 		</script>
 
 		<div id="errors">
-
 			<h1>PHP Errors</h1>
-
 			<ul>
-
-			<xsl:for-each select="xmvc:errorentry">
-				<li><span class="datetime">[<xsl:value-of select="xmvc:datetime" />] </span><span class="errortype"><xsl:value-of select="xmvc:errortype" /></span>: <span class="errormsg"><xsl:value-of select="xmvc:errormsg" /></span>. Line <span class="scriptlinenum"><xsl:value-of select="xmvc:scriptlinenum" /></span> in <span class="scriptname"><xsl:value-of select="xmvc:scriptname" /></span></li>
-			</xsl:for-each>
-
+				<xsl:for-each select="xmvc:errorentry">
+					<li>
+						<span class="datetime">[<xsl:value-of select="xmvc:datetime" />] </span><span class="errortype"><xsl:value-of select="xmvc:errortype" /></span>: <span class="errormsg"><xsl:value-of select="xmvc:errormsg" /></span>. Line <span class="scriptlinenum"><xsl:value-of select="xmvc:scriptlinenum" /></span> in <span class="scriptname"><xsl:value-of select="xmvc:scriptname" /></span><br />
+						<pre class="stack-trace"><xsl:value-of select="xmvc:stack-trace" /></pre>
+					</li>
+				</xsl:for-each>
 			</ul>
-
 		</div>
 
 	</xsl:template>

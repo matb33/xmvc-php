@@ -2,27 +2,19 @@
 
 class Error extends Controller
 {
-	private $errorCode = null;
-	private $errorMessages = null;
-
 	public function __construct()
 	{
 		parent::__construct();
-
-		$this->errorMessages = new Model( "xml" );
-		$this->errorMessages->xml->Load( "http-errors" );
 	}
 
-	public function Index( $error = "404" )
+	public function Index( $errorCode = "404" )
 	{
-		$this->Display( $error );
+		$this->Display( $errorCode );
 	}
 
-	public function Display( $error = "404" )
+	public function Display( $errorCode = "404" )
 	{
-		$page = new View();
-		$page->PushModel( $this->errorMessages );
-		$page->Render( "http-error", array( "errorCode" => $error, "model" => $this->errorMessages ) );
+		ErrorHandler::InvokeHTTPError( array( "errorCode" => $errorCode, "controllerFile" => "N/A", "method" => "N/A" ) );
 	}
 }
 

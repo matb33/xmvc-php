@@ -2,9 +2,7 @@
 
 class Controller
 {
-	protected $config;
-
-	protected function __construct()
+	public function __construct()
 	{
 	}
 }

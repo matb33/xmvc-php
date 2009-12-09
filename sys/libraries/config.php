@@ -4,7 +4,7 @@ class Config
 {
 	public static $data = array();
 
-	public function Load( $basePath )
+	public static function Load( $basePath )
 	{
 		$entry = null;
 		$configPath = $basePath . "config/";

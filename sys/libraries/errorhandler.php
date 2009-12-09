@@ -32,36 +32,65 @@ class ErrorHandler
 		);
 	}
 
-	public static function InvokeError( $viewName = "http-error", $modelName = "http-errors", $data = array() )
+	public static function InvokeHTTPError( $data = array() )
+	{
+		$headerPattern = "HTTP/1.0 #errorCode# #headerType#";
+
+		self::InvokeError( "http-error", "http-errors", $headerPattern, $data );
+	}
+
+	private static function InvokeError( $viewName, $modelName, $headerPattern, $data )
 	{
 		$model = new Model( "xml" );
 		$model->xml->Load( $modelName );
 
+		$data[ "headerType" ] = $model->xml->xPath->query( "//xmvc:error[ @xmvc:code = '" . $data[ "errorCode" ] . "' ]/@xmvc:type" )->item( 0 )->nodeValue;
+
+		$header = self::CreateHeaderUsingPattern( $headerPattern, $data );
+
+		$strings = new Model( "strings" );
+		$strings->strings->Add( "error-code", $data[ "errorCode" ] );
+		$strings->strings->Add( "controller-file", $data[ "controllerFile" ] );
+		$strings->strings->Add( "method", $data[ "method" ] );
+
 		$view = new View();
 		$view->PushModel( $model );
-		$view->Render( $viewName, array_merge( $data, array( "model" => $model ) ) );
+		$view->PushModel( $strings );
+		$view->Render( $viewName, null, $header );
 
 		die();
 	}
 
+	private static function CreateHeaderUsingPattern( $pattern, $data )
+	{
+		foreach( $data as $key => $value )
+		{
+			$pattern = str_replace( $key, "#" . $value . "#", $pattern );
+		}
+
+		return( $pattern );
+	}
+
 	public static function ErrorHandlerXML( $errorNumber, $errorMessage, $filename, $lineNum, $vars )
 	{
-		$err = "";
+		$errorException = new ErrorException( $errorMessage, 0, $errorNumber, $filename, $lineNum );
+
+		$errorXML = "";
 
 		if( ( $errorNumber & self::$errorReporting ) == $errorNumber )
 		{
-			$err .= "<xmvc:errorentry>";
-			$err .= "<xmvc:datetime><![CDATA[" . date( "Y-m-d H:i:s (T)" ) . "]]></xmvc:datetime>";
-			$err .= "<xmvc:errornum><![CDATA[" . $errorNumber . "]]></xmvc:errornum>";
-			$err .= "<xmvc:errortype><![CDATA[" . self::$errorTypes[ $errorNumber ] . "]]></xmvc:errortype>";
-			$err .= "<xmvc:errormsg><![CDATA[" . $errorMessage . "]]></xmvc:errormsg>";
-			$err .= "<xmvc:scriptname><![CDATA[" . $filename . "]]></xmvc:scriptname>";
-			$err .= "<xmvc:scriptlinenum><![CDATA[" . $lineNum . "]]></xmvc:scriptlinenum>";
-			$err .= "</xmvc:errorentry>";
-
+			$errorXML .= "<xmvc:errorentry>";
+			$errorXML .= "<xmvc:datetime><![CDATA[" . date( "Y-m-d H:i:s (T)" ) . "]]></xmvc:datetime>";
+			$errorXML .= "<xmvc:errornum><![CDATA[" . $errorNumber . "]]></xmvc:errornum>";
+			$errorXML .= "<xmvc:errortype><![CDATA[" . self::$errorTypes[ $errorNumber ] . "]]></xmvc:errortype>";
+			$errorXML .= "<xmvc:errormsg><![CDATA[" . $errorMessage . "]]></xmvc:errormsg>";
+			$errorXML .= "<xmvc:scriptname><![CDATA[" . $filename . "]]></xmvc:scriptname>";
+			$errorXML .= "<xmvc:scriptlinenum><![CDATA[" . $lineNum . "]]></xmvc:scriptlinenum>";
+			$errorXML .= "<xmvc:stack-trace><![CDATA[" . $errorException->getTraceAsString() . "]]></xmvc:stack-trace>";
+			$errorXML .= "</xmvc:errorentry>";
 		}
 
-		self::$errors .= $err;
+		self::$errors .= $errorXML;
 
 		return( true );
 	}

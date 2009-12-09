@@ -54,24 +54,15 @@ class ModelDriver extends DOMDocument
 		$this->xPath->registerNamespace( "xhtml", "http://www.w3.org/1999/xhtml" );
 	}
 
-	protected function LoadModelXML( $xmlModelFile, $data = null, $preservePHP = false )
+	protected function LoadModelXML( $xmlModelFile, $data = null )
 	{
-		$xml = null;
-
-		if( file_exists( $xmlModelFile ) )
+		if( Config::$data[ "enableInlinePHPInModels" ] )
 		{
-			if( $preservePHP )
-			{
-				$xml = Loader::ReadExternal( $xmlModelFile, $data );
-			}
-			else
-			{
-				$xml = Loader::ParseExternal( $xmlModelFile, $data );
-			}
+			$xml = Loader::ParseExternal( $xmlModelFile, $data );
 		}
 		else
 		{
-			trigger_error( "XML model file '" . $xmlModelFile . "' not found", E_USER_ERROR );
+			$xml = Loader::ReadExternal( $xmlModelFile, $data );
 		}
 
 		return( $xml );
@@ -91,7 +82,17 @@ class ModelDriver extends DOMDocument
 		return( $xmlString );
 	}
 
-	public function GetXML( $stripRootTags = false )
+	public function GetXMLForStacking()
+	{
+		return( $this->GetXML( true ) );
+	}
+
+	public function GetCompleteXML()
+	{
+		return( $this->GetXML( false ) );
+	}
+
+	protected function GetXML( $stripRootTags = false )
 	{
 		$xmlString = $this->saveXML( $this->documentElement );
 
@@ -114,6 +115,11 @@ class ModelDriver extends DOMDocument
 
 		return( $xmlData );
 	}
+}
+
+interface ModelDriverInterface
+{
+	public function TransformForeignToXML();
 }
 
 ?>

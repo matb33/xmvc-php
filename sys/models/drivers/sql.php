@@ -1,37 +1,32 @@
 <?php
 
-require_once( SYS_PATH . "libraries/db.php" );
-
-class SqlModelDriver extends ModelDriver
+class SqlModelDriver extends ModelDriver implements ModelDriverInterface
 {
 	private $currentQueryName = null;
 	private $currentParameters = null;
-	private $DB;
 
 	public function __construct()
 	{
 		parent::__construct();
 
-		$this->DB = new DB();
-		$this->DB->Connect();
-		$this->DB->SelectDB();
+		DB::Connect();
+		DB::SelectDB();
 	}
 
 	public function Load( $xmlModelName, $data = null )
 	{
-		$xmlModelFile = Loader::Prioritize( "models/" . $xmlModelName . ".sql.xml" );
-
-		if( is_null( $xmlModelFile ) )
+		if( ( $xmlModelFile = Loader::Prioritize( "models/" . $xmlModelName . ".sql.xml" ) ) !== false )
 		{
-			// Allow error messaging to see what model file was attempted
-			$xmlModelFile = $xmlModelName;
+			$xmlData = $this->LoadModelXML( $xmlModelFile, $data );
+
+			$this->SetXML( $xmlData );
+
+			return( $xmlData );
 		}
-
-		$xmlData = $this->LoadModelXML( $xmlModelFile, $data );
-
-		$this->SetXML( $xmlData );
-
-		return( $xmlData );
+		else
+		{
+			trigger_error( "SQL XML model [" . $xmlModelName . "] not found", E_USER_ERROR );
+		}
 	}
 
 	public function SetQuery( $queryName )
@@ -70,10 +65,9 @@ class SqlModelDriver extends ModelDriver
 		return( $value );
 	}
 
-	public function Execute( $parameters = null, $model = "db.execute_prepared_stmt" )
+	public function Execute( $parameters = null, $model = "db-execute-prepared-stmt" )
 	{
 		$data = array(
-			"DB"			=> $this->DB,
 			"queryName"		=> $this->currentQueryName,
 			"sqlQuery"		=> $this->GetSQL(),
 			"parameters"	=> ( is_null( $parameters ) ? $this->currentParameters : $parameters )

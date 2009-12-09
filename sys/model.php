@@ -11,9 +11,8 @@ class Model
 		$success = null;
 
 		$driverClassname = Normalize::ObjectName( $driver ) . "ModelDriver";
-		$driverFile	= Loader::Prioritize( "models/drivers/" . $driver . ".php" );
 
-		if( file_exists( $driverFile ) )
+		if( ( $driverFile = Loader::Prioritize( "models/drivers/" . $driver . ".php" ) ) !== false )
 		{
 			require_once( $driverFile );
 
@@ -24,7 +23,7 @@ class Model
 		}
 		else
 		{
-			trigger_error( "Model driver file '" . $driverFile . "' not found", E_USER_ERROR );
+			trigger_error( "Model driver [" . $driver . "] not found", E_USER_ERROR );
 		}
 
 		return( $success );
@@ -32,9 +31,9 @@ class Model
 
 	public function GetDriverInstance()
 	{
-		$driver = $this->driver;
+		$driverName = $this->driver;
 
-		return( $this->$driver );
+		return( $this->$driverName );
 	}
 }
 
