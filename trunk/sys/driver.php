@@ -7,6 +7,8 @@ class ModelDriver extends DOMDocument
 	private $autoXPath;
 	private $autoRegisterNamespaces;
 
+	protected $rootElement;
+
 	public function __construct()
 	{
 		parent::__construct();
@@ -26,11 +28,21 @@ class ModelDriver extends DOMDocument
 		$this->RefreshXPath( $source );
 	}
 
+	protected function TransformForeignToXML()
+	{
+		$this->RefreshXPath();
+	}
+
 	private function RefreshXPath( $source = null )
 	{
 		$this->xPath = new DOMXpath( $this );
 
-		if( $this->autoRegisterNamespaces && !is_null( $source ) )
+		if( is_null( $source ) )
+		{
+			$source = $this->saveXML();
+		}
+
+		if( $this->autoRegisterNamespaces )
 		{
 			preg_match_all( "/xmlns:(.+?)=\"(.+?)\"/", $source, $matches, PREG_SET_ORDER );
 

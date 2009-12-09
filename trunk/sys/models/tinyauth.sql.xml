@@ -2,7 +2,7 @@
 
 	<xmvc:prepared-statements>
 
-		<xmvc:query name="IsLoginPasswordValid">
+		<xmvc:query xmvc:name="IsLoginPasswordValid">
 			<xmvc:sql><![CDATA[
 
 				SELECT
@@ -16,7 +16,7 @@
 			]]></xmvc:sql>
 		</xmvc:query>
 
-		<xmvc:query name="GetUserData">
+		<xmvc:query xmvc:name="GetUserData">
 			<xmvc:sql><![CDATA[
 
 				SELECT

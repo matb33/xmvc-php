@@ -12,7 +12,7 @@ class Model
 
 		$driverClassname = Normalize::ObjectName( $driver ) . "ModelDriver";
 
-		if( ( $driverFile = Loader::Prioritize( "models/drivers/" . $driver . ".php" ) ) !== false )
+		if( ( $driverFile = Loader::Prioritize( "drivers/" . $driver . ".php" ) ) !== false )
 		{
 			require_once( $driverFile );
 

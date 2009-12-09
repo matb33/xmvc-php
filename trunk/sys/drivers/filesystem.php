@@ -2,8 +2,6 @@
 
 class FileSystemModelDriver extends ModelDriver implements ModelDriverInterface
 {
-	private $rootElement;
-
 	public function __construct()
 	{
 		parent::__construct();
@@ -15,65 +13,61 @@ class FileSystemModelDriver extends ModelDriver implements ModelDriverInterface
 	public function GetFolderList( $rootFolder, $match = "/./" )
 	{
 		$listing = FileSystem::GetFolderList( $rootFolder, $match, false );
-		return( $this->PushResultsToModel( $listing ) );
+		$this->TransformForeignToXML( $listing );
 	}
 
 	public function GetDetailedFolderList( $rootFolder, $match = "/./" )
 	{
 		$listing = FileSystem::GetFolderList( $rootFolder, $match, true );
-		return( $this->PushResultsToModel( $listing ) );
+		$this->TransformForeignToXML( $listing );
 	}
 
 	public function GetFolderListRecursive( $rootFolder, $match = "/./", $maxDepth = null )
 	{
 		$listing = FileSystem::GetFolderListRecursive( $rootFolder, $match, false, $maxDepth );
-		return( $this->PushResultsToModel( $listing ) );
+		$this->TransformForeignToXML( $listing );
 	}
 
 	public function GetDetailedFolderListRecursive( $rootFolder, $match = "/./", $maxDepth = null )
 	{
 		$listing = FileSystem::GetFolderListRecursive( $rootFolder, $match, true, $maxDepth );
-		return( $this->PushResultsToModel( $listing ) );
+		$this->TransformForeignToXML( $listing );
 	}
 
 	public function GetFileList( $rootFolder, $match = "/./" )
 	{
 		$listing = FileSystem::GetFileList( $rootFolder, $match, false );
-		return( $this->TransformForeignToXML( $listing ) );
+		$this->TransformForeignToXML( $listing );
 	}
 
 	public function GetDetailedFileList( $rootFolder, $match = "/./" )
 	{
 		$listing = FileSystem::GetFileList( $rootFolder, $match, true );
-		return( $this->PushResultsToModel( $listing ) );
+		$this->TransformForeignToXML( $listing );
 	}
 
 	public function GetDirList( $rootFolder, $match = "/./" )
 	{
 		$listing = FileSystem::GetDirList( $rootFolder, $match, false );
-		return( $this->PushResultsToModel( $listing ) );
+		$this->TransformForeignToXML( $listing );
 	}
 
 	public function GetDetailedDirList( $rootFolder, $match = "/./" )
 	{
 		$listing = FileSystem::GetDirList( $rootFolder, $match, true );
-		return( $this->PushResultsToModel( $listing ) );
+		$this->TransformForeignToXML( $listing );
 	}
 
 	public function GetDirListRecursive( $rootFolder, $match = "/./", $maxDepth = null )
 	{
 		$listing = FileSystem::GetDirListRecursive( $rootFolder, $match, false, $maxDepth );
-		return( $this->PushResultsToModel( $listing ) );
+		$this->TransformForeignToXML( $listing );
 	}
 
 	public function GetDetailedDirListRecursive( $rootFolder, $match = "/./", $maxDepth = null )
 	{
 		$listing = FileSystem::GetDirListRecursive( $rootFolder, $match, true, $maxDepth );
-		return( $this->PushResultsToModel( $listing ) );
-	}
-
-	private function PushResultsToModel( $listing )
-	{
+		$this->TransformForeignToXML( $listing );
 	}
 
 	public function TransformForeignToXML()
@@ -81,56 +75,56 @@ class FileSystemModelDriver extends ModelDriver implements ModelDriverInterface
 		$listing = func_get_arg( 0 );
 
 		$this->RecursiveListing( $listing );
+
+		parent::TransformForeignToXML();
 	}
 
 	private function RecursiveListing( $listing )
 	{
-		foreach( array_keys( $listing ) as $folder )
+		foreach( array_keys( $listing ) as $folderName )
 		{
 			$folderElement = $this->createElementNS( xMVC::$namespace, "xmvc:folder" );
 			$nameAttribute = $this->createAttributeNS( xMVC::$namespace, "xmvc:name" );
-			$nameAttribute->value = $folder;
-
+			$nameAttribute->value = $folderName;
 			$folderElement->appendChild( $nameAttribute );
 			$this->rootElement->appendChild( $folderElement );
 
-			foreach( $listing[ $folder ] as $name => $data )
+			foreach( $listing[ $folderName ] as $metaName => $metaData )
 			{
-				if( $name != ":FOLDERS:" && $name != ":FILES:" )
+				if( $metaName != ":FOLDERS:" && $metaName != ":FILES:" )
 				{
 					$metaElement = $this->createElementNS( xMVC::$namespace, "xmvc:meta" );
 					$nameAttribute = $this->createAttributeNS( xMVC::$namespace, "xmvc:name" );
-					$nameAttribute->value = $name;
-					$metaElement->value = ( string )$data;
-
+					$valueNode = $this->createCDATASection( ( string )$metaData );
+					$nameAttribute->value = $metaName;
+					$metaElement->appendChild( $valueNode );
 					$metaElement->appendChild( $nameAttribute );
 					$folderElement->appendChild( $metaElement );
 				}
 			}
 
-			if( isset( $listing[ $folder ][ ":FOLDERS:" ] ) && count( $listing[ $folder ][ ":FOLDERS:" ] ) )
+			if( isset( $listing[ $folderName ][ ":FOLDERS:" ] ) && count( $listing[ $folderName ][ ":FOLDERS:" ] ) )
 			{
-				RecursiveListing( $listing[ $folder ][ ":FOLDERS:" ] );
+				$this->RecursiveListing( $listing[ $folderName ][ ":FOLDERS:" ] );
 			}
 
-			if( isset( $listing[ $folder ][ ":FILES:" ] ) && count( $listing[ $folder ][ ":FILES:" ] ) )
+			if( isset( $listing[ $folderName ][ ":FILES:" ] ) && count( $listing[ $folderName ][ ":FILES:" ] ) )
 			{
-				foreach( $listing[ $folder ][ ":FILES:" ] as $filename => $meta )
+				foreach( $listing[ $folderName ][ ":FILES:" ] as $filename => $meta )
 				{
 					$fileElement = $this->createElementNS( xMVC::$namespace, "xmvc:file" );
 					$nameAttribute = $this->createAttributeNS( xMVC::$namespace, "xmvc:name" );
 					$nameAttribute->value = $filename;
-
 					$fileElement->appendChild( $nameAttribute );
 					$folderElement->appendChild( $fileElement );
 
-					foreach( $meta as $name => $data )
+					foreach( $meta as $metaName => $metaData )
 					{
 						$metaElement = $this->createElementNS( xMVC::$namespace, "xmvc:meta" );
 						$nameAttribute = $this->createAttributeNS( xMVC::$namespace, "xmvc:name" );
-						$nameAttribute->value = $name;
-						$metaElement->value = ( string )$data;
-
+						$valueNode = $this->createCDATASection( ( string )$metaData );
+						$nameAttribute->value = $metaName;
+						$metaElement->appendChild( $valueNode );
 						$metaElement->appendChild( $nameAttribute );
 						$fileElement->appendChild( $metaElement );
 					}
