@@ -2,8 +2,6 @@
 
 class StringsModelDriver extends ModelDriver implements ModelDriverInterface
 {
-	private $rootElement;
-
 	public function __construct()
 	{
 		parent::__construct();
@@ -24,6 +22,8 @@ class StringsModelDriver extends ModelDriver implements ModelDriverInterface
 
 		$node = $this->createElementNS( xMVC::$namespace, "xmvc:" . $key, ( string )$value );
 		$this->rootElement->appendChild( $node );
+
+		parent::TransformForeignToXML();
 	}
 }
 

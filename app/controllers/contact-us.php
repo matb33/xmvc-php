@@ -31,10 +31,10 @@ class Contact_us extends Controller
 	public function Send()
 	{
 		$queryData = array();
-		$queryData[ "firstname" ] = trim( $_POST[ "firstname" ] );
-		$queryData[ "lastname" ] = trim( $_POST[ "lastname" ] );
-		$queryData[ "email" ] = trim( $_POST[ "email" ] );
-		$queryData[ "remote_addr" ] = $_SERVER[ "REMOTE_ADDR" ];
+		$queryData[] = trim( $_POST[ "firstname" ] );
+		$queryData[] = trim( $_POST[ "lastname" ] );
+		$queryData[] = trim( $_POST[ "email" ] );
+		$queryData[] = $_SERVER[ "REMOTE_ADDR" ];
 
 		$entry = new Model( "sql" );
 		$entry->sql->Load( "contact-us" );
