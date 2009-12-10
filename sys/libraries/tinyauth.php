@@ -1,7 +1,5 @@
 <?php
 
-// TO-DO: Test this under the new PHP 5 infrastructure
-
 class TinyAuth
 {
 	private static $userDataFieldsToFetch = array( "loginID", "created", "modified", "login" );
