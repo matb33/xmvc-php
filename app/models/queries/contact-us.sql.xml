@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8" ?>
 <xmvc:database xmlns:xmvc="http://www.xmvc.org/ns/xmvc/1.0">
 	<xmvc:prepared-statements>
 		<xmvc:query xmvc:name="AddEntry">

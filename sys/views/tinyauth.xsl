@@ -13,14 +13,10 @@
 		omit-xml-declaration="yes"
 	/>
 
-	<xsl:include href="http://<?php echo( $_SERVER[ "HTTP_HOST" ] ); ?>/load/view/error.xsl<?php echo( isset( $encodedData ) ? $encodedData : "" ); ?>" />
-
-	<xsl:template match="xmvc:query" />
+	<xsl:include href="sys/views/error.xsl" />
 
 	<xsl:template match="/xmvc:root">
-
-		<html>
-
+		<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 			<head>
 				<title>Authentication Required</title>
 				<meta http-equiv="content-type" content="text/html; charset=utf-8" />
@@ -133,85 +129,28 @@
 			</head>
 
 			<body>
-				<?php
 
-				if( Config::$data[ "logoSrc" ] )
-				{
-					?><img src="<?php echo( Config::$data[ "logoSrc" ] ); ?>" class="logo" border="0" />
-					<?php
-				}
+				<form method="post" action="./">
 
-				?><form method="post" action="<?php echo( count( $_GET ) ? "?" . http_build_query( $_GET, "", "&amp;" ) : "" ); ?>">
-					<label for="login">Username: </label>
-					<input type="text" name="login" id="login" value="<?php echo( $login ); ?>" />
-					<label for="password">Password: </label>
-					<input type="password" name="password" id="password" value="" />
+					<label for="login">
+						Username:
+						<input type="text" name="login" id="login" value="{ //xmvc:strings/xmvc:login }" />
+					</label>
+					<label for="password">
+						Password:
+						<input type="password" name="password" id="password" value="" />
+					</label>
+
 					<input type="submit" name="loginbutton" id="loginbutton" value="Login »" />
-					<?php
 
-					foreach( $_POST as $key => $value )
-					{
-						if( ! in_array( $key, array( "login", "password", "loginbutton" ) ) )
-						{
-							?><input type="hidden" name="<?php echo( $key ); ?>" value="<?php echo( $value ); ?>" />
-							<?php
-						}
-					}
-
-					if( $incorrectLogin )
-					{
-						?><p class="error">Incorrect username and/or password</p>
-						<?php
-					}
-					else
-					{
-						?><p class="normal">Please enter your username and password</p>
-						<?php
-					}
-
-					if( Config::$data[ "version" ] || Config::$data[ "releaseDate" ] || Config::$data[ "administratorEmail" ] )
-					{
-						?><div class="footer">
-							<?php
-
-							if( Config::$data[ "version" ] || Config::$data[ "releaseDate" ] )
-							{
-								?><p class="auth-info"><?php
-
-								if( Config::$data[ "version" ] )
-								{
-									?>Version <?php
-
-									echo( Config::$data[ "version" ] );
-
-									if( Config::$data[ "releaseDate" ] )
-									{
-										?> — <?php
-									}
-								}
-
-								if( Config::$data[ "releaseDate" ] )
-								{
-									?>Released <?php
-
-									echo( Config::$data[ "releaseDate" ] );
-								}
-
-								?></p>
-								<?php
-							}
-
-							if( Config::$data[ "administratorEmail" ] )
-							{
-								?><p class="help">Comments? Suggestions? Need assistance?<br />Contact the <a href="mailto:<?php echo( Config::$data[ "administratorEmail" ] ); ?>">Administrator</a>.</p>
-								<?php
-							}
-
-							?>
-						</div>
-						<?php
-					}
-					?>
+					<xsl:choose>
+						<xsl:when test="//xmvc:strings/xmvc:incorrect-login = 'true'">
+							<p class="error">Incorrect username and/or password</p>
+						</xsl:when>
+						<xsl:otherwise>
+							<p class="normal">Please enter your username and password</p>
+						</xsl:otherwise>
+					</xsl:choose>
 
 				</form>
 			</body>
@@ -219,5 +158,7 @@
 		</html>
 
 	</xsl:template>
+
+	<xsl:template match="xmvc:database" />
 
 </xsl:stylesheet>

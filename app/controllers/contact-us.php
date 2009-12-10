@@ -35,7 +35,7 @@ class Contact_us
 		$queryData[] = $_SERVER[ "REMOTE_ADDR" ];
 
 		$entry = new SQLModelDriver();
-		$entry->Load( "contact-us" );
+		$entry->Load( "queries/contact-us" );
 		$entry->SetQuery( "AddEntry" );
 		$entry->SetParameters( $queryData );
 		$entry->Execute();

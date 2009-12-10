@@ -1,11 +1,12 @@
+<?xml version="1.0" encoding="utf-8" ?>
 <str:strings xmlns:str="http://www.xmvc.org/ns/str/1.0" xmlns="http://www.w3.org/1999/xhtml">
-        <str:title>Contact Us | Example Website</str:title>
-		<str:labels>
-			<str:firstname>First name:</str:firstname>
-			<str:lastname>Last name:</str:lastname>
-			<str:email>E-mail:</str:email>
-			<str:contact-button>Contact</str:contact-button>
-		</str:labels>
-		<str:thanks>Thank you for contacting us.</str:thanks>
-		<str:error>An error occured when trying to submit your information to us.</str:error>
+	<str:title>Contact Us | Example Website</str:title>
+	<str:labels>
+		<str:firstname>First name:</str:firstname>
+		<str:lastname>Last name:</str:lastname>
+		<str:email>E-mail:</str:email>
+		<str:contact-button>Contact</str:contact-button>
+	</str:labels>
+	<str:thanks>Thank you for contacting us.</str:thanks>
+	<str:error>An error occured when trying to submit your information to us.</str:error>
 </str:strings>
