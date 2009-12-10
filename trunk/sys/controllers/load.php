@@ -30,14 +30,14 @@ class Load
 			}
 		}
 
-		$tmpView = new View();
+		$tmpView = new View( $xslViewName );
 
-		$xmlHead = $tmpView->GetXMLHead( $xslViewName, $data, true );
+		$xmlHead = $tmpView->GetXMLHead( $data, true );
 		$xmlFoot = $tmpView->GetXMLFoot( true );
 
 		$xslViewName = str_replace( ".xsl", "", implode( "/", $args ) );
 
-		$xmlString = ( $xmlHead . $tmpView->ImportXSL( $xslViewName, $data ) . $xmlFoot );
+		$xmlString = ( $xmlHead . $tmpView->ImportXSL( $data ) . $xmlFoot );
 
 		OutputHeaders::XML();
 

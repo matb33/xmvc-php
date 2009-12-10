@@ -53,10 +53,10 @@ class ErrorHandler
 		$strings->Add( "controller-file", $data[ "controllerFile" ] );
 		$strings->Add( "method", $data[ "method" ] );
 
-		$view = new View();
+		$view = new View( $viewName );
 		$view->PushModel( $model );
 		$view->PushModel( $strings );
-		$view->Render( $viewName, null, $header );
+		$view->RenderAsHTML( null, $header );
 
 		die();
 	}

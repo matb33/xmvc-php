@@ -4,7 +4,13 @@ class View
 {
 	private $xmlData = null;
 	private $xslData = null;
+	private $xslViewName = null;
 	private $models = array();
+
+	public function __construct( $xslViewName )
+	{
+		$this->xslViewName = $xslViewName;
+	}
 
 	public function AddModel( $model )
 	{
@@ -35,43 +41,46 @@ class View
 		return( $model );
 	}
 
-	public function RenderAsHTML( $xslViewName, $data = null, $omitRoot = null )
+	public function RenderAsHTML( $data = null, $omitRoot = null )
 	{
-		return( $this->Render( $xslViewName, $data, "HTML", $omitRoot ) );
+		return( $this->Render( $data, "HTML", $omitRoot ) );
 	}
 
-	public function RenderAsXML( $xslViewName, $data = null, $omitRoot = null )
+	public function RenderAsXML( $data = null, $omitRoot = null )
 	{
-		return( $this->Render( $xslViewName, $data, "XML", $omitRoot ) );
+		return( $this->Render( $data, "XML", $omitRoot ) );
 	}
 
-	public function Render( $xslViewName, $data = null, $outputType = null, $omitRoot = null )
+	public function Render( $data = null, $outputType = null, $omitRoot = null )
 	{
-		return( $this->Load( $xslViewName, $data, false, $outputType, $omitRoot ) );
+		return( $this->Load( $data, false, $outputType, $omitRoot ) );
 	}
 
-	public function ProcessAsHTML( $xslViewName, $data = null, $omitRoot = null )
+	public function ProcessAsHTML( $data = null, $omitRoot = null )
 	{
-		return( $this->Process( $xslViewName, $data, "HTML", $omitRoot ) );
+		return( $this->Process( $data, "HTML", $omitRoot ) );
 	}
 
-	public function ProcessAsXML( $xslViewName, $data = null, $omitRoot = null )
+	public function ProcessAsXML( $data = null, $omitRoot = null )
 	{
-		return( $this->Process( $xslViewName, $data, "XML", $omitRoot ) );
+		return( $this->Process( $data, "XML", $omitRoot ) );
 	}
 
-	public function Process( $xslViewName, $data = null, $outputType = null, $omitRoot = null )
+	public function Process( $data = null, $outputType = null, $omitRoot = null )
 	{
-		return( $this->Load( $xslViewName, $data, true, $outputType, $omitRoot ) );
+		return( $this->Load( $data, true, $outputType, $omitRoot ) );
 	}
 
-	public function Load( $xslViewName, $data = null, $return = null, $outputType = null, $omitRoot = null )
+	public function Load( $data = null, $return = null, $outputType = null, $omitRoot = null )
 	{
 		$return = $this->GetReturn( $return );
 		$outputType = $this->GetOutputType( $outputType );
 		$omitRoot = $this->GetOmitRoot( $omitRoot );
 
-		$this->PrepareData( $xslViewName, $data, $omitRoot );
+		if( is_null( $this->xmlData ) )
+		{
+			$this->PrepareData( $data, $omitRoot );
+		}
 
 		if( ! is_null( $this->xslData ) && ! is_null( $this->xmlData ) )
 		{
@@ -79,28 +88,16 @@ class View
 		}
 		else
 		{
-			trigger_error( "Could not find any XML data (model) and/or XSL data (view) while loading view [" . $xslViewName . "]", E_USER_ERROR );
+			trigger_error( "Could not find any XML data (model) and/or XSL data (view) while loading view [" . $this->xslViewName . "]", E_USER_ERROR );
 		}
 
 		return( $result );
 	}
 
-	public function PrepareData( $xslViewName = null, $data = null, $omitRoot = null )
+	private function PrepareData( $data = null, $omitRoot = null )
 	{
-		// If xslViewName is not null, we assume that xslData and xmlData are already set from a previous call to Load, Render or Process.
-		// This allows us to call Process on an view instance, and later on run a Render elsewhere without parameters.
-
-		if( ! is_null( $xslViewName ) )
-		{
-			$this->xslData = $this->ImportXSL( $xslViewName, $data );
-
-			if( ! is_null( $this->xslData ) )
-			{
-				$omitRoot = $this->GetOmitRoot( $omitRoot );
-
-				$this->xmlData = $this->StackModelsForView( $xslViewName, $data, $omitRoot );
-			}
-		}
+		$this->xslData = $this->ImportXSL( $data );
+		$this->xmlData = $this->StackModelsForView( $data, $this->GetOmitRoot( $omitRoot ) );
 	}
 
 	private function GetReturn( $return )
@@ -133,13 +130,13 @@ class View
 		return( $omitRoot );
 	}
 
-	public function ImportXSL( $xslViewName, $data = null, $xslViewFile = null )
+	public function ImportXSL( $data = null, $xslViewFile = null )
 	{
 		$result = null;
 
 		if( is_null( $xslViewFile ) )
 		{
-			$xslViewFile = Loader::Prioritize( "views/" . $xslViewName . ".xsl" );
+			$xslViewFile = Loader::Prioritize( "views/" . $this->xslViewName . ".xsl" );
 		}
 
 		if( file_exists( $xslViewFile ) )
@@ -155,15 +152,15 @@ class View
 		}
 		else
 		{
-			trigger_error( "XSL view [" . $xslViewName . "] not found", E_USER_ERROR );
+			trigger_error( "XSL view [" . $this->xslViewName . "] not found", E_USER_ERROR );
 		}
 
 		return( $result );
 	}
 
-	private function StackModelsForView( $xslViewName, $data, $omitRoot )
+	private function StackModelsForView( $data, $omitRoot )
 	{
-		$xmlHead = $this->GetXMLHead( $xslViewName, $data, $omitRoot );
+		$xmlHead = $this->GetXMLHead( $data, $omitRoot );
 		$xmlBody = $this->GetStackedModels();
 		$xmlFoot = $this->GetXMLFoot( $omitRoot );
 
@@ -223,7 +220,7 @@ class View
 		}
 		else
 		{
-			$xmlHead = $this->GetXMLHead( "", $data, $omitRoot );
+			$xmlHead = $this->GetXMLHead( $data, $omitRoot );
 			$xmlFoot = $this->GetXMLFoot( $omitRoot );
 
 			$xmlResult = ( $xmlHead . $xmlBody . $xmlFoot );
@@ -236,7 +233,7 @@ class View
 		return( $xmlResult );
 	}
 
-	public function GetXMLHead( $xslViewName, $data, $omitRoot )
+	public function GetXMLHead( $data, $omitRoot )
 	{
 		$encodedData = "";
 
@@ -258,15 +255,15 @@ class View
 		}
 		else
 		{
-			if( $xslViewName != "" )
+			if( $this->xslViewName != "" )
 			{
 				if( Config::$data[ "enableInlinePHPInViews" ] )
 				{
-					$xmlHead .= "<" . "?xml-stylesheet type=\"text/xsl\" href=\"" . Routing::URIProtocol() . "://" . $_SERVER[ "HTTP_HOST" ] . "/load/view/" . $xslViewName . $encodedData . "\" ?" . ">\n";
+					$xmlHead .= "<" . "?xml-stylesheet type=\"text/xsl\" href=\"" . Routing::URIProtocol() . "://" . $_SERVER[ "HTTP_HOST" ] . "/load/view/" . $this->xslViewName . $encodedData . "\" ?" . ">\n";
 				}
 				else
 				{
-					$xmlHead .= "<" . "?xml-stylesheet type=\"text/xsl\" href=\"app/views/" . $xslViewName . ".xsl\" ?" . ">\n";
+					$xmlHead .= "<" . "?xml-stylesheet type=\"text/xsl\" href=\"app/views/" . $this->xslViewName . ".xsl\" ?" . ">\n";
 				}
 			}
 
