@@ -1,25 +1,23 @@
 <?php
 
-class Contact_us extends Controller
+class Contact_us
 {
 	private $commonContent;
 	private $data;
 
 	public function __construct()
 	{
-		parent::__construct();
+		$this->commonContent = new XMLModelDriver();
+		$this->commonContent->Load( "content/en/common" );
 
-		$this->commonContent = new Model( "xml" );
-		$this->commonContent->xml->Load( "content/en/common" );
-
-		$this->data = new Model( "strings" );
-		$this->data->strings->Add( "lang", Language::GetLang() );
+		$this->data = new StringsModelDriver();
+		$this->data->Add( "lang", Language::GetLang() );
 	}
 
 	public function Index()
 	{
-		$pageContent = new Model( "xml" );
-		$pageContent->xml->Load( "content/en/contact-us" );
+		$pageContent = new XMLModelDriver();
+		$pageContent->Load( "content/en/contact-us" );
 
 		$page = new View();
 		$page->PushModel( $this->commonContent );
@@ -36,13 +34,13 @@ class Contact_us extends Controller
 		$queryData[] = trim( $_POST[ "email" ] );
 		$queryData[] = $_SERVER[ "REMOTE_ADDR" ];
 
-		$entry = new Model( "sql" );
-		$entry->sql->Load( "contact-us" );
-		$entry->sql->SetQuery( "AddEntry" );
-		$entry->sql->SetParameters( $queryData );
-		$entry->sql->Execute();
+		$entry = new SQLModelDriver();
+		$entry->Load( "contact-us" );
+		$entry->SetQuery( "AddEntry" );
+		$entry->SetParameters( $queryData );
+		$entry->Execute();
 
-		if( $entry->sql->IsSuccessful() )
+		if( $entry->IsSuccessful() )
 		{
 			header( "HTTP/1.1 302 Found\r\n" );
 			header( "Location: /contact-us/thanks/\r\n" );
@@ -56,10 +54,10 @@ class Contact_us extends Controller
 
 	public function Thanks()
 	{
-		$pageContent = new Model( "xml" );
-		$pageContent->xml->Load( "content/en/contact-us" );
+		$pageContent = new XMLModelDriver();
+		$pageContent->Load( "content/en/contact-us" );
 
-		$this->data->strings->Add( "type", "thanks" );
+		$this->data->Add( "type", "thanks" );
 
 		$page = new View();
 		$page->PushModel( $this->commonContent );
@@ -70,10 +68,10 @@ class Contact_us extends Controller
 
 	public function Error()
 	{
-		$pageContent = new Model( "xml" );
-		$pageContent->xml->Load( "content/en/contact-us" );
+		$pageContent = new XMLModelDriver();
+		$pageContent->Load( "content/en/contact-us" );
 
-		$this->data->strings->Add( "type", "error" );
+		$this->data->Add( "type", "error" );
 
 		$page = new View();
 		$page->PushModel( $this->commonContent );

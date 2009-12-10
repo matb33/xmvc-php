@@ -32,8 +32,8 @@ class Language
 	{
 		if( is_null( self::$languages ) )
 		{
-			self::$languages = new Model( "xml" );
-			self::$languages->xml->Load( "languages" );
+			self::$languages = new XMLModelDriver();
+			self::$languages->Load( "languages" );
 		}
 	}
 
@@ -41,10 +41,10 @@ class Language
 	{
 		if( is_null( self::$data ) )
 		{
-			foreach( self::$languages->xml->xPath->query( "//lang:languages/lang:language-list/lang:language" ) as $node )
+			foreach( self::$languages->xPath->query( "//lang:languages/lang:language-list/lang:language" ) as $node )
 			{
 				$id			 = $node->getAttribute( "lang:id" );
-				$hostMatch	 = self::$languages->xml->xPath->query( "lang:host-match", $node )->item( 0 )->nodeValue;
+				$hostMatch	 = self::$languages->xPath->query( "lang:host-match", $node )->item( 0 )->nodeValue;
 
 				self::$data[ $id ] = array(
 					"host-match" => $hostMatch
@@ -57,13 +57,13 @@ class Language
 	{
 		if( ! in_array( self::GetDefaultLanguage(), array_keys( self::$data ) ) )
 		{
-			self::$language = self::$languages->xml->xPath->query( "//lang:languages/lang:language-list/lang:language[ 1 ]/@lang:id" )->item( 0 )->nodeValue;
+			self::$language = self::$languages->xPath->query( "//lang:languages/lang:language-list/lang:language[ 1 ]/@lang:id" )->item( 0 )->nodeValue;
 		}
 	}
 
 	private static function GetDefaultLanguage()
 	{
-		return( self::$languages->xml->xPath->query( "//lang:languages/lang:config/lang:default" )->item( 0 )->nodeValue );
+		return( self::$languages->xPath->query( "//lang:languages/lang:config/lang:default" )->item( 0 )->nodeValue );
 	}
 
 	private static function FindLanguageBasedOnHost()

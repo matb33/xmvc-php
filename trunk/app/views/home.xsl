@@ -30,20 +30,30 @@
 		<div id="page">
 			<xsl:call-template name="header" />
 
-			<div id="intro">
-				<xsl:call-template name="copy-of"><xsl:with-param name="select" select="//str:intro" /></xsl:call-template>
+			<div id="search-engines">
+				<xsl:call-template name="copy-of"><xsl:with-param name="select" select="//str:search-engines-intro" /></xsl:call-template>
+				<ul>
+					<xsl:for-each select="//str:search-engines/str:search-engine">
+						<li>
+							<a>
+								<xsl:attribute name="href"><xsl:value-of select="str:link" /></xsl:attribute>
+								<xsl:value-of select="str:caption" />
+							</a>
+						</li>
+					</xsl:for-each>
+				</ul>
 			</div>
 
-			<ul id="search-engines">
-				<xsl:for-each select="//str:search-engines/str:search-engine">
-					<li>
-						<a>
-							<xsl:attribute name="href"><xsl:value-of select="str:link" /></xsl:attribute>
-							<xsl:value-of select="str:caption" />
-						</a>
-					</li>
-				</xsl:for-each>
-			</ul>
+			<div id="file-listing">
+				<xsl:call-template name="copy-of"><xsl:with-param name="select" select="//str:file-listing-intro" /></xsl:call-template>
+				<ul>
+					<xsl:for-each select="//xmvc:filesystem/xmvc:folder/xmvc:file">
+						<li>
+							<xsl:value-of select="@xmvc:name" />
+						</li>
+					</xsl:for-each>
+				</ul>
+			</div>
 
 			<xsl:call-template name="footer" />
 		</div>

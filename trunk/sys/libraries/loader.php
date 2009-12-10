@@ -5,7 +5,7 @@ class Loader
 	public static function Prioritize( $filename )
 	{
 		$applicationFilename = APP_PATH . $filename;
-		$systemFilename	 = SYS_PATH . $filename;
+		$systemFilename = SYS_PATH . $filename;
 
 		if( file_exists( $applicationFilename ) )
 		{

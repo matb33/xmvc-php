@@ -1,5 +1,7 @@
 <?php
 
+// TO-DO: Test this under the new PHP 5 infrastructure
+
 class TinyAuth
 {
 	private static $userDataFieldsToFetch = array( "loginID", "created", "modified", "login" );
@@ -18,16 +20,16 @@ class TinyAuth
 				$login		= $_POST[ "login" ];
 				$password	= $_POST[ "password" ];
 
-				$authModel = new Model( "sql" );
-				$authModel->sql->Load( "tinyauth" );
-				$authModel->sql->SetQuery( "IsLoginPasswordValid" );
-				$authModel->sql->SetParameters( array( ( string )$login, md5( ( string )$password ) ) );
-				$authModel->sql->Execute();
+				$authModel = new SQLModelDriver();
+				$authModel->Load( "tinyauth" );
+				$authModel->SetQuery( "IsLoginPasswordValid" );
+				$authModel->SetParameters( array( ( string )$login, md5( ( string )$password ) ) );
+				$authModel->Execute();
 
-				$authResults = new Model( "xml" );
-				$authResults->xml->Load( $authModel );
+				$authResults = new XMLModelDriver();
+				$authResults->Load( $authModel );
 
-				$query		= $authResults->xml->xPath->query( "//xmvc:loginID[1]" );
+				$query		= $authResults->xPath->query( "//xmvc:loginID[1]" );
 				$loginID	= $query->item( 0 )->nodeValue;
 
 				$authenticated = ( ! is_null( $loginID ) );
@@ -72,21 +74,20 @@ class TinyAuth
 
 	private static function SetAuthenticated( $loginID )
 	{
-		$userModel = new Model( "sql" );
-		$userModel->sql->Load( "tinyauth" );
-		$userModel->sql->SetQuery( "GetUserData" );
-		$userModel->sql->SetParameters( array( ( int )$loginID ) );
-		$userModel->sql->Execute();
+		$userModel = new SQLModelDriver();
+		$userModel->Load( "tinyauth" );
+		$userModel->SetQuery( "GetUserData" );
+		$userModel->SetParameters( array( ( int )$loginID ) );
+		$userModel->Execute();
 
-		$userResults = new Model( "xml" );
-		$userResults->xml->Load( $userModel );
+		$userResults = XMLModelDriver();
+		$userResults->Load( $userModel );
 
 		$userData = array();
 
 		foreach( $this->userDataFieldsToFetch as $fieldName )
 		{
-			$query = $userResults->xml->xPath->query( "//xmvc:" . $fieldName . "[1]" );
-			$userData[ $fieldName ] = $query->item( 0 )->nodeValue;
+			$userData[ $fieldName ] = $userResults->xPath->query( "//xmvc:" . $fieldName . "[1]" )->item( 0 )->nodeValue;
 		}
 
 		$_SESSION[ "authUserData" ] = $userData;

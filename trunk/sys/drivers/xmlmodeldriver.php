@@ -1,6 +1,6 @@
 <?php
 
-class XmlModelDriver extends ModelDriver implements ModelDriverInterface
+class XMLModelDriver extends ModelDriver implements ModelDriverInterface
 {
 	public function __construct()
 	{
@@ -21,8 +21,7 @@ class XmlModelDriver extends ModelDriver implements ModelDriverInterface
 		{
 			// Treat parameter as an instance of a model
 
-			$driver = &$parameter->GetDriverInstance();
-			$xmlData = $driver->GetXMLForStacking();
+			$xmlData = $parameter->GetXMLForStacking();
 		}
 		else
 		{
