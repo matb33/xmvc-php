@@ -9,34 +9,30 @@ class TinyAuth
 
 	public static function Protect( $loginView = null )
 	{
-		$authenticated		= false;
-		$incorrectLogin		= false;
-		$login				= "";
+		$authenticated = false;
+		$incorrectLogin = false;
+		$login = "";
 
-		if( ! $this->IsAuthenticated() )
+		if( ! self::IsAuthenticated() )
 		{
 			if( isset( $_POST[ "loginbutton" ] ) )
 			{
-				$login		= $_POST[ "login" ];
-				$password	= $_POST[ "password" ];
+				$login = $_POST[ "login" ];
+				$password = $_POST[ "password" ];
 
 				$authModel = new SQLModelDriver();
-				$authModel->Load( "tinyauth" );
+				$authModel->Load( "queries/tinyauth" );
 				$authModel->SetQuery( "IsLoginPasswordValid" );
 				$authModel->SetParameters( array( ( string )$login, md5( ( string )$password ) ) );
 				$authModel->Execute();
 
-				$authResults = new XMLModelDriver();
-				$authResults->Load( $authModel );
-
-				$query		= $authResults->xPath->query( "//xmvc:loginID[1]" );
-				$loginID	= $query->item( 0 )->nodeValue;
+				$loginID = $authModel->xPath->query( "//xmvc:column[@xmvc:name='loginID']" )->item( 0 )->nodeValue;
 
 				$authenticated = ( ! is_null( $loginID ) );
 
 				if( $authenticated )
 				{
-					$this->SetAuthenticated( $loginID );
+					self::SetAuthenticated( $loginID );
 				}
 				else
 				{
@@ -44,12 +40,17 @@ class TinyAuth
 				}
 			}
 
-			if( ! $this->IsAuthenticated() )
+			if( ! self::IsAuthenticated() )
 			{
 				if( is_null( $loginView ) )
 				{
+					$strings = new StringsModelDriver();
+					$strings->Add( "login", $login );
+					$strings->Add( "incorrect-login", $incorrectLogin ? "true" : "false" );
+
 					$loginView = new View();
-					$loginView->Render( "tinyauth", array( "login" => $login, "incorrectLogin" => $incorrectLogin ) );
+					$loginView->PushModel( $strings );
+					$loginView->Render( "tinyauth" );
 				}
 				else
 				{
@@ -65,6 +66,11 @@ class TinyAuth
 		return( $authenticated );
 	}
 
+	public static function GetUserData( $key )
+	{
+		return( $_SESSION[ "authUserData" ][ $key ] );
+	}
+
 	public static function Logout()
 	{
 		unset( $_SESSION[ "authUserData" ] );
@@ -75,19 +81,16 @@ class TinyAuth
 	private static function SetAuthenticated( $loginID )
 	{
 		$userModel = new SQLModelDriver();
-		$userModel->Load( "tinyauth" );
+		$userModel->Load( "queries/tinyauth" );
 		$userModel->SetQuery( "GetUserData" );
 		$userModel->SetParameters( array( ( int )$loginID ) );
 		$userModel->Execute();
 
-		$userResults = XMLModelDriver();
-		$userResults->Load( $userModel );
-
 		$userData = array();
 
-		foreach( $this->userDataFieldsToFetch as $fieldName )
+		foreach( self::$userDataFieldsToFetch as $fieldName )
 		{
-			$userData[ $fieldName ] = $userResults->xPath->query( "//xmvc:" . $fieldName . "[1]" )->item( 0 )->nodeValue;
+			$userData[ $fieldName ] = $userModel->xPath->query( "//xmvc:column[@xmvc:name='" . $fieldName . "']" )->item( 0 )->nodeValue;
 		}
 
 		$_SESSION[ "authUserData" ] = $userData;

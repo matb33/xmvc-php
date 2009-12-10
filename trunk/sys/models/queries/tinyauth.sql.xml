@@ -1,10 +1,8 @@
+<?xml version="1.0" encoding="utf-8" ?>
 <xmvc:database>
-
 	<xmvc:prepared-statements>
-
 		<xmvc:query xmvc:name="IsLoginPasswordValid">
 			<xmvc:sql><![CDATA[
-
 				SELECT
 					loginID
 				FROM
@@ -12,28 +10,21 @@
 				WHERE
 					login = ?
 					AND password = ?
-
 			]]></xmvc:sql>
 		</xmvc:query>
-
 		<xmvc:query xmvc:name="GetUserData">
 			<xmvc:sql><![CDATA[
-
 				SELECT
 					*
 				FROM
 					logins
 				WHERE
 					loginID = ?
-
 			]]></xmvc:sql>
 		</xmvc:query>
-
 	</xmvc:prepared-statements>
-
 	<xmvc:schema>
 		<xmvc:sql><![CDATA[
-
 			CREATE TABLE IF NOT EXISTS `logins` (
 			  `loginID` int(11) NOT NULL auto_increment,
 			  `created` datetime default NULL,
@@ -41,9 +32,7 @@
 			  `login` varchar(50) default NULL,
 			  `password` varchar(50) default NULL,
 			  PRIMARY KEY  (`loginID`)
-			) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
-
+			) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 		]]></xmvc:sql>
 	</xmvc:schema>
-
 </xmvc:database>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8" ?>
 <xmvc:error-codes xmlns:xmvc="http://www.xmvc.org/ns/xmvc/1.0">
 	<xmvc:error xmvc:code="301" xmvc:type="Moved Permanently">The requested page has moved to a new url</xmvc:error>
 	<xmvc:error xmvc:code="302" xmvc:type="Found">The requested page has moved temporarily to a new url</xmvc:error>

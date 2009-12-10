@@ -70,11 +70,11 @@ class ModelDriver extends DOMDocument
 	{
 		if( Config::$data[ "enableInlinePHPInModels" ] )
 		{
-			$xml = Loader::ParseExternal( $xmlModelFile, $data );
+			$xml = $this->StripRootTags( Loader::ParseExternal( $xmlModelFile, $data ) );
 		}
 		else
 		{
-			$xml = Loader::ReadExternal( $xmlModelFile, $data );
+			$xml = $this->StripRootTags( Loader::ReadExternal( $xmlModelFile, $data ) );
 		}
 
 		return( $xml );
@@ -118,7 +118,7 @@ class ModelDriver extends DOMDocument
 
 	protected static function StripRootTags( $xmlData )
 	{
-		// Strip XML declaration
+		// Strip xml declaration
 		$xmlData = preg_replace( "|<\?xml(.+?)\?>[\n\r]?|i", "", $xmlData );
 
 		// Strip xmvc:root
