@@ -1,12 +1,7 @@
 <?php
 
-class Phpinfo extends Controller
+class Phpinfo
 {
-	public function __construct()
-	{
-		parent::__construct();
-	}
-
 	public function Index()
 	{
 		var_dump( Config::Load( SYS_PATH ) );

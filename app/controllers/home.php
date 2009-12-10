@@ -1,25 +1,20 @@
 <?php
 
-class Home extends Controller
+class Home
 {
-	public function __construct()
-	{
-		parent::__construct();
-	}
-
 	public function Index()
 	{
-		$commonContent = new Model( "xml" );
-		$commonContent->xml->Load( "content/en/common" );
+		$commonContent = new XMLModelDriver();
+		$commonContent->Load( "content/en/common" );
 
-		$pageContent = new Model( "xml" );
-		$pageContent->xml->Load( "content/en/home" );
+		$pageContent = new XMLModelDriver();
+		$pageContent->Load( "content/en/home" );
 
-		$data = new Model( "strings" );
-		$data->strings->Add( "lang", Language::GetLang() );
+		$data = new StringsModelDriver();
+		$data->Add( "lang", Language::GetLang() );
 
-		$controllers = new Model( "filesystem" );
-		$controllers->filesystem->GetFileList( APP_PATH . "controllers", "/\.php/" );
+		$controllers = new FilesystemModelDriver();
+		$controllers->GetFileList( APP_PATH . "controllers", "/\.php/" );
 
 		$page = new View();
 		$page->PushModel( $commonContent );

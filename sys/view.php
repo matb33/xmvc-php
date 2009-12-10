@@ -1,19 +1,10 @@
 <?php
 
-// TO-DO: Refactor so that Process, Render, etc are even more abstracted so that there is a minimum of arguments passed to each
-
 class View
 {
-	private $xmlData;
-	private $xslData;
-	private $models;
-
-	public function __construct()
-	{
-		$this->xmlData	= null;
-		$this->xslData	= null;
-		$this->models	= array();
-	}
+	private $xmlData = null;
+	private $xslData = null;
+	private $models = array();
 
 	public function AddModel( $model )
 	{
@@ -44,22 +35,41 @@ class View
 		return( $model );
 	}
 
-	public function Load( $xslViewName = null, $data = null, $return = null, $outputType = null, $omitRoot = null )
+	public function RenderAsHTML( $xslViewName, $data = null, $omitRoot = null )
 	{
-		if( is_null( $return ) )
-		{
-			$return = false;
-		}
+		return( $this->Render( $xslViewName, $data, "HTML", $omitRoot ) );
+	}
 
-		if( is_null( $outputType ) )
-		{
-			$outputType = "HTML";
-		}
+	public function RenderAsXML( $xslViewName, $data = null, $omitRoot = null )
+	{
+		return( $this->Render( $xslViewName, $data, "XML", $omitRoot ) );
+	}
 
-		if( is_null( $omitRoot ) )
-		{
-			$omitRoot = false;
-		}
+	public function Render( $xslViewName, $data = null, $outputType = null, $omitRoot = null )
+	{
+		return( $this->Load( $xslViewName, $data, false, $outputType, $omitRoot ) );
+	}
+
+	public function ProcessAsHTML( $xslViewName, $data = null, $omitRoot = null )
+	{
+		return( $this->Process( $xslViewName, $data, "HTML", $omitRoot ) );
+	}
+
+	public function ProcessAsXML( $xslViewName, $data = null, $omitRoot = null )
+	{
+		return( $this->Process( $xslViewName, $data, "XML", $omitRoot ) );
+	}
+
+	public function Process( $xslViewName, $data = null, $outputType = null, $omitRoot = null )
+	{
+		return( $this->Load( $xslViewName, $data, true, $outputType, $omitRoot ) );
+	}
+
+	public function Load( $xslViewName, $data = null, $return = null, $outputType = null, $omitRoot = null )
+	{
+		$return = $this->GetReturn( $return );
+		$outputType = $this->GetOutputType( $outputType );
+		$omitRoot = $this->GetOmitRoot( $omitRoot );
 
 		$this->PrepareData( $xslViewName, $data, $omitRoot );
 
@@ -67,13 +77,17 @@ class View
 		{
 			$result = $this->ProcessView( $return, $outputType );
 		}
+		else
+		{
+			trigger_error( "Could not find any XML data (model) and/or XSL data (view) while loading view [" . $xslViewName . "]", E_USER_ERROR );
+		}
 
 		return( $result );
 	}
 
-	public function PrepareData( $xslViewName, $data, $omitRoot )
+	public function PrepareData( $xslViewName = null, $data = null, $omitRoot = null )
 	{
-		// If xslViewName is not specified, we assume that xslData and xmlData are already set from a previous call to Load, Render or Process.
+		// If xslViewName is not null, we assume that xslData and xmlData are already set from a previous call to Load, Render or Process.
 		// This allows us to call Process on an view instance, and later on run a Render elsewhere without parameters.
 
 		if( ! is_null( $xslViewName ) )
@@ -82,19 +96,41 @@ class View
 
 			if( ! is_null( $this->xslData ) )
 			{
+				$omitRoot = $this->GetOmitRoot( $omitRoot );
+
 				$this->xmlData = $this->StackModelsForView( $xslViewName, $data, $omitRoot );
 			}
 		}
 	}
 
-	public function Render( $xslViewName = null, $data = null, $outputType = null, $omitRoot = null )
+	private function GetReturn( $return )
 	{
-		return( $this->Load( $xslViewName, $data, false, $outputType, $omitRoot ) );
+		if( is_null( $return ) )
+		{
+			return( false );
+		}
+
+		return( $return );
 	}
 
-	public function Process( $xslViewName = null, $data = null, $outputType = null, $omitRoot = null )
+	private function GetOutputType( $outputType )
 	{
-		return( $this->Load( $xslViewName, $data, true, $outputType, $omitRoot ) );
+		if( is_null( $outputType ) )
+		{
+			return( "HTML" );
+		}
+
+		return( $outputType );
+	}
+
+	private function GetOmitRoot( $omitRoot )
+	{
+		if( is_null( $omitRoot ) )
+		{
+			return( false );
+		}
+
+		return( $omitRoot );
 	}
 
 	public function ImportXSL( $xslViewName, $data = null, $xslViewFile = null )
@@ -127,21 +163,31 @@ class View
 
 	private function StackModelsForView( $xslViewName, $data, $omitRoot )
 	{
-		$result = null;
-		$xmlBody = "";
-
 		$xmlHead = $this->GetXMLHead( $xslViewName, $data, $omitRoot );
-		$xmlFoot = $this->GetXMLFoot( $omitRoot );
 		$xmlBody = $this->GetStackedModels();
+		$xmlFoot = $this->GetXMLFoot( $omitRoot );
 
 		if( Config::$data[ "handleErrors" ] )
 		{
 			$xmlBody .= ErrorHandler::GetErrorsAsXML();
 		}
 
-		$xmlString = ( $xmlHead . $xmlBody . $xmlFoot );
+		return( $xmlHead . $xmlBody . $xmlFoot );
+	}
 
-		return( $xmlString );
+	public function GetStackedModels()
+	{
+		$stack = "";
+
+		if( is_array( $this->models ) )
+		{
+			foreach( $this->models as $model )
+			{
+				$stack .= $model->GetXMLForStacking();
+			}
+		}
+
+		return( $stack );
 	}
 
 	private function ProcessView( $return, $outputType )
@@ -169,27 +215,25 @@ class View
 
 	public function PassThru( $data = null, $return = false, $omitRoot = true )
 	{
-		$xmlHead = "";
-		$xmlFoot = "";
 		$xmlBody = $this->GetStackedModels();
 
 		if( $return )
 		{
-			$xmlString = $xmlBody;
+			$xmlResult = $xmlBody;
 		}
 		else
 		{
 			$xmlHead = $this->GetXMLHead( "", $data, $omitRoot );
 			$xmlFoot = $this->GetXMLFoot( $omitRoot );
 
-			$xmlString = ( $xmlHead . $xmlBody . $xmlFoot );
+			$xmlResult = ( $xmlHead . $xmlBody . $xmlFoot );
 
 			OutputHeaders::XML();
 
-			echo( $xmlString );
+			echo( $xmlResult );
 		}
 
-		return( $xmlString );
+		return( $xmlResult );
 	}
 
 	public function GetXMLHead( $xslViewName, $data, $omitRoot )
@@ -233,22 +277,6 @@ class View
 		}
 
 		return( $xmlHead );
-	}
-
-	public function GetStackedModels()
-	{
-		$stack = "";
-
-		if( is_array( $this->models ) )
-		{
-			foreach( $this->models as $model )
-			{
-				$driver = &$model->GetDriverInstance();
-				$stack .= $driver->GetXMLForStacking();
-			}
-		}
-
-		return( $stack );
 	}
 
 	public function GetXMLFoot( $omitRoot )

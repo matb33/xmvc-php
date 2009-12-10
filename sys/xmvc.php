@@ -14,10 +14,9 @@ class xMVC
 		require( SYS_PATH . "libraries/normalize.php" );
 		require( SYS_PATH . "libraries/loader.php" );
 		require( SYS_PATH . "libraries/xslt.php" );
-		require( SYS_PATH . "libraries.php" );
+		require( SYS_PATH . "autoload.php" );
 
-		require( SYS_PATH . "controller.php" );
-		require( SYS_PATH . "model.php" );
+		require( SYS_PATH . "driver.php" );
 		require( SYS_PATH . "view.php" );
 
 		Config::Load( SYS_PATH );

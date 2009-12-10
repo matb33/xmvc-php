@@ -41,17 +41,17 @@ class ErrorHandler
 
 	private static function InvokeError( $viewName, $modelName, $headerPattern, $data )
 	{
-		$model = new Model( "xml" );
-		$model->xml->Load( $modelName );
+		$model = new XMLModelDriver();
+		$model->Load( $modelName );
 
-		$data[ "headerType" ] = $model->xml->xPath->query( "//xmvc:error[ @xmvc:code = '" . $data[ "errorCode" ] . "' ]/@xmvc:type" )->item( 0 )->nodeValue;
+		$data[ "headerType" ] = $model->xPath->query( "//xmvc:error[ @xmvc:code = '" . $data[ "errorCode" ] . "' ]/@xmvc:type" )->item( 0 )->nodeValue;
 
 		$header = self::CreateHeaderUsingPattern( $headerPattern, $data );
 
-		$strings = new Model( "strings" );
-		$strings->strings->Add( "error-code", $data[ "errorCode" ] );
-		$strings->strings->Add( "controller-file", $data[ "controllerFile" ] );
-		$strings->strings->Add( "method", $data[ "method" ] );
+		$strings = new StringsModelDriver();
+		$strings->Add( "error-code", $data[ "errorCode" ] );
+		$strings->Add( "controller-file", $data[ "controllerFile" ] );
+		$strings->Add( "method", $data[ "method" ] );
 
 		$view = new View();
 		$view->PushModel( $model );

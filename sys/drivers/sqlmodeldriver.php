@@ -1,6 +1,6 @@
 <?php
 
-class SqlModelDriver extends ModelDriver implements ModelDriverInterface
+class SQLModelDriver extends ModelDriver implements ModelDriverInterface
 {
 	private $currentQueryName = null;
 	private $currentParameters = null;
@@ -19,8 +19,8 @@ class SqlModelDriver extends ModelDriver implements ModelDriverInterface
 
 	public function Load( $xmlModelName, $data = null )
 	{
-		$this->queriesModel = new Model( "xml" );
-		$this->queriesModel->xml->Load( $xmlModelName . ".sql", $data );
+		$this->queriesModel = new XMLModelDriver();
+		$this->queriesModel->Load( $xmlModelName . ".sql", $data );
 	}
 
 	public function SetQuery( $queryName )
@@ -49,7 +49,7 @@ class SqlModelDriver extends ModelDriver implements ModelDriverInterface
 
 	private function GetSQL()
 	{
-		$sql = trim( $this->queriesModel->xml->xPath->query( "//xmvc:query[@xmvc:name='" . $this->currentQueryName . "']/xmvc:sql" )->item( 0 )->nodeValue );
+		$sql = trim( $this->queriesModel->xPath->query( "//xmvc:query[@xmvc:name='" . $this->currentQueryName . "']/xmvc:sql" )->item( 0 )->nodeValue );
 
 		return( $sql );
 	}

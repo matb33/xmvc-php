@@ -1,12 +1,7 @@
 <?php
 
-class Error extends Controller
+class Error
 {
-	public function __construct()
-	{
-		parent::__construct();
-	}
-
 	public function Index( $errorCode = "404" )
 	{
 		$this->Display( $errorCode );
