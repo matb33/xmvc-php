@@ -16,12 +16,12 @@ class Home
 		$controllers = new FilesystemModelDriver();
 		$controllers->GetFileList( APP_PATH . "controllers", "/\.php/" );
 
-		$page = new View();
+		$page = new View( "home" );
 		$page->PushModel( $commonContent );
 		$page->PushModel( $pageContent );
 		$page->PushModel( $data );
 		$page->PushModel( $controllers );
-		$page->Render( "home" );
+		$page->RenderAsHTML();
 	}
 }
 

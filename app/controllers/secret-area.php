@@ -21,11 +21,11 @@ class Secret_area
 			$data->Add( "lang", Language::GetLang() );
 			$data->Add( "logged-in-user", TinyAuth::GetUserData( "login" ) );
 
-			$page = new View();
+			$page = new View( "secret-area" );
 			$page->PushModel( $commonContent );
 			$page->PushModel( $pageContent );
 			$page->PushModel( $data );
-			$page->Render( "secret-area" );
+			$page->RenderAsHTML();
 		}
 	}
 

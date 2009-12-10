@@ -19,11 +19,11 @@ class Contact_us
 		$pageContent = new XMLModelDriver();
 		$pageContent->Load( "content/en/contact-us" );
 
-		$page = new View();
+		$page = new View( "contact-us" );
 		$page->PushModel( $this->commonContent );
 		$page->PushModel( $pageContent );
 		$page->PushModel( $this->data );
-		$page->Render( "contact-us" );
+		$page->RenderAsHTML();
 	}
 
 	public function Send()
@@ -59,11 +59,11 @@ class Contact_us
 
 		$this->data->Add( "type", "thanks" );
 
-		$page = new View();
+		$page = new View( "contact-us" );
 		$page->PushModel( $this->commonContent );
 		$page->PushModel( $pageContent );
 		$page->PushModel( $this->data );
-		$page->Render( "contact-us" );
+		$page->RenderAsHTML();
 	}
 
 	public function Error()
@@ -73,11 +73,11 @@ class Contact_us
 
 		$this->data->Add( "type", "error" );
 
-		$page = new View();
+		$page = new View( "contact-us" );
 		$page->PushModel( $this->commonContent );
 		$page->PushModel( $pageContent );
 		$page->PushModel( $this->data );
-		$page->Render( "contact-us" );
+		$page->RenderAsHTML();
 	}
 }
 

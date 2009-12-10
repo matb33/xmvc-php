@@ -46,13 +46,13 @@ class TinyAuth
 					$strings->Add( "login", $login );
 					$strings->Add( "incorrect-login", $incorrectLogin ? "true" : "false" );
 
-					$loginView = new View();
+					$loginView = new View( "tinyauth" );
 					$loginView->PushModel( $strings );
-					$loginView->Render( "tinyauth" );
+					$loginView->RenderAsHTML();
 				}
 				else
 				{
-					$loginView->Render();
+					$loginView->RenderAsHTML();
 				}
 			}
 		}
