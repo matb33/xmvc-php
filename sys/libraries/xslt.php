@@ -2,33 +2,73 @@
 
 class XSL
 {
+	private static $processor;
+
 	public static function Transform( $xmlData, $xslData )
 	{
-		$processor = new XsltProcessor();
+		self::$processor = new XSLTProcessor();
 
 		libxml_use_internal_errors( true );
 
-		$xml = new DomDocument();
-		$xsl = new DomDocument();
+		self::SetupPHPFunctions();
+		self::SetupProfiling();
+
+		$xml = new DOMDocument( "1.0", "UTF-8" );
+		$xsl = new DOMDocument( "1.0", "UTF-8" );
 
 		$xml->loadXML( $xmlData );
 		$xsl->loadXML( $xslData );
 
-		$processor->importStyleSheet( $xsl );
+		self::$processor->importStyleSheet( $xsl );
 
-		$result = $processor->transformToXML( $xml );
+		$result = self::$processor->transformToXML( $xml );
 
 		if( empty( $result ) )
 		{
-			trigger_error( self::DumpErrors( $processor ), E_USER_ERROR );
+			trigger_error( self::DumpErrors(), E_USER_ERROR );
 		}
 
-		unset( $processor );
+		self::$processor = null;
 
 		return( $result );
 	}
 
-	private static function DumpErrors( $processor )
+	private static function SetupPHPFunctions()
+	{
+		if( isset( Config::$data[ "enableXSLTPHPFunctions" ] ) )
+		{
+			if( Config::$data[ "enableXSLTPHPFunctions" ] )
+			{
+				$restrict = array();
+
+				if( isset( Config::$data[ "restrictXSLTPHPFunctions" ] ) )
+				{
+					$restrict = Config::$data[ "restrictXSLTPHPFunctions" ];
+				}
+
+				self::$processor->registerPHPFunctions( $restrict );
+			}
+		}
+	}
+
+	private static function SetupProfiling()
+	{
+		if( isset( Config::$data[ "enableXSLTProfiling" ] ) )
+		{
+			if( Config::$data[ "enableXSLTProfiling" ] )
+			{
+				if( isset( Config::$data[ "XSLTProfilingFilename" ] ) )
+				{
+					if( strlen( trim( Config::$data[ "XSLTProfilingFilename" ] ) ) > 0 )
+					{
+						self::$processor->setProfiling( Config::$data[ "XSLTProfilingFilename" ] );
+					}
+				}
+			}
+		}
+	}
+
+	private static function DumpErrors()
 	{
 		// TO-DO: Clean this up
 
