@@ -23,7 +23,7 @@ class Loader
 		}
 	}
 
-	public static function ReadExternal( $filename, $data )
+	public static function ReadExternal( $filename )
 	{
 		return( file_get_contents( $filename ) );
 	}
@@ -35,10 +35,11 @@ class Loader
 			$data[ "encodedData" ] = self::EncodeData( $data );
 		}
 
-		if( is_array( $data ) )
+		if( ! is_null( $data ) && is_array( $data ) )
 		{
 			// Bring variables from data array into local scope
 
+			// TO-DO: Check if this is safe!
 			foreach( $data as $key => $value )
 			{
 				eval( "\$$key = \$value;" );

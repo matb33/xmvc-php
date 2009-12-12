@@ -136,6 +136,7 @@ class DB
 						$typesJoined	= implode( "", $types );
 						$varsJoined		= ", " . implode( ", ", $vars );
 
+						// TO-DO: Check if this is safe!
 						eval( "mysqli_stmt_bind_param( \$stmt, \$typesJoined" . $varsJoined . " );" );
 
 						$success = mysqli_stmt_execute( $stmt );
@@ -165,6 +166,7 @@ class DB
 
 						foreach( $fieldNames as $index => $fieldName )
 						{
+							// TO-DO: Check if this is safe!
 							eval( "mysqli_stmt_bind_result( \$stmt" . $fieldVarsJoined . " );" );
 						}
 

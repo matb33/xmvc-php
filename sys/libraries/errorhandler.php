@@ -51,14 +51,26 @@ class ErrorHandler
 		$header = self::CreateHeaderUsingPattern( $headerPattern, $data );
 
 		$strings = new StringsModelDriver();
-		$strings->Add( "error-code", $data[ "errorCode" ] );
-		$strings->Add( "controller-file", $data[ "controllerFile" ] );
-		$strings->Add( "method", $data[ "method" ] );
+
+		if( isset( $data[ "errorCode" ] ) )
+		{
+			$strings->Add( "error-code", $data[ "errorCode" ] );
+		}
+
+		if( isset( $data[ "controllerFile" ] ) )
+		{
+			$strings->Add( "controller-file", $data[ "controllerFile" ] );
+		}
+
+		if( isset( $data[ "method" ] ) )
+		{
+			$strings->Add( "method", $data[ "method" ] );
+		}
 
 		$view = new View( $viewName );
 		$view->PushModel( $model );
 		$view->PushModel( $strings );
-		$view->RenderAsHTML( null, $header );
+ 		$view->Render( null, $header );
 
 		die();
 	}
@@ -67,7 +79,7 @@ class ErrorHandler
 	{
 		foreach( $data as $key => $value )
 		{
-			$pattern = str_replace( $key, "#" . $value . "#", $pattern );
+			$pattern = str_replace( "#" . $key . "#", $value, $pattern );
 		}
 
 		return( $pattern );

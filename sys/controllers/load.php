@@ -4,12 +4,12 @@ namespace xMVC;
 
 class Load
 {
-	public function Index()
+	public static function Index()
 	{
 		trigger_error( "Incorrect use of load controller. Specify a type to load, such as 'view'.", E_USER_ERROR );
 	}
 
-	public function View()
+	public static function View()
 	{
 		$args = func_get_args();
 

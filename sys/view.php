@@ -149,7 +149,7 @@ class View
 			}
 			else
 			{
-				$result = Loader::ReadExternal( $xslViewFile, $data );
+				$result = Loader::ReadExternal( $xslViewFile );
 			}
 		}
 		else
@@ -257,7 +257,7 @@ class View
 		}
 		else
 		{
-			if( $this->xslViewName != "" )
+			if( isset( $this->xslViewName ) && $this->xslViewName != "" )
 			{
 				if( Config::$data[ "enableInlinePHPInViews" ] )
 				{

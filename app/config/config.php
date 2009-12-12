@@ -1,9 +1,8 @@
 <?php
 
-srand( microtime() );
+srand( microtime( true ) );
 set_time_limit( 0 );
 session_start();
-date_default_timezone_set( "America/New_York" );
 
 $sourceViewKey = "-src";
 $sourceViewEnabled = true;

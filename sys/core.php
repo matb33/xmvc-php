@@ -9,7 +9,7 @@ class Core
 	private static $useRoutes;
 	private static $controllerName;
 	private static $controllerFile;
-	private static $controllerInstance;
+	private static $controllerClassName;
 
 	public static function Load()
 	{
@@ -47,6 +47,8 @@ class Core
 		if( self::ControllerExists() )
 		{
 			self::LoadControllerClass();
+
+			self::InvokeCommon();
 
 			if( self::IsIndex() )
 			{
@@ -103,7 +105,7 @@ class Core
 		}
 		else
 		{
-			ErrorHandler::InvokeHTTPError( array( "errorCode" => "404", "controllerFile" => self::$controllerFile ) );
+			ErrorHandler::InvokeHTTPError( array( "errorCode" => "404", "controllerFile" => self::$controllerFile, "method" => "N/A" ) );
 
 			return( false );
 		}
@@ -113,9 +115,7 @@ class Core
 	{
 		require_once( self::$controllerFile );
 
-		$controllerClassName = __NAMESPACE__ . "\\" . Normalize::ObjectName( self::$controllerName );
-
-		self::$controllerInstance = new $controllerClassName;
+		self::$controllerClassName = __NAMESPACE__ . "\\" . Normalize::ObjectName( self::$controllerName );
 	}
 
 	private static function IsIndex()
@@ -126,29 +126,44 @@ class Core
 		return( count( $pathParts ) <= 1 );
 	}
 
+	private static function InvokeCommon()
+	{
+		$commonMethod = array( self::$controllerClassName, "Common" );
+
+		if( is_callable( $commonMethod ) )
+		{
+			call_user_func( $commonMethod );
+		}
+	}
+
 	private static function InvokeIndex()
 	{
-		self::$controllerInstance->Index();
+		$indexMethod = array( self::$controllerClassName, "Index" );
+
+		if( is_callable( $indexMethod ) )
+		{
+			call_user_func( $indexMethod );
+		}
+		else
+		{
+			ErrorHandler::InvokeHTTPError( array( "errorCode" => "404", "controllerFile" => self::$controllerFile, "method" => implode( "::", $indexMethod ) ) );
+		}
 	}
 
 	private static function InvokeMethod()
 	{
-		$pathData	= Routing::PathData();
-		$pathParts	= self::$useRoutes ? $pathData[ "pathParts" ] : $pathData[ "pathPartsOriginal" ];
+		$pathData = Routing::PathData();
+		$pathParts = self::$useRoutes ? $pathData[ "pathParts" ] : $pathData[ "pathPartsOriginal" ];
 
-		$method		= Normalize::ObjectName( $pathParts[ 1 ] );
+		$method	= array( self::$controllerClassName, Normalize::ObjectName( $pathParts[ 1 ] ) );
 
-		if( method_exists( self::$controllerInstance, $method ) )
+		if( is_callable( $method ) )
 		{
-			$args = array_slice( $pathParts, 2 );
-
-			array_walk( $args, create_function( '&$value, $key', '$value = ( "\"" . $value . "\"" );' ) );
-
-			eval( "self::\$controllerInstance->\$method( " . implode( ", ", $args ) . " );" );
+			call_user_func_array( $method, array_slice( $pathParts, 2 ) );
 		}
 		else
 		{
-			ErrorHandler::InvokeHTTPError( array( "errorCode" => "404", "controllerFile" => self::$controllerFile, "method" => $method ) );
+			ErrorHandler::InvokeHTTPError( array( "errorCode" => "404", "controllerFile" => self::$controllerFile, "method" => implode( "::", $method ) ) );
 		}
 	}
 
