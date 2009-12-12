@@ -4,31 +4,31 @@ namespace xMVC;
 
 class Contact_us
 {
-	private $commonContent;
-	private $data;
+	private static $commonContent;
+	private static $data;
 
-	public function __construct()
+	public static function Common()
 	{
-		$this->commonContent = new XMLModelDriver();
-		$this->commonContent->Load( "content/en/common" );
+		self::$commonContent = new XMLModelDriver();
+		self::$commonContent->Load( "content/en/common" );
 
-		$this->data = new StringsModelDriver();
-		$this->data->Add( "lang", Language::GetLang() );
+		self::$data = new StringsModelDriver();
+		self::$data->Add( "lang", Language::GetLang() );
 	}
 
-	public function Index()
+	public static function Index()
 	{
 		$pageContent = new XMLModelDriver();
 		$pageContent->Load( "content/en/contact-us" );
 
 		$page = new View( "contact-us" );
-		$page->PushModel( $this->commonContent );
+		$page->PushModel( self::$commonContent );
 		$page->PushModel( $pageContent );
-		$page->PushModel( $this->data );
+		$page->PushModel( self::$data );
 		$page->RenderAsHTML();
 	}
 
-	public function Send()
+	public static function Send()
 	{
 		$queryData = array();
 		$queryData[] = trim( $_POST[ "firstname" ] );
@@ -54,31 +54,31 @@ class Contact_us
 		}
 	}
 
-	public function Thanks()
+	public static function Thanks()
 	{
 		$pageContent = new XMLModelDriver();
 		$pageContent->Load( "content/en/contact-us" );
 
-		$this->data->Add( "type", "thanks" );
+		self::$data->Add( "type", "thanks" );
 
 		$page = new View( "contact-us" );
-		$page->PushModel( $this->commonContent );
+		$page->PushModel( self::$commonContent );
 		$page->PushModel( $pageContent );
-		$page->PushModel( $this->data );
+		$page->PushModel( self::$data );
 		$page->RenderAsHTML();
 	}
 
-	public function Error()
+	public static function Error()
 	{
 		$pageContent = new XMLModelDriver();
 		$pageContent->Load( "content/en/contact-us" );
 
-		$this->data->Add( "type", "error" );
+		self::$data->Add( "type", "error" );
 
 		$page = new View( "contact-us" );
-		$page->PushModel( $this->commonContent );
+		$page->PushModel( self::$commonContent );
 		$page->PushModel( $pageContent );
-		$page->PushModel( $this->data );
+		$page->PushModel( self::$data );
 		$page->RenderAsHTML();
 	}
 }

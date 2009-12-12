@@ -4,12 +4,12 @@ namespace xMVC;
 
 class Secret_area
 {
-	public function __construct()
+	public static function Common()
 	{
 		TinyAuth::Protect();
 	}
 
-	public function Index()
+	public static function Index()
 	{
 		if( TinyAuth::IsAuthenticated() )
 		{
@@ -31,7 +31,7 @@ class Secret_area
 		}
 	}
 
-	public function Logout()
+	public static function Logout()
 	{
 		TinyAuth::Logout();
 

@@ -4,7 +4,7 @@ namespace xMVC;
 
 class Phpinfo
 {
-	public function Index()
+	public static function Index()
 	{
 		var_dump( Config::Load( SYS_PATH ) );
 

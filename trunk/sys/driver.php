@@ -67,7 +67,7 @@ class ModelDriver extends \DOMDocument
 		}
 		else
 		{
-			$xml = Loader::ReadExternal( $xmlModelFile, $data );
+			$xml = Loader::ReadExternal( $xmlModelFile );
 		}
 
 		return( $this->StripRootTags( $xml ) );

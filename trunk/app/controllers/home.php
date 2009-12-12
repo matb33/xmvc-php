@@ -4,7 +4,7 @@ namespace xMVC;
 
 class Home
 {
-	public function Index()
+	public static function Index()
 	{
 		$commonContent = new XMLModelDriver();
 		$commonContent->Load( "content/en/common" );
