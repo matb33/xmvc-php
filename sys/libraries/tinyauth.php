@@ -1,5 +1,7 @@
 <?php
 
+namespace xMVC;
+
 class TinyAuth
 {
 	private static $userDataFieldsToFetch = array( "loginID", "created", "modified", "login" );

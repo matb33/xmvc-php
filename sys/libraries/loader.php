@@ -1,5 +1,7 @@
 <?php
 
+namespace xMVC;
+
 class Loader
 {
 	public static function Prioritize( $filename )

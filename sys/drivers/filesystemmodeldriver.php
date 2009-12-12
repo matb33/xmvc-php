@@ -1,12 +1,14 @@
 <?php
 
+namespace xMVC;
+
 class FileSystemModelDriver extends ModelDriver implements ModelDriverInterface
 {
 	public function __construct()
 	{
 		parent::__construct();
 
-		$this->rootElement = $this->createElementNS( xMVC::$namespace, "xmvc:filesystem" );
+		$this->rootElement = $this->createElementNS( Core::$namespace, "xmvc:filesystem" );
 		$this->appendChild( $this->rootElement );
 	}
 
@@ -83,8 +85,8 @@ class FileSystemModelDriver extends ModelDriver implements ModelDriverInterface
 	{
 		foreach( array_keys( $listing ) as $folderName )
 		{
-			$folderElement = $this->createElementNS( xMVC::$namespace, "xmvc:folder" );
-			$nameAttribute = $this->createAttributeNS( xMVC::$namespace, "xmvc:name" );
+			$folderElement = $this->createElementNS( Core::$namespace, "xmvc:folder" );
+			$nameAttribute = $this->createAttributeNS( Core::$namespace, "xmvc:name" );
 			$nameAttribute->value = $folderName;
 			$folderElement->appendChild( $nameAttribute );
 			$this->rootElement->appendChild( $folderElement );
@@ -93,8 +95,8 @@ class FileSystemModelDriver extends ModelDriver implements ModelDriverInterface
 			{
 				if( $metaName != ":FOLDERS:" && $metaName != ":FILES:" )
 				{
-					$metaElement = $this->createElementNS( xMVC::$namespace, "xmvc:meta" );
-					$nameAttribute = $this->createAttributeNS( xMVC::$namespace, "xmvc:name" );
+					$metaElement = $this->createElementNS( Core::$namespace, "xmvc:meta" );
+					$nameAttribute = $this->createAttributeNS( Core::$namespace, "xmvc:name" );
 					$valueNode = $this->createCDATASection( ( string )$metaData );
 					$nameAttribute->value = $metaName;
 					$metaElement->appendChild( $valueNode );
@@ -112,16 +114,16 @@ class FileSystemModelDriver extends ModelDriver implements ModelDriverInterface
 			{
 				foreach( $listing[ $folderName ][ ":FILES:" ] as $filename => $meta )
 				{
-					$fileElement = $this->createElementNS( xMVC::$namespace, "xmvc:file" );
-					$nameAttribute = $this->createAttributeNS( xMVC::$namespace, "xmvc:name" );
+					$fileElement = $this->createElementNS( Core::$namespace, "xmvc:file" );
+					$nameAttribute = $this->createAttributeNS( Core::$namespace, "xmvc:name" );
 					$nameAttribute->value = $filename;
 					$fileElement->appendChild( $nameAttribute );
 					$folderElement->appendChild( $fileElement );
 
 					foreach( $meta as $metaName => $metaData )
 					{
-						$metaElement = $this->createElementNS( xMVC::$namespace, "xmvc:meta" );
-						$nameAttribute = $this->createAttributeNS( xMVC::$namespace, "xmvc:name" );
+						$metaElement = $this->createElementNS( Core::$namespace, "xmvc:meta" );
+						$nameAttribute = $this->createAttributeNS( Core::$namespace, "xmvc:name" );
 						$valueNode = $this->createCDATASection( ( string )$metaData );
 						$nameAttribute->value = $metaName;
 						$metaElement->appendChild( $valueNode );

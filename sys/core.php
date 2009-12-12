@@ -1,6 +1,8 @@
 <?php
 
-class xMVC
+namespace xMVC;
+
+class Core
 {
 	public static $namespace = "http://www.xmvc.org/ns/xmvc/1.0";
 
@@ -14,6 +16,7 @@ class xMVC
 		require( SYS_PATH . "libraries/normalize.php" );
 		require( SYS_PATH . "libraries/loader.php" );
 		require( SYS_PATH . "libraries/xslt.php" );
+		require( SYS_PATH . "libraries/autoload.php" );
 		require( SYS_PATH . "autoload.php" );
 
 		require( SYS_PATH . "driver.php" );
@@ -110,7 +113,7 @@ class xMVC
 	{
 		require_once( self::$controllerFile );
 
-		$controllerClassName = Normalize::ObjectName( self::$controllerName );
+		$controllerClassName = __NAMESPACE__ . "\\" . Normalize::ObjectName( self::$controllerName );
 
 		self::$controllerInstance = new $controllerClassName;
 	}

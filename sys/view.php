@@ -1,5 +1,7 @@
 <?php
 
+namespace xMVC;
+
 class View
 {
 	private $xmlData = null;
@@ -189,7 +191,7 @@ class View
 
 	private function ProcessView( $return, $outputType )
 	{
-		if( ( xMVC::IsClientSideXSLTSupported() || ( !xMVC::IsClientSideXSLTSupported() && isset( $_GET[ Config::$data[ "sourceViewKey" ] ] ) && Config::$data[ "sourceViewEnabled" ] ) ) && $return === false )
+		if( ( Core::IsClientSideXSLTSupported() || ( !Core::IsClientSideXSLTSupported() && isset( $_GET[ Config::$data[ "sourceViewKey" ] ] ) && Config::$data[ "sourceViewEnabled" ] ) ) && $return === false )
 		{
 			OutputHeaders::XML();
 
@@ -250,7 +252,7 @@ class View
 
 			if( ! $omitRoot )
 			{
-				$xmlHead .= "<xmvc:root xmlns:xmvc=\"" . xMVC::$namespace . "\" xmvc:mcc=\"true\">\n";
+				$xmlHead .= "<xmvc:root xmlns:xmvc=\"" . Core::$namespace . "\" xmvc:mcc=\"true\">\n";
 			}
 		}
 		else
@@ -269,7 +271,7 @@ class View
 
 			if( ! $omitRoot )
 			{
-				$xmlHead .= "<xmvc:root xmlns:xmvc=\"" . xMVC::$namespace . "\">\n";
+				$xmlHead .= "<xmvc:root xmlns:xmvc=\"" . Core::$namespace . "\">\n";
 			}
 		}
 

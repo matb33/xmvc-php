@@ -1,5 +1,7 @@
 <?php
 
+namespace xMVC;
+
 class Load
 {
 	public function Index()

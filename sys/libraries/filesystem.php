@@ -1,5 +1,7 @@
 <?php
 
+namespace xMVC;
+
 class FileSystem
 {
 	const FS_FILE = 1;

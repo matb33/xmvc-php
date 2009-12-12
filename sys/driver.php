@@ -1,6 +1,8 @@
 <?php
 
-class ModelDriver extends DOMDocument
+namespace xMVC;
+
+class ModelDriver extends \DOMDocument
 {
 	public $xPath;
 	protected $rootElement;
@@ -29,7 +31,7 @@ class ModelDriver extends DOMDocument
 
 	private function RefreshXPath( $source = null )
 	{
-		$this->xPath = new DOMXpath( $this );
+		$this->xPath = new \DOMXpath( $this );
 		$this->RegisterNamespaces( $source );
 	}
 

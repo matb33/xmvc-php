@@ -1,5 +1,7 @@
 <?php
 
+namespace xMVC;
+
 class Favicon
 {
 	public function Index()

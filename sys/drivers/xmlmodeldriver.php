@@ -1,5 +1,7 @@
 <?php
 
+namespace xMVC;
+
 class XMLModelDriver extends ModelDriver implements ModelDriverInterface
 {
 	public function __construct()

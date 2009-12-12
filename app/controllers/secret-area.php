@@ -1,5 +1,7 @@
 <?php
 
+namespace xMVC;
+
 class Secret_area
 {
 	public function __construct()

@@ -1,5 +1,7 @@
 <?php
 
+namespace xMVC;
+
 class Contact_us
 {
 	private $commonContent;
