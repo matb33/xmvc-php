@@ -1,5 +1,7 @@
 <?php
 
+namespace xMVC;
+
 class OutputHeaders
 {
 	public static function Specifically( $outputType )

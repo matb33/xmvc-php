@@ -1,5 +1,7 @@
 <?php
 
+namespace xMVC;
+
 class Config
 {
 	public static $data = array();

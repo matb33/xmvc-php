@@ -1,5 +1,7 @@
 <?php
 
+namespace xMVC;
+
 class Routing
 {
 	private static $URI = null;

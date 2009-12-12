@@ -1,5 +1,7 @@
 <?php
 
+namespace xMVC;
+
 class ErrorHandler
 {
 	private static $oldErrorHandler;
@@ -9,7 +11,7 @@ class ErrorHandler
 
 	public static function HandleErrors()
 	{
-		self::$oldErrorHandler = set_error_handler( array( "ErrorHandler", "ErrorHandlerXML" ) );
+		self::$oldErrorHandler = set_error_handler( array( __NAMESPACE__ . "\\" . "ErrorHandler", "ErrorHandlerXML" ) );
 		self::$errorReporting = error_reporting();
 		self::$errors = "";
 
@@ -73,14 +75,14 @@ class ErrorHandler
 
 	public static function ErrorHandlerXML( $errorNumber, $errorMessage, $filename, $lineNum, $vars )
 	{
-		$errorException = new ErrorException( $errorMessage, 0, $errorNumber, $filename, $lineNum );
+		$errorException = new \ErrorException( $errorMessage, 0, $errorNumber, $filename, $lineNum );
 
 		$errorXML = "";
 
 		if( ( $errorNumber & self::$errorReporting ) == $errorNumber )
 		{
 			$errorXML .= "<xmvc:errorentry>";
-			$errorXML .= "<xmvc:datetime><![CDATA[" . date( "Y-m-d H:i:s (T)" ) . "]]></xmvc:datetime>";
+			$errorXML .= "<xmvc:datetime><![CDATA[" . date( "Y-m-d H:i:s" ) . "]]></xmvc:datetime>";
 			$errorXML .= "<xmvc:errornum><![CDATA[" . $errorNumber . "]]></xmvc:errornum>";
 			$errorXML .= "<xmvc:errortype><![CDATA[" . self::$errorTypes[ $errorNumber ] . "]]></xmvc:errortype>";
 			$errorXML .= "<xmvc:errormsg><![CDATA[" . $errorMessage . "]]></xmvc:errormsg>";

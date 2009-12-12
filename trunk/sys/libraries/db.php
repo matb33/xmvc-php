@@ -1,8 +1,50 @@
 <?php
 
+namespace xMVC;
+
 class DB
 {
 	private static $link = null;
+
+	public static function Connect()
+	{
+		switch( Config::$data[ "databaseType" ] )
+		{
+			case "mysql":
+
+				self::$link = mysql_connect( Config::$data[ "databaseHost" ], Config::$data[ "databaseUser" ], Config::$data[ "databasePass" ] ) or trigger_error( "Could not connect: [" . mysql_error() . "]", E_USER_ERROR );
+
+			break;
+
+			case "mysqli":
+
+				self::$link = mysqli_init();
+
+				mysqli_real_connect( self::$link, Config::$data[ "databaseHost" ], Config::$data[ "databaseUser" ], Config::$data[ "databasePass" ], Config::$data[ "databaseName" ] );
+
+				if( mysqli_connect_errno() )
+				{
+					trigger_error( "Connect failed: [" . mysqli_connect_error() . "]", E_USER_ERROR );
+				}
+
+			break;
+		}
+	}
+
+	public static function SelectDB()
+	{
+		switch( Config::$data[ "databaseType" ] )
+		{
+			case "mysql":
+
+				mysql_select_db( Config::$data[ "databaseName" ] ) or trigger_error( "Could not select database [" . Config::$data[ "databaseName" ] . "]: [" . mysql_error() . "]", E_USER_ERROR );
+
+			break;
+
+			case "mysqli":
+			break;
+		}
+	}
 
 	public static function ExecutePreparedStatement( $sql, $parameters = null )
 	{
@@ -210,46 +252,6 @@ class DB
 		}
 
 		return( $rowLists );
-	}
-
-	public static function Connect()
-	{
-		switch( Config::$data[ "databaseType" ] )
-		{
-			case "mysql":
-
-				self::$link = mysql_connect( Config::$data[ "databaseHost" ], Config::$data[ "databaseUser" ], Config::$data[ "databasePass" ] ) or trigger_error( "Could not connect: [" . mysql_error() . "]", E_USER_ERROR );
-
-			break;
-
-			case "mysqli":
-
-				self::$link = mysqli_init();
-
-				mysqli_real_connect( self::$link, Config::$data[ "databaseHost" ], Config::$data[ "databaseUser" ], Config::$data[ "databasePass" ], Config::$data[ "databaseName" ] );
-
-				if( mysqli_connect_errno() )
-				{
-					trigger_error( "Connect failed: [" . mysqli_connect_error() . "]", E_USER_ERROR );
-				}
-
-			break;
-		}
-	}
-
-	public static function SelectDB()
-	{
-		switch( Config::$data[ "databaseType" ] )
-		{
-			case "mysql":
-
-				mysql_select_db( Config::$data[ "databaseName" ] ) or trigger_error( "Could not select database [" . Config::$data[ "databaseName" ] . "]: [" . mysql_error() . "]", E_USER_ERROR );
-
-			break;
-
-			case "mysqli":
-			break;
-		}
 	}
 
 	public static function Query( $sql )

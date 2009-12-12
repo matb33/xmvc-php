@@ -1,20 +1,22 @@
 <?php
 
+namespace xMVC;
+
 class XSL
 {
 	private static $processor;
 
 	public static function Transform( $xmlData, $xslData )
 	{
-		self::$processor = new XSLTProcessor();
+		self::$processor = new \XSLTProcessor();
 
 		libxml_use_internal_errors( true );
 
 		self::SetupPHPFunctions();
 		self::SetupProfiling();
 
-		$xml = new DOMDocument( "1.0", "UTF-8" );
-		$xsl = new DOMDocument( "1.0", "UTF-8" );
+		$xml = new \DOMDocument( "1.0", "UTF-8" );
+		$xsl = new \DOMDocument( "1.0", "UTF-8" );
 
 		$xml->loadXML( $xmlData );
 		$xsl->loadXML( $xslData );

@@ -1,5 +1,7 @@
 <?php
 
+namespace xMVC;
+
 class Error
 {
 	public function Index( $errorCode = "404" )

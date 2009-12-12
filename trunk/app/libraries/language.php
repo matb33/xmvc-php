@@ -1,5 +1,7 @@
 <?php
 
+namespace xMVC;
+
 class Language
 {
 	private static $languages = null;

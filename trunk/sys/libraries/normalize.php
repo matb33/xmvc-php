@@ -1,5 +1,7 @@
 <?php
 
+namespace xMVC;
+
 class Normalize
 {
 	public static function ObjectName( $name )

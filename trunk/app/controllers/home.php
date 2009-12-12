@@ -1,5 +1,7 @@
 <?php
 
+namespace xMVC;
+
 class Home
 {
 	public function Index()
