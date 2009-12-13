@@ -105,9 +105,10 @@ class DB
 				{
 					if( is_array( $parameters ) )
 					{
-						$types		= array();
-						$vars		= array();
-						$boundVars	= array();
+						$types = array();
+						$vars = array();
+						$boundVars = array();
+						$valueHolder = array();
 
 						foreach( $parameters as $key => $value )
 						{
@@ -130,14 +131,11 @@ class DB
 							$types[]	= $type;
 							$vars[]		= $varName;
 
-							$boundVars[ $key ] = $value;
+							$valueHolder[ $key ] = $value;
+							$boundVars[ $key ] = &$valueHolder[ $key ];
 						}
 
-						$typesJoined	= implode( "", $types );
-						$varsJoined		= ", " . implode( ", ", $vars );
-
-						// TO-DO: Check if this is safe!
-						eval( "mysqli_stmt_bind_param( \$stmt, \$typesJoined" . $varsJoined . " );" );
+						call_user_func_array( "mysqli_stmt_bind_param", array_merge( array( $stmt, implode( "", $types ) ), $boundVars ) );
 
 						$success = mysqli_stmt_execute( $stmt );
 					}
@@ -152,22 +150,20 @@ class DB
 					{
 						$fieldInfo = mysqli_fetch_fields( $metaData );
 
-						$fieldNames		= array();
-						$fieldVars		= array();
-						$boundResult	= array();
+						$fieldNames = array();
+						$boundResult = array();
+						$resultHolder = array();
 
 						foreach( $fieldInfo as $index => $field )
 						{
-							$fieldNames[ $index ]	= $field->name;
-							$fieldVars[ $index ]	= "\$boundResult[ \"" . $field->name . "\" ]";
+							$fieldNames[ $index ] = $field->name;
+							$resultHolder[ $field->name ] = null;
+							$boundResult[ $field->name ] = &$resultHolder[ $field->name ];
 						}
-
-						$fieldVarsJoined = ", " . implode( ", ", $fieldVars );
 
 						foreach( $fieldNames as $index => $fieldName )
 						{
-							// TO-DO: Check if this is safe!
-							eval( "mysqli_stmt_bind_result( \$stmt" . $fieldVarsJoined . " );" );
+							call_user_func_array( "mysqli_stmt_bind_result", array_merge( array( $stmt ), $boundResult ) );
 						}
 
 						$rowList = array();

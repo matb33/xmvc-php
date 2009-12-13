@@ -37,21 +37,12 @@ class Loader
 
 		if( ! is_null( $data ) && is_array( $data ) )
 		{
-			// Bring variables from data array into local scope
-
-			// TO-DO: Check if this is safe!
-			foreach( $data as $key => $value )
-			{
-				eval( "\$$key = \$value;" );
-			}
+			extract( $data, EXTR_SKIP );
 		}
 
 		ob_start();
-
 		include( $filename );
-
 		$result = ob_get_contents();
-
 		ob_end_clean();
 
 		return( $result );
