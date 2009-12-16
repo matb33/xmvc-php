@@ -21,7 +21,7 @@ class TinyAuth
 				$password = $_POST[ "password" ];
 
 				$authModel = new SQLModelDriver();
-				$authModel->Load( "queries/tinyauth" );
+				$authModel->Load( "tinyauth/queries" );
 				$authModel->SetQuery( "IsLoginPasswordValid" );
 				$authModel->SetParameters( array( ( string )$login, md5( ( string )$password ) ) );
 				$authModel->Execute();
@@ -48,7 +48,7 @@ class TinyAuth
 					$strings->Add( "login", $login );
 					$strings->Add( "incorrect-login", $incorrectLogin ? "true" : "false" );
 
-					$loginView = new View( "tinyauth" );
+					$loginView = new View( "tinyauth/login" );
 					$loginView->PushModel( $strings );
 					$loginView->RenderAsHTML();
 				}
@@ -81,7 +81,7 @@ class TinyAuth
 	private static function SetAuthenticated( $loginID )
 	{
 		$userModel = new SQLModelDriver();
-		$userModel->Load( "queries/tinyauth" );
+		$userModel->Load( "tinyauth/queries" );
 		$userModel->SetQuery( "GetUserData" );
 		$userModel->SetParameters( array( ( int )$loginID ) );
 		$userModel->Execute();

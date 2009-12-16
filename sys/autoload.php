@@ -2,11 +2,14 @@
 
 function __autoload( $className )
 {
-	if( ! xMVC\AutoLoad::ModelDriver( $className ) )
+	if( xMVC\AutoLoad::ModelDriver( $className ) === false )
 	{
-		if( ! xMVC\AutoLoad::Library( $className ) )
+		if( xMVC\AutoLoad::Library( $className ) === false )
 		{
-			trigger_error( "Unable to load a model-driver or library by the name [" . $className . "]", E_USER_ERROR );
+			//if( xMVC\AutoLoad::ModuleLibrary( $className ) === false )
+			//{
+				trigger_error( "Unable to load a model-driver, library or module library by the name [" . $className . "]", E_USER_ERROR );
+			//}
 		}
 	}
 }

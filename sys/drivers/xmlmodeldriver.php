@@ -38,7 +38,7 @@ class XMLModelDriver extends ModelDriver implements ModelDriverInterface
 			{
 				// Treat parameter as XML model name
 
-				if( ( $xmlModelFile = Loader::Prioritize( "models/" . $parameter . ".xml" ) ) !== false )
+				if( ( $xmlModelFile = Loader::Prioritize( "models", $parameter, "xml" ) ) !== false )
 				{
 					$xmlData = $this->LoadModelXML( $xmlModelFile, $data );
 				}

@@ -1,5 +1,5 @@
 <xsl:stylesheet version="1.0"
-	exclude-result-prefixes="xmvc db dbfield fs err"
+	exclude-result-prefixes="xmvc"
 	xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 	xmlns:xmvc="http://www.xmvc.org/ns/xmvc/1.0">

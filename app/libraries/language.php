@@ -45,8 +45,8 @@ class Language
 		{
 			foreach( self::$languages->xPath->query( "//lang:languages/lang:language-list/lang:language" ) as $node )
 			{
-				$id			 = $node->getAttribute( "lang:id" );
-				$hostMatch	 = self::$languages->xPath->query( "lang:host-match", $node )->item( 0 )->nodeValue;
+				$id = $node->getAttribute( "lang:id" );
+				$hostMatch = self::$languages->xPath->query( "lang:host-match", $node )->item( 0 )->nodeValue;
 
 				self::$data[ $id ] = array(
 					"host-match" => $hostMatch
