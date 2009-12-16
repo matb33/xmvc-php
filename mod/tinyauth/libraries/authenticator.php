@@ -1,8 +1,12 @@
 <?php
 
-namespace xMVC;
+namespace TinyAuth;
 
-class TinyAuth
+use xMVC\StringsModelDriver;
+use xMVC\SQLModelDriver;
+use xMVC\View;
+
+class Authenticator
 {
 	private static $userDataFieldsToFetch = array( "loginID", "created", "modified", "login" );
 	private static $authenticated = null;
@@ -20,8 +24,7 @@ class TinyAuth
 				$login = $_POST[ "login" ];
 				$password = $_POST[ "password" ];
 
-				$authModel = new SQLModelDriver();
-				$authModel->Load( "tinyauth/queries" );
+				$authModel = new SQLModelDriver( "queries", __NAMESPACE__ );
 				$authModel->SetQuery( "IsLoginPasswordValid" );
 				$authModel->SetParameters( array( ( string )$login, md5( ( string )$password ) ) );
 				$authModel->Execute();
@@ -48,7 +51,7 @@ class TinyAuth
 					$strings->Add( "login", $login );
 					$strings->Add( "incorrect-login", $incorrectLogin ? "true" : "false" );
 
-					$loginView = new View( "tinyauth/login" );
+					$loginView = new View( "login", __NAMESPACE__ );
 					$loginView->PushModel( $strings );
 					$loginView->RenderAsHTML();
 				}
@@ -80,8 +83,7 @@ class TinyAuth
 
 	private static function SetAuthenticated( $loginID )
 	{
-		$userModel = new SQLModelDriver();
-		$userModel->Load( "tinyauth/queries" );
+		$userModel = new SQLModelDriver( "queries", __NAMESPACE__ );
 		$userModel->SetQuery( "GetUserData" );
 		$userModel->SetParameters( array( ( int )$loginID ) );
 		$userModel->Execute();

@@ -14,25 +14,14 @@ class Normalize
 
 	public static function Filename( $name )
 	{
-		$name = self::RemoveNamespaces( strtolower( $name ) );
+		$name = strtolower( self::RemoveNamespace( $name, __NAMESPACE__ ) );
 
 		return( $name );
 	}
 
-	private static function RemoveNamespaces( $className )
+	private static function RemoveNamespace( $className, $namespace )
 	{
-		$lastBackSlashPosition = strrpos( $className, "\\" );
-
-		if( $lastBackSlashPosition !== false )
-		{
-			$startPosition = $lastBackSlashPosition + 1;
-		}
-		else
-		{
-			$startPosition = 0;
-		}
-
-		return( substr( $className, $startPosition ) );
+		return( str_replace( $namespace . "\\", "", $className ) );
 	}
 }
 

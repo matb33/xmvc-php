@@ -6,11 +6,8 @@ class Home
 {
 	public static function Index()
 	{
-		$commonContent = new XMLModelDriver();
-		$commonContent->Load( "content/en/common" );
-
-		$pageContent = new XMLModelDriver();
-		$pageContent->Load( "content/en/home" );
+		$commonContent = new XMLModelDriver( "content/en/common" );
+		$pageContent = new XMLModelDriver( "content/en/home" );
 
 		$data = new StringsModelDriver();
 		$data->Add( "lang", Language::GetLang() );

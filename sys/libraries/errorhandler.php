@@ -43,8 +43,7 @@ class ErrorHandler
 
 	private static function InvokeError( $viewName, $modelName, $headerPattern, $data )
 	{
-		$model = new XMLModelDriver();
-		$model->Load( $modelName );
+		$model = new XMLModelDriver( $modelName );
 
 		$data[ "headerType" ] = $model->xPath->query( "//xmvc:error[ @xmvc:code = '" . $data[ "errorCode" ] . "' ]/@xmvc:type" )->item( 0 )->nodeValue;
 

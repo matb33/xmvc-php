@@ -4,22 +4,20 @@ namespace xMVC;
 
 class XMLModelDriver extends ModelDriver implements ModelDriverInterface
 {
-	public function __construct()
+	public function __construct( $parameter, $namespace = __NAMESPACE__, $data = null )
 	{
 		parent::__construct();
-	}
 
-	public function Load( $parameter, $data = null )
-	{
-		$this->TransformForeignToXML( $parameter, $data );
+		$this->TransformForeignToXML( $parameter, $namespace, $data );
 	}
 
 	public function TransformForeignToXML()
 	{
 		$parameter = func_get_arg( 0 );
-		$data = func_get_arg( 1 );
+		$namespace = func_get_arg( 1 );
+		$data = func_get_arg( 2 );
 
-		if( is_a( $parameter, "Model" ) )
+		if( is_a( $parameter, "ModelDriver" ) )
 		{
 			// Treat parameter as an instance of a model
 
@@ -38,7 +36,7 @@ class XMLModelDriver extends ModelDriver implements ModelDriverInterface
 			{
 				// Treat parameter as XML model name
 
-				if( ( $xmlModelFile = Loader::Prioritize( "models", $parameter, "xml" ) ) !== false )
+				if( ( $xmlModelFile = Loader::Prioritize( "models", $namespace . "\\" . $parameter, "xml" ) ) !== false )
 				{
 					$xmlData = $this->LoadModelXML( $xmlModelFile, $data );
 				}

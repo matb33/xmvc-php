@@ -6,6 +6,7 @@ class Loader
 {
 	public static function Prioritize( $folder, $file, $extension )
 	{
+		$file = Normalize::Filename( $file );
 		$path = self::FindPathWhereFileExists( $folder, $file, $extension );
 
 		if( $path !== false )
@@ -24,36 +25,23 @@ class Loader
 		{
 			return( APP_PATH );
 		}
-		else
+
+		$sysFile = SYS_PATH . $folder . "/" . $file . "." . $extension;
+
+		if( file_exists( $sysFile ) )
 		{
-			$sysFile = SYS_PATH . $folder . "/" . $file . "." . $extension;
+			return( SYS_PATH );
+		}
 
-			if( file_exists( $sysFile ) )
+		$moduleNamespace = self::ExtractModuleNamespace( $file );
+
+		if( $moduleNamespace !== false )
+		{
+			$modFile = MOD_PATH . $moduleNamespace . "/" . $folder . "/" . $file . "." . $extension;
+
+			if( file_exists( $modFile ) )
 			{
-				return( SYS_PATH );
-			}
-			else
-			{
-				$libraryModFile = MOD_PATH . $file . "/" . $folder . "/" . $file . "." . $extension;
-
-				if( file_exists( $libraryModFile ) )
-				{
-					return( MOD_PATH . $file . "/" );
-				}
-				else
-				{
-					$moduleNamespace = self::ExtractModuleNamespace( $file );
-
-					if( $moduleNamespace !== false )
-					{
-						$modFile = MOD_PATH . $moduleNamespace . "/" . $folder . "/" . $file . "." . $extension;
-
-						if( file_exists( $modFile ) )
-						{
-							return( MOD_PATH . $moduleNamespace . "/" );
-						}
-					}
-				}
+				return( MOD_PATH . $moduleNamespace . "/" );
 			}
 		}
 
@@ -62,7 +50,7 @@ class Loader
 
 	private static function ExtractModuleNamespace( &$file )
 	{
-		$parts = explode( "/", $file );
+		$parts = explode( "\\", $file );
 
 		if( count( $parts ) > 1 )
 		{
