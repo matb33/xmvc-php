@@ -62,16 +62,27 @@ class Loader
 
 	private static function ExtractModuleNamespace( &$file )
 	{
-		$fileParts = explode( "/", $file );
+		$parts = explode( "/", $file );
 
-		if( count( $fileParts ) > 1 )
+		if( count( $parts ) > 1 )
 		{
-			$file = implode( "/", array_slice( $fileParts, 1 ) );
+			$namespace = self::GetFirstPart( $parts );
+			$file = self::GetRemainingParts( $parts );
 
-			return( $fileParts[ 0 ] );
+			return( $namespace );
 		}
 
 		return( false );
+	}
+
+	private static function GetFirstPart( $parts )
+	{
+		return( $parts[ 0 ] );
+	}
+
+	private static function GetRemainingParts( $parts )
+	{
+		return( implode( "/", array_slice( $parts, 1 ) ) );
 	}
 
 	public static function ReadExternal( $filename )
