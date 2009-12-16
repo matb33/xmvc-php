@@ -6,9 +6,19 @@ class Config
 {
 	public static $data = array();
 
-	public static function Load( $basePath )
+	public static function Load()
 	{
+		self::LoadByPath( SYS_PATH );
+		self::LoadByPath( APP_PATH );
+	}
+
+	public static function LoadByPath( $basePath )
+	{
+		$variable = null;
+		$value = null;
 		$entry = null;
+		$variablesToMerge = null;
+		$variableToUnset = null;
 		$configPath = $basePath . "config/";
 		$handle = dir( $configPath );
 
@@ -22,9 +32,12 @@ class Config
 				{
 					include( $configPath . $entry );
 
-					foreach( array_diff_key( get_defined_vars(), $existingVariables, array( "existingVariables" => "" ) ) as $variable => $value )
+					$variablesToMerge = array_diff_key( get_defined_vars(), $existingVariables, array( "existingVariables" => "" ) );
+					self::$data = array_merge_recursive( self::$data, $variablesToMerge );
+
+					foreach( array_keys( $variablesToMerge ) as $variableToUnset )
 					{
-						self::$data[ $variable ] = $value;
+						unset( $$variableToUnset );
 					}
 				}
 			}

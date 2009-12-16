@@ -4,23 +4,74 @@ namespace xMVC;
 
 class Loader
 {
-	public static function Prioritize( $filename )
+	public static function Prioritize( $folder, $file, $extension )
 	{
-		$applicationFilename = APP_PATH . $filename;
-		$systemFilename = SYS_PATH . $filename;
+		$path = self::FindPathWhereFileExists( $folder, $file, $extension );
 
-		if( file_exists( $applicationFilename ) )
+		if( $path !== false )
 		{
-			return( $applicationFilename );
+			return( $path . $folder . "/" . $file . "." . $extension );
 		}
-		else if( file_exists( $systemFilename ) )
+
+		return( false );
+	}
+
+	private static function FindPathWhereFileExists( $folder, &$file, $extension )
+	{
+		$appFile = APP_PATH . $folder . "/" . $file . "." . $extension;
+
+		if( file_exists( $appFile ) )
 		{
-			return( $systemFilename );
+			return( APP_PATH );
 		}
 		else
 		{
-			return( false );
+			$sysFile = SYS_PATH . $folder . "/" . $file . "." . $extension;
+
+			if( file_exists( $sysFile ) )
+			{
+				return( SYS_PATH );
+			}
+			else
+			{
+				$libraryModFile = MOD_PATH . $file . "/" . $folder . "/" . $file . "." . $extension;
+
+				if( file_exists( $libraryModFile ) )
+				{
+					return( MOD_PATH . $file . "/" );
+				}
+				else
+				{
+					$moduleNamespace = self::ExtractModuleNamespace( $file );
+
+					if( $moduleNamespace !== false )
+					{
+						$modFile = MOD_PATH . $moduleNamespace . "/" . $folder . "/" . $file . "." . $extension;
+
+						if( file_exists( $modFile ) )
+						{
+							return( MOD_PATH . $moduleNamespace . "/" );
+						}
+					}
+				}
+			}
 		}
+
+		return( false );
+	}
+
+	private static function ExtractModuleNamespace( &$file )
+	{
+		$fileParts = explode( "/", $file );
+
+		if( count( $fileParts ) > 1 )
+		{
+			$file = implode( "/", array_slice( $fileParts, 1 ) );
+
+			return( $fileParts[ 0 ] );
+		}
+
+		return( false );
 	}
 
 	public static function ReadExternal( $filename )

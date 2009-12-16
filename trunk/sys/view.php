@@ -138,7 +138,7 @@ class View
 
 		if( is_null( $xslViewFile ) )
 		{
-			$xslViewFile = Loader::Prioritize( "views/" . $this->xslViewName . ".xsl" );
+			$xslViewFile = Loader::Prioritize( "views", $this->xslViewName, "xsl" );
 		}
 
 		if( file_exists( $xslViewFile ) )

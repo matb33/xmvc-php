@@ -22,8 +22,7 @@ class Core
 		require( SYS_PATH . "driver.php" );
 		require( SYS_PATH . "view.php" );
 
-		Config::Load( SYS_PATH );
-		Config::Load( APP_PATH );
+		Config::Load();
 
 		if( Config::$data[ "handleErrors" ] )
 		{
