@@ -8,7 +8,7 @@ class SQLModelDriver extends ModelDriver implements ModelDriverInterface
 	private $currentParameters = null;
 	private $queriesModel;
 
-	public function __construct()
+	public function __construct( $xmlModelName, $namespace = __NAMESPACE__, $data = null )
 	{
 		parent::__construct();
 
@@ -17,12 +17,13 @@ class SQLModelDriver extends ModelDriver implements ModelDriverInterface
 
 		DB::Connect();
 		DB::SelectDB();
+
+		$this->LoadSQLFromModel( $xmlModelName, $namespace, $data );
 	}
 
-	public function Load( $xmlModelName, $data = null )
+	private function LoadSQLFromModel( $xmlModelName, $namespace, $data )
 	{
-		$this->queriesModel = new XMLModelDriver();
-		$this->queriesModel->Load( $xmlModelName . ".sql", $data );
+		$this->queriesModel = new XMLModelDriver( $xmlModelName . ".sql", $namespace, $data );
 	}
 
 	public function SetQuery( $queryName )

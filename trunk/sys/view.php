@@ -7,11 +7,13 @@ class View
 	private $xmlData = null;
 	private $xslData = null;
 	private $xslViewName = null;
+	private $namespace = null;
 	private $models = array();
 
-	public function __construct( $xslViewName )
+	public function __construct( $xslViewName, $namespace = __NAMESPACE__ )
 	{
 		$this->xslViewName = $xslViewName;
+		$this->namespace = $namespace;
 	}
 
 	public function AddModel( $model )
@@ -138,7 +140,7 @@ class View
 
 		if( is_null( $xslViewFile ) )
 		{
-			$xslViewFile = Loader::Prioritize( "views", $this->xslViewName, "xsl" );
+			$xslViewFile = Loader::Prioritize( "views", $this->namespace . "\\" . $this->xslViewName, "xsl" );
 		}
 
 		if( file_exists( $xslViewFile ) )

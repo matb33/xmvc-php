@@ -34,8 +34,7 @@ class Language
 	{
 		if( is_null( self::$languages ) )
 		{
-			self::$languages = new XMLModelDriver();
-			self::$languages->Load( "languages" );
+			self::$languages = new XMLModelDriver( "languages" );
 		}
 	}
 

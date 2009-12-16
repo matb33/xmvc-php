@@ -9,8 +9,7 @@ class Contact_us
 
 	public static function Common()
 	{
-		self::$commonContent = new XMLModelDriver();
-		self::$commonContent->Load( "content/en/common" );
+		self::$commonContent = new XMLModelDriver( "content/en/common" );
 
 		self::$data = new StringsModelDriver();
 		self::$data->Add( "lang", Language::GetLang() );
@@ -18,8 +17,7 @@ class Contact_us
 
 	public static function Index()
 	{
-		$pageContent = new XMLModelDriver();
-		$pageContent->Load( "content/en/contact-us" );
+		$pageContent = new XMLModelDriver( "content/en/contact-us" );
 
 		$page = new View( "contact-us" );
 		$page->PushModel( self::$commonContent );
@@ -36,8 +34,7 @@ class Contact_us
 		$queryData[] = trim( $_POST[ "email" ] );
 		$queryData[] = $_SERVER[ "REMOTE_ADDR" ];
 
-		$entry = new SQLModelDriver();
-		$entry->Load( "queries/contact-us" );
+		$entry = new SQLModelDriver( "queries/contact-us" );
 		$entry->SetQuery( "AddEntry" );
 		$entry->SetParameters( $queryData );
 		$entry->Execute();
@@ -56,8 +53,7 @@ class Contact_us
 
 	public static function Thanks()
 	{
-		$pageContent = new XMLModelDriver();
-		$pageContent->Load( "content/en/contact-us" );
+		$pageContent = new XMLModelDriver( "content/en/contact-us" );
 
 		self::$data->Add( "type", "thanks" );
 
@@ -70,8 +66,7 @@ class Contact_us
 
 	public static function Error()
 	{
-		$pageContent = new XMLModelDriver();
-		$pageContent->Load( "content/en/contact-us" );
+		$pageContent = new XMLModelDriver( "content/en/contact-us" );
 
 		self::$data->Add( "type", "error" );
 
