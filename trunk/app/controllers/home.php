@@ -24,9 +24,6 @@ class Home
 		$page->PushModel( $data );
 		$page->PushModel( $controllers );
 		$page->RenderAsHTML();
-
-		echo "<pre>";
-		var_dump( Config::$data );
 	}
 }
 
