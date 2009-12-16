@@ -3,6 +3,7 @@
 namespace xMVC;
 
 use TinyAuth\Authenticator;
+use Language\Language;
 
 class Secret_area
 {

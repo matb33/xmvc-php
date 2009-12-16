@@ -1,6 +1,6 @@
 <?php
 
-namespace xMVC;
+namespace Favicon;
 
 class Favicon
 {

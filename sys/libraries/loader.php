@@ -17,7 +17,7 @@ class Loader
 		return( false );
 	}
 
-	private static function FindPathWhereFileExists( $folder, &$file, $extension )
+	public static function FindPathWhereFileExists( $folder, &$file, $extension )
 	{
 		$appFile = APP_PATH . $folder . "/" . $file . "." . $extension;
 
