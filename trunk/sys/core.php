@@ -72,27 +72,34 @@ class Core
 
 	private static function LoadUnroutedSystemController()
 	{
-		self::$useRoutes		= false;
-		self::$controllerName	= self::GetOriginalController();
-		self::$controllerFile	= SYS_PATH . "controllers/" . Normalize::Filename( self::GetOriginalController() ) . ".php";
+		self::$useRoutes = false;
+		self::$controllerName = self::GetOriginalController();
+		self::$controllerFile = SYS_PATH . "controllers/" . Normalize::Filename( self::GetOriginalController() ) . ".php";
 	}
 
 	private static function LoadRoutedController()
 	{
-		self::$controllerName		= self::GetRoutedController();
+		self::$controllerName = self::GetRoutedController();
 
-		$applicationControllerFile	= APP_PATH . "controllers/" . Normalize::Filename( self::$controllerName ) . ".php";
-		$systemControllerFile		= SYS_PATH . "controllers/" . Normalize::Filename( self::$controllerName ) . ".php";
+		$file = Normalize::Filename( self::$controllerName );
+		$path = Loader::FindPathWhereFileExists( "controllers", $file, "php" );
 
-		if( file_exists( $applicationControllerFile ) )
+		if( $path !== false )
 		{
-			self::$controllerFile	= $applicationControllerFile;
-			self::$useRoutes		= true;
+			self::$controllerFile = $path . "controllers/" . $file . ".php";
+
+			if( $path == SYS_PATH )
+			{
+				self::$useRoutes = false;
+			}
+			else
+			{
+				self::$useRoutes = true;
+			}
 		}
 		else
 		{
-			self::$controllerFile	= $systemControllerFile;
-			self::$useRoutes		= false;
+			ErrorHandler::InvokeHTTPError( array( "errorCode" => "404", "controllerFile" => $file, "method" => "N/A" ) );
 		}
 	}
 
@@ -114,7 +121,20 @@ class Core
 	{
 		require_once( self::$controllerFile );
 
-		self::$controllerClassName = __NAMESPACE__ . "\\" . Normalize::ObjectName( self::$controllerName );
+		self::$controllerClassName = self::AddNamespaceIfMissing( self::$controllerName, __NAMESPACE__ );
+		self::$controllerClassName = Normalize::ObjectName( self::$controllerClassName );
+	}
+
+	private static function AddNamespaceIfMissing( $name, $namespace )
+	{
+		if( strpos( $name, "\\" ) === false )
+		{
+			return( $namespace . "\\" . $name );
+		}
+		else
+		{
+			return( $name );
+		}
 	}
 
 	private static function IsIndex()

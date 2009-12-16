@@ -2,6 +2,8 @@
 
 namespace xMVC;
 
+use Language\Language;
+
 class Contact_us
 {
 	private static $commonContent;

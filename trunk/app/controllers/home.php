@@ -2,15 +2,19 @@
 
 namespace xMVC;
 
+use Language\Language;
+
 class Home
 {
 	public static function Index()
 	{
-		$commonContent = new XMLModelDriver( "content/en/common" );
-		$pageContent = new XMLModelDriver( "content/en/home" );
+		$lang = Language::GetLang();
+
+		$commonContent = new XMLModelDriver( "content/" . $lang . "/common" );
+		$pageContent = new XMLModelDriver( "content/" . $lang . "/home" );
 
 		$data = new StringsModelDriver();
-		$data->Add( "lang", Language::GetLang() );
+		$data->Add( "lang", $lang );
 
 		$controllers = new FilesystemModelDriver();
 		$controllers->GetFileList( APP_PATH . "controllers", "/\.php/" );

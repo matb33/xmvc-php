@@ -30,6 +30,8 @@
 		<div id="page">
 			<xsl:call-template name="header" />
 
+			Current language: <xsl:value-of select="//xmvc:strings/xmvc:lang" />
+
 			<div id="search-engines">
 				<xsl:call-template name="copy-of"><xsl:with-param name="select" select="//str:search-engines-intro" /></xsl:call-template>
 				<ul>

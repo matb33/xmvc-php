@@ -1,6 +1,8 @@
 <?php
 
-namespace xMVC;
+namespace Language;
+
+use xMVC\XMLModelDriver;
 
 class Language
 {

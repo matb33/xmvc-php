@@ -3,7 +3,7 @@
 $forceServerSideRendering = true;
 $forceClientSideRendering = false;
 
-$enableXSLTProfiling = true;
+$enableXSLTProfiling = false;
 $XSLTProfilingFilename = "xslt-profiling.txt";
 
 $enableXSLTPHPFunctions = true;

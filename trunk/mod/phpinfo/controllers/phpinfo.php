@@ -1,14 +1,17 @@
 <?php
 
-namespace xMVC;
+namespace Phpinfo;
+
+use xMVC\Config;
 
 class Phpinfo
 {
 	public static function Index()
 	{
+		phpinfo();
+
 		echo "<pre>";
 		var_dump( Config::$data );
-
-		phpinfo();
+		echo "</pre>";
 	}
 }
