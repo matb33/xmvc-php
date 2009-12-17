@@ -32,12 +32,12 @@ class Load
 			}
 		}
 
+		$xslViewName = str_replace( ( "." . Core::$viewExtension ), "", implode( "/", $args ) );
+
 		$tmpView = new View( $xslViewName );
 
 		$xmlHead = $tmpView->GetXMLHead( $data, true );
 		$xmlFoot = $tmpView->GetXMLFoot( true );
-
-		$xslViewName = str_replace( ".xsl", "", implode( "/", $args ) );
 
 		$xmlString = ( $xmlHead . $tmpView->ImportXSL( $data ) . $xmlFoot );
 

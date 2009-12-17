@@ -6,12 +6,17 @@ class AutoLoad
 {
 	public static function ModelDriver( $className )
 	{
-		return( self::TryLoading( "drivers", $className, "php" ) );
+		return( self::TryLoading( Core::$driverFolder, $className, Core::$driverExtension ) );
 	}
 
 	public static function Library( $className )
 	{
-		return( self::TryLoading( "libraries", $className, "php" ) );
+		return( self::TryLoading( Core::$libraryFolder, $className, Core::$libraryExtension ) );
+	}
+
+	public static function Controller( $className )
+	{
+		return( self::TryLoading( Core::$controllerFolder, $className, Core::$controllerExtension ) );
 	}
 
 	private static function TryLoading( $folder, $file, $extension )

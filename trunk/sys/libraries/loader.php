@@ -19,6 +19,26 @@ class Loader
 
 	public static function FindPathWhereFileExists( $folder, &$file, $extension )
 	{
+		if( ( $path = self::FindByApp( $folder, $file, $extension ) ) !== false )
+		{
+			return( $path );
+		}
+
+		if( ( $path = self::FindByMod( $folder, $file, $extension ) ) !== false )
+		{
+			return( $path );
+		}
+
+		if( ( $path = self::FindBySys( $folder, $file, $extension ) ) !== false )
+		{
+			return( $path );
+		}
+
+		return( false );
+	}
+
+	private static function FindByApp( $folder, &$file, $extension )
+	{
 		$appFile = APP_PATH . $folder . "/" . $file . "." . $extension;
 
 		if( file_exists( $appFile ) )
@@ -26,13 +46,11 @@ class Loader
 			return( APP_PATH );
 		}
 
-		$sysFile = SYS_PATH . $folder . "/" . $file . "." . $extension;
+		return( false );
+	}
 
-		if( file_exists( $sysFile ) )
-		{
-			return( SYS_PATH );
-		}
-
+	private static function FindByMod( $folder, &$file, $extension )
+	{
 		$moduleNamespace = self::ExtractModuleNamespace( $file );
 
 		if( $moduleNamespace !== false )
@@ -43,6 +61,18 @@ class Loader
 			{
 				return( MOD_PATH . $moduleNamespace . "/" );
 			}
+		}
+
+		return( false );
+	}
+
+	private static function FindBySys( $folder, &$file, $extension )
+	{
+		$sysFile = SYS_PATH . $folder . "/" . $file . "." . $extension;
+
+		if( file_exists( $sysFile ) )
+		{
+			return( SYS_PATH );
 		}
 
 		return( false );

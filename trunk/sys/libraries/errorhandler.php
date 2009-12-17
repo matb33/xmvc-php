@@ -11,7 +11,7 @@ class ErrorHandler
 
 	public static function HandleErrors()
 	{
-		self::$oldErrorHandler = set_error_handler( array( __NAMESPACE__ . "\\" . "ErrorHandler", "ErrorHandlerXML" ) );
+		self::$oldErrorHandler = set_error_handler( array( Core::$namespacePHP . "\\" . "ErrorHandler", "ErrorHandlerXML" ) );
 		self::$errorReporting = error_reporting();
 		self::$errors = "";
 

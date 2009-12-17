@@ -14,7 +14,7 @@ class Normalize
 
 	public static function Filename( $name )
 	{
-		$name = strtolower( self::RemoveNamespace( $name, __NAMESPACE__ ) );
+		$name = strtolower( self::RemoveNamespace( $name, Core::$namespacePHP ) );
 
 		return( $name );
 	}

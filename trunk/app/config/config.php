@@ -12,4 +12,6 @@ $enableInlinePHPInViews = false;
 
 $handleErrors = true;
 
+$useStaticControllers = false;
+
 ?>
