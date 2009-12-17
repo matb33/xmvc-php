@@ -140,7 +140,7 @@ class View
 
 		if( is_null( $xslViewFile ) )
 		{
-			$xslViewFile = Loader::Prioritize( "views", $this->namespace . "\\" . $this->xslViewName, "xsl" );
+			$xslViewFile = Loader::Prioritize( Core::$viewFolder, $this->namespace . "\\" . $this->xslViewName, Core::$viewExtension );
 		}
 
 		if( file_exists( $xslViewFile ) )
@@ -193,7 +193,7 @@ class View
 
 	private function ProcessView( $return, $outputType )
 	{
-		if( ( Core::IsClientSideXSLTSupported() || ( !Core::IsClientSideXSLTSupported() && isset( $_GET[ Config::$data[ "sourceViewKey" ] ] ) && Config::$data[ "sourceViewEnabled" ] ) ) && $return === false )
+		if( self::ShouldRenderClientSide( $return ) )
 		{
 			OutputHeaders::XML();
 
@@ -212,6 +212,24 @@ class View
 		}
 
 		return( $result );
+	}
+
+	private function ShouldRenderClientSide( $return )
+	{
+		if( $return === false )
+		{
+			if( Core::IsClientSideXSLTSupported() )
+			{
+				return( true );
+			}
+
+			if( self::IsSourceViewOn() )
+			{
+				return( true );
+			}
+		}
+
+		return( false );
 	}
 
 	public function PassThru( $data = null, $return = false, $omitRoot = true )
@@ -240,6 +258,7 @@ class View
 	public function GetXMLHead( $data, $omitRoot )
 	{
 		$encodedData = "";
+		$sourceViewAttribute = "";
 
 		if( ! is_null( $data ) )
 		{
@@ -248,14 +267,11 @@ class View
 
 		$xmlHead = "<" . "?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\" ?" . ">\n";
 
-		if( isset( $_GET[ Config::$data[ "sourceViewKey" ] ] ) && Config::$data[ "sourceViewEnabled" ] )
+		if( self::IsSourceViewOn() )
 		{
 			$xmlHead .= "<" . "?xml-stylesheet type=\"text/xsl\" href=\"" . Routing::URIProtocol() . "://" . $_SERVER[ "HTTP_HOST" ] . "/load/view/mcc.xsl\" ?" . ">\n";
 
-			if( ! $omitRoot )
-			{
-				$xmlHead .= "<xmvc:root xmlns:xmvc=\"" . Core::$namespace . "\" xmvc:mcc=\"true\">\n";
-			}
+			$sourceViewAttribute = " xmvc:mcc=\"true\"";
 		}
 		else
 		{
@@ -265,16 +281,12 @@ class View
 				{
 					$xmlHead .= "<" . "?xml-stylesheet type=\"text/xsl\" href=\"" . Routing::URIProtocol() . "://" . $_SERVER[ "HTTP_HOST" ] . "/load/view/" . $this->xslViewName . $encodedData . "\" ?" . ">\n";
 				}
-				else
-				{
-					$xmlHead .= "<" . "?xml-stylesheet type=\"text/xsl\" href=\"app/views/" . $this->xslViewName . ".xsl\" ?" . ">\n";
-				}
 			}
+		}
 
-			if( ! $omitRoot )
-			{
-				$xmlHead .= "<xmvc:root xmlns:xmvc=\"" . Core::$namespace . "\">\n";
-			}
+		if( ! $omitRoot )
+		{
+			$xmlHead .= "<xmvc:root xmlns:xmvc=\"" . Core::$namespaceXML . "\"" . $sourceViewAttribute . ">\n";
 		}
 
 		return( $xmlHead );
@@ -290,6 +302,11 @@ class View
 		}
 
 		return( $xmlFoot );
+	}
+
+	private function IsSourceViewOn()
+	{
+		return( isset( $_GET[ Config::$data[ "sourceViewKey" ] ] ) && Config::$data[ "sourceViewEnabled" ] );
 	}
 }
 

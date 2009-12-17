@@ -28,7 +28,7 @@ class XMLModelDriver extends ModelDriver implements ModelDriverInterface
 			if( strpos( $parameter, "</" ) !== false )
 			{
 				// Treat parameter as raw XML.  However, we must strip out the xml declaration and xmvc:root tag if present.
-				// Otherwise this model won't play nice with other models.
+				// Otherwise this model won't play nice with other models when stacked.
 
 				$xmlData = $this->StripRootTags( $parameter );
 			}
@@ -36,7 +36,7 @@ class XMLModelDriver extends ModelDriver implements ModelDriverInterface
 			{
 				// Treat parameter as XML model name
 
-				if( ( $xmlModelFile = Loader::Prioritize( "models", $namespace . "\\" . $parameter, "xml" ) ) !== false )
+				if( ( $xmlModelFile = Loader::Prioritize( Core::$modelFolder, $namespace . "\\" . $parameter, Core::$modelExtension ) ) !== false )
 				{
 					$xmlData = $this->LoadModelXML( $xmlModelFile, $data );
 				}

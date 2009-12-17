@@ -2,27 +2,24 @@
 
 namespace xMVC;
 
-use Language\Language;
-
-class Home
+class Home extends Website
 {
-	public static function Index()
+	public function __construct()
 	{
-		$lang = Language::GetLang();
+		parent::__construct();
+	}
 
-		$commonContent = new XMLModelDriver( "content/" . $lang . "/common" );
-		$pageContent = new XMLModelDriver( "content/" . $lang . "/home" );
-
-		$data = new StringsModelDriver();
-		$data->Add( "lang", $lang );
+	public function Index()
+	{
+		$pageContent = new XMLModelDriver( "content/" . $this->lang . "/home" );
 
 		$controllers = new FilesystemModelDriver();
-		$controllers->GetFileList( APP_PATH . "controllers", "/\.php/" );
+		$controllers->GetFileList( APP_PATH . Core::$controllerFolder, "/\." . Core::$controllerExtension . "/" );
 
 		$page = new View( "home" );
-		$page->PushModel( $commonContent );
+		$page->PushModel( $this->commonContent );
 		$page->PushModel( $pageContent );
-		$page->PushModel( $data );
+		$page->PushModel( $this->stringData );
 		$page->PushModel( $controllers );
 		$page->RenderAsHTML();
 	}

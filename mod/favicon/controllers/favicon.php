@@ -4,24 +4,24 @@ namespace Favicon;
 
 class Favicon
 {
-	public static function Index()
+	public function Index()
 	{
-		self::Ico();
+		$this->Ico();
 	}
 
-	public static function Ico()
+	public function Ico()
 	{
 		header( "Content-type: image/vnd.microsoft.icon" );
 		echo( file_get_contents( "./inc/images/favicon.ico" ) );
 	}
 
-	public static function Gif()
+	public function Gif()
 	{
 		header( "Content-type: image/gif" );
 		echo( file_get_contents( "./inc/images/favicon.gif" ) );
 	}
 
-	public static function Png()
+	public function Png()
 	{
 		header( "Content-type: image/png" );
 		echo( file_get_contents( "./inc/images/favicon.png" ) );

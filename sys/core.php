@@ -4,21 +4,36 @@ namespace xMVC;
 
 class Core
 {
-	public static $namespace = "http://www.xmvc.org/ns/xmvc/1.0";
+	public static $namespaceXML = "http://www.xmvc.org/ns/xmvc/1.0";
+	public static $namespacePHP = __NAMESPACE__;
+
+	public static $controllerExtension = "php";
+	public static $modelExtension = "xml";
+	public static $viewExtension = "xsl";
+	public static $driverExtension = "php";
+	public static $libraryExtension = "php";
+	public static $configExtension = "php";
+
+	public static $controllerFolder = "controllers";
+	public static $modelFolder = "models";
+	public static $viewFolder = "views";
+	public static $driverFolder = "drivers";
+	public static $libraryFolder = "libraries";
+	public static $configFolder = "config";
 
 	private static $useRoutes;
 	private static $controllerName;
 	private static $controllerFile;
 	private static $controllerClassName;
+	private static $controllerInstance;
 
 	public static function Load()
 	{
-		require( SYS_PATH . "libraries/normalize.php" );
-		require( SYS_PATH . "libraries/loader.php" );
-		require( SYS_PATH . "libraries/xslt.php" );
-		require( SYS_PATH . "libraries/autoload.php" );
+		require( SYS_PATH . self::$libraryFolder . "/normalize.php" );
+		require( SYS_PATH . self::$libraryFolder . "/loader.php" );
+		require( SYS_PATH . self::$libraryFolder . "/xslt.php" );
+		require( SYS_PATH . self::$libraryFolder . "/autoload.php" );
 		require( SYS_PATH . "autoload.php" );
-
 		require( SYS_PATH . "driver.php" );
 		require( SYS_PATH . "view.php" );
 
@@ -36,18 +51,18 @@ class Core
 	{
 		if( self::UnroutedSystemControllerExists() )
 		{
-			self::LoadUnroutedSystemController();
+			self::GetUnroutedSystemControllerFilename();
 		}
 		else
 		{
-			self::LoadRoutedController();
+			self::GetRoutedControllerFilename();
 		}
 
 		if( self::ControllerExists() )
 		{
-			self::LoadControllerClass();
+			self::LoadControllerInstance();
 
-			self::InvokeCommon();
+			self::InvokeCommonIfStatic();
 
 			if( self::IsIndex() )
 			{
@@ -62,7 +77,7 @@ class Core
 
 	private static function UnroutedSystemControllerExists()
 	{
-		if( file_exists( SYS_PATH . "controllers/" . Normalize::Filename( self::GetOriginalController() ) . ".php" ) )
+		if( file_exists( SYS_PATH . self::$controllerFolder . "/" . Normalize::Filename( self::GetOriginalController() ) . "." . self::$controllerExtension ) )
 		{
 			return( true );
 		}
@@ -70,23 +85,23 @@ class Core
 		return( false );
 	}
 
-	private static function LoadUnroutedSystemController()
+	private static function GetUnroutedSystemControllerFilename()
 	{
 		self::$useRoutes = false;
 		self::$controllerName = self::GetOriginalController();
-		self::$controllerFile = SYS_PATH . "controllers/" . Normalize::Filename( self::GetOriginalController() ) . ".php";
+		self::$controllerFile = SYS_PATH . self::$controllerFolder . "/" . Normalize::Filename( self::GetOriginalController() ) . "." . self::$controllerExtension;
 	}
 
-	private static function LoadRoutedController()
+	private static function GetRoutedControllerFilename()
 	{
 		self::$controllerName = self::GetRoutedController();
 
 		$file = Normalize::Filename( self::$controllerName );
-		$path = Loader::FindPathWhereFileExists( "controllers", $file, "php" );
+		$path = Loader::FindPathWhereFileExists( self::$controllerFolder, $file, self::$controllerExtension );
 
 		if( $path !== false )
 		{
-			self::$controllerFile = $path . "controllers/" . $file . ".php";
+			self::$controllerFile = $path . self::$controllerFolder . "/" . $file . "." . self::$controllerExtension;
 
 			if( $path == SYS_PATH )
 			{
@@ -117,12 +132,17 @@ class Core
 		}
 	}
 
-	private static function LoadControllerClass()
+	private static function LoadControllerInstance()
 	{
 		require_once( self::$controllerFile );
 
-		self::$controllerClassName = self::AddNamespaceIfMissing( self::$controllerName, __NAMESPACE__ );
+		self::$controllerClassName = self::AddNamespaceIfMissing( self::$controllerName, self::$namespacePHP );
 		self::$controllerClassName = Normalize::ObjectName( self::$controllerClassName );
+
+		if( ! Config::$data[ "useStaticControllers" ] )
+		{
+			self::$controllerInstance = new self::$controllerClassName;
+		}
 	}
 
 	private static function AddNamespaceIfMissing( $name, $namespace )
@@ -145,40 +165,58 @@ class Core
 		return( count( $pathParts ) <= 1 );
 	}
 
-	private static function InvokeCommon()
+	private static function InvokeCommonIfStatic()
 	{
-		$commonMethod = array( self::$controllerClassName, "Common" );
-
-		if( is_callable( $commonMethod ) )
+		if( Config::$data[ "useStaticControllers" ] )
 		{
-			call_user_func( $commonMethod );
+			$method = self::GetMethod( "Common" );
+
+			self::CallMethod( $method );
 		}
 	}
 
 	private static function InvokeIndex()
 	{
-		$indexMethod = array( self::$controllerClassName, "Index" );
+		$method = self::GetMethod( "Index" );
 
-		if( is_callable( $indexMethod ) )
-		{
-			call_user_func( $indexMethod );
-		}
-		else
-		{
-			ErrorHandler::InvokeHTTPError( array( "errorCode" => "404", "controllerFile" => self::$controllerFile, "method" => implode( "::", $indexMethod ) ) );
-		}
+		self::CallMethod( $method );
 	}
 
 	private static function InvokeMethod()
 	{
 		$pathData = Routing::PathData();
 		$pathParts = self::$useRoutes ? $pathData[ "pathParts" ] : $pathData[ "pathPartsOriginal" ];
+		$method	= self::GetMethod( Normalize::ObjectName( $pathParts[ 1 ] ) );
 
-		$method	= array( self::$controllerClassName, Normalize::ObjectName( $pathParts[ 1 ] ) );
+		self::CallMethod( $method, array_slice( $pathParts, 2 ) );
+	}
 
+	private static function GetMethod( $methodName )
+	{
+		if( Config::$data[ "useStaticControllers" ] )
+		{
+			$controller = self::$controllerClassName;
+		}
+		else
+		{
+			$controller = self::$controllerInstance;
+		}
+
+		return( array( $controller, $methodName ) );
+	}
+
+	private static function CallMethod( $method, $parameters = array() )
+	{
 		if( is_callable( $method ) )
 		{
-			call_user_func_array( $method, array_slice( $pathParts, 2 ) );
+			if( count( $parameters ) )
+			{
+				call_user_func_array( $method, $parameters );
+			}
+			else
+			{
+				call_user_func( $method );
+			}
 		}
 		else
 		{
@@ -198,8 +236,8 @@ class Core
 
 	private static function DetermineController( $useRoutes = true )
 	{
-		$pathData	= Routing::PathData();
-		$pathParts	= $useRoutes ? $pathData[ "pathParts" ] : $pathData[ "pathPartsOriginal" ];
+		$pathData = Routing::PathData();
+		$pathParts = $useRoutes ? $pathData[ "pathParts" ] : $pathData[ "pathPartsOriginal" ];
 
 		if( $pathParts[ 0 ] != "" )
 		{
@@ -215,15 +253,13 @@ class Core
 
 	public static function IsClientSideXSLTSupported()
 	{
-		$isSupported = false;
-
 		if( Config::$data[ "forceServerSideRendering" ] )
 		{
-			$isSupported = false;
+			return( false );
 		}
 		else if( Config::$data[ "forceClientSideRendering" ] )
 		{
-			$isSupported = true;
+			return( true );
 		}
 		else
 		{
@@ -231,14 +267,12 @@ class Core
 			{
 				if( preg_match( $preg, $_SERVER[ "HTTP_USER_AGENT" ] ) )
 				{
-					$isSupported = true;
-
-					break;
+					return( true );
 				}
 			}
 		}
 
-		return( $isSupported );
+		return( false );
 	}
 }
 

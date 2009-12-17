@@ -6,7 +6,7 @@ use xMVC\Config;
 
 class Phpinfo
 {
-	public static function Index()
+	public function Index()
 	{
 		phpinfo();
 

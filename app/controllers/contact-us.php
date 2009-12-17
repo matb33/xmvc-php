@@ -4,31 +4,25 @@ namespace xMVC;
 
 use Language\Language;
 
-class Contact_us
+class Contact_us extends Website
 {
-	private static $commonContent;
-	private static $data;
-
-	public static function Common()
+	public function __construct()
 	{
-		self::$commonContent = new XMLModelDriver( "content/en/common" );
-
-		self::$data = new StringsModelDriver();
-		self::$data->Add( "lang", Language::GetLang() );
+		parent::__construct();
 	}
 
-	public static function Index()
+	public function Index()
 	{
 		$pageContent = new XMLModelDriver( "content/en/contact-us" );
 
 		$page = new View( "contact-us" );
-		$page->PushModel( self::$commonContent );
+		$page->PushModel( $this->commonContent );
 		$page->PushModel( $pageContent );
-		$page->PushModel( self::$data );
+		$page->PushModel( $this->stringData );
 		$page->RenderAsHTML();
 	}
 
-	public static function Send()
+	public function Send()
 	{
 		$queryData = array();
 		$queryData[] = trim( $_POST[ "firstname" ] );
@@ -53,29 +47,29 @@ class Contact_us
 		}
 	}
 
-	public static function Thanks()
+	public function Thanks()
 	{
 		$pageContent = new XMLModelDriver( "content/en/contact-us" );
 
-		self::$data->Add( "type", "thanks" );
+		$this->stringData->Add( "type", "thanks" );
 
 		$page = new View( "contact-us" );
-		$page->PushModel( self::$commonContent );
+		$page->PushModel( $this->commonContent );
 		$page->PushModel( $pageContent );
-		$page->PushModel( self::$data );
+		$page->PushModel( $this->stringData );
 		$page->RenderAsHTML();
 	}
 
-	public static function Error()
+	public function Error()
 	{
 		$pageContent = new XMLModelDriver( "content/en/contact-us" );
 
-		self::$data->Add( "type", "error" );
+		$this->stringData->Add( "type", "error" );
 
 		$page = new View( "contact-us" );
-		$page->PushModel( self::$commonContent );
+		$page->PushModel( $this->commonContent );
 		$page->PushModel( $pageContent );
-		$page->PushModel( self::$data );
+		$page->PushModel( $this->stringData );
 		$page->RenderAsHTML();
 	}
 }

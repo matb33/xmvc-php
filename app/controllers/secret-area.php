@@ -3,35 +3,33 @@
 namespace xMVC;
 
 use TinyAuth\Authenticator;
-use Language\Language;
 
-class Secret_area
+class Secret_area extends Website
 {
-	public static function Common()
+	public function __construct()
 	{
+		parent::__construct();
+
 		Authenticator::Protect();
 	}
 
-	public static function Index()
+	public function Index()
 	{
 		if( Authenticator::IsAuthenticated() )
 		{
-			$commonContent = new XMLModelDriver( "content/en/common" );
-			$pageContent = new XMLModelDriver( "content/en/secret-area" );
+			$pageContent = new XMLModelDriver( "content/" . $this->lang . "/secret-area" );
 
-			$data = new StringsModelDriver();
-			$data->Add( "lang", Language::GetLang() );
-			$data->Add( "logged-in-user", Authenticator::GetUserData( "login" ) );
+			$this->stringData->Add( "logged-in-user", Authenticator::GetUserData( "login" ) );
 
 			$page = new View( "secret-area" );
-			$page->PushModel( $commonContent );
+			$page->PushModel( $this->commonContent );
 			$page->PushModel( $pageContent );
-			$page->PushModel( $data );
+			$page->PushModel( $this->stringData );
 			$page->RenderAsHTML();
 		}
 	}
 
-	public static function Logout()
+	public function Logout()
 	{
 		Authenticator::Logout();
 

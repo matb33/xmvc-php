@@ -21,7 +21,7 @@ class Config
 		{
 			if( $module != "." && $module != ".." )
 			{
-				if( file_exists( $basePath . $module . "/config" ) )
+				if( file_exists( $basePath . $module . "/" . Core::$configFolder ) )
 				{
 					self::LoadByPath( $basePath . $module . "/" );
 				}
@@ -36,7 +36,7 @@ class Config
 		$entry = null;
 		$variablesToMerge = null;
 		$variableToUnset = null;
-		$configPath = $basePath . "config/";
+		$configPath = $basePath . Core::$configFolder . "/";
 		$handle = dir( $configPath );
 
 		$existingVariables = get_defined_vars();
@@ -45,7 +45,7 @@ class Config
 		{
 			if( $entry != "." && $entry != ".." )
 			{
-				if( strtolower( substr( $entry, -4 ) ) == ".php" )
+				if( strtolower( substr( $entry, -4 ) ) == ( "." . Core::$configExtension ) )
 				{
 					include( $configPath . $entry );
 
