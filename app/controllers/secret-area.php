@@ -1,8 +1,12 @@
 <?php
 
-namespace xMVC;
+namespace xMVC\App;
 
-use TinyAuth\Authenticator;
+use xMVC\Sys\Loader;
+use xMVC\Sys\XMLModelDriver;
+use xMVC\Sys\View;
+
+use Module\TinyAuth\Authenticator;
 
 class Secret_area extends Website
 {

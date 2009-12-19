@@ -1,5 +1,5 @@
 <?php
 
-$routes[ "/^\/phpinfo/" ] = "Phpinfo\\phpinfo";
+$routes[ "/^\/phpinfo/" ] = "Module\\Phpinfo\\phpinfo";
 
 ?>

@@ -1,6 +1,11 @@
 <?php
 
-namespace xMVC;
+namespace xMVC\App;
+
+use xMVC\Sys\Loader;
+use xMVC\Sys\XMLModelDriver;
+use xMVC\Sys\FilesystemModelDriver;
+use xMVC\Sys\View;
 
 class Home extends Website
 {
@@ -14,7 +19,7 @@ class Home extends Website
 		$pageContent = new XMLModelDriver( "content/" . $this->lang . "/home" );
 
 		$controllers = new FilesystemModelDriver();
-		$controllers->GetFileList( APP_PATH . Core::$controllerFolder, "/\." . Core::$controllerExtension . "/" );
+		$controllers->GetFileList( "app/" . Loader::controllerFolder, "/\." . Loader::controllerExtension . "/" );
 
 		$page = new View( "home" );
 		$page->PushModel( $this->commonContent );

@@ -1,15 +1,20 @@
 <?php
 
-namespace xMVC;
+namespace xMVC\Sys;
 
 class Load
 {
-	public static function Index()
+	public function __construct()
+	{
+		parent::__construct();
+	}
+
+	public function Index()
 	{
 		trigger_error( "Incorrect use of load controller. Specify a type to load, such as 'view'.", E_USER_ERROR );
 	}
 
-	public static function View()
+	public function View()
 	{
 		$args = func_get_args();
 
@@ -32,9 +37,10 @@ class Load
 			}
 		}
 
-		$xslViewName = str_replace( ( "." . Core::$viewExtension ), "", implode( "/", $args ) );
+		$xslViewName = str_replace( ( "." . Loader::viewExtension ), "", implode( "/", $args ) );
 
-		$tmpView = new View( $xslViewName );
+		// TO-DO: Figure out how this is supposed to map to App, or Mod, or Sys, etc
+		$tmpView = new View( Core::namespaceSys . $xslViewName );
 
 		$xmlHead = $tmpView->GetXMLHead( $data, true );
 		$xmlFoot = $tmpView->GetXMLFoot( true );

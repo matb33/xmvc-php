@@ -1,19 +1,17 @@
 <?php
 
-namespace xMVC;
+namespace xMVC\Sys;
 
 class View
 {
 	private $xmlData = null;
 	private $xslData = null;
 	private $xslViewName = null;
-	private $namespace = null;
 	private $models = array();
 
-	public function __construct( $xslViewName, $namespace = __NAMESPACE__ )
+	public function __construct( $xslViewName, $namespace = null )
 	{
-		$this->xslViewName = $xslViewName;
-		$this->namespace = $namespace;
+		$this->xslViewName = Loader::AssignDefaultNamespace( $xslViewName, $namespace );
 	}
 
 	public function AddModel( $model )
@@ -81,12 +79,12 @@ class View
 		$outputType = $this->GetOutputType( $outputType );
 		$omitRoot = $this->GetOmitRoot( $omitRoot );
 
-		if( is_null( $this->xmlData ) )
+		if( is_null( $this->GetXMLData() ) )
 		{
 			$this->PrepareData( $data, $omitRoot );
 		}
 
-		if( ! is_null( $this->xslData ) && ! is_null( $this->xmlData ) )
+		if( ! is_null( $this->GetXSLData() ) && ! is_null( $this->GetXMLData() ) )
 		{
 			$result = $this->ProcessView( $return, $outputType );
 		}
@@ -100,8 +98,28 @@ class View
 
 	private function PrepareData( $data = null, $omitRoot = null )
 	{
-		$this->xslData = $this->ImportXSL( $data );
-		$this->xmlData = $this->StackModelsForView( $data, $this->GetOmitRoot( $omitRoot ) );
+		$this->SetXSLData( $this->ImportXSL( $data ) );
+		$this->SetXMLData( $this->StackModelsForView( $data, $this->GetOmitRoot( $omitRoot ) ) );
+	}
+
+	public function SetXSLData( $xslData )
+	{
+		$this->xslData = $xslData;
+	}
+
+	public function SetXMLData( $xmlData )
+	{
+		$this->xmlData = $xmlData;
+	}
+
+	public function GetXSLData()
+	{
+		return( $this->xslData );
+	}
+
+	public function GetXMLData()
+	{
+		return( $this->xmlData );
 	}
 
 	private function GetReturn( $return )
@@ -140,7 +158,7 @@ class View
 
 		if( is_null( $xslViewFile ) )
 		{
-			$xslViewFile = Loader::Prioritize( Core::$viewFolder, $this->namespace . "\\" . $this->xslViewName, Core::$viewExtension );
+			$xslViewFile = Loader::Resolve( Loader::viewFolder, $this->xslViewName, Loader::viewExtension );
 		}
 
 		if( file_exists( $xslViewFile ) )
@@ -191,17 +209,17 @@ class View
 		return( $stack );
 	}
 
-	private function ProcessView( $return, $outputType )
+	public function ProcessView( $return, $outputType )
 	{
 		if( self::ShouldRenderClientSide( $return ) )
 		{
 			OutputHeaders::XML();
 
-			echo( $this->xmlData );
+			echo( $this->GetXMLData() );
 		}
 		else
 		{
-			$result = XSL::Transform( $this->xmlData, $this->xslData );
+			$result = XSL::Transform( $this->GetXMLData(), $this->GetXSLData() );
 
 			if( ! $return )
 			{
@@ -262,7 +280,7 @@ class View
 
 		if( ! is_null( $data ) )
 		{
-			$encodedData = Loader::EncodeData( $data );
+			$encodedData = Normalize::EncodeData( $data );
 		}
 
 		$xmlHead = "<" . "?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\" ?" . ">\n";
@@ -286,7 +304,7 @@ class View
 
 		if( ! $omitRoot )
 		{
-			$xmlHead .= "<xmvc:root xmlns:xmvc=\"" . Core::$namespaceXML . "\"" . $sourceViewAttribute . ">\n";
+			$xmlHead .= "<xmvc:root xmlns:xmvc=\"" . Core::namespaceXML . "\"" . $sourceViewAttribute . ">\n";
 		}
 
 		return( $xmlHead );

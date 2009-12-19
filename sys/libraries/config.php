@@ -1,31 +1,18 @@
 <?php
 
-namespace xMVC;
+namespace xMVC\Sys;
 
 class Config
 {
 	public static $data = array();
 
-	public static function Load()
+	public static function Load( $path )
 	{
-		self::LoadByPath( SYS_PATH );
-		self::LoadByPath( APP_PATH );
-		self::LoadFoldersInPath( MOD_PATH );
-	}
+		$path = substr( $path, -1 ) == "/" ? substr( $path, 0, -1 ) : $path;
 
-	private static function LoadFoldersInPath( $basePath )
-	{
-		$handle = dir( $basePath );
-
-		while( ( $module = $handle->read() ) !== false )
+		foreach( glob( $path ) as $expandedPath )
 		{
-			if( $module != "." && $module != ".." )
-			{
-				if( file_exists( $basePath . $module . "/" . Core::$configFolder ) )
-				{
-					self::LoadByPath( $basePath . $module . "/" );
-				}
-			}
+			self::LoadByPath( $expandedPath );
 		}
 	}
 
@@ -36,31 +23,34 @@ class Config
 		$entry = null;
 		$variablesToMerge = null;
 		$variableToUnset = null;
-		$configPath = $basePath . Core::$configFolder . "/";
-		$handle = dir( $configPath );
+		$configPath = $basePath . "/" . Loader::configFolder . "/";
+		$handle = @dir( $configPath );
 
-		$existingVariables = get_defined_vars();
-
-		while( ( $entry = $handle->read() ) !== false )
+		if( $handle )
 		{
-			if( $entry != "." && $entry != ".." )
+			$existingVariables = get_defined_vars();
+
+			while( ( $entry = $handle->read() ) !== false )
 			{
-				if( strtolower( substr( $entry, -4 ) ) == ( "." . Core::$configExtension ) )
+				if( $entry != "." && $entry != ".." )
 				{
-					include( $configPath . $entry );
-
-					$variablesToMerge = array_diff_key( get_defined_vars(), $existingVariables, array( "existingVariables" => "" ) );
-					self::$data = self::ArrayInsert( self::$data, $variablesToMerge );
-
-					foreach( array_keys( $variablesToMerge ) as $variableToUnset )
+					if( strtolower( substr( $entry, -4 ) ) == ( "." . Loader::configExtension ) )
 					{
-						unset( $$variableToUnset );
+						include( $configPath . $entry );
+
+						$variablesToMerge = array_diff_key( get_defined_vars(), $existingVariables, array( "existingVariables" => "" ) );
+						self::$data = self::ArrayInsert( self::$data, $variablesToMerge );
+
+						foreach( array_keys( $variablesToMerge ) as $variableToUnset )
+						{
+							unset( $$variableToUnset );
+						}
 					}
 				}
 			}
-		}
 
-		$handle->close();
+			$handle->close();
+		}
 	}
 
 	// This function was obtained from the comments on array_merge_recursive on php.net

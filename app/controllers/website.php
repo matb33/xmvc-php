@@ -1,8 +1,12 @@
 <?php
 
-namespace xMVC;
+namespace xMVC\App;
 
-use Language\Language;
+use xMVC\Sys\Loader;
+use xMVC\Sys\XMLModelDriver;
+use xMVC\Sys\StringsModelDriver;
+
+use Module\Language\Language;
 
 class Website
 {

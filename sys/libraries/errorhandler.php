@@ -1,6 +1,6 @@
 <?php
 
-namespace xMVC;
+namespace xMVC\Sys;
 
 class ErrorHandler
 {
@@ -11,7 +11,7 @@ class ErrorHandler
 
 	public static function HandleErrors()
 	{
-		self::$oldErrorHandler = set_error_handler( array( Core::$namespacePHP . "\\" . "ErrorHandler", "ErrorHandlerXML" ) );
+		self::$oldErrorHandler = set_error_handler( array( Core::namespaceSys . "ErrorHandler", "ErrorHandlerXML" ) );
 		self::$errorReporting = error_reporting();
 		self::$errors = "";
 

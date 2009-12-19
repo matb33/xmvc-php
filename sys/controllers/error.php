@@ -1,15 +1,20 @@
 <?php
 
-namespace xMVC;
+namespace xMVC\Sys;
 
 class Error
 {
-	public static function Index( $errorCode = "404" )
+	public function __construct()
+	{
+		parent::__construct();
+	}
+
+	public function Index( $errorCode = "404" )
 	{
 		self::Display( $errorCode );
 	}
 
-	public static function Display( $errorCode = "404" )
+	public function Display( $errorCode = "404" )
 	{
 		ErrorHandler::InvokeHTTPError( array( "errorCode" => $errorCode, "controllerFile" => "N/A", "method" => "N/A" ) );
 	}
