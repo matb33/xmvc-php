@@ -1,6 +1,6 @@
 <?php
 
-namespace xMVC;
+namespace xMVC\Sys;
 
 class FileSystem
 {
@@ -191,6 +191,7 @@ class FileSystem
 		return( $meta );
 	}
 
+	// TO-DO: Consider moving this to the Normalize library??
 	private static function NormalizeFolder( $path )
 	{
 		$path = str_replace( "\\", "/", $path );

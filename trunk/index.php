@@ -1,20 +1,17 @@
 <?php
 
-namespace xMVC;
+namespace xMVC\Sys;
 
-$appPathRelativeToIndex = "app/";
-$sysPathRelativeToIndex = "sys/";
-$modPathRelativeToIndex = "mod/";
+require_once( "autoload.php" );
+require_once( "bootstrap.php" );
 
-$appPath = str_replace( "\\", "/", realpath( $appPathRelativeToIndex ) );
-$sysPath = str_replace( "\\", "/", realpath( $sysPathRelativeToIndex ) );
-$modPath = str_replace( "\\", "/", realpath( $modPathRelativeToIndex ) );
+NamespaceMap::Register( "/^xMVC::Sys::(.*)$/", "./sys/%f/%1" );
+NamespaceMap::Register( "/^xMVC::App::(.*)$/", "./app/%f/%1" );
+NamespaceMap::Register( "/^Module::(.*?)::(.*)$/", "./mod/%1/%f/%2" );
 
-define( "APP_PATH", ( substr( $appPath, -1 ) != "/" ? $appPath . "/" : $appPath ) );
-define( "SYS_PATH", ( substr( $sysPath, -1 ) != "/" ? $sysPath . "/" : $sysPath ) );
-define( "MOD_PATH", ( substr( $modPath, -1 ) != "/" ? $modPath . "/" : $modPath ) );
-
-require_once( SYS_PATH . "core.php" );
+Config::Load( "./app" );
+Config::Load( "./mod/*" );
+Config::Load( "./sys" );
 
 Core::Load();
 

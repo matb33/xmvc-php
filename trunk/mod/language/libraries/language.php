@@ -1,14 +1,18 @@
 <?php
 
-namespace Language;
+namespace Module\Language;
 
-use xMVC\XMLModelDriver;
+use xMVC\Sys\Loader;
+use xMVC\Sys\XMLModelDriver;
 
 class Language
 {
 	private static $languages = null;
 	private static $language = null;
 	private static $data = null;
+
+	const languageConfig = "xMVC\\App\\languages";
+	const languageConfigDefault = "Module\\Language\\languages.default";
 
 	public static function GetLang()
 	{
@@ -36,7 +40,30 @@ class Language
 	{
 		if( is_null( self::$languages ) )
 		{
-			self::$languages = new XMLModelDriver( "languages" );
+			//if( self::LanguageConfigExists() )
+			//{
+			//	self::CreateDefaultLanguageConfig();
+			//}
+
+			self::$languages = new XMLModelDriver( self::languageConfig );
+		}
+	}
+
+	private static function LanguageConfigExists()
+	{
+		//return( Loader::Exists( Loader::modelFolder, self::languageConfig, Loader::modelExtension ) );
+		return( true );
+	}
+
+	private static function CreateDefaultLanguageConfig()
+	{
+		// TO-DO: Finish this with new namespacing, because this will work SO much better with the new idea of namespacing (as far as I can imagine).
+		$source	= Loader::Resolve( Loader::modelFolder, self::languageConfigDefault, Loader::modelExtension );
+		$destination = Loader::Resolve( Loader::modelFolder, self::languageConfig, Loader::modelExtension );	//not working because file needs to EXIST in order for this function to return something!
+
+		if( $source !== false )
+		{
+			copy( $source, $destination );
 		}
 	}
 

@@ -1,8 +1,11 @@
 <?php
 
-namespace xMVC;
+namespace xMVC\App;
 
-use Language\Language;
+use xMVC\Sys\Loader;
+use xMVC\Sys\XMLModelDriver;
+use xMVC\Sys\SQLModelDriver;
+use xMVC\Sys\View;
 
 class Contact_us extends Website
 {
@@ -31,7 +34,7 @@ class Contact_us extends Website
 		$queryData[] = $_SERVER[ "REMOTE_ADDR" ];
 
 		$entry = new SQLModelDriver( "queries/contact-us" );
-		$entry->SetQuery( "AddEntry" );
+		$entry->UseQuery( "AddEntry" );
 		$entry->SetParameters( $queryData );
 		$entry->Execute();
 

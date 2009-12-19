@@ -1,6 +1,6 @@
 <?php
 
-namespace xMVC;
+namespace xMVC\Sys;
 
 class StringsModelDriver extends ModelDriver implements ModelDriverInterface
 {
@@ -8,7 +8,7 @@ class StringsModelDriver extends ModelDriver implements ModelDriverInterface
 	{
 		parent::__construct();
 
-		$this->rootElement = $this->createElementNS( Core::$namespaceXML, "xmvc:strings" );
+		$this->rootElement = $this->createElementNS( Core::namespaceXML, "xmvc:strings" );
 		$this->appendChild( $this->rootElement );
 	}
 
@@ -22,7 +22,7 @@ class StringsModelDriver extends ModelDriver implements ModelDriverInterface
 		$key = func_get_arg( 0 );
 		$value = func_get_arg( 1 );
 
-		$node = $this->createElementNS( Core::$namespaceXML, "xmvc:" . $key, ( string )$value );
+		$node = $this->createElementNS( Core::namespaceXML, "xmvc:" . $key, ( string )$value );
 		$this->rootElement->appendChild( $node );
 
 		parent::TransformForeignToXML();

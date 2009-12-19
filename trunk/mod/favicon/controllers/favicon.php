@@ -1,6 +1,6 @@
 <?php
 
-namespace Favicon;
+namespace Module\Favicon;
 
 class Favicon
 {

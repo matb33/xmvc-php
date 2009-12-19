@@ -1,10 +1,10 @@
 <?php
 
-namespace xMVC;
+namespace xMVC\Sys;
 
 class XMLModelDriver extends ModelDriver implements ModelDriverInterface
 {
-	public function __construct( $parameter, $namespace = __NAMESPACE__, $data = null )
+	public function __construct( $parameter, $namespace = null, $data = null )
 	{
 		parent::__construct();
 
@@ -36,7 +36,9 @@ class XMLModelDriver extends ModelDriver implements ModelDriverInterface
 			{
 				// Treat parameter as XML model name
 
-				if( ( $xmlModelFile = Loader::Prioritize( Core::$modelFolder, $namespace . "\\" . $parameter, Core::$modelExtension ) ) !== false )
+				$parameter = Loader::AssignDefaultNamespace( $parameter, $namespace );
+
+				if( ( $xmlModelFile = Loader::Resolve( Loader::modelFolder, $parameter, Loader::modelExtension ) ) !== false )
 				{
 					$xmlData = $this->LoadModelXML( $xmlModelFile, $data );
 				}

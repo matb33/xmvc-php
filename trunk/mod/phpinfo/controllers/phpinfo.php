@@ -1,8 +1,8 @@
 <?php
 
-namespace Phpinfo;
+namespace Module\Phpinfo;
 
-use xMVC\Config;
+use xMVC\Sys\Config;
 
 class Phpinfo
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace xMVC;
+namespace xMVC\Sys;
 
 class SQLModelDriver extends ModelDriver implements ModelDriverInterface
 {
@@ -8,11 +8,11 @@ class SQLModelDriver extends ModelDriver implements ModelDriverInterface
 	private $currentParameters = null;
 	private $queriesModel;
 
-	public function __construct( $xmlModelName, $namespace = __NAMESPACE__, $data = null )
+	public function __construct( $xmlModelName, $namespace = null, $data = null )
 	{
 		parent::__construct();
 
-		$this->rootElement = $this->createElementNS( Core::$namespaceXML, "xmvc:database" );
+		$this->rootElement = $this->createElementNS( Core::namespaceXML, "xmvc:database" );
 		$this->appendChild( $this->rootElement );
 
 		DB::Connect();
@@ -26,7 +26,7 @@ class SQLModelDriver extends ModelDriver implements ModelDriverInterface
 		$this->queriesModel = new XMLModelDriver( $xmlModelName . ".sql", $namespace, $data );
 	}
 
-	public function SetQuery( $queryName )
+	public function UseQuery( $queryName )
 	{
 		$this->currentQueryName = $queryName;
 	}
@@ -75,20 +75,20 @@ class SQLModelDriver extends ModelDriver implements ModelDriverInterface
 
 		if( ! is_null( $this->currentQueryName ) )
 		{
-			$queryElement = $this->createElementNS( Core::$namespaceXML, "xmvc:query" );
-			$nameAttribute = $this->createAttributeNS( Core::$namespaceXML, "xmvc:name" );
+			$queryElement = $this->createElementNS( Core::namespaceXML, "xmvc:query" );
+			$nameAttribute = $this->createAttributeNS( Core::namespaceXML, "xmvc:name" );
 			$nameAttribute->value = $this->currentQueryName;
 			$queryElement->appendChild( $nameAttribute );
 			$this->rootElement->appendChild( $queryElement );
 
 			if( ! is_null( $rowList ) )
 			{
-				$resultElement = $this->createElementNS( Core::$namespaceXML, "xmvc:result" );
+				$resultElement = $this->createElementNS( Core::namespaceXML, "xmvc:result" );
 				$queryElement->appendChild( $resultElement );
 
 				if( $rowList === true || $rowList === false )
 				{
-					$successElement = $this->createElementNS( Core::$namespaceXML, "xmvc:success" );
+					$successElement = $this->createElementNS( Core::namespaceXML, "xmvc:success" );
 					$valueNode = $this->createTextNode( $rowList ? "true" : "false" );
 					$successElement->appendChild( $valueNode );
 					$resultElement->appendChild( $successElement );
@@ -97,13 +97,13 @@ class SQLModelDriver extends ModelDriver implements ModelDriverInterface
 				{
 					foreach( $rowList as $row )
 					{
-						$rowElement = $this->createElementNS( Core::$namespaceXML, "xmvc:row" );
+						$rowElement = $this->createElementNS( Core::namespaceXML, "xmvc:row" );
 						$resultElement->appendChild( $rowElement );
 
 						foreach( $row as $key => $value )
 						{
-							$columnElement = $this->createElementNS( Core::$namespaceXML, "xmvc:column" );
-							$nameAttribute = $this->createAttributeNS( Core::$namespaceXML, "xmvc:name" );
+							$columnElement = $this->createElementNS( Core::namespaceXML, "xmvc:column" );
+							$nameAttribute = $this->createAttributeNS( Core::namespaceXML, "xmvc:name" );
 							$valueNode = $this->createCDATASection( $value );
 							$nameAttribute->value = $key;
 							$columnElement->appendChild( $nameAttribute );
@@ -118,7 +118,7 @@ class SQLModelDriver extends ModelDriver implements ModelDriverInterface
 		}
 		else
 		{
-			trigger_error( "SQL query name not specified. Use the SetQuery method.", E_USER_ERROR );
+			trigger_error( "SQL query name not specified. Use the UseQuery method.", E_USER_ERROR );
 		}
 	}
 }

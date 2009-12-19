@@ -1,6 +1,6 @@
 <?php
 
-namespace xMVC;
+namespace xMVC\Sys;
 
 class ModelDriver extends \DOMDocument
 {
@@ -11,8 +11,8 @@ class ModelDriver extends \DOMDocument
 	{
 		parent::__construct( "1.0", "UTF-8" );
 
-		$this->preserveWhiteSpace		= true;
-		$this->formatOutput				= true;
+		$this->preserveWhiteSpace = true;
+		$this->formatOutput = true;
 	}
 
 	public function loadXML( $source, $options = 0 )
@@ -73,7 +73,7 @@ class ModelDriver extends \DOMDocument
 		return( $this->StripRootTags( $xml ) );
 	}
 
-	protected function SetXML( $xml )
+	public function SetXML( $xml )
 	{
 		$completeXML  = View::GetXMLHead( null, false );
 		$completeXML .= $xml;
@@ -108,6 +108,7 @@ class ModelDriver extends \DOMDocument
 		}
 	}
 
+	// TO-DO: Consider moving to Normalize library??
 	protected static function StripRootTags( $xml )
 	{
 		// Strip xml declaration

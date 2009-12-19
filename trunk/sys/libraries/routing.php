@@ -1,6 +1,6 @@
 <?php
 
-namespace xMVC;
+namespace xMVC\Sys;
 
 class Routing
 {
@@ -70,7 +70,7 @@ class Routing
 				{
 					self::$routeMatches = $routeMatches;
 
-					$routedURI = preg_replace_callback( "/\\$([0-9]+)/", array( self, "RouteReplaceCallback" ), $replace );
+					$routedURI = preg_replace_callback( "/%([0-9]+)/", array( self, "RouteReplaceCallback" ), $replace );
 
 					break;
 				}
