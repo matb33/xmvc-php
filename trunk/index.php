@@ -2,7 +2,6 @@
 
 namespace xMVC\Sys;
 
-require_once( "autoload.php" );
 require_once( "bootstrap.php" );
 
 NamespaceMap::Register( "/^xMVC::Sys::(.*)$/", "./sys/%f/%1" );
