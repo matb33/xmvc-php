@@ -8,7 +8,6 @@ class Core
 	const namespaceApp = "xMVC\\App\\";
 	const namespaceSys = "xMVC\\Sys\\";
 
-	//private static $useRoutes;
 	private static $controllerName;
 	private static $controllerFile;
 	private static $controllerClassName;
@@ -26,99 +25,34 @@ class Core
 
 	public static function InstantiateRootController()
 	{
-		//if( self::UnroutedSystemControllerExists() )
-		//{
-		//	self::GetUnroutedSystemControllerFilename();
-		//}
-		//else
-		//{
-		//	self::GetRoutedControllerFilename();
-		//}
+		self::LoadControllerInstance();
 
-		self::GetRoutedControllerFilename();
-
-		if( self::ControllerExists() )
+		if( self::IsIndex() )
 		{
-			self::LoadControllerInstance();
-
-			if( self::IsIndex() )
-			{
-				self::InvokeIndex();
-			}
-			else
-			{
-				self::InvokeMethod();
-			}
-		}
-	}
-
-	/*
-	private static function UnroutedSystemControllerExists()
-	{
-		if( file_exists( SYS_PATH . Loader::controllerFolder . "/" . Normalize::Filename( self::GetOriginalController() ) . "." . Loader::controllerExtension ) )
-		{
-			return( true );
-		}
-
-		return( false );
-	}
-
-	private static function GetUnroutedSystemControllerFilename()
-	{
-		self::$useRoutes = false;
-		self::$controllerName = self::GetOriginalController();
-		self::$controllerFile = SYS_PATH . Loader::controllerFolder . "/" . Normalize::Filename( self::GetOriginalController() ) . "." . Loader::controllerExtension;
-	}
-	*/
-
-	private static function GetRoutedControllerFilename()
-	{
-		self::$controllerName = self::GetRoutedController();
-
-		$file = self::$controllerName;
-		$path = Loader::FindPathWhereFileExists( Loader::controllerFolder, $file, Loader::controllerExtension );
-
-		if( $path !== false )
-		{
-			self::$controllerFile = $path . $file;
-
-			/*
-			if( $path == SYS_PATH )
-			{
-				self::$useRoutes = false;
-			}
-			else
-			{
-				self::$useRoutes = true;
-			}
-			*/
+			self::InvokeIndex();
 		}
 		else
 		{
-			ErrorHandler::InvokeHTTPError( array( "errorCode" => "404", "controllerFile" => $file, "method" => "N/A" ) );
-		}
-	}
-
-	private static function ControllerExists()
-	{
-		if( file_exists( self::$controllerFile ) )
-		{
-			return( true );
-		}
-		else
-		{
-			ErrorHandler::InvokeHTTPError( array( "errorCode" => "404", "controllerFile" => self::$controllerFile, "method" => "N/A" ) );
-
-			return( false );
+			self::InvokeMethod();
 		}
 	}
 
 	private static function LoadControllerInstance()
 	{
-		require_once( self::$controllerFile );
+		self::$controllerName = self::GetRoutedController();
 
-		self::$controllerClassName = Normalize::ObjectName( self::$controllerName );
-		self::$controllerInstance = new self::$controllerClassName;
+		if( ( self::$controllerFile = Loader::Resolve( Loader::controllerFolder, self::$controllerName, Loader::controllerExtension ) ) !== false )
+		{
+			require_once( self::$controllerFile );
+
+			self::$controllerClassName = Normalize::ObjectName( self::$controllerName );
+			self::$controllerInstance = new self::$controllerClassName;
+		}
+		else
+		{
+			// TO-DO: Get ErrorHandler to work
+			ErrorHandler::InvokeHTTPError( array( "errorCode" => "404", "controllerFile" => self::$controllerName, "method" => "N/A" ) );
+		}
 	}
 
 	private static function IsIndex()
