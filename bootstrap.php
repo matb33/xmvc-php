@@ -191,6 +191,18 @@ namespace xMVC\Sys
 		{
 			return( "/_enc_" . str_replace( "=", "_", base64_encode( serialize( $data ) ) ) );
 		}
+
+		public static function StripXMLRootTags( $xml )
+		{
+			// Strip xml declaration
+			$xml = preg_replace( "|<\?xml(.+?)\?>[\n\r]?|i", "", $xml );
+
+			// Strip xmvc:root
+			$xml = preg_replace( "|<xmvc:root(.+?)>[\n\r]?|", "", $xml );
+			$xml = preg_replace( "|<\/xmvc:root>[\n\r]?|", "", $xml );
+
+			return( $xml );
+		}
 	}
 }
 
