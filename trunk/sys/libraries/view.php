@@ -287,17 +287,18 @@ class View
 
 		if( self::IsSourceViewOn() )
 		{
-			$xmlHead .= "<" . "?xml-stylesheet type=\"text/xsl\" href=\"" . Routing::URIProtocol() . "://" . $_SERVER[ "HTTP_HOST" ] . "/load/view/mcc\" ?" . ">\n";
+			$xmlHead .= "<" . "?xml-stylesheet type=\"text/xsl\" href=\"" . Routing::URIProtocol() . "://" . $_SERVER[ "HTTP_HOST" ] . "/load/view/xMVC::Sys::mcc\" ?" . ">\n";
 
 			$sourceViewAttribute = " xmvc:mcc=\"true\"";
 		}
 		else
 		{
-			if( isset( $this->xslViewName ) && $this->xslViewName != "" )
+			if( Config::$data[ "enableInlinePHPInViews" ] )
 			{
-				if( Config::$data[ "enableInlinePHPInViews" ] )
+				if( ! is_null( $this->xslViewName ) )
 				{
-					$xmlHead .= "<" . "?xml-stylesheet type=\"text/xsl\" href=\"" . Routing::URIProtocol() . "://" . $_SERVER[ "HTTP_HOST" ] . "/load/view/" . $this->xslViewName . $encodedData . "\" ?" . ">\n";
+					$fullyQualifiedXsltViewName = str_replace( "\\", "::", Loader::AssignDefaultNamespace( $this->xslViewName ) );
+					$xmlHead .= "<" . "?xml-stylesheet type=\"text/xsl\" href=\"" . Routing::URIProtocol() . "://" . $_SERVER[ "HTTP_HOST" ] . "/load/view/" . $fullyQualifiedXsltViewName . $encodedData . "\" ?" . ">\n";
 				}
 			}
 		}

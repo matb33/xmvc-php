@@ -33,9 +33,9 @@ class Load
 		}
 
 		$xslViewName = str_replace( ( "." . Loader::viewExtension ), "", implode( "/", $args ) );
+		$xslViewName = str_replace( "::", "\\", $xslViewName );
 
-		// TO-DO: Figure out how this is supposed to map to App, or Mod, or Sys, etc
-		$tmpView = new View( Core::namespaceSys . $xslViewName );
+		$tmpView = new View( $xslViewName );
 
 		$xmlHead = $tmpView->GetXMLHead( $data, true );
 		$xmlFoot = $tmpView->GetXMLFoot( true );

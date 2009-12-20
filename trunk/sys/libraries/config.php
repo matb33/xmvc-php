@@ -39,7 +39,7 @@ class Config
 						include( $configPath . $entry );
 
 						$variablesToMerge = array_diff_key( get_defined_vars(), $existingVariables, array( "existingVariables" => "" ) );
-						self::$data = self::ArrayInsert( self::$data, $variablesToMerge );
+						self::$data = self::MergeVariables( self::$data, $variablesToMerge );
 
 						foreach( array_keys( $variablesToMerge ) as $variableToUnset )
 						{
@@ -53,8 +53,7 @@ class Config
 		}
 	}
 
-	// This function was obtained from the comments on array_merge_recursive on php.net
-	private static function ArrayInsert( $arr, $ins )
+	private static function MergeVariables( $arr, $ins )
 	{
 		if( is_array( $arr ) && is_array( $ins ) )
 		{
@@ -62,7 +61,7 @@ class Config
 			{
 				if( isset( $arr[ $k ] ) && is_array( $v ) && is_array( $arr[ $k ] ) )
 				{
-					$arr[ $k ] = self::ArrayInsert( $arr[ $k ], $v );
+					$arr[ $k ] = self::MergeVariables( $v, $arr[ $k ] );
 				}
 				elseif( is_int( $k ) )
 				{
