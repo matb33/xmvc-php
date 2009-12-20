@@ -50,7 +50,6 @@ class Core
 		}
 		else
 		{
-			// TO-DO: Get ErrorHandler to work
 			ErrorHandler::InvokeHTTPError( array( "errorCode" => "404", "controllerFile" => self::$controllerName, "method" => "N/A" ) );
 		}
 	}
@@ -58,7 +57,7 @@ class Core
 	private static function IsIndex()
 	{
 		$pathData	= Routing::PathData();
-		$pathParts	= $pathData[ "pathParts" ];	//self::$useRoutes ? $pathData[ "pathParts" ] : $pathData[ "pathPartsOriginal" ];
+		$pathParts	= $pathData[ "pathParts" ];
 
 		return( count( $pathParts ) <= 1 );
 	}
@@ -73,7 +72,7 @@ class Core
 	private static function InvokeMethod()
 	{
 		$pathData = Routing::PathData();
-		$pathParts = $pathData[ "pathParts" ];	//self::$useRoutes ? $pathData[ "pathParts" ] : $pathData[ "pathPartsOriginal" ];
+		$pathParts = $pathData[ "pathParts" ];
 		$method	= self::GetMethod( Normalize::ObjectName( $pathParts[ 1 ] ) );
 
 		self::CallMethod( $method, array_slice( $pathParts, 2 ) );
@@ -101,7 +100,7 @@ class Core
 		}
 		else
 		{
-			ErrorHandler::InvokeHTTPError( array( "errorCode" => "404", "controllerFile" => self::$controllerFile, "method" => implode( "::", $method ) ) );
+			ErrorHandler::InvokeHTTPError( array( "errorCode" => "404", "controllerFile" => self::$controllerFile, "method" => $method ) );
 		}
 	}
 

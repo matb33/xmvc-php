@@ -25,6 +25,7 @@
 	</xsl:template>
 
 	<xsl:template match="//xmvc:error" />
+	<xsl:template match="//xmvc:errors" />
 	<xsl:template match="//xmvc:strings" />
 
 	<xsl:template match="//xmvc:error[ @xmvc:code = //xmvc:strings/xmvc:error-code ]">
@@ -32,6 +33,17 @@
 		<p><xsl:apply-templates /></p>
 		<p><em>Controller File: <xsl:value-of select="//xmvc:strings/xmvc:controller-file" /></em></p>
 		<p><em>Method: <xsl:value-of select="//xmvc:strings/xmvc:method" /></em></p>
+		<xsl:if test="//xmvc:errors">
+			<h2>PHP Errors</h2>
+			<ul>
+				<xsl:for-each select="//xmvc:errors/xmvc:errorentry">
+					<li>
+						<span class="datetime">[<xsl:value-of select="xmvc:datetime" />] </span><span class="errortype"><xsl:value-of select="xmvc:errortype" /></span>: <span class="errormsg"><xsl:value-of select="xmvc:errormsg" /></span>. Line <span class="scriptlinenum"><xsl:value-of select="xmvc:scriptlinenum" /></span> in <span class="scriptname"><xsl:value-of select="xmvc:scriptname" /></span><br />
+						<pre class="stack-trace"><xsl:value-of select="xmvc:stack-trace" /></pre>
+					</li>
+				</xsl:for-each>
+			</ul>
+		</xsl:if>
 	</xsl:template>
 
 </xsl:stylesheet>

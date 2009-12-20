@@ -287,7 +287,7 @@ class View
 
 		if( self::IsSourceViewOn() )
 		{
-			$xmlHead .= "<" . "?xml-stylesheet type=\"text/xsl\" href=\"" . Routing::URIProtocol() . "://" . $_SERVER[ "HTTP_HOST" ] . "/load/view/mcc.xsl\" ?" . ">\n";
+			$xmlHead .= "<" . "?xml-stylesheet type=\"text/xsl\" href=\"" . Routing::URIProtocol() . "://" . $_SERVER[ "HTTP_HOST" ] . "/load/view/mcc\" ?" . ">\n";
 
 			$sourceViewAttribute = " xmvc:mcc=\"true\"";
 		}
