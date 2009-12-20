@@ -38,7 +38,7 @@ class ErrorHandler
 	{
 		$headerPattern = "HTTP/1.0 #errorCode# #headerType#";
 
-		self::InvokeError( "http-error", "http-errors", $headerPattern, $data );
+		self::InvokeError( "xMVC\\Sys\\http-error", "xMVC\\Sys\\http-errors", $headerPattern, $data );
 	}
 
 	private static function InvokeError( $viewName, $modelName, $headerPattern, $data )
@@ -63,7 +63,7 @@ class ErrorHandler
 
 		if( isset( $data[ "method" ] ) )
 		{
-			$strings->Add( "method", $data[ "method" ] );
+			$strings->Add( "method", is_string( $data[ "method" ] ) ? $data[ "method" ] : print_r( $data[ "method" ], true ) );
 		}
 
 		$view = new View( $viewName );

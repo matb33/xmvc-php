@@ -4,11 +4,6 @@ namespace xMVC\Sys;
 
 class Error
 {
-	public function __construct()
-	{
-		parent::__construct();
-	}
-
 	public function Index( $errorCode = "404" )
 	{
 		self::Display( $errorCode );

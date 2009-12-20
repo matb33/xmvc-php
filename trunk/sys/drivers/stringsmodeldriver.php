@@ -22,7 +22,9 @@ class StringsModelDriver extends ModelDriver implements ModelDriverInterface
 		$key = func_get_arg( 0 );
 		$value = func_get_arg( 1 );
 
-		$node = $this->createElementNS( Core::namespaceXML, "xmvc:" . $key, ( string )$value );
+		$node = $this->createElementNS( Core::namespaceXML, "xmvc:" . $key );
+		$data = $this->createCDATASection( ( string )$value );
+		$node->appendChild( $data );
 		$this->rootElement->appendChild( $node );
 
 		parent::TransformForeignToXML();
