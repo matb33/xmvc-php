@@ -18,7 +18,6 @@ class ModelDriver extends \DOMDocument
 	public function loadXML( $source, $options = 0 )
 	{
 		// DOMDocument method override
-
 		parent::loadXML( $source, $options );
 
 		$this->RefreshXPath( $source );
@@ -70,13 +69,13 @@ class ModelDriver extends \DOMDocument
 			$xml = Loader::ReadExternal( $xmlModelFile );
 		}
 
-		return( $this->StripRootTags( $xml ) );
+		return( Normalize::StripXMLRootTags( $xml ) );
 	}
 
 	public function SetXML( $xml )
 	{
 		$completeXML  = View::GetXMLHead( null, false );
-		$completeXML .= $xml;
+		$completeXML .= Normalize::StripXMLRootTags( $xml );
 		$completeXML .= View::GetXMLFoot( false );
 
 		$this->loadXML( $completeXML );
@@ -100,25 +99,12 @@ class ModelDriver extends \DOMDocument
 
 		if( $stripRootTags )
 		{
-			return( $this->StripRootTags( $completeXML ) );
+			return( Normalize::StripXMLRootTags( $completeXML ) );
 		}
 		else
 		{
 			return( $completeXML );
 		}
-	}
-
-	// TO-DO: Consider moving to Normalize library??
-	protected static function StripRootTags( $xml )
-	{
-		// Strip xml declaration
-		$xml = preg_replace( "|<\?xml(.+?)\?>[\n\r]?|i", "", $xml );
-
-		// Strip xmvc:root
-		$xml = preg_replace( "|<xmvc:root(.+?)>[\n\r]?|", "", $xml );
-		$xml = preg_replace( "|<\/xmvc:root>[\n\r]?|", "", $xml );
-
-		return( $xml );
 	}
 }
 

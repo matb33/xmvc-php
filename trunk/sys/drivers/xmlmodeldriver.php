@@ -30,7 +30,7 @@ class XMLModelDriver extends ModelDriver implements ModelDriverInterface
 				// Treat parameter as raw XML.  However, we must strip out the xml declaration and xmvc:root tag if present.
 				// Otherwise this model won't play nice with other models when stacked.
 
-				$xmlData = $this->StripRootTags( $parameter );
+				$xmlData = Normalize::StripXMLRootTags( $parameter );
 			}
 			else
 			{
