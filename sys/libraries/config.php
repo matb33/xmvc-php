@@ -20,61 +20,51 @@ class Config
 	{
 		$variable = null;
 		$value = null;
-		$entry = null;
+		$configFile = null;
 		$variablesToMerge = null;
 		$variableToUnset = null;
+
 		$configPath = $basePath . "/" . Loader::configFolder . "/";
-		$handle = @dir( $configPath );
+		$configFilePattern = $configPath . "*." . Loader::configExtension;
 
-		if( $handle )
+		$existingVariables = get_defined_vars();
+
+		foreach( glob( $configFilePattern ) as $configFile )
 		{
-			$existingVariables = get_defined_vars();
+			include( $configFile );
 
-			while( ( $entry = $handle->read() ) !== false )
+			$variablesToMerge = array_diff_key( get_defined_vars(), $existingVariables, array( "existingVariables" => "" ) );
+			self::$data = self::MergeVariables( self::$data, $variablesToMerge );
+
+			foreach( array_keys( $variablesToMerge ) as $variableToUnset )
 			{
-				if( $entry != "." && $entry != ".." )
-				{
-					if( strtolower( substr( $entry, -4 ) ) == ( "." . Loader::configExtension ) )
-					{
-						include( $configPath . $entry );
-
-						$variablesToMerge = array_diff_key( get_defined_vars(), $existingVariables, array( "existingVariables" => "" ) );
-						self::$data = self::MergeVariables( self::$data, $variablesToMerge );
-
-						foreach( array_keys( $variablesToMerge ) as $variableToUnset )
-						{
-							unset( $$variableToUnset );
-						}
-					}
-				}
+				unset( $$variableToUnset );
 			}
-
-			$handle->close();
 		}
 	}
 
-	private static function MergeVariables( $arr, $ins )
+	private static function MergeVariables( $existingVariables, $variablesToMerge )
 	{
-		if( is_array( $arr ) && is_array( $ins ) )
+		if( is_array( $existingVariables ) && is_array( $variablesToMerge ) )
 		{
-			foreach( $ins as $k => $v )
+			foreach( $variablesToMerge as $k => $v )
 			{
-				if( isset( $arr[ $k ] ) && is_array( $v ) && is_array( $arr[ $k ] ) )
+				if( isset( $existingVariables[ $k ] ) && is_array( $v ) && is_array( $existingVariables[ $k ] ) )
 				{
-					$arr[ $k ] = self::MergeVariables( $v, $arr[ $k ] );
+					$existingVariables[ $k ] = self::MergeVariables( $existingVariables[ $k ], $v );
 				}
 				elseif( is_int( $k ) )
 				{
-					$arr[] = $v;
+					array_unshift( $existingVariables, $v );
 				}
 				else
 				{
-					$arr[ $k ] = $v;
+					$existingVariables[ $k ] = $v;
 				}
 			}
 		}
 
-		return( $arr );
+		return( $existingVariables );
 	}
 }
 

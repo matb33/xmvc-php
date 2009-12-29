@@ -66,13 +66,14 @@ class Routing
 
 			foreach( $routes as $preg => $replace )
 			{
-				if( preg_match( $preg, $routedURI, $routeMatches ) )
+				if( ! is_null( $replace ) )
 				{
-					self::$routeMatches = $routeMatches;
-
-					$routedURI = preg_replace_callback( "/%([0-9]+)/", array( self, "RouteReplaceCallback" ), $replace );
-
-					break;
+					if( preg_match( $preg, $routedURI, $routeMatches ) )
+					{
+						self::$routeMatches = $routeMatches;
+						$routedURI = preg_replace_callback( "/%([0-9]+)/", array( self, "RouteReplaceCallback" ), $replace );
+						break;
+					}
 				}
 			}
 		}
@@ -101,15 +102,14 @@ class Routing
 			$pathOnly = "";
 		}
 
-		$pathPartsOriginal	= explode( "/", $pathOnlyOriginal );
-		$pathParts			= explode( "/", $pathOnly );
+		$pathPartsOriginal = explode( "/", $pathOnlyOriginal );
+		$pathParts = explode( "/", $pathOnly );
 
 		$pathData = array();
-
-		$pathData[ "pathOnlyOriginal" ]		= $pathOnlyOriginal;
-		$pathData[ "pathPartsOriginal" ]	= $pathPartsOriginal;
-		$pathData[ "pathOnly" ]				= $pathOnly;
-		$pathData[ "pathParts" ]			= $pathParts;
+		$pathData[ "pathOnlyOriginal" ] = $pathOnlyOriginal;
+		$pathData[ "pathPartsOriginal" ] = $pathPartsOriginal;
+		$pathData[ "pathOnly" ] = $pathOnly;
+		$pathData[ "pathParts" ] = $pathParts;
 
 		return( $pathData );
 	}

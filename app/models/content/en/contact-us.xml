@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <str:strings xmlns:str="http://www.xmvc.org/ns/str/1.0" xmlns="http://www.w3.org/1999/xhtml">
+	<str:hierarchy>
+		<str:parents>
+			<str:parent>home</str:parent>
+		</str:parents>
+	</str:hierarchy>
+
 	<str:title>Contact Us | Example Website</str:title>
 	<str:labels>
 		<str:firstname>First name:</str:firstname>

@@ -45,7 +45,7 @@ class Core
 		{
 			require_once( self::$controllerFile );
 
-			self::$controllerClassName = Normalize::ObjectName( self::$controllerName );
+			self::$controllerClassName = Normalize::MethodOrClassName( self::$controllerName );
 			self::$controllerInstance = new self::$controllerClassName;
 		}
 		else
@@ -73,7 +73,7 @@ class Core
 	{
 		$pathData = Routing::PathData();
 		$pathParts = $pathData[ "pathParts" ];
-		$method	= self::GetMethod( Normalize::ObjectName( $pathParts[ 1 ] ) );
+		$method	= self::GetMethod( Normalize::MethodOrClassName( $pathParts[ 1 ] ) );
 
 		self::CallMethod( $method, array_slice( $pathParts, 2 ) );
 	}

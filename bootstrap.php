@@ -4,7 +4,6 @@ namespace xMVC\Sys
 {
 	class Loader
 	{
-		private static $matches;
 		private static $defaultNamespace = "xMVC\\App";
 
 		const controllerExtension = "php";
@@ -23,47 +22,27 @@ namespace xMVC\Sys
 
 		public static function Resolve( $folder, $name, $extension )
 		{
-			$path = self::FindPathWhereFileExists( $folder, $name, $extension );
-
-			if( $path !== false )
-			{
-				return( $path . $name );
-			}
-
-			return( false );
-		}
-
-		public static function FindPathWhereFileExists( $folder, &$name, $extension )
-		{
 			$name = self::AssignDefaultNamespace( $name );
 
-			foreach( NamespaceMap::GetMappings() as $pattern => $mapping )
+			NamespaceMap::SetName( $name );
+			NamespaceMap::SetFolder( $folder );
+			NamespaceMap::RewindIterator();
+
+			foreach( NamespaceMap::Iterate() as $mappedFile )
 			{
-				$pattern = str_replace( "::", "\\\\", $pattern );
+				$mappedFile = Normalize::Filename( $mappedFile ) . "." . $extension;
+				$mappedFile = realpath( $mappedFile );
 
-				if( preg_match( $pattern, $name, self::$matches ) )
+				if( $mappedFile !== false )
 				{
-					$mappedFile = preg_replace_callback( "/%([0-9]+)/", array( self, "ResolveReplaceCallback" ), $mapping );
-					$mappedFile = str_replace( "%f", $folder, $mappedFile );
-					$mappedFile = Normalize::Filename( $mappedFile ) . "." . $extension;
-					$mappedFile = realpath( $mappedFile );
+					$mappedFolder = Normalize::Path( dirname( $mappedFile ) );
+					$name = basename( $mappedFile );
 
-					if( $mappedFile !== false )
-					{
-						$mappedFolder = Normalize::Path( dirname( $mappedFile ) );
-						$name = basename( $mappedFile );
-
-						return( $mappedFolder );
-					}
+					return( $mappedFolder . $name );
 				}
 			}
 
 			return( false );
-		}
-
-		private static function ResolveReplaceCallback( $matches )
-		{
-			return( self::$matches[ $matches[ 1 ] ] );
 		}
 
 		public static function AssignDefaultNamespace( $name, $forcedNamespace = null )
@@ -119,16 +98,58 @@ namespace xMVC\Sys
 
 	class NamespaceMap
 	{
+		private static $matches;
 		private static $mappings;
+		private static $name;
+		private static $folder;
 
 		public static function Register( $namespacePattern, $folderMap )
 		{
 			self::$mappings[ $namespacePattern ] = $folderMap;
 		}
 
-		public static function GetMappings()
+		public static function SetName( $name )
 		{
-			return( self::$mappings );
+			self::$name = $name;
+		}
+
+		public static function SetFolder( $folder )
+		{
+			self::$folder = $folder;
+		}
+
+		public static function RewindIterator()
+		{
+			reset( self::$mappings );
+		}
+
+		public static function Iterate()
+		{
+			$pair = each( self::$mappings );
+
+			if( $pair !== false )
+			{
+				list( $pattern, $mapping ) = $pair;
+
+				$pattern = str_replace( "::", "\\\\", $pattern );
+
+				if( preg_match( $pattern, self::$name, self::$matches ) )
+				{
+					$mappedFile = preg_replace_callback( "/%([0-9]+)/", array( self, "ResolveReplaceCallback" ), $mapping );
+					$mappedFile = str_replace( "%f", self::$folder, $mappedFile );
+
+					return( array( $mappedFile ) );
+				}
+
+				return( self::Iterate() );
+			}
+
+			return( false );
+		}
+
+		private static function ResolveReplaceCallback( $matches )
+		{
+			return( self::$matches[ $matches[ 1 ] ] );
 		}
 	}
 
@@ -164,7 +185,7 @@ namespace xMVC\Sys
 
 	class Normalize
 	{
-		public static function ObjectName( $name )
+		public static function MethodOrClassName( $name )
 		{
 			$name = str_replace( "-", "_", $name );
 			$name = ucfirst( strtolower( preg_replace( "/ |\.|%20/", "", $name ) ) );
