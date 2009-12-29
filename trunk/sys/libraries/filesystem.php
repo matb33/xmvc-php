@@ -126,7 +126,7 @@ class FileSystem
 	{
 		$list = array();
 
-		$rootFolder = self::NormalizeFolder( $rootFolder );
+		$rootFolder = Normalize::Path( $rootFolder );
 
 		$dir = dir( $rootFolder );
 
@@ -157,8 +157,8 @@ class FileSystem
 	{
 		$meta = array();
 
-		$meta[ "is_file" ]				= @is_file( $file );
-		$meta[ "is_dir" ]				= @is_dir( $file );
+		$meta[ "is_file" ]	= @is_file( $file );
+		$meta[ "is_dir" ]	= @is_dir( $file );
 
 		if( $getMeta )
 		{
@@ -189,15 +189,6 @@ class FileSystem
 		}
 
 		return( $meta );
-	}
-
-	// TO-DO: Consider moving this to the Normalize library??
-	private static function NormalizeFolder( $path )
-	{
-		$path = str_replace( "\\", "/", $path );
-		$path = ( substr( $path, -1 ) != "/" ) ? ( $path . "/" ) : $path;
-
-		return( $path );
 	}
 }
 
