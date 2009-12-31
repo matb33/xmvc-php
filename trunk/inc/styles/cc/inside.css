@@ -1,0 +1,11 @@
+#header
+{
+	border: 1px solid black;
+	padding: 16px;
+}
+
+#footer
+{
+	border: 1px solid red;
+	padding: 16px;
+}

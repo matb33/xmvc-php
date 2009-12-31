@@ -202,7 +202,14 @@ class View
 		{
 			foreach( $this->models as $model )
 			{
-				$stack .= $model->GetXMLForStacking();
+				if( $model instanceof ModelDriver )
+				{
+					$stack .= $model->GetXMLForStacking();
+				}
+				else
+				{
+					trigger_error( "Invalid model was found in this view's model-stack", E_USER_ERROR );
+				}
 			}
 		}
 

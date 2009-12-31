@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<cc:root xmlns:cc="http://www.xmvc.org/ns/cc/1.0" xmlns="http://www.w3.org/1999/xhtml">
+	<cc:navigation cc:name="top-nav">
+		<cc:item>
+			<cc:caption>Top nav item 1</cc:caption>
+			<cc:link>#1</cc:link>
+		</cc:item>
+		<cc:item>
+			<cc:caption>Top nav item 2</cc:caption>
+			<cc:link>#2</cc:link>
+		</cc:item>
+		<cc:item>
+			<cc:caption>Top nav item 3</cc:caption>
+			<cc:link>#3</cc:link>
+		</cc:item>
+	</cc:navigation>
+</cc:root>

@@ -39,21 +39,35 @@ class Routing
 		return( self::$URIProtocol );
 	}
 
-	public static function PathData()
+	public static function PathData( $overrideURI = null )
 	{
+		$URI = self::URI();
+
+		if( !is_null( $overrideURI ) )
+		{
+			$URI = $overrideURI;
+
+			self::$pathData = null;
+		}
+
 		if( is_null( self::$pathData ) )
 		{
-			self::$pathData = self::DeterminePathData( self::URI() );
+			self::$pathData = self::GetPathData( $URI );
 		}
 
 		return( self::$pathData );
 	}
 
-	private static function DeterminePathData( $URI )
+	private static function GetPathData( $URI )
+	{
+		$routedURI = self::ApplyRoutingRules( $URI );
+
+		return( self::GetPathDataFromURIs( $URI, $routedURI ) );
+	}
+
+	private static function ApplyRoutingRules( $URI )
 	{
 		$routedURI = $URI;
-
-		// Apply routing rules
 
 		$routes = Config::$data[ "routes" ];
 
@@ -78,29 +92,20 @@ class Routing
 			}
 		}
 
-		$pathOnlyOriginal = substr( $URI, 0, strpos( ( strpos( $URI, "?" ) === false ? ( $URI . "?" ) : $URI ), "?" ) );
+		return( $routedURI );
+	}
 
-		if( $pathOnlyOriginal != "/" )
-		{
-			$pathOnlyOriginal = ( substr( $pathOnlyOriginal, 0, 1 ) == "/" ? substr( $pathOnlyOriginal, 1 ) : $pathOnlyOriginal );
-			$pathOnlyOriginal = ( substr( $pathOnlyOriginal, -1 ) == "/" ? substr( $pathOnlyOriginal, 0, -1 ) : $pathOnlyOriginal );
-		}
-		else
-		{
-			$pathOnlyOriginal = "";
-		}
+	private static function RouteReplaceCallback( $matches )
+	{
+		$index = $matches[ 1 ];
 
-		$pathOnly = substr( $routedURI, 0, strpos( ( strpos( $routedURI, "?" ) === false ? ( $routedURI . "?" ) : $routedURI ), "?" ) );
+		return( self::$routeMatches[ $index ] );
+	}
 
-		if( $pathOnly != "/" )
-		{
-			$pathOnly = ( substr( $pathOnly, 0, 1 ) == "/" ? substr( $pathOnly, 1 ) : $pathOnly );
-			$pathOnly = ( substr( $pathOnly, -1 ) == "/" ? substr( $pathOnly, 0, -1 ) : $pathOnly );
-		}
-		else
-		{
-			$pathOnly = "";
-		}
+	private static function GetPathDataFromURIs( $URI, $routedURI )
+	{
+		$pathOnlyOriginal = self::CleanURI( $URI );
+		$pathOnly = self::CleanURI( $routedURI );
 
 		$pathPartsOriginal = explode( "/", $pathOnlyOriginal );
 		$pathParts = explode( "/", $pathOnly );
@@ -114,11 +119,21 @@ class Routing
 		return( $pathData );
 	}
 
-	private static function RouteReplaceCallback( $matches )
+	private static function CleanURI( $path )
 	{
-		$index = $matches[ 1 ];
+		$path = substr( $path, 0, strpos( ( strpos( $path, "?" ) === false ? ( $path . "?" ) : $path ), "?" ) );
 
-		return( self::$routeMatches[ $index ] );
+		if( $path != "/" )
+		{
+			$path = ( substr( $path, 0, 1 ) == "/" ? substr( $path, 1 ) : $path );
+			$path = ( substr( $path, -1 ) == "/" ? substr( $path, 0, -1 ) : $path );
+		}
+		else
+		{
+			$path = "";
+		}
+
+		return( $path );
 	}
 
 	private static function DetermineURI()

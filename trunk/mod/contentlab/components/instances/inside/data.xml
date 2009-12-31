@@ -1,0 +1,75 @@
+<clab:instance clab:definition="inside" clab:instance-name="data" clab:friendly-name="Inside page" xmlns:clab="http://clab.xmvc.org/ns/clab/1.0" xmlns="http://www.w3.org/1999/xhtml">
+	<clab:metadata>
+		<clab:urlpath>/dnb-data-quality/</clab:urlpath>
+		<clab:name>D&amp;B Data Quality</clab:name>
+		<clab:sort-index>3</clab:sort-index>
+		<clab:visible-for>
+			<clab:component clab:definition="dynamic-nav" clab:instance-name="top-nav" />
+		</clab:visible-for>
+		<clab:clickable-for>
+			<clab:component clab:definition="dynamic-nav" clab:instance-name="top-nav" />
+		</clab:clickable-for>
+	</clab:metadata>
+	<clab:head>
+		<clab:title>D&amp;B Data Quality | D&amp;B For Your Customers</clab:title>
+		<clab:metatags />
+		<clab:stylesheets>
+			<clab:stylesheet>
+				<clab:location>/inc/styles/data.css?<?php echo( md5( filemtime( realpath( "./inc/styles/data.css" ) ) ) ); ?></clab:location>
+			</clab:stylesheet>
+		</clab:stylesheets>
+		<clab:scripts />
+	</clab:head>
+	<clab:mast>
+		<clab:logo>D&amp;B</clab:logo>
+		<clab:mast-title>D&amp;B For Your Customers</clab:mast-title>
+		<clab:short-nav>
+			<clab:instance-load clab:definition="navigation" clab:instance-name="short-nav" />
+		</clab:short-nav>
+		<clab:top-nav>
+			<clab:instance-load clab:definition="dynamic-nav" clab:instance-name="top-nav" />
+		</clab:top-nav>
+	</clab:mast>
+	<clab:page>
+		<clab:heading>
+			<clab:heading-caption>D&amp;B Data Quality</clab:heading-caption>
+			<clab:heading-deco>guyleaningonwindow</clab:heading-deco>
+		</clab:heading>
+		<clab:content>
+			<clab:column1>
+				<clab:deco-stub />
+				<clab:item-list>
+					<clab:items>
+						<clab:item>
+							<clab:content><a href="http://www.dnbgov.com/pdf/DataElementsFS.pdf" target="dataelementsfs">Download Data Elements PDF</a></clab:content>
+						</clab:item>
+						<clab:item>
+							<clab:content><a href="http://www.ccr.gov/" target="dunsnumber">Get A D-U-N-S Number</a></clab:content>
+						</clab:item>
+						<clab:item>
+							<clab:content><a href="http://www.dnbgov.com/pdf/CorporateLinkageFS.pdf" target="corporatepdf">Download Corporate Linkage PDF</a></clab:content>
+						</clab:item>
+					</clab:items>
+				</clab:item-list>
+			</clab:column1>
+			<clab:body>
+				<h2>Discover the DUNSRight<sup>®</sup> Difference</h2>
+				<p>DUNSRight is D&amp;B's patented process for ensuring quality information. This process encompasses five quality drivers—Global Data Collection, Entity Matching, D-U-N-S<sup>®</sup> Number, Corporate Linkage, and Predictive Indicators—that work sequentially to aggregate, standardize, and enrich information. The foundation of DUNSRight is Quality Assurance, which includes more than 2,000 separate automated and manual checks.</p>
+			</clab:body>
+			<clab:column2>
+				<clab:phone-cta>
+					<clab:instance-load clab:definition="blue-shadow" clab:instance-name="phone-cta" />
+				</clab:phone-cta>
+				<clab:mission-statement>
+					<clab:instance-load clab:definition="blue-shadow" clab:instance-name="mission-statement" />
+				</clab:mission-statement>
+			</clab:column2>
+		</clab:content>
+	</clab:page>
+	<clab:footer>
+		<clab:copyright>© Dun &amp; Bradstreet, Inc., 2000–2009. All rights reserved.</clab:copyright>
+		<clab:footer-nav>
+			<clab:instance-load clab:definition="navigation" clab:instance-name="footer-nav" />
+		</clab:footer-nav>
+	</clab:footer>
+</clab:instance>

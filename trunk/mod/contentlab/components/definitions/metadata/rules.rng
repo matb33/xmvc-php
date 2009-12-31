@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<element name="metadata" xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes" ns="http://clab.xmvc.org/ns/clab/1.0">
+
+	<choice>
+		<optional>
+			<element name="protocol">
+				<data type="string" />
+			</element>
+			<element name="host">
+				<data type="string" />
+			</element>
+		</optional>
+		<element name="urlpath">
+			<data type="anyURI" />
+		</element>
+	</choice>
+	<choice>
+		<element name="url">
+			<data type="anyURI" />
+		</element>
+	</choice>
+
+	<optional>
+		<element name="name">
+			<data type="string" />
+		</element>
+	</optional>
+
+	<optional>
+		<element name="parents">
+			<oneOrMore>
+				<element name="instance-name">
+					<data type="string" />
+				</element>
+			</oneOrMore>
+		</element>
+	</optional>
+
+	<optional>
+		<element name="sort-index">
+			<data type="ID" />
+		</element>
+	</optional>
+
+	<optional>
+		<element name="visible-for">
+			<oneOrMore>
+				<element name="component">
+					<attribute name="definition">
+						<data type="string" />
+					</attribute>
+					<attribute name="instance-name">
+						<data type="string" />
+					</attribute>
+				</element>
+			</oneOrMore>
+		</element>
+	</optional>
+
+	<optional>
+		<element name="clickable-for">
+			<oneOrMore>
+				<element name="component">
+					<attribute name="definition">
+						<data type="string" />
+					</attribute>
+					<attribute name="instance-name">
+						<data type="string" />
+					</attribute>
+				</element>
+			</oneOrMore>
+		</element>
+	</optional>
+
+</element>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<cc:root xmlns:cc="http://www.xmvc.org/ns/cc/1.0" xmlns="http://www.w3.org/1999/xhtml">
+
+	<cc:config>
+		<cc:dependency cc:type="xhtml1-strict" cc:instance="xhtml1-strict" />
+		<cc:dependency cc:type="inside" cc:instance="inside" />
+		<cc:dependency cc:type="navigation" cc:instance="top-nav" />
+		<cc:dependency cc:type="navigation" cc:instance="footer-nav" />
+		<!--
+		<cc:child-for>
+			<cc:component cc:view="home" cc:model="home" />
+		</cc:child-for>
+		-->
+	</cc:config>
+
+	<cc:xhtml1-strict>
+		<cc:head>
+			<cc:title>About Us | Example Website</cc:title>
+		</cc:head>
+		<cc:inside>
+			<cc:standard>
+				<cc:heading>About Us</cc:heading>
+				<cc:content>
+					<p>This is the about us page.</p>
+					<p>More content could go <a href="#here">here</a>.</p>
+				</cc:content>
+			</cc:standard>
+		</cc:inside>
+	</cc:xhtml1-strict>
+
+</cc:root>

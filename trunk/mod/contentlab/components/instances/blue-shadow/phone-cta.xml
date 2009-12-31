@@ -1,0 +1,7 @@
+<clab:instance xmlns:clab="http://clab.xmvc.org/ns/clab/1.0" xmlns="http://www.w3.org/1999/xhtml" clab:definition="blue-shadow" clab:instance-name="phone-cta" clab:friendly-name="Blue header white box with shadow">
+	<clab:heading>START BUILDING TODAY</clab:heading>
+	<clab:content>
+		<p>Speak to Relationship Manager to find out more:</p>
+		<h2>1.800.255.9220</h2>
+	</clab:content>
+</clab:instance>

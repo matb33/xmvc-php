@@ -1,0 +1,12 @@
+<clab:instance xmlns:clab="http://clab.xmvc.org/ns/clab/1.0" xmlns="http://www.w3.org/1999/xhtml" clab:definition="error404" clab:instance-name="error404" clab:friendly-name="404 error page">
+	<clab:head>
+		<clab:title>Error — Page Not Found</clab:title>
+	</clab:head>
+	<clab:content>
+<h1>Our apologies!</h1>
+<p>The page you are looking for could not be found.</p>
+<p>It's possible that:</p>
+<ul>
+<li>You have mistyped the URL or clicked on an out-of-date bookmark.</li>
+<li>We have a broken link that we haven't noticed yet.</li></ul></clab:content>
+</clab:instance>

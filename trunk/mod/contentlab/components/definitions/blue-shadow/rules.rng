@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<element name="blue-shadow" xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes" ns="http://clab.xmvc.org/ns/clab/1.0">
+
+	<attribute name="friendly-name">
+		<value type="string">Blue header white box with shadow</value>
+	</attribute>
+	<attribute name="definition">
+		<data type="string" />
+	</attribute>
+	<attribute name="instance-name">
+		<data type="string" />
+	</attribute>
+
+	<element name="heading">
+		<data type="string" />
+	</element>
+
+	<element name="content">
+		<data type="string" />
+	</element>
+
+</element>
