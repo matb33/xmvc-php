@@ -60,6 +60,25 @@ namespace xMVC\Sys
 			return( $name );
 		}
 
+		public static function ExtractNamespace( $name )
+		{
+			$namespace = substr( $name, 0, strrpos( $name, "\\" ) );
+
+			if( strlen( $namespace ) > 0 )
+			{
+				return( $namespace );
+			}
+			else
+			{
+				return( null );
+			}
+		}
+
+		public static function StripNamespace( $name )
+		{
+			return( str_replace( "\\", "", substr( $name, strrpos( $name, "\\" ) ) ) );
+		}
+
 		public static function SetDefaultNamespace( $namespace )
 		{
 			self::$defaultNamespace = $namespace;
@@ -98,10 +117,10 @@ namespace xMVC\Sys
 
 	class NamespaceMap
 	{
-		private static $matches;
-		private static $mappings;
-		private static $name;
-		private static $folder;
+		private static $matches = array();
+		private static $mappings = array();
+		private static $name = "";
+		private static $folder = "";
 
 		public static function Register( $namespacePattern, $folderMap )
 		{

@@ -1,0 +1,10 @@
+<clab:instance xmlns:clab="http://clab.xmvc.org/ns/clab/1.0" xmlns="http://www.w3.org/1999/xhtml" clab:definition="navigation" clab:instance-name="short-nav" clab:friendly-name="Standard navigation">
+	<clab:items>
+		<clab:item>
+			<clab:content><a href="http://www.dnb.com/us/about/index.html?cm_re=Homepage*Header*AboutDB" target="aboutdnb">About D&amp;B</a> | </clab:content>
+		</clab:item>
+		<clab:item>
+			<clab:content>Already A Customer? <a href="http://foryourcustomers.dnb.com/building-blocks/login.php" target="login">Login Here</a></clab:content>
+		</clab:item>
+	</clab:items>
+</clab:instance>

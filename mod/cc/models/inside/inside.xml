@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<cc:root xmlns:cc="http://www.xmvc.org/ns/cc/1.0" xmlns="http://www.w3.org/1999/xhtml">
+	<cc:head>
+		<cc:stylesheet cc:location="/inc/styles/cc/inside.css" />
+	</cc:head>
+</cc:root>

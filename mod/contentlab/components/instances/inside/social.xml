@@ -1,0 +1,91 @@
+<clab:instance clab:definition="inside" clab:instance-name="social" clab:friendly-name="Inside page" xmlns:clab="http://clab.xmvc.org/ns/clab/1.0" xmlns="http://www.w3.org/1999/xhtml">
+	<clab:metadata>
+		<clab:urlpath>/how-you-use-dnb-data/social-networking-communities-career-services/</clab:urlpath>
+		<clab:name>Social Networking/Communities/Career Services</clab:name>
+		<clab:child-for>
+			<clab:component clab:definition="inside" clab:instance-name="how" />
+		</clab:child-for>
+		<clab:visible-for>
+			<clab:component clab:definition="dynamic-nav" clab:instance-name="top-nav" />
+		</clab:visible-for>
+		<clab:clickable-for>
+			<clab:component clab:definition="dynamic-nav" clab:instance-name="top-nav" />
+		</clab:clickable-for>
+	</clab:metadata>
+	<clab:head>
+		<clab:title>Social Networking/Communities/Career Services | D&amp;B For Your Customers</clab:title>
+		<clab:metatags />
+		<clab:stylesheets>
+			<clab:stylesheet>
+				<clab:location>/inc/styles/social.css?<?php echo( md5( filemtime( realpath( "./inc/styles/social.css" ) ) ) ); ?></clab:location>
+			</clab:stylesheet>
+		</clab:stylesheets>
+		<clab:scripts />
+	</clab:head>
+	<clab:mast>
+		<clab:logo>D&amp;B</clab:logo>
+		<clab:mast-title>D&amp;B For Your Customers</clab:mast-title>
+		<clab:short-nav>
+			<clab:instance-load clab:definition="navigation" clab:instance-name="short-nav" />
+		</clab:short-nav>
+		<clab:top-nav>
+			<clab:instance-load clab:definition="dynamic-nav" clab:instance-name="top-nav" />
+		</clab:top-nav>
+	</clab:mast>
+	<clab:page>
+		<clab:heading>
+			<clab:heading-caption>Social Networking/Communities/Career Services</clab:heading-caption>
+			<clab:heading-deco>guyleaningonwindow</clab:heading-deco>
+		</clab:heading>
+		<clab:content>
+			<clab:column1>
+				<clab:deco-stub />
+				<clab:item-list>
+					<clab:items>
+						<clab:item>
+							<clab:content><p>Help your customers research businesses, discover connections between individuals and businesses, and evaluate potential employers, partners, or other relationships.</p></clab:content>
+						</clab:item>
+					</clab:items>
+				</clab:item-list>
+			</clab:column1>
+			<clab:body>
+				<h2>How you help your customers</h2>
+				<p>Your customers need to research businesses, and gain insight into the connections between those businesses and individuals of interest. They also need insight gleaned from social networking and community sources to help them evaluate potential employers, partners, or other relationships.</p>
+				<h2>How <span class="dnbfyc">D&amp;B For Your Customers</span> helps you</h2>
+				<p>Our data solutions for social networking, communities, and career services will help your customers make the connection. With easy integration into your systems and processes and unparalleled depth of information, your customers will rely on you for current, accurate social networking and community insight.</p>
+				<h3>The <em>extraordinary depth, breadth, and quality of our data</em> sets us apart.</h3>
+				<ul>
+					<li>The D&amp;B Global Database is the largest single source of local and global business data in the world, with information on more than 140 million global businesses in more than 190 countries.</li>
+					<li>Our world-class DUNSRight<sup>®</sup> Quality Process—with more than 2,000 separate automated and manual checks, and data updated more than 1.5 million times daily—ensures insight that is accurate, complete, timely, consistent and, most importantly, actionable.</li>
+					<li>Our flexible solutions allow you to append value-added data elements based on your requirements.</li>
+				</ul>
+				<h3>Our <em>database building and management capabilities</em> are one-of-a-kind.</h3>
+				<ul>
+					<li>Our patented Entity Matching technology and unique expertise enable you and your customers to effectively match and link similar data and maintain its quality over time.</li>
+					<li>Our globally recognized D-U-N-S<sup>®</sup> Number acts as a key for data, provides continuity and consistency, and eliminates records duplication.</li>
+					<li>Our reputation and the D&amp;B company name provide a benchmark standard for use in taxonomy and entity classification.</li>
+				</ul>
+				<h3>Our <em>uniquely qualified consultative team</em> has your back.</h3>
+				<ul>
+					<li>Specialized D&amp;B Relationship Managers have the expertise, insight, and flexibility to help you successfully integrate D&amp;B data and solutions into your offerings.</li>
+					<li>Our Social Networking and Communities Specialists can help your customers make connections.</li>
+					<li>Our one-touch dedicated “For Your Customers” customer hotline is at your service.</li>
+				</ul>
+			</clab:body>
+			<clab:column2>
+				<clab:phone-cta>
+					<clab:instance-load clab:definition="blue-shadow" clab:instance-name="phone-cta" />
+				</clab:phone-cta>
+				<clab:mission-statement>
+					<clab:instance-load clab:definition="blue-shadow" clab:instance-name="mission-statement" />
+				</clab:mission-statement>
+			</clab:column2>
+		</clab:content>
+	</clab:page>
+	<clab:footer>
+		<clab:copyright>© Dun &amp; Bradstreet, Inc., 2000–2009. All rights reserved.</clab:copyright>
+		<clab:footer-nav>
+			<clab:instance-load clab:definition="navigation" clab:instance-name="footer-nav" />
+		</clab:footer-nav>
+	</clab:footer>
+</clab:instance>

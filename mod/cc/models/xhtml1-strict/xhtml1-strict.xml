@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<cc:root xmlns:cc="http://www.xmvc.org/ns/cc/1.0" xmlns="http://www.w3.org/1999/xhtml">
+	<cc:head>
+		<cc:metatag cc:name="robots" cc:content="index, follow" />
+		<cc:metatag cc:name="generator" cc:content="xMVC.org" />
+		<cc:stylesheet cc:location="/inc/styles/cc/reset-0.0.7.css" />
+		<cc:stylesheet cc:location="/inc/styles/cc/typography.css" />
+		<cc:script cc:location="/inc/scripts/cc/jquery-1.3.2.tools.min.js" />
+	</cc:head>
+</cc:root>

@@ -40,8 +40,14 @@ class Core
 	private static function LoadControllerInstance()
 	{
 		self::$controllerName = self::GetRoutedController();
+		self::$controllerFile = Loader::Resolve( Loader::controllerFolder, self::$controllerName, Loader::controllerExtension );
 
-		if( ( self::$controllerFile = Loader::Resolve( Loader::controllerFolder, self::$controllerName, Loader::controllerExtension ) ) !== false )
+		if( self::$controllerFile === false )
+		{
+			self::AttemptFallbackRoute();
+		}
+
+		if( self::$controllerFile !== false )
 		{
 			require_once( self::$controllerFile );
 
@@ -54,10 +60,24 @@ class Core
 		}
 	}
 
+	private static function AttemptFallbackRoute()
+	{
+		if( isset( Config::$data[ "fallbackRoute" ] ) )
+		{
+			$originalNamespace = Loader::ExtractNamespace( Config::$data[ "fallbackRoute" ] );
+			$routeAsURI = Loader::StripNamespace( Config::$data[ "fallbackRoute" ] );
+
+			Routing::PathData( $routeAsURI . Routing::URI() );
+
+			self::$controllerName = Loader::AssignDefaultNamespace( self::GetRoutedController(), $originalNamespace );
+			self::$controllerFile = Loader::Resolve( Loader::controllerFolder, self::$controllerName, Loader::controllerExtension );
+		}
+	}
+
 	private static function IsIndex()
 	{
-		$pathData	= Routing::PathData();
-		$pathParts	= $pathData[ "pathParts" ];
+		$pathData = Routing::PathData();
+		$pathParts = $pathData[ "pathParts" ];
 
 		return( count( $pathParts ) <= 1 );
 	}

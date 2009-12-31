@@ -1,0 +1,99 @@
+<clab:instance clab:definition="inside" clab:instance-name="public" clab:friendly-name="Inside page" xmlns:clab="http://clab.xmvc.org/ns/clab/1.0" xmlns="http://www.w3.org/1999/xhtml">
+	<clab:metadata>
+		<clab:urlpath>/how-you-use-dnb-data/public-records/</clab:urlpath>
+		<clab:name>Public Records</clab:name>
+		<clab:child-for>
+			<clab:component clab:definition="inside" clab:instance-name="how" />
+		</clab:child-for>
+		<clab:visible-for>
+			<clab:component clab:definition="dynamic-nav" clab:instance-name="top-nav" />
+		</clab:visible-for>
+		<clab:clickable-for>
+			<clab:component clab:definition="dynamic-nav" clab:instance-name="top-nav" />
+		</clab:clickable-for>
+	</clab:metadata>
+	<clab:head>
+		<clab:title>Public Records | D&amp;B For Your Customers</clab:title>
+		<clab:metatags />
+		<clab:stylesheets>
+			<clab:stylesheet>
+				<clab:location>/inc/styles/public.css?<?php echo( md5( filemtime( realpath( "./inc/styles/public.css" ) ) ) ); ?></clab:location>
+			</clab:stylesheet>
+		</clab:stylesheets>
+		<clab:scripts />
+	</clab:head>
+	<clab:mast>
+		<clab:logo>D&amp;B</clab:logo>
+		<clab:mast-title>D&amp;B For Your Customers</clab:mast-title>
+		<clab:short-nav>
+			<clab:instance-load clab:definition="navigation" clab:instance-name="short-nav" />
+		</clab:short-nav>
+		<clab:top-nav>
+			<clab:instance-load clab:definition="dynamic-nav" clab:instance-name="top-nav" />
+		</clab:top-nav>
+	</clab:mast>
+	<clab:page>
+		<clab:heading>
+			<clab:heading-caption>Public Records</clab:heading-caption>
+			<clab:heading-deco>guyleaningonwindow</clab:heading-deco>
+		</clab:heading>
+		<clab:content>
+			<clab:column1>
+				<clab:deco-stub />
+				<clab:item-list>
+					<clab:items>
+						<clab:item>
+							<clab:content><p>Help your customers with due diligence and research. The comprehensive D&amp;B Public Records Database includes suits, liens, judgments, bankruptcies, UCCs, and more.</p></clab:content>
+						</clab:item>
+					</clab:items>
+				</clab:item-list>
+			</clab:column1>
+			<clab:body>
+				<h2>How you help your customers</h2>
+				<p>Your customers need to use public information to help them make better business decisions. Perhaps they are conducting due diligence or research, and they look to you as a source of valuable information about legal matters involving the businesses in which they are interested.</p>
+				<h2>How <span class="dnbfyc">D&amp;B For Your Customers</span> helps you</h2>
+				<p>Among the largest of its kind, the D&amp;B Public Records Database is the perfect solution for companies offering due diligence and research solutions. Our solutions can help your customers to determine the status of a debtor company's assets, identify legal documents that impact credit files, spot patterns of litigation, identify business-related bankruptcy involvement, and more.</p>
+				<h3>The <em>extraordinary depth, breadth, and quality of our data</em> sets us apart.</h3>
+				<ul>
+					<li>The D&amp;B public records information database offers U.S. data that includes:
+						<ul>
+							<li>149 million public records from 3,100 U.S. courts and state offices</li>
+							<li>60 million business registrations</li>
+							<li>24 million suits, liens, and judgment filings</li>
+							<li>64 million UCC filings</li>
+							<li>1.1 million bankruptcy filings</li>
+						</ul>
+					</li>
+				</ul>
+				<h3>Our <em>database building and management capabilities</em> are one-of-a-kind.</h3>
+				<ul>
+					<li>We are the only data provider that collects business-related suit information.</li>
+					<li>96% of bankruptcies are added with 24 hours.</li>
+					<li>Public records from multiple jurisdictions are standardized and delivered in one easy-to-process format.</li>
+					<li>Our patented Entity Matching technology and unique expertise enable you and your customers to effectively match and link similar data and maintain its quality over time.</li>
+					<li>Our globally recognized D-U-N-S<sup>®</sup> Number acts as a key for data, provides continuity and consistency, and eliminates records duplication.</li>
+				</ul>
+				<h3>Our <em>uniquely qualified consultative team</em> has your back.</h3>
+				<ul>
+					<li>Specialized D&amp;B Relationship Managers have the expertise, insight, and flexibility to help you successfully integrate D&amp;B data and solutions into your offerings.</li>
+					<li>Our Public Records Specialists bring a dedicated focus on interpreting and helping your customers act on insight gained from public records.</li>
+					<li>Our one-touch dedicated “For Your Customers” customer hotline is at your service.</li>
+				</ul>
+			</clab:body>
+			<clab:column2>
+				<clab:phone-cta>
+					<clab:instance-load clab:definition="blue-shadow" clab:instance-name="phone-cta" />
+				</clab:phone-cta>
+				<clab:mission-statement>
+					<clab:instance-load clab:definition="blue-shadow" clab:instance-name="mission-statement" />
+				</clab:mission-statement>
+			</clab:column2>
+		</clab:content>
+	</clab:page>
+	<clab:footer>
+		<clab:copyright>© Dun &amp; Bradstreet, Inc., 2000–2009. All rights reserved.</clab:copyright>
+		<clab:footer-nav>
+			<clab:instance-load clab:definition="navigation" clab:instance-name="footer-nav" />
+		</clab:footer-nav>
+	</clab:footer>
+</clab:instance>

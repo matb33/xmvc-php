@@ -1,0 +1,10 @@
+<clab:instance clab:definition="navigation" clab:instance-name="footer-nav" clab:friendly-name="Standard navigation" xmlns:clab="http://clab.xmvc.org/ns/clab/1.0" xmlns="http://www.w3.org/1999/xhtml">
+	<clab:items>
+		<clab:item>
+			<clab:content><a href="http://www.dnb.com/US/home/privacy_policy/index.html?cm_re=Homepage*Footer*Privacy" target="privacypolicy">Privacy Policy</a> | </clab:content>
+		</clab:item>
+		<clab:item>
+			<clab:content><a href="#" onclick="window.open('http://www.dnb.com/us/home/termsofuse.html','terms','width=520,height=500,scrollbars=yes');return false;">Terms of Use</a></clab:content>
+		</clab:item>
+	</clab:items>
+</clab:instance>

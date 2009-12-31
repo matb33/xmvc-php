@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!-- This file defines all of the areas in this particular component.  This is exactly what a Wireframe is supposed to be. -->
+
+<grammar xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes" ns="http://clab.xmvc.org/ns/clab/1.0">
+
+	<start>
+		<element name="instance">
+			<attribute name="friendly-name">
+				<value type="string">Standard navigation</value>
+			</attribute>
+			<attribute name="definition">
+				<data type="string" />
+			</attribute>
+			<attribute name="instance-name">
+				<data type="string" />
+			</attribute>
+
+			<ref name="items" />
+		</element>
+	</start>
+
+	<define name="items">
+		<element name="items">
+			<zeroOrMore>
+				<interleave>
+					<element name="item">
+						<element name="content">
+							<data type="string" />
+						</element>
+
+						<ref name="items" />
+					</element>
+				</interleave>
+			</zeroOrMore>
+		</element>
+	</define>
+
+</grammar>
