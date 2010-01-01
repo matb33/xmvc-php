@@ -10,7 +10,7 @@ class Config
 	{
 		$path = substr( $path, -1 ) == "/" ? substr( $path, 0, -1 ) : $path;
 
-		foreach( glob( $path ) as $expandedPath )
+		foreach( glob( $path, GLOB_ONLYDIR | GLOB_BRACE ) as $expandedPath )
 		{
 			self::LoadByPath( $expandedPath );
 		}

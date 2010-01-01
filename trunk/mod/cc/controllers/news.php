@@ -7,7 +7,7 @@ use xMVC\Sys\XMLModelDriver;
 use xMVC\Sys\FilesystemModelDriver;
 use xMVC\Sys\View;
 
-class About extends Website
+class News extends Website
 {
 	public function __construct()
 	{
@@ -16,9 +16,10 @@ class About extends Website
 
 	public function Index()
 	{
-		$model = new XMLModelDriver( __NAMESPACE__ . "\\standard/about" );
+		$model = new XMLModelDriver( __NAMESPACE__ . "\\rss/news" );
+		$model = self::ExpandRSSFeeds( $model );
 
-		$view = new View( __NAMESPACE__ . "\\standard" );
+		$view = new View( __NAMESPACE__ . "\\rss" );
 		$view->PushModel( $model );
 		$view->PushModel( $this->stringData );
 

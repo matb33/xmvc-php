@@ -1,15 +1,5 @@
 <?php
 
-// re-build example to be a fake "corporate site" (perhaps if designed well, this could be incentive for people to use xMVC as a starter?):
-// Home (xhtml-1.0-strict/home)
-// About (xhtml-1.0-strict/inside/standard)
-// News (xhtml-1.0-strict/inside/articles)
-// Careers (xhtml-1.0-strict/inside/articles)
-// Contact (xhtml-1.0-strict/inside/contact)
-// Customer Area
-// Terms of Use (xhtml-1.0-strict/inside/standard)
-// Privacy Policy (xhtml-1.0-strict/inside/standard)
-
 namespace Module\CC;
 
 use xMVC\Sys\Loader;
@@ -42,6 +32,43 @@ class Website
 		}
 
 		return( $page );
+	}
+
+	protected function ExpandRSSFeeds( $model )
+	{
+		foreach( $model->xPath->query( "//cc:rss-feed" ) as $node )
+		{
+			$rssModel = new XMLModelDriver( $node->getAttribute( "cc:url" ) );
+			$rssNodes = $rssModel->xPath->query( "//rss" );
+
+			if( $rssNodes->length > 0 )
+			{
+				$node->setAttribute( "xmlns", "http://cyber.law.harvard.edu/rss/rss.html" );
+
+				$rssNode = $rssNodes->item( 0 );
+				$newNode = $model->importNode( $rssNode, true );
+				$node->appendChild( $newNode );
+			}
+		}
+
+		return( $model );
+	}
+
+	protected function ExpandGetStrings( $model, $stringModel )
+	{
+		foreach( $model->xPath->query( "//cc:get-string" ) as $stringNode )
+		{
+			$currentKey = $stringNode->getAttribute( "cc:name" );
+			$targetStringNode = $stringModel->xPath->query( "//xmvc:" . $currentKey );
+
+			if( $targetStringNode->length > 0 )
+			{
+				$textNode = $model->createTextNode( $targetStringNode->item( 0 )->nodeValue );
+				$stringNode->parentNode->replaceChild( $textNode, $stringNode );
+			}
+		}
+
+		return( $model );
 	}
 }
 

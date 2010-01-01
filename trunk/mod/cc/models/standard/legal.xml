@@ -10,13 +10,17 @@
 
 	<cc:xhtml1-strict>
 		<cc:head>
-			<cc:title>About Us | Example Website</cc:title>
+			<cc:title>Legal | Example Website</cc:title>
 		</cc:head>
 		<cc:inside>
 			<cc:standard>
-				<cc:heading>About Us</cc:heading>
+				<cc:heading>Legal</cc:heading>
 				<cc:content cc:xhtml="1">
-					<p>This is an example website that demonstrates various common functionality of corporate-style websites.</p>
+					<p>Please choose from the following legal pages:</p>
+					<ul>
+						<li><a href="/legal/terms-of-use/">Terms of Use</a></li>
+						<li><a href="/legal/privacy-policy/">Privacy Policy</a></li>
+					</ul>
 				</cc:content>
 			</cc:standard>
 		</cc:inside>

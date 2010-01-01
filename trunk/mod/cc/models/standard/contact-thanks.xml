@@ -10,13 +10,13 @@
 
 	<cc:xhtml1-strict>
 		<cc:head>
-			<cc:title>About Us | Example Website</cc:title>
+			<cc:title>Contact Us | Example Website</cc:title>
 		</cc:head>
 		<cc:inside>
 			<cc:standard>
-				<cc:heading>About Us</cc:heading>
+				<cc:heading>Thanks!</cc:heading>
 				<cc:content cc:xhtml="1">
-					<p>This is an example website that demonstrates various common functionality of corporate-style websites.</p>
+					<p>Thank you for contacting us.</p>
 				</cc:content>
 			</cc:standard>
 		</cc:inside>

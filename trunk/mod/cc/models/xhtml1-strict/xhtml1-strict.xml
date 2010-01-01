@@ -5,6 +5,7 @@
 		<cc:metatag cc:name="generator" cc:content="xMVC.org" />
 		<cc:stylesheet cc:location="/inc/styles/cc/reset-0.0.7.css" />
 		<cc:stylesheet cc:location="/inc/styles/cc/typography.css" />
+		<cc:stylesheet cc:location="/inc/styles/cc/common.css" />
 		<cc:script cc:location="/inc/scripts/cc/jquery-1.3.2.tools.min.js" />
 	</cc:head>
 </cc:root>
