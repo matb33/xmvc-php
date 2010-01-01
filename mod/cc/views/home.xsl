@@ -5,12 +5,19 @@
 	xmlns:xmvc="http://www.xmvc.org/ns/xmvc/1.0"
 	xmlns:cc="http://www.xmvc.org/ns/cc/1.0">
 
-	<xsl:include href="mod/cc/views/inside.xsl" />
+	<xsl:include href="mod/cc/views/xhtml1-strict.xsl" />
+	<xsl:include href="mod/cc/views/navigation.xsl" />
 
-	<xsl:template match="cc:standard">
-		<div id="standard">
+	<xsl:template match="cc:home">
+
+		<div id="home">
+			<div id="header">
+				<xsl:apply-templates select="//cc:navigation[ @cc:name = 'top-nav' ]" />
+			</div>
+
 			<xsl:apply-templates />
 		</div>
+
 	</xsl:template>
 
 	<xsl:template match="cc:heading">

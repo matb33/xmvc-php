@@ -10,13 +10,14 @@
 
 	<cc:xhtml1-strict>
 		<cc:head>
-			<cc:title>About Us | Example Website</cc:title>
+			<cc:title>Customer Area | Example Website</cc:title>
 		</cc:head>
 		<cc:inside>
 			<cc:standard>
-				<cc:heading>About Us</cc:heading>
+				<cc:heading>Customer Area</cc:heading>
 				<cc:content cc:xhtml="1">
-					<p>This is an example website that demonstrates various common functionality of corporate-style websites.</p>
+					<p>Welcome <cc:get-string cc:name="logged-in-user" />.</p>
+					<p>This is the customer area. <a href="logout">Logout</a></p>
 				</cc:content>
 			</cc:standard>
 		</cc:inside>

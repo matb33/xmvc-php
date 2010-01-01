@@ -1,76 +1,91 @@
 h1
 {
 	font: normal 24px Arial, Helvetica, sans;
-	color: #192c37;
+	color: #333333;
+	margin-bottom: 12px;
 }
 
 h2
 {
-	font: normal 22px Arial, Helvetica, sans;
-	color: #253742;
-	margin-bottom: 13px;
+	font: normal 18px Arial, Helvetica, sans;
+	color: #333333;
+	margin-bottom: 12px;
 }
 
 h3
 {
-	font: normal 20px Arial, Helvetica, sans;
-	color: #192c37;
-	margin-bottom: 13px;
+	font: normal 17px Arial, Helvetica, sans;
+	color: #333333;
+	margin-bottom: 12px;
 }
 
 h4
 {
-	font: normal 18px Arial, Helvetica, sans;
-	color: #192c37;
-	margin-bottom: 13px;
+	font: normal 16px Arial, Helvetica, sans;
+	color: #333333;
+	margin-bottom: 12px;
 }
 
 h5
 {
-	font: normal 16px Arial, Helvetica, sans;
-	color: #192c37;
-	margin-bottom: 13px;
+	font: normal 15px Arial, Helvetica, sans;
+	color: #333333;
+	margin-bottom: 12px;
 }
 
 h6
 {
 	font: normal 14px Arial, Helvetica, sans;
-	color: #192c37;
-	margin-bottom: 13px;
+	color: #333333;
+	margin-bottom: 12px;
 }
 
 p
 {
 	font: normal 15px Arial, Helvetica, sans;
-	color: #959ea2;
-	margin-bottom: 13px;
+	color: #333333;
+	margin-bottom: 12px;
 }
 
 a
 {
 	font: normal 15px Arial, Helvetica, sans;
-	color: #47575f;
-	text-decoration: none;
-}
-
-a:hover
-{
+	color: #333388;
 	text-decoration: underline;
 }
 
 a:visited
 {
-	color: #67777f;
+	color: #555588;
+}
+
+a:hover
+{
+	text-decoration: none;
+	color: #000000;
+	background-color: #ffffaa;
 }
 
 a:active
 {
-	color: #87979f;
+	color: #338833;
+}
+
+label
+{
+	font: normal 15px Arial, Helvetica, sans;
+	color: #333333;
+}
+
+input
+{
+	font: normal 15px Arial, Helvetica, sans;
+	color: #333333;
 }
 
 ol, ul
 {
-	color: #959ea2;
+	color: #333333;
 }
 
 ol
@@ -91,7 +106,6 @@ ul li
 
 li
 {
-	font: normal 15px Arial, Helvetica, sans;
 }
 
 em

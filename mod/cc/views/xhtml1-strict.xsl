@@ -48,4 +48,22 @@
 
 	<xsl:template match="xmvc:*" />
 
+	<!-- Strip namespaces from XHTML using an identity template -->
+
+	<xsl:template match="*[ @cc:xhtml = '1' ]">
+		<xsl:apply-templates select="node()" />
+	</xsl:template>
+
+	<xsl:template match="*[ @cc:xhtml = '1' ]//*">
+		<xsl:element name="{ local-name() }">
+			<xsl:apply-templates select="@* | node()" />
+		</xsl:element>
+	</xsl:template>
+
+	<xsl:template match="*[ @cc:xhtml = '1' ]//@*">
+		<xsl:attribute name="{ local-name() }">
+			<xsl:apply-templates />
+		</xsl:attribute>
+	</xsl:template>
+
 </xsl:stylesheet>
