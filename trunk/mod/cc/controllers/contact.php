@@ -22,7 +22,7 @@ class Contact extends Website
 		$view->PushModel( $model );
 		$view->PushModel( $this->stringData );
 
-		self::PushDependencies( $view, $model );
+		$this->PushDependencies( $view );
 
 		$view->RenderAsHTML();
 	}
@@ -60,7 +60,7 @@ class Contact extends Website
 		$view->PushModel( $model );
 		$view->PushModel( $this->stringData );
 
-		self::PushDependencies( $view, $model );
+		$this->PushDependencies( $view );
 
 		$view->RenderAsHTML();
 	}
@@ -73,7 +73,7 @@ class Contact extends Website
 		$view->PushModel( $model );
 		$view->PushModel( $this->stringData );
 
-		self::PushDependencies( $view, $model );
+		$this->PushDependencies( $view );
 
 		$view->RenderAsHTML();
 	}

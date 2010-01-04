@@ -2,10 +2,7 @@
 <cc:root xmlns:cc="http://www.xmvc.org/ns/cc/1.0" xmlns="http://www.w3.org/1999/xhtml">
 
 	<cc:config>
-		<cc:dependency cc:type="xhtml1-strict" cc:instance="xhtml1-strict" />
 		<cc:dependency cc:type="inside" cc:instance="inside" />
-		<cc:dependency cc:type="navigation" cc:instance="top-nav" />
-		<cc:dependency cc:type="navigation" cc:instance="footer-nav" />
 	</cc:config>
 
 	<cc:xhtml1-strict>
