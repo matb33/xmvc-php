@@ -17,13 +17,13 @@ class News extends Website
 	public function Index()
 	{
 		$model = new XMLModelDriver( __NAMESPACE__ . "\\rss/news" );
-		$model = self::ExpandRSSFeeds( $model );
+		$model = $this->ExpandRSSFeeds( $model );
 
 		$view = new View( __NAMESPACE__ . "\\rss" );
 		$view->PushModel( $model );
 		$view->PushModel( $this->stringData );
 
-		self::PushDependencies( $view, $model );
+		$this->PushDependencies( $view );
 
 		$view->RenderAsHTML();
 	}

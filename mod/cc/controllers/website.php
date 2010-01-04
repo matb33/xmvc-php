@@ -21,17 +21,49 @@ class Website
 		$this->stringData->Add( "lang", $this->lang );
 	}
 
-	protected function PushDependencies( $page, $model )
+	protected function PushDependencies( &$view )
 	{
-		foreach( $model->xPath->query( "//cc:config/cc:dependency" ) as $node )
-		{
-			$type = $node->getAttribute( "cc:type" );
-			$instance = $node->getAttribute( "cc:instance" );
+		$initialStackXML = $view->GetStackedModels();
+		$dependencyModels = $this->GetDependencies( $initialStackXML );
 
-			$page->PushModel( new XMLModelDriver( __NAMESPACE__ . "\\" . $type . "/" . $instance ) );
+		foreach( $dependencyModels as $model )
+		{
+			$view->PushModel( $model );
+		}
+	}
+
+	private function GetDependencies( $stackXML, $dependencyModels = array() )
+	{
+		$model = new XMLModelDriver( $stackXML );
+		$dependencies = $model->xPath->query( "//cc:config/cc:dependency" );
+
+		if( count( $dependencies ) )
+		{
+			$subStackXML = "";
+
+			foreach( $dependencies as $node )
+			{
+				$type = $node->getAttribute( "cc:type" );
+				$instance = $node->getAttribute( "cc:instance" );
+
+				$modelName = __NAMESPACE__ . "\\" . $type . "/" . $instance;
+
+				if( !isset( $dependencyModels[ $modelName ] ) )
+				{
+					$instanceModel = new XMLModelDriver( $modelName );
+
+					$dependencyModels[ $modelName ] = $instanceModel;
+					$subStackXML .= $instanceModel->GetXMLForStacking();
+				}
+			}
+
+			if( strlen( $subStackXML ) > 0 )
+			{
+				$dependencyModels = $this->GetDependencies( $subStackXML, $dependencyModels );
+			}
 		}
 
-		return( $page );
+		return( $dependencyModels );
 	}
 
 	protected function ExpandRSSFeeds( $model )

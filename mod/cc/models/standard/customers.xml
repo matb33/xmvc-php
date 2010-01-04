@@ -7,14 +7,15 @@
 
 	<cc:xhtml1-strict>
 		<cc:head>
-			<cc:title>Contact Us | Example Website</cc:title>
+			<cc:title>Customers | Example Website</cc:title>
 		</cc:head>
 		<cc:inside>
 			<cc:standard>
-				<cc:heading>Thanks!</cc:heading>
-				<cc:content cc:xhtml="1">
-					<p>Thank you for contacting us.</p>
-				</cc:content>
+				<cc:heading>Hello my customers</cc:heading>
+				<cc:stuff cc:xhtml="1">
+					<p>Hey there.</p>
+					<p>Coool</p>
+				</cc:stuff>
 			</cc:standard>
 		</cc:inside>
 	</cc:xhtml1-strict>

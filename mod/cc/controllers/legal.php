@@ -22,7 +22,7 @@ class Legal extends Website
 		$view->PushModel( $model );
 		$view->PushModel( $this->stringData );
 
-		self::PushDependencies( $view, $model );
+		$this->PushDependencies( $view );
 
 		$view->RenderAsHTML();
 	}
@@ -35,7 +35,7 @@ class Legal extends Website
 		$view->PushModel( $model );
 		$view->PushModel( $this->stringData );
 
-		self::PushDependencies( $view, $model );
+		$this->PushDependencies( $view );
 
 		$view->RenderAsHTML();
 	}
@@ -48,7 +48,7 @@ class Legal extends Website
 		$view->PushModel( $model );
 		$view->PushModel( $this->stringData );
 
-		self::PushDependencies( $view, $model );
+		$this->PushDependencies( $view );
 
 		$view->RenderAsHTML();
 	}

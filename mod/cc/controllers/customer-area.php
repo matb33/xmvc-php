@@ -25,13 +25,13 @@ class Customer_area extends Website
 
 			$this->stringData->Add( "logged-in-user", Authenticator::GetUserData( "login" ) );
 
-			$model = self::ExpandGetStrings( $model, $this->stringData );
+			$model = $this->ExpandGetStrings( $model, $this->stringData );
 
 			$view = new View( __NAMESPACE__ . "\\standard" );
 			$view->PushModel( $model );
 			$view->PushModel( $this->stringData );
 
-			self::PushDependencies( $view, $model );
+			$this->PushDependencies( $view );
 
 			$view->RenderAsHTML();
 		}
