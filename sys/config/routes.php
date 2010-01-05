@@ -1,5 +1,5 @@
 <?php
 
-$routes[ "/^\/load(.*)/" ] = "xMVC\\Sys\\load%1";
+$priorityRoutes[ "/^\/load(.*)/" ] = "xMVC\\Sys\\load%1";
 
 ?>
