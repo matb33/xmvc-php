@@ -1,18 +1,16 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<cc:root xmlns:cc="http://www.xmvc.org/ns/cc/1.0" xmlns="http://www.w3.org/1999/xhtml">
+<cc:root xmlns:cc="urn:cc:root" xmlns="http://www.w3.org/1999/xhtml">
 
 	<cc:config>
-		<cc:dependency cc:type="inside" cc:instance="inside" />
+		<cc:dependency view="inside" model="inside" />
+		<cc:title>Contact Us | Example Website</cc:title>
 	</cc:config>
 
 	<cc:xhtml1-strict>
-		<cc:head>
-			<cc:title>Contact Us | Example Website</cc:title>
-		</cc:head>
 		<cc:inside>
 			<cc:standard>
 				<cc:heading>Thanks!</cc:heading>
-				<cc:content cc:xhtml="1">
+				<cc:content xhtml="1">
 					<p>Thank you for contacting us.</p>
 				</cc:content>
 			</cc:standard>

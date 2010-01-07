@@ -35,6 +35,7 @@ class Website
 	private function GetDependencies( $stackXML, $dependencyModels = array() )
 	{
 		$model = new XMLModelDriver( $stackXML );
+		$model->xPath->registerNamespace( "cc", "urn:cc:root" );
 		$dependencies = $model->xPath->query( "//cc:config/cc:dependency" );
 
 		if( count( $dependencies ) )
@@ -43,8 +44,8 @@ class Website
 
 			foreach( $dependencies as $node )
 			{
-				$type = $node->getAttribute( "cc:type" );
-				$instance = $node->getAttribute( "cc:instance" );
+				$type = $node->getAttribute( "view" );
+				$instance = $node->getAttribute( "model" );
 
 				$modelName = __NAMESPACE__ . "\\" . $type . "/" . $instance;
 
@@ -68,9 +69,11 @@ class Website
 
 	protected function ExpandRSSFeeds( $model )
 	{
+		$model->xPath->registerNamespace( "cc", "urn:cc:root" );
+
 		foreach( $model->xPath->query( "//cc:rss-feed" ) as $node )
 		{
-			$rssModel = new XMLModelDriver( $node->getAttribute( "cc:url" ) );
+			$rssModel = new XMLModelDriver( $node->getAttribute( "url" ) );
 			$rssNodes = $rssModel->xPath->query( "//rss" );
 
 			if( $rssNodes->length > 0 )
@@ -88,9 +91,11 @@ class Website
 
 	protected function ExpandGetStrings( $model, $stringModel )
 	{
+		$model->xPath->registerNamespace( "cc", "urn:cc:root" );
+
 		foreach( $model->xPath->query( "//cc:get-string" ) as $stringNode )
 		{
-			$currentKey = $stringNode->getAttribute( "cc:name" );
+			$currentKey = $stringNode->getAttribute( "name" );
 			$targetStringNode = $stringModel->xPath->query( "//xmvc:" . $currentKey );
 
 			if( $targetStringNode->length > 0 )

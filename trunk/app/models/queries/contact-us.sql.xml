@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <xmvc:database xmlns:xmvc="http://www.xmvc.org/ns/xmvc/1.0">
 	<xmvc:prepared-statements>
-		<xmvc:query xmvc:name="AddEntry">
+		<xmvc:query name="AddEntry">
 			<xmvc:sql><![CDATA[
 				INSERT INTO entries
 				(
@@ -15,7 +15,7 @@
 				VALUES ( NOW(), NOW(), ?, ?, ?, ? )
 			]]></xmvc:sql>
 		</xmvc:query>
-		<xmvc:query xmvc:name="GetInsertID">
+		<xmvc:query name="GetInsertID">
 			<xmvc:sql><![CDATA[
 				SELECT
 					LAST_INSERT_ID() AS insert_id

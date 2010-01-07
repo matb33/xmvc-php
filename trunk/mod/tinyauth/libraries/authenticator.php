@@ -32,7 +32,7 @@ class Authenticator
 				$authModel->SetParameters( array( ( string )$login, md5( ( string )$password ) ) );
 				$authModel->Execute();
 
-				$loginID = $authModel->xPath->query( "//xmvc:column[@xmvc:name='loginID']" )->item( 0 )->nodeValue;
+				$loginID = $authModel->xPath->query( "//xmvc:column[@name='loginID']" )->item( 0 )->nodeValue;
 
 				$authenticated = ( ! is_null( $loginID ) );
 
@@ -95,7 +95,7 @@ class Authenticator
 
 		foreach( self::$userDataFieldsToFetch as $fieldName )
 		{
-			$userData[ $fieldName ] = $userModel->xPath->query( "//xmvc:column[@xmvc:name='" . $fieldName . "']" )->item( 0 )->nodeValue;
+			$userData[ $fieldName ] = $userModel->xPath->query( "//xmvc:column[@name='" . $fieldName . "']" )->item( 0 )->nodeValue;
 		}
 
 		$_SESSION[ "authUserData" ] = $userData;

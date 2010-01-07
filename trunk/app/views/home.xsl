@@ -51,7 +51,7 @@
 				<ul>
 					<xsl:for-each select="//xmvc:filesystem/xmvc:folder/xmvc:file">
 						<li>
-							<xsl:value-of select="@xmvc:name" />
+							<xsl:value-of select="@name" />
 						</li>
 					</xsl:for-each>
 				</ul>

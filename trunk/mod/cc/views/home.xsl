@@ -3,7 +3,7 @@
 	xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 	xmlns:xmvc="http://www.xmvc.org/ns/xmvc/1.0"
-	xmlns:cc="http://www.xmvc.org/ns/cc/1.0">
+	xmlns:cc="urn:cc:root">
 
 	<xsl:include href="mod/cc/views/xhtml1-strict.xsl" />
 	<xsl:include href="mod/cc/views/navigation.xsl" />
@@ -12,7 +12,7 @@
 
 		<div id="home">
 			<div id="header">
-				<xsl:apply-templates select="//cc:navigation[ @cc:name = 'top-nav' ]" />
+				<xsl:apply-templates select="//cc:navigation[ @name = 'top-nav' ]" />
 			</div>
 
 			<xsl:apply-templates />

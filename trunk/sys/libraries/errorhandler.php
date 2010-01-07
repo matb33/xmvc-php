@@ -45,7 +45,7 @@ class ErrorHandler
 	{
 		$model = new XMLModelDriver( $modelName );
 
-		$data[ "headerType" ] = $model->xPath->query( "//xmvc:error[ @xmvc:code = '" . $data[ "errorCode" ] . "' ]/@xmvc:type" )->item( 0 )->nodeValue;
+		$data[ "headerType" ] = $model->xPath->query( "//xmvc:error[ @code = '" . $data[ "errorCode" ] . "' ]/@type" )->item( 0 )->nodeValue;
 
 		$header = self::CreateHeaderUsingPattern( $headerPattern, $data );
 
