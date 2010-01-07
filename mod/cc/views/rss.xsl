@@ -3,7 +3,7 @@
 	xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 	xmlns:xmvc="http://www.xmvc.org/ns/xmvc/1.0"
-	xmlns:cc="http://www.xmvc.org/ns/cc/1.0"
+	xmlns:cc="urn:cc:root"
 	xmlns:r="http://cyber.law.harvard.edu/rss/rss.html">
 
 	<xsl:include href="mod/cc/views/inside.xsl" />

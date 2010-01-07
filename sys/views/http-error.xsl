@@ -27,8 +27,8 @@
 	<xsl:template match="//xmvc:error" />
 	<xsl:template match="//xmvc:strings" />
 
-	<xsl:template match="//xmvc:error[ @xmvc:code = //xmvc:strings/xmvc:error-code ]">
-		<h1><xsl:value-of select="@xmvc:type" /> - <xsl:value-of select="@xmvc:code" /></h1>
+	<xsl:template match="//xmvc:error[ @code = //xmvc:strings/xmvc:error-code ]">
+		<h1><xsl:value-of select="@type" /> - <xsl:value-of select="@code" /></h1>
 		<p><xsl:apply-templates /></p>
 		<p>
 			<em>Controller File:</em>

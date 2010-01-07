@@ -3,7 +3,7 @@
 	xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 	xmlns:xmvc="http://www.xmvc.org/ns/xmvc/1.0"
-	xmlns:cc="http://www.xmvc.org/ns/cc/1.0">
+	xmlns:cc="urn:cc:root">
 
 	<xsl:output
 		method="xml"
@@ -23,26 +23,31 @@
 	<xsl:template match="cc:xhtml1-strict">
 		<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="{ //xmvc:strings/xmvc:lang }" lang="{ //xmvc:strings/xmvc:lang }">
 			<head>
-				<xsl:apply-templates select="//cc:head" />
+				<xsl:apply-templates select="//cc:config" />
 			</head>
 			<body>
-				<xsl:apply-templates select="*[ name() != 'cc:head' ]" />
+				<xsl:apply-templates select="*[ name() != 'cc:config' ]" />
 			</body>
 		</html>
 	</xsl:template>
 
-	<xsl:template match="cc:head">
+	<xsl:template match="cc:config">
 		<xsl:for-each select="cc:title">
 			<title><xsl:value-of select="." /></title>
 		</xsl:for-each>
 		<xsl:for-each select="cc:metatag">
-			<meta name="{ @cc:name }" content="{ @cc:content }" />
+			<meta name="{ @name }" content="{ @content }" />
 		</xsl:for-each>
 		<xsl:for-each select="cc:stylesheet">
-			<link rel="stylesheet" type="text/css" href="{ @cc:location }" />
+			<link rel="stylesheet" type="text/css" media="{ @media }" href="{ @location }" />
 		</xsl:for-each>
 		<xsl:for-each select="cc:script">
-			<script type="text/javascript" src="{ @cc:location }" />
+			<script type="text/javascript" src="{ @location }" />
+		</xsl:for-each>
+		<xsl:for-each select="cc:icon">
+			<link rel="icon" type="image/vnd.microsoft.icon" href="/{ @basename }.ico" />
+			<link rel="icon" type="image/gif" href="/{ @basename }.gif" />
+			<link rel="icon" type="image/png" href="/{ @basename }.png" />
 		</xsl:for-each>
 	</xsl:template>
 
@@ -50,17 +55,17 @@
 
 	<!-- Strip namespaces from XHTML using an identity template -->
 
-	<xsl:template match="*[ @cc:xhtml = '1' ]">
+	<xsl:template match="*[ @xhtml = '1' ]">
 		<xsl:apply-templates select="node()" />
 	</xsl:template>
 
-	<xsl:template match="*[ @cc:xhtml = '1' ]//*">
+	<xsl:template match="*[ @xhtml = '1' ]//*">
 		<xsl:element name="{ local-name() }">
 			<xsl:apply-templates select="@* | node()" />
 		</xsl:element>
 	</xsl:template>
 
-	<xsl:template match="*[ @cc:xhtml = '1' ]//@*">
+	<xsl:template match="*[ @xhtml = '1' ]//@*">
 		<xsl:attribute name="{ local-name() }">
 			<xsl:apply-templates />
 		</xsl:attribute>

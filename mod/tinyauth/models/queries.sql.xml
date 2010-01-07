@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <xmvc:database>
 	<xmvc:prepared-statements>
-		<xmvc:query xmvc:name="IsLoginPasswordValid">
+		<xmvc:query name="IsLoginPasswordValid">
 			<xmvc:sql><![CDATA[
 				SELECT
 					loginID
@@ -12,7 +12,7 @@
 					AND password = ?
 			]]></xmvc:sql>
 		</xmvc:query>
-		<xmvc:query xmvc:name="GetUserData">
+		<xmvc:query name="GetUserData">
 			<xmvc:sql><![CDATA[
 				SELECT
 					*

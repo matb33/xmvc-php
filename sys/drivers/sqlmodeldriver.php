@@ -38,21 +38,21 @@ class SQLModelDriver extends ModelDriver implements ModelDriverInterface
 
 	public function IsSuccessful()
 	{
-		$success = $this->xPath->query( "//xmvc:query[@xmvc:name='" . $this->currentQueryName . "']/xmvc:result/xmvc:success" )->item( 0 )->nodeValue == "true";
+		$success = $this->xPath->query( "//xmvc:query[@name='" . $this->currentQueryName . "']/xmvc:result/xmvc:success" )->item( 0 )->nodeValue == "true";
 
 		return( $success );
 	}
 
 	public function GetSingleRowValue( $field )
 	{
-		$value = $this->xPath->query( "//xmvc:query[@xmvc:name='" . $this->currentQueryName . "']/xmvc:result/xmvc:row/xmvc:column[@xmvc:name='" . $field . "']" )->item( 0 )->nodeValue;
+		$value = $this->xPath->query( "//xmvc:query[@name='" . $this->currentQueryName . "']/xmvc:result/xmvc:row/xmvc:column[@name='" . $field . "']" )->item( 0 )->nodeValue;
 
 		return( $value );
 	}
 
 	private function GetSQL()
 	{
-		$sql = trim( $this->queriesModel->xPath->query( "//xmvc:query[@xmvc:name='" . $this->currentQueryName . "']/xmvc:sql" )->item( 0 )->nodeValue );
+		$sql = trim( $this->queriesModel->xPath->query( "//xmvc:query[@name='" . $this->currentQueryName . "']/xmvc:sql" )->item( 0 )->nodeValue );
 
 		return( $sql );
 	}
@@ -76,7 +76,7 @@ class SQLModelDriver extends ModelDriver implements ModelDriverInterface
 		if( ! is_null( $this->currentQueryName ) )
 		{
 			$queryElement = $this->createElementNS( Core::namespaceXML, "xmvc:query" );
-			$nameAttribute = $this->createAttributeNS( Core::namespaceXML, "xmvc:name" );
+			$nameAttribute = $this->createAttribute( "name" );
 			$nameAttribute->value = $this->currentQueryName;
 			$queryElement->appendChild( $nameAttribute );
 			$this->rootElement->appendChild( $queryElement );
@@ -103,7 +103,7 @@ class SQLModelDriver extends ModelDriver implements ModelDriverInterface
 						foreach( $row as $key => $value )
 						{
 							$columnElement = $this->createElementNS( Core::namespaceXML, "xmvc:column" );
-							$nameAttribute = $this->createAttributeNS( Core::namespaceXML, "xmvc:name" );
+							$nameAttribute = $this->createAttribute( "name" );
 							$valueNode = $this->createCDATASection( $value );
 							$nameAttribute->value = $key;
 							$columnElement->appendChild( $nameAttribute );

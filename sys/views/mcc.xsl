@@ -3,7 +3,7 @@
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 	xmlns:xmvc="http://www.xmvc.org/ns/xmvc/1.0">
 
-	<xsl:template match="*[@xmvc:mcc = 'true']">
+	<xsl:template match="*[@mcc = 'true']">
 		<html>
 			<head>
 				<style type="text/css">
@@ -219,7 +219,7 @@
 		</html>
 	</xsl:template>
 
-	<xsl:template match="*[@xmvc:mcc = 'true']//*">
+	<xsl:template match="*[@mcc = 'true']//*">
 		<div class="push">
 			<xsl:choose>
 				<xsl:when test=".//*">

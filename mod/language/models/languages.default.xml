@@ -7,11 +7,11 @@
 	</lang:config>
 
 	<lang:language-list>
-		<lang:language lang:id="en">
+		<lang:language id="en">
 			<lang:title>English</lang:title>
 			<lang:host-match>www.xmvc.org</lang:host-match>
 		</lang:language>
-		<lang:language lang:id="fr">
+		<lang:language id="fr">
 			<lang:title>Français</lang:title>
 			<lang:host-match>www.xmvc-fr.org</lang:host-match>
 		</lang:language>

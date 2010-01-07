@@ -296,7 +296,7 @@ class View
 		{
 			$xmlHead .= "<" . "?xml-stylesheet type=\"text/xsl\" href=\"" . Routing::URIProtocol() . "://" . $_SERVER[ "HTTP_HOST" ] . "/load/view/xMVC::Sys::mcc\" ?" . ">\n";
 
-			$sourceViewAttribute = " xmvc:mcc=\"true\"";
+			$sourceViewAttribute = " mcc=\"true\"";
 		}
 		else
 		{
