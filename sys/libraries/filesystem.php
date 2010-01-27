@@ -7,6 +7,90 @@ class FileSystem
 	const FS_FILE = 1;
 	const FS_DIR = 2;
 
+	const FS_PERM_EXEC	= 0x0001;
+	const FS_PERM_WRITE = 0x0002;
+	const FS_PERM_READ	= 0x0004;
+
+	public static function CreateFolderStructure( $folder )
+	{
+		$folderParts = explode( "/", $folder );
+
+		for( $i = 2; $i < count( $folderParts ); $i++ )
+		{
+			$builtPath = implode( "/", array_slice( $folderParts, 0, $i ) );
+
+			if( ! self::PathExists( $builtPath ) )
+			{
+				mkdir( $builtPath );
+			}
+		}
+	}
+
+	public static function TestPermissions( $folder, $accessType )
+	{
+		if( self::PathExists( $folder ) )
+		{
+			$perms = fileperms( $folder );
+
+			$world = ( $accessType << 6 );
+			$group = ( $accessType << 3 );
+			$owner = ( $accessType << 0 );
+
+			$hasPerms = ( $perms & $world ) == $world |
+						( $perms & $group ) == $group |
+						( $perms & $owner ) == $owner;
+
+			return( $hasPerms );
+		}
+		else
+		{
+			return( false );
+		}
+	}
+
+	public static function EmptyFolder( $folder )
+	{
+		if( self::PathExists( $folder ) )
+		{
+			foreach( new \DirectoryIterator( $folder ) as $fileInfo )
+			{
+				if( !$fileInfo->isDot() )
+				{
+					$filename = str_replace( "\\", "/", $fileInfo->getPathname() );
+
+					if( $fileInfo->isDir() )
+					{
+						self::EmptyFolder( $filename );
+						rmdir( $filename );
+					}
+					else
+					{
+						unlink( $filename );
+					}
+				}
+			}
+
+			return( true );
+		}
+		else
+		{
+			return( false );
+		}
+	}
+
+	public static function PathExists( $path )
+	{
+		if( $path !== false )
+		{
+			if( realpath( $path ) !== false )
+			{
+				return( true );
+			}
+		}
+
+		return( false );
+	}
+
 	public static function GetFolderList( $rootFolder, $match = "/./", $getMeta = true )
 	{
 		$list[ $rootFolder ] = self::GetMeta( $rootFolder, $getMeta );
