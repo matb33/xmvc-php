@@ -2,6 +2,8 @@
 
 namespace xMVC\Sys;
 
+// TO-DO: Make this an abstract class where TransformForeignToXML is abstract
+
 class ModelDriver extends \DOMDocument
 {
 	public $xPath;

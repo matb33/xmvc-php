@@ -17,7 +17,7 @@ class Dynamic_nav
 			$this->GenerateInstanceXML( $instance, $hierarchy, $startNode );
 		}
 
-		$instance->SetXML( $instance->saveXML() );
+		//$instance->saveXML();
 	}
 
 	private function GenerateInstanceXML( &$instance, $hierarchy, $startNode )

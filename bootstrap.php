@@ -30,15 +30,21 @@ namespace xMVC\Sys
 
 			foreach( NamespaceMap::Iterate() as $mappedFile )
 			{
-				$mappedFile = Normalize::Filename( $mappedFile ) . "." . $extension;
-				$mappedFile = realpath( $mappedFile );
+				$file = Normalize::Filename( $mappedFile ) . "." . $extension;
+				$file = realpath( $file );
 
-				if( $mappedFile !== false )
+				if( $file === false )
 				{
-					$mappedFolder = Normalize::Path( dirname( $mappedFile ) );
-					$name = basename( $mappedFile );
+					$file = Normalize::Filename( $mappedFile );
+					$file = realpath( $file );
+				}
 
-					return( $mappedFolder . $name );
+				if( $file !== false )
+				{
+					$dirName = Normalize::Path( dirname( $file ) );
+					$name = basename( $file );
+
+					return( $dirName . $name );
 				}
 			}
 
