@@ -25,7 +25,7 @@ class DefaultEventDispatcher implements EventDispatcher
         $this->listeners = array();
     }
     
-    public function addEventListener(string $eventType, Delegate $delegate)
+    public function addEventListener($eventType, Delegate $delegate)
     {
         if( $this->eventListenerNotAdded( $eventType, $delegate ) )
         {
@@ -35,7 +35,7 @@ class DefaultEventDispatcher implements EventDispatcher
         }
     }
     
-    private function eventListenerNotAdded(string $eventType, Delegate $delegate)
+    private function eventListenerNotAdded($eventType, Delegate $delegate)
     {
         if( $this->bucketExists( $eventType ) )
         {                    
@@ -56,7 +56,7 @@ class DefaultEventDispatcher implements EventDispatcher
         return( isset( $this->listeners[ $eventType ] ) );
     }                
     
-    private function tryToCreateListenerBucket(string $eventType)
+    private function tryToCreateListenerBucket($eventType)
     {
         if( $this->buckDoesNotExist( $eventType ) )
         {            
@@ -69,7 +69,7 @@ class DefaultEventDispatcher implements EventDispatcher
         return( !$this->bucketExists( $eventType ) );
     }                
     
-    public function removeEventListener(string $eventType, Delegate $delegate)
+    public function removeEventListener($eventType, Delegate $delegate)
     {
         if( $this->bucketExists( $eventType ) )
         {
