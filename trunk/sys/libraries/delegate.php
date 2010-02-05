@@ -42,7 +42,7 @@ class Delegate
      */
     public function asCallback()
     {        
-        if( isset( $this->thisObject ) )
+        if( $this->thisObjectIsValid() )
         {                       
             $callback = array( $this->thisObject, $this->functionName );            
         }                       
@@ -53,17 +53,41 @@ class Delegate
         return( $callback );
     }
     
+    private function thisObjectIsValid()
+    {
+        return( isset( $this->thisObject ) && $this->thisObject != NULL );
+    }
+    
     private function callCallback( $callback, $arguments )
-    {                           
-        if( !is_callable( $callback ) )
-        {                        
-            return( NULL );
-        }        
-        if( count( $arguments ) == 0 )
+    {                    
+        $value = NULL;
+        if  ( $this->callbackCallable( $callback ) )
         {
-            return( call_user_func( $callback ) ); 
-        }                
-        return( call_user_func_array( $callback, $arguments ) );               
+            if( count( $arguments ) == 0 )
+            {
+                $value = $this->callWithNoArguments( $callback );
+            }
+            else
+            {
+                $value = $this->callWithArguments( $callback, $arguments );
+            }
+        }
+        return( $value );                     
+    }
+    
+    private function callbackCallable($callback)
+    {
+        return( is_callable( $callback ) );
+    }
+    
+    private function callWithNoArguments($callback)
+    {
+        return( call_user_func( $callback ) );
+    }
+    
+    private function callWithArguments($callback, $arguments)
+    {
+        return( call_user_func_array( $callback, $arguments ) );
     }
     
     /**

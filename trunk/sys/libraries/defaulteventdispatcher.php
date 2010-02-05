@@ -27,42 +27,51 @@ class DefaultEventDispatcher implements EventDispatcher
     
     public function addEventListener(string $eventType, Delegate $delegate)
     {
-        if( !$this->hasEventListener( $eventType, $delegate ) )
+        if( $this->eventListenerNotAdded( $eventType, $delegate ) )
         {
-            $bucket = $this->getOrCreateListenerBucket( $eventType );
+            $this->tryToCreateListenerBucket( $eventType );
+            $bucket = &$this->listeners[ $eventType ];
             $bucket[] = $delegate;
-            $this->listeners[ $eventType ] = $bucket;            
         }
     }
     
-    private function hasEventListener(string $eventType, Delegate $delegate)
+    private function eventListenerNotAdded(string $eventType, Delegate $delegate)
     {
-        if( isset( $this->listeners[ $eventType ] ) )
+        if( $this->bucketExists( $eventType ) )
         {                    
             $bucket = $this->listeners[ $eventType ];        
             foreach( $bucket as $value )
             {
                 if( $value->equals( $delegate ) )
                 {
-                    return( true );
+                    return( false );
                 }
             }
         }
-        return( false );
+        return( true );
     }
     
-    private function getOrCreateListenerBucket(string $eventType)
+    private function bucketExists($eventType)
     {
-        if( !isset( $this->listeners[ $eventType ] ) )
+        return( isset( $this->listeners[ $eventType ] ) );
+    }                
+    
+    private function tryToCreateListenerBucket(string $eventType)
+    {
+        if( $this->buckDoesNotExist( $eventType ) )
         {            
             $this->listeners[ $eventType ] = array();          
-        }        
-        return( $this->listeners[ $eventType ] );
+        }                
     }
+    
+    private function buckDoesNotExist($eventType)
+    {
+        return( !$this->bucketExists( $eventType ) );
+    }                
     
     public function removeEventListener(string $eventType, Delegate $delegate)
     {
-        if( isset( $this->listeners[ $eventType ] ) )
+        if( $this->bucketExists( $eventType ) )
         {
             $bucket = &$this->listeners[ $eventType ];
             foreach( $bucket as $key => $value )
@@ -87,7 +96,7 @@ class DefaultEventDispatcher implements EventDispatcher
     public function dispatchEvent(Event $event)
     {        
         $eventType = $event->type;
-        if( isset( $this->listeners[ $eventType ] ) )
+        if( $this->bucketExists( $eventType ) )
         {            
             $event->target = $this->target;
             $bucket = $this->listeners[ $eventType ];

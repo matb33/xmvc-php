@@ -22,7 +22,7 @@ class Event
     {
         $this->type = $type;
         $this->arguments = ($args == NULL) ? array() : $args;
-    }  
+    }         
     
     public function __toString()
     {
