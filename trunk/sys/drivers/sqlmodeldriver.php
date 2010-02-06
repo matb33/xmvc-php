@@ -36,6 +36,16 @@ class SQLModelDriver extends ModelDriver implements ModelDriverInterface
 		$this->currentParameters = $parameters;
 	}
 
+	public function AddParameter( $parameter )
+	{
+		if( is_null( $this->currentParameters ) )
+		{
+			$this->currentParameters = array();
+		}
+
+		$this->currentParameters[] = $parameter;
+	}
+
 	public function IsSuccessful()
 	{
 		$success = $this->xPath->query( "//xmvc:query[@name='" . $this->currentQueryName . "']/xmvc:result/xmvc:success" )->item( 0 )->nodeValue == "true";
