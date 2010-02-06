@@ -21,13 +21,13 @@ class DefaultEventDispatcher implements EventDispatcher
      * this event dispatcher. This is useful for classes that cannot extend from DefaultEventDispatcher
      * and can only implement the EventDispatcher interface.
      */
-    public function __construct(EventDispatcher $target = NULL)
+    public function __construct( EventDispatcher $target = NULL )
     {
         $this->target = ( $target == NULL ) ? $this : $target;
         $this->listeners = array();
     }
 
-    public function addEventListener($eventType, Delegate $delegate)
+    public function addEventListener( $eventType, Delegate $delegate )
     {
         if( $this->eventListenerNotAdded( $eventType, $delegate ) )
         {
@@ -37,11 +37,12 @@ class DefaultEventDispatcher implements EventDispatcher
         }
     }
 
-    private function eventListenerNotAdded($eventType, Delegate $delegate)
+    private function eventListenerNotAdded( $eventType, Delegate $delegate )
     {
         if( $this->bucketExists( $eventType ) )
         {
             $bucket = $this->listeners[ $eventType ];
+
             foreach( $bucket as $value )
             {
                 if( $value->equals( $delegate ) )
@@ -50,15 +51,16 @@ class DefaultEventDispatcher implements EventDispatcher
                 }
             }
         }
+
         return( true );
     }
 
-    private function bucketExists($eventType)
+    private function bucketExists( $eventType )
     {
         return( isset( $this->listeners[ $eventType ] ) );
     }
 
-    private function tryToCreateListenerBucket($eventType)
+    private function tryToCreateListenerBucket( $eventType )
     {
         if( $this->buckDoesNotExist( $eventType ) )
         {
@@ -66,16 +68,17 @@ class DefaultEventDispatcher implements EventDispatcher
         }
     }
 
-    private function buckDoesNotExist($eventType)
+    private function buckDoesNotExist( $eventType )
     {
         return( !$this->bucketExists( $eventType ) );
     }
 
-    public function removeEventListener($eventType, Delegate $delegate)
+    public function removeEventListener( $eventType, Delegate $delegate )
     {
         if( $this->bucketExists( $eventType ) )
         {
             $bucket = &$this->listeners[ $eventType ];
+
             foreach( $bucket as $key => $value )
             {
                 if( $value->equals( $delegate ) )
@@ -95,13 +98,15 @@ class DefaultEventDispatcher implements EventDispatcher
         }
     }
 
-    public function dispatchEvent(Event $event)
+    public function dispatchEvent( Event $event )
     {
         $eventType = $event->type;
+
         if( $this->bucketExists( $eventType ) )
         {
             $event->target = $this->target;
             $bucket = $this->listeners[ $eventType ];
+
             foreach( $bucket as $delegate )
             {
                 $delegate->call( $event );

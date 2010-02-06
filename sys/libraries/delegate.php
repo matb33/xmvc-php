@@ -34,6 +34,7 @@ class Delegate
     public function call()
     {
         $callback = $this->asCallback();
+
         return( $this->callCallback( $callback, func_get_args() ) );
     }
 
@@ -50,6 +51,7 @@ class Delegate
         {
             $callback = $this->functionName;
         }
+
         return( $callback );
     }
 
@@ -61,7 +63,8 @@ class Delegate
     private function callCallback( $callback, $arguments )
     {
         $value = NULL;
-        if  ( $this->callbackCallable( $callback ) )
+
+        if( $this->callbackCallable( $callback ) )
         {
             if( count( $arguments ) == 0 )
             {
@@ -72,20 +75,21 @@ class Delegate
                 $value = $this->callWithArguments( $callback, $arguments );
             }
         }
+
         return( $value );
     }
 
-    private function callbackCallable($callback)
+    private function callbackCallable( $callback )
     {
         return( is_callable( $callback ) );
     }
 
-    private function callWithNoArguments($callback)
+    private function callWithNoArguments( $callback )
     {
         return( call_user_func( $callback ) );
     }
 
-    private function callWithArguments($callback, $arguments)
+    private function callWithArguments( $callback, $arguments )
     {
         return( call_user_func_array( $callback, $arguments ) );
     }
