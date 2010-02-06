@@ -18,10 +18,10 @@ class Event
      * Constructs a new event object with the specified type and option arguments.
      * If the arguments is NULL then the arguments property is set to an empty array.
      */
-    public function __construct($type, array $args = NULL)
+    public function __construct( $type, array $args = NULL )
     {
         $this->type = $type;
-        $this->arguments = ($args == NULL) ? array() : $args;
+        $this->arguments = ( $args == NULL ) ? array() : $args;
     }
 
     public function __toString()
