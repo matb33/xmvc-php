@@ -1,9 +1,7 @@
 <?php
 
-$defaultController = "Module\\CC\\home";
-//$fallbackRoute = "Module\\CC\\root/page";
-
-//$routes[ "/^\/sitemap\.xml(.*)/" ] = "Module\\CC\\root/sitemap%1";
-$routes[ "/^\/(.+)/" ] = "Module\\CC\\%1";
+$routes[ "/^\/robots\.txt$/" ] = "Module\\CC\\robotstxt";
+$routes[ "/^\/sitemap-([a-z]+)\.xml$/" ] = "Module\\CC\\sitemapxml/view/%1";
+$routes[ "/^\/ccms(.*)/" ] = "Module\\CC\\ccms-admin%1";
 
 ?>
