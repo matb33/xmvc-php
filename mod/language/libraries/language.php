@@ -36,34 +36,21 @@ class Language
 		return( self::$language );
 	}
 
+	public static function GetDefinedLangs()
+	{
+		self::LoadLanguageModel();
+		self::LoadLanguageData();
+
+		$definedLanguages = array_keys( self::$data );
+
+		return( $definedLanguages );
+	}
+
 	private static function LoadLanguageModel()
 	{
 		if( is_null( self::$languages ) )
 		{
-			//if( self::LanguageConfigExists() )
-			//{
-			//	self::CreateDefaultLanguageConfig();
-			//}
-
 			self::$languages = new XMLModelDriver( self::languageConfig );
-		}
-	}
-
-	private static function LanguageConfigExists()
-	{
-		//return( Loader::Exists( Loader::modelFolder, self::languageConfig, Loader::modelExtension ) );
-		return( true );
-	}
-
-	private static function CreateDefaultLanguageConfig()
-	{
-		// TO-DO: Finish this with new namespacing, because this will work much better with the new idea of namespacing (as far as I can imagine).
-		$source	= Loader::Resolve( Loader::modelFolder, self::languageConfigDefault, Loader::modelExtension );
-		$destination = Loader::Resolve( Loader::modelFolder, self::languageConfig, Loader::modelExtension );	//not working because file needs to EXIST in order for this function to return something!
-
-		if( $source !== false )
-		{
-			copy( $source, $destination );
 		}
 	}
 
