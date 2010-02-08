@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8" ?>
-<cc:root xmlns:cc="urn:cc:root" xmlns="http://www.w3.org/1999/xhtml">
-	<cc:config>
-		<cc:dependency view="xhtml1-strict" model="xhtml1-strict" />
-		<cc:dependency view="navigation" model="top-nav" />
-		<cc:dependency view="navigation" model="footer-nav" />
-		<cc:stylesheet location="/inc/styles/cc/inside.css" />
-	</cc:config>
-</cc:root>
