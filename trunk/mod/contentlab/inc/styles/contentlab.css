@@ -1,0 +1,17 @@
+.clab
+{
+}
+
+.clab-editing
+{
+	background-color: #b5d4fe;
+	outline: 0 none;
+	text-indent: 0;
+}
+
+.clab-editable
+{
+	background-color: #ccffcc;
+	outline: 0 none;
+	text-indent: 0;
+}
