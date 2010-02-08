@@ -1,0 +1,137 @@
+#body h1
+{
+	width: 408px;
+	height: 29px;
+
+	margin: 0px;
+	padding: 8px 20px 0px 12px;
+
+	background-image: url( "../images/lightbox-header-tile.gif" );
+	background-repeat: repeat-x;
+	background-position: 0px 0px;
+
+	color: #ffffff;
+
+	font-size: 90%;
+}
+
+#body h2
+{
+	margin: 0px;
+	padding: 0px;
+
+	margin-bottom: 8px;
+}
+
+#content em
+{
+	font-weight: bold;
+	font-style: normal;
+}
+
+#content
+{
+	padding: 10px 0px 0px 0px;
+	font-size: 90%;
+	overflow: hidden;
+}
+
+#content form
+{
+	width: 396px;
+	margin: 0px auto;
+}
+
+#contact-by-phone,
+#contact-by-email
+{
+	margin-bottom: 16px;
+}
+
+#content label
+{
+	display: block;
+	font-size: 90%;
+	font-weight: bold;
+	margin-bottom: 4px;
+}
+
+#content div.firstname,
+#content div.lastname,
+#content div.email,
+#content div.phone
+{
+}
+
+#content div.firstname,
+#content div.email
+{
+	clear: left;
+	float: left;
+	width: 204px;
+}
+
+#content div.lastname,
+#content div.phone
+{
+	float: left;
+	width: 184px;
+}
+
+#content div.email,
+#content div.phone
+{
+	padding-top: 2px;
+}
+
+input#firstname,
+input#lastname,
+input#email,
+input#phone
+{
+	width: 182px;
+}
+
+#content div.state,
+#content div.company,
+#content div.numemployees
+{
+	clear: left;
+	padding-top: 8px;
+}
+
+#content div.numemployees
+{
+	padding-bottom: 16px;
+}
+
+#content input.submitbutton
+{
+	clear: both;
+
+	background-image: url( "../images/button_bg.gif" );
+	background-repeat: no-repeat;
+	background-position: top left;
+
+	border: 0px;
+
+	color: #ffffff;
+	font-size: 100%;
+	font-weight: bold;
+
+	width: 75px;
+	height: 32px;
+
+	padding-bottom: 6px;
+	*padding-bottom: 3px;
+}
+
+#content p.thanks
+{
+	font-size: 120%;
+	font-weight: bold;
+	color: #000066;
+	text-align: center;
+	margin: 0px;
+	padding: 0px;
+}
