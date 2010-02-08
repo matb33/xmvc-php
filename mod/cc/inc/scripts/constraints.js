@@ -209,7 +209,11 @@ var ConstraintVisuals = new function()
 	{
 		fieldCollection.each( function()
 		{
-			$( this ).closest( "label" ).addClass( "constraint-loading" );
+			var closestLabel = $( this ).closest( "label" );
+
+			closestLabel.addClass( "constraint-loading" );
+			closestLabel.removeClass( "constraint-success" );
+			closestLabel.removeClass( "constraint-fail" );
 		});
 	};
 
@@ -221,11 +225,11 @@ var ConstraintVisuals = new function()
 
 		if( valid )
 		{
-			closestLabel.removeClass( "constraint-valid" );
+			closestLabel.addClass( "constraint-success" );
 		}
 		else
 		{
-			closestLabel.removeClass( "constraint-invalid" );
+			closestLabel.addClass( "constraint-fail" );
 		}
 	};
 }
