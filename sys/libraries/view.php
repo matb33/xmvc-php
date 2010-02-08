@@ -43,6 +43,16 @@ class View
 		return( $model );
 	}
 
+	public function GetModels()
+	{
+		return( $this->models );
+	}
+
+	public function PutModels( $models )
+	{
+		$this->models = $models;
+	}
+
 	public function RenderAsHTML( $data = null, $omitRoot = null )
 	{
 		return( $this->Render( $data, "HTML", $omitRoot ) );
