@@ -294,13 +294,12 @@ class View
 	{
 		$encodedData = "";
 		$sourceViewAttribute = "";
+		$xmlHead = "";
 
 		if( ! is_null( $data ) )
 		{
 			$encodedData = Normalize::EncodeData( $data );
 		}
-
-		$xmlHead = "<" . "?xml version=\"1.0\" encoding=\"utf-8\" ?" . ">\n";
 
 		if( self::IsSourceViewOn() )
 		{
