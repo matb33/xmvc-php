@@ -43,7 +43,7 @@ class Constraints
 		{
 			$constraintResults->SetTarget( $this->targetField );
 
-			foreach( $this->sourceModel->xPath->query( "//cc:field[ @name = '" . $this->targetField->name . "' ]/cc:constraint" ) as $constraintNode )
+			foreach( $this->sourceModel->xPath->query( "//form:field[ @name = '" . $this->targetField->name . "' ]/form:constraint" ) as $constraintNode )
 			{
 				$type = $constraintNode->getAttribute( "type" );
 				$against = $constraintNode->getAttribute( "against" );
@@ -79,7 +79,7 @@ class Constraints
 
 	private function LookForMessages( &$constraint, &$constraintNode )
 	{
-		$messageNodeList = $this->sourceModel->xPath->query( "cc:message[ @lang = '" . Language::GetLang() . "' ]", $constraintNode );
+		$messageNodeList = $this->sourceModel->xPath->query( "form:message[ @lang = '" . Language::GetLang() . "' ]", $constraintNode );
 
 		$constraintMessages = new ConstraintMessages();
 

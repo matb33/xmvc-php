@@ -132,6 +132,19 @@ class CC
 
 				$itemNode->removeAttribute( "cc:page-name" );
 			}
+
+			foreach( $model->xPath->query( "//cc:*[ @cc:page-name != '' ]" ) as $itemNode )
+			{
+				$pageName = $itemNode->getAttribute( "cc:page-name" );
+
+				$path = Sitemap::GetPathByPageNameAndLanguage( $pageName, Language::GetLang() );
+
+				$linkNode = $model->createAttribute( "href" );
+				$linkNode->value = $path;
+				$itemNode->appendChild( $linkNode );
+
+				$itemNode->removeAttribute( "cc:page-name" );
+			}
 		}
 	}
 
