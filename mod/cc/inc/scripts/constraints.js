@@ -57,7 +57,7 @@ var Constraints = new function()
 
 		if( receivedProperResponse )
 		{
-			var rootElement = $( "cc\\:root", data );
+			var rootElement = $( "cc\\:constraint-results", data );
 			var fullSuccess = rootElement.attr( "success" ) == "true";
 
 			$( "cc\\:field", data ).each( function()
