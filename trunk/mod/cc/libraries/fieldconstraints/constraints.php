@@ -21,34 +21,18 @@ class Constraints
 	{
 		self::$postFields = $postFields;
 
-		$constraintResults = array();
+		$constraintResultsList = array();
 
 		foreach( self::$postFields as $name => $value )
 		{
 			$constraints = new Constraints( $name, $value, $sourceModel );
 
-			$constraintResults[] = $constraints->GetConstraintResults()->ToArray();
+			$constraintResultsList[] = $constraints->GetConstraintResults();
 		}
 
-		return( $constraintResults );
-	}
+		$resultsModel = new ConstraintResultsModelDriver( $constraintResultsList );
 
-	public static function DoTheseResultsValidate( $fields )
-	{
-		$valid = true;
-
-		foreach( $fields as $field )
-		{
-			if( is_array( $field[ "results" ] ) )
-			{
-				foreach( $field[ "results" ] as $result )
-				{
-					$valid = $valid && $result[ "success" ];
-				}
-			}
-		}
-
-		return( $valid );
+		return( $resultsModel );
 	}
 
 	public function GetConstraintResults()
