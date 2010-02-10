@@ -46,7 +46,7 @@ var Constraints = new function()
 			type: "POST",
 			async: true,
 			data: this.GetParameters( this.GetUniquelyNamedFieldCollection( field ) ),
-			dataType: "json",
+			dataType: "xml",
 			success: function( data, textStatus ) { Constraints.OnResponseFromServer( data, textStatus, field ) }
 		});
 	};
@@ -57,33 +57,23 @@ var Constraints = new function()
 
 		if( receivedProperResponse )
 		{
-			var valid = false;
-			var collectionValid = true;
+			var rootElement = $( "cc\\:root", data );
+			var fullSuccess = rootElement.attr( "success" ) == "true";
 
-			for( var i = 0; i < data.length; i++ )
+			$( "cc\\:field", data ).each( function()
 			{
-				var field = $( "form *[ name='" + this.EscapeName( data[ i ].name ) + "' ], form *[ name='" + this.EscapeName( data[ i ].name ) + "\\[\\]' ]" );
+				var name = $( this ).attr( "name" );
+				var fieldSuccess = $( this ).attr( "success" ) == "true";
+				var field = $( "form *[ name='" + Constraints.EscapeName( name ) + "' ], form *[ name='" + Constraints.EscapeName( name ) + "\\[\\]' ]" );
 
-				if( "results" in data[ i ] )
-				{
-					valid = true;
-
-					for( var j = 0; j < data[ i ].results.length; j++ )
-					{
-						var result = data[ i ].results[ j ];
-						valid = valid && result.success;
-						collectionValid = collectionValid && valid;
-					}
-
-					ConstraintVisuals.OnFieldConstraintResult( field, valid );
-				}
-			}
+				ConstraintVisuals.OnFieldConstraintResult( field, fieldSuccess );
+			});
 
 			if( eventField.is( "form" ) )
 			{
-				this.allowOnNextSubmitEvent = collectionValid;
+				this.allowOnNextSubmitEvent = fullSuccess;
 
-				if( collectionValid )
+				if( fullSuccess )
 				{
 					$( "form" ).submit();
 				}
