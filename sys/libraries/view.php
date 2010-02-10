@@ -9,9 +9,12 @@ class View
 	private $xslViewName = null;
 	private $models = array();
 
-	public function __construct( $xslViewName, $namespace = null )
+	public function __construct( $xslViewName = null, $namespace = null )
 	{
-		$this->xslViewName = Loader::AssignDefaultNamespace( $xslViewName, $namespace );
+		if( ! is_null( $xslViewName ) )
+		{
+			$this->xslViewName = Loader::AssignDefaultNamespace( $xslViewName, $namespace );
+		}
 	}
 
 	public function AddModel( $model )

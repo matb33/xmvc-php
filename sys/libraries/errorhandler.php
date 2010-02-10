@@ -11,7 +11,7 @@ class ErrorHandler
 
 	public static function HandleErrors()
 	{
-		self::$oldErrorHandler = set_error_handler( array( Core::namespaceSys . "ErrorHandler", "ErrorHandlerXML" ) );
+		self::$oldErrorHandler = set_error_handler( array( Core::namespaceSys . "ErrorHandler", "ErrorHandlerPHP" ) );
 		self::$errorReporting = error_reporting();
 		self::$errors = "";
 
@@ -118,6 +118,18 @@ class ErrorHandler
 		}
 
 		return( $errors );
+	}
+
+	public static function ErrorHandlerPHP( $errorNumber, $errorMessage, $filename, $lineNum, $vars )
+	{
+		$errorException = new \ErrorException( $errorMessage, 0, $errorNumber, $filename, $lineNum );
+
+		if( ( $errorNumber & self::$errorReporting ) == $errorNumber )
+		{
+			echo( "[" . date( "Y-m-d H:i:s" ) . "] " . self::$errorTypes[ $errorNumber ] . ": " . $errorMessage . ". Line " . $lineNum . " in " . $filename ."\n" . $errorException->getTraceAsString() );
+		}
+
+		return( true );
 	}
 }
 
