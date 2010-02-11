@@ -14,57 +14,76 @@ use Module\Language\Language;
 
 class CC
 {
-	public static function PushDependencies( &$view )
+	private static function RegisterNamespaces( $model )
 	{
-		$initialStackXML = $view->GetStackedModels();
-		$dependencyModels = self::GetDependencies( $initialStackXML );
-
-		foreach( $dependencyModels as $model )
+		foreach( Config::$data[ "ccNamespaces" ] as $prefix => $namespace )
 		{
-			$view->PushModel( $model );
+			$model->xPath->registerNamespace( $prefix, $namespace );
 		}
+
+		return( $model );
 	}
 
-	private static function GetDependencies( $stackXML, $dependencyModels = array() )
+	public static function InjectDependencies( $model )
 	{
-		$model = new XMLModelDriver( $stackXML );
-		$model->xPath->registerNamespace( "cc", "urn:cc:root" );
-		$dependencies = $model->xPath->query( "//cc:config/cc:dependency" );
+		$model = self::RegisterNamespaces( $model );
 
-		if( count( $dependencies ) )
+		while( self::DependencyCount( $model, $dependencies ) > 0 )
 		{
-			$subStackXML = "";
+			$node = $dependencies->item( 0 );
+			$type = $node->localName;
+			$instance = $node->getAttribute( "instance" );
 
-			foreach( $dependencies as $node )
+			$modelName = Core::namespaceApp . $type . "/" . $instance . ".xwf";
+
+			$instanceModel = new XMLModelDriver( $modelName );
+			$instanceModel = self::RegisterNamespaces( $instanceModel );
+
+			$originalNode = $node->cloneNode( true );
+
+			$externalNode = $model->importNode( $instanceModel->xPath->query( "//wireframe:*" )->item( 0 ), true );
+			$node->parentNode->replaceChild( $externalNode, $node );
+
+			$childRefNodeList = $model->xPath->query( "//child:reference", $node );
+
+			if( $childRefNodeList->length > 0 )
 			{
-				$type = $node->getAttribute( "view" );
-				$instance = $node->getAttribute( "model" );
-
-				$modelName = Core::namespaceApp . $type . "/" . $instance . ".ccx";
-
-				if( !isset( $dependencyModels[ $modelName ] ) )
-				{
-					$instanceModel = new XMLModelDriver( $modelName );
-
-					$dependencyModels[ $modelName ] = $instanceModel;
-					$subStackXML .= $instanceModel->GetXMLForStacking();
-				}
-			}
-
-			if( strlen( $subStackXML ) > 0 )
-			{
-				$dependencyModels = self::GetDependencies( $subStackXML, $dependencyModels );
+				$childRefNode = $childRefNodeList->item( 0 );
+				$importedNode = $model->importNode( $originalNode, true );
+				self::ReplaceNodeWithChildren( $model, $childRefNode, $importedNode );
 			}
 		}
 
-		return( $dependencyModels );
+		return( $model );
+	}
+
+	private static function DependencyCount( $model, &$dependencies )
+	{
+		$dependencies = $model->xPath->query( "//dependency:*[ @instance ]" );
+
+		return( $dependencies->length );
+	}
+
+	private static function ReplaceNodeWithChildren( &$model, &$refNode, &$node )
+	{
+		for( $i = 0; $i < $node->childNodes->length; $i++ )
+		{
+			$childNode = $node->childNodes->item( $i );
+
+			if( !( $childNode instanceof \DOMText ) )
+			{
+				$refNode->parentNode->insertBefore( $childNode, $refNode );
+			}
+		}
+
+		$refNode->parentNode->removeChild( $refNode );
 	}
 
 	public static function InjectRSSFeed( $model )
 	{
-		$model->xPath->registerNamespace( "cc", "urn:cc:root" );
+		$model = self::RegisterNamespaces( $model );
 
-		foreach( $model->xPath->query( "//cc:rss-feed" ) as $node )
+		foreach( $model->xPath->query( "//inject:rss-feed" ) as $node )
 		{
 			$rssModel = new XMLModelDriver( $node->getAttribute( "url" ) );
 			$rssNodes = $rssModel->xPath->query( "//rss" );
@@ -84,9 +103,9 @@ class CC
 
 	public static function InjectStrings( $model, $stringModel )
 	{
-		$model->xPath->registerNamespace( "cc", "urn:cc:root" );
+		$model = self::RegisterNamespaces( $model );
 
-		foreach( $model->xPath->query( "//cc:get-string" ) as $stringNode )
+		foreach( $model->xPath->query( "//inject:get-string" ) as $stringNode )
 		{
 			$currentKey = $stringNode->getAttribute( "name" );
 			$targetStringNode = $stringModel->xPath->query( "//xmvc:" . $currentKey );
@@ -107,35 +126,22 @@ class CC
 
 		foreach( $models as $model )
 		{
-			$model->xPath->registerNamespace( "cc", "urn:cc:root" );
+			$model = self::RegisterNamespaces( $model );
 
-			foreach( $model->xPath->query( "//*[ cc:page-name != '' ]" ) as $itemNode )
+			foreach( $model->xPath->query( "//*[ inject:href != '' ]" ) as $itemNode )
 			{
-				$pageNameNode = $model->xPath->query( "cc:page-name", $itemNode )->item( 0 );
+				$pageNameNode = $model->xPath->query( "inject:href", $itemNode )->item( 0 );
 				$pageName = $pageNameNode->nodeValue;
 
 				$path = Sitemap::GetPathByPageNameAndLanguage( $pageName, Language::GetLang() );
 
-				$linkNode = $model->createElementNS( Config::$data[ "ccNamespace" ], "cc:href", $path );
+				$linkNode = $model->createElementNS( Config::$data[ "ccNamespaces" ][ "link" ], "link:href", $path );
 				$itemNode->appendChild( $linkNode );
 			}
 
-			foreach( $model->xPath->query( "//xhtml:a[ @cc:page-name != '' ]" ) as $itemNode )
+			foreach( $model->xPath->query( "//*[ @inject:href != '' ]" ) as $itemNode )
 			{
-				$pageName = $itemNode->getAttribute( "cc:page-name" );
-
-				$path = Sitemap::GetPathByPageNameAndLanguage( $pageName, Language::GetLang() );
-
-				$linkNode = $model->createAttributeNS( "http://www.w3.org/1999/xhtml", "xhtml:href" );
-				$linkNode->value = $path;
-				$itemNode->appendChild( $linkNode );
-
-				$itemNode->removeAttribute( "cc:page-name" );
-			}
-
-			foreach( $model->xPath->query( "//cc:*[ @cc:page-name != '' ]" ) as $itemNode )
-			{
-				$pageName = $itemNode->getAttribute( "cc:page-name" );
+				$pageName = $itemNode->getAttribute( "inject:href" );
 
 				$path = Sitemap::GetPathByPageNameAndLanguage( $pageName, Language::GetLang() );
 
@@ -143,7 +149,7 @@ class CC
 				$linkNode->value = $path;
 				$itemNode->appendChild( $linkNode );
 
-				$itemNode->removeAttribute( "cc:page-name" );
+				$itemNode->removeAttribute( "inject:href" );
 			}
 		}
 	}
@@ -156,17 +162,17 @@ class CC
 
 		foreach( $models as $model )
 		{
-			$model->xPath->registerNamespace( "cc", "urn:cc:root" );
+			$model = self::RegisterNamespaces( $model );
 
-			foreach( $model->xPath->query( "//cc:*[ cc:lang-swap != '' ]" ) as $itemNode )
+			foreach( $model->xPath->query( "//*[ inject:lang-swap != '' ]" ) as $itemNode )
 			{
-				$langSwapNode = $model->xPath->query( "cc:lang-swap[ @lang = '" . Language::GetLang() . "' ]", $itemNode )->item( 0 );
+				$langSwapNode = $model->xPath->query( "inject:lang-swap[ @lang = '" . Language::GetLang() . "' ]", $itemNode )->item( 0 );
 				$targetLang = $langSwapNode->nodeValue;
 				$suffix = $langSwapNode->getAttribute( "suffix" );
 
 				$path = Sitemap::GetPathByPageNameAndLanguage( $currentPageName, $targetLang ) . $suffix;
 
-				$linkNode = $model->createElementNS( Config::$data[ "ccNamespace" ], "cc:href", $path );
+				$linkNode = $model->createElementNS( Config::$data[ "ccNamespaces" ][ "link" ], "link:href", $path );
 				$itemNode->appendChild( $linkNode );
 			}
 		}
@@ -174,9 +180,9 @@ class CC
 
 	public static function InjectMathCaptcha( $model )
 	{
-		$model->xPath->registerNamespace( "cc", "urn:cc:root" );
+		$model = self::RegisterNamespaces( $model );
 
-		foreach( $model->xPath->query( "//cc:math-captcha" ) as $mathCaptchaNode )
+		foreach( $model->xPath->query( "//inject:math-captcha" ) as $mathCaptchaNode )
 		{
 			$type = $mathCaptchaNode->getAttribute( "type" );
 

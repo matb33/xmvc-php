@@ -29,23 +29,25 @@ class Sitemap
 
 	private static function GatherLinksFromModels()
 	{
-		foreach( glob( "app/" . Loader::modelFolder . "/*/*.ccx" ) as $ccxFile )
+		foreach( glob( "app/" . Loader::modelFolder . "/*/*.xwf" ) as $file )
 		{
-			$ccxModel = new XMLModelDriver( $ccxFile );
+			$model = new XMLModelDriver( $file );
 
-			foreach( $ccxModel->xPath->query( "//cc:config/cc:page" ) as $pageNode )
+			$model->xPath->registerNamespace( "config", Config::$data[ "ccNamespaces" ][ "config" ] );
+
+			foreach( $model->xPath->query( "//config:page" ) as $pageNode )
 			{
-				$name = $pageNode->getAttribute( "name" );
+				$name = $model->xPath->query( "//page:*" )->item( 0 )->localName;
 				$parent = $pageNode->getAttribute( "parent" );
 
-				foreach( $ccxModel->xPath->query( "cc:href", $pageNode ) as $linkNode )
+				foreach( $model->xPath->query( "config:href", $pageNode ) as $linkNode )
 				{
 					$lang = $linkNode->getAttribute( "lang" );
 
 					$links[ $lang ][ $name ] = array(
 						"path" => $linkNode->nodeValue,
 						"parent" => $parent,
-						"file" => $ccxFile
+						"file" => $file
 					);
 				}
 			}
@@ -61,7 +63,7 @@ class Sitemap
 		$urlsetNode = $sitemapModel->createElementNS( Config::$data[ "sitemapNamespace" ], "urlset" );
 		$sitemapModel->xPath->query( "/xmvc:root" )->item( 0 )->appendChild( $urlsetNode );
 
-		$urlsetNode->setAttributeNS( "http://www.w3.org/2000/xmlns/", "xmlns:cc", Config::$data[ "ccNamespace" ] );
+		$urlsetNode->setAttributeNS( "http://www.w3.org/2000/xmlns/", "xmlns:sitemap", Config::$data[ "ccNamespaces" ][ "sitemap" ] );
 
 		foreach( $linkData as $name => $data )
 		{
@@ -80,16 +82,16 @@ class Sitemap
 			$lastModNode = $sitemapModel->createElementNS( Config::$data[ "sitemapNamespace" ], "lastmod", $lastMod );
 			$urlNode->appendChild( $lastModNode );
 
-			$nameNode = $sitemapModel->createElementNS( Config::$data[ "ccNamespace" ], "cc:name", $name );
+			$nameNode = $sitemapModel->createElementNS( Config::$data[ "ccNamespaces" ][ "sitemap" ], "sitemap:name", $name );
 			$urlNode->appendChild( $nameNode );
 
 			if( strlen( $parent ) > 0 )
 			{
-				$parentNode = $sitemapModel->createElementNS( Config::$data[ "ccNamespace" ], "cc:parent", $parent );
+				$parentNode = $sitemapModel->createElementNS( Config::$data[ "ccNamespaces" ][ "sitemap" ], "sitemap:parent", $parent );
 				$urlNode->appendChild( $parentNode );
 			}
 
-			$pathNode = $sitemapModel->createElementNS( Config::$data[ "ccNamespace" ], "cc:path", $path );
+			$pathNode = $sitemapModel->createElementNS( Config::$data[ "ccNamespaces" ][ "sitemap" ], "sitemap:path", $path );
 			$urlNode->appendChild( $pathNode );
 		}
 
@@ -161,9 +163,9 @@ class Sitemap
 		{
 			$sitemapModel = self::Get( $lang );
 
-			foreach( $sitemapModel->xPath->query( "//s:url[ cc:path = '" . $currentPath . "' ]" ) as $urlNode )
+			foreach( $sitemapModel->xPath->query( "//s:url[ sitemap:path = '" . $currentPath . "' ]" ) as $urlNode )
 			{
-				$pageName = $sitemapModel->xPath->query( "cc:name", $urlNode )->item( 0 )->nodeValue;
+				$pageName = $sitemapModel->xPath->query( "sitemap:name", $urlNode )->item( 0 )->nodeValue;
 
 				return( $pageName );
 			}
@@ -176,7 +178,7 @@ class Sitemap
 	{
 		$sitemapModel = self::Get( $lang );
 
-		$path = $sitemapModel->xPath->query( "//s:url/cc:path[ ../cc:name = '" . $name . "' ]" )->item( 0 )->nodeValue;
+		$path = $sitemapModel->xPath->query( "//s:url/sitemap:path[ ../sitemap:name = '" . $name . "' ]" )->item( 0 )->nodeValue;
 
 		return( $path );
 	}
