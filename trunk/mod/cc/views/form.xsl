@@ -2,6 +2,12 @@
 
 	<!-- Generic form fields.  To override, match the same xpath but specify a higher priority number in your template -->
 
+	<xsl:template match="form:form" priority="0">
+		<form method="post" action="{ @href }">
+			<xsl:apply-templates />
+		</form>
+	</xsl:template>
+
 	<xsl:template match="form:field[ @type = 'text' or @type = 'password' ]" priority="0">
 		<xsl:variable name="name" select="@name" />
 		<label for="{ @name }" class="{ @name }">
