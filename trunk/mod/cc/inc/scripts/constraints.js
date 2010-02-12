@@ -251,22 +251,16 @@ var ConstraintVisuals = new function()
 
 		for( var key in failMessages )
 		{
-			if( failMessages[ key ].length > 0 )
-			{
-				var box = $( "<input class='fail' type='hidden' />" );
-				box.val( failMessages[ key ] );
-				closestLabel.append( box );
-			}
+			var box = $( "<input class='fail' type='hidden' />" );
+			box.val( failMessages[ key ] );
+			closestLabel.append( box );
 		}
 
 		for( var key in passMessages )
 		{
-			if( passMessages[ key ].length > 0 )
-			{
-				var box = $( "<input class='pass' type='hidden' />" );
-				box.val( passMessages[ key ] );
-				closestLabel.append( box );
-			}
+			var box = $( "<input class='pass' type='hidden' />" );
+			box.val( passMessages[ key ] );
+			closestLabel.append( box );
 		}
 	};
 }
