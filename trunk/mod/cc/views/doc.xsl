@@ -91,4 +91,88 @@
 		</xsl:if>
 	</xsl:template>
 
+	<xsl:template match="doc:address">
+		<xsl:if test="not( @lang ) or @lang = //xmvc:lang">
+			<address><xsl:apply-templates /></address>
+		</xsl:if>
+	</xsl:template>
+
+	<xsl:template match="doc:copyright">
+		<xsl:if test="not( @lang ) or @lang = //xmvc:lang">
+			<span class="copyright"><xsl:apply-templates /></span>
+		</xsl:if>
+	</xsl:template>
+
+	<xsl:template match="doc:phone">
+		<xsl:if test="not( @lang ) or @lang = //xmvc:lang">
+			<span class="phone"><xsl:apply-templates /></span>
+		</xsl:if>
+	</xsl:template>
+
+	<xsl:template match="doc:fax">
+		<xsl:if test="not( @lang ) or @lang = //xmvc:lang">
+			<span class="fax"><xsl:apply-templates /></span>
+		</xsl:if>
+	</xsl:template>
+
+	<xsl:template match="doc:postcode">
+		<xsl:if test="not( @lang ) or @lang = //xmvc:lang">
+			<span class="postcode"><xsl:apply-templates /></span>
+		</xsl:if>
+	</xsl:template>
+
+	<xsl:template match="doc:street">
+		<xsl:if test="not( @lang ) or @lang = //xmvc:lang">
+			<span class="street"><xsl:apply-templates /></span>
+		</xsl:if>
+	</xsl:template>
+
+	<xsl:template match="doc:city">
+		<xsl:if test="not( @lang ) or @lang = //xmvc:lang">
+			<span class="city"><xsl:apply-templates /></span>
+		</xsl:if>
+	</xsl:template>
+
+	<xsl:template match="doc:country">
+		<xsl:if test="not( @lang ) or @lang = //xmvc:lang">
+			<span class="country"><xsl:apply-templates /></span>
+		</xsl:if>
+	</xsl:template>
+
+	<xsl:template match="doc:date">
+		<xsl:if test="not( @lang ) or @lang = //xmvc:lang">
+			<span class="date"><xsl:apply-templates /></span>
+		</xsl:if>
+	</xsl:template>
+
+	<xsl:template match="doc:year">
+		<xsl:if test="not( @lang ) or @lang = //xmvc:lang">
+			<span class="year"><xsl:apply-templates /></span>
+		</xsl:if>
+	</xsl:template>
+
+	<xsl:template match="doc:email">
+		<xsl:if test="not( @lang ) or @lang = //xmvc:lang">
+			<span class="email"><xsl:apply-templates /></span>
+		</xsl:if>
+	</xsl:template>
+
+	<xsl:template match="doc:abbrev">
+		<xsl:if test="not( @lang ) or @lang = //xmvc:lang">
+			<abbr><xsl:apply-templates /></abbr>
+		</xsl:if>
+	</xsl:template>
+
+	<xsl:template match="doc:acronym">
+		<xsl:if test="not( @lang ) or @lang = //xmvc:lang">
+			<acronym><xsl:apply-templates /></acronym>
+		</xsl:if>
+	</xsl:template>
+
+	<xsl:template match="doc:quote">
+		<xsl:if test="not( @lang ) or @lang = //xmvc:lang">
+			<q><xsl:apply-templates /></q>
+		</xsl:if>
+	</xsl:template>
+
 </xsl:stylesheet>
