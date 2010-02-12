@@ -21,7 +21,7 @@
 
 	<xsl:template match="link:*/link:caption">
 		<xsl:if test="not( @lang ) or @lang = //xmvc:lang">
-			<xsl:apply-templates select="text()" />
+			<xsl:apply-templates />
 		</xsl:if>
 	</xsl:template>
 
