@@ -23,6 +23,7 @@
 				</xsl:choose>
 			</input>
 			<xsl:apply-templates select="form:label[ @position = 'after' ]" />
+			<xsl:apply-templates select="form:info" />
 		</label>
 		<xsl:for-each select=".//form:math-captcha">
 			<input type="hidden" id="{ @name }" name="{ @name }" value="{ @answer-md5 }" />
@@ -39,6 +40,7 @@
 				<xsl:when test="form:value"><xsl:value-of select="form:value[ not( @lang ) or @lang = //xmvc:lang ]" /></xsl:when>
 			</xsl:choose></textarea>
 			<xsl:apply-templates select="form:label[ @position = 'after' ]" />
+			<xsl:apply-templates select="form:info" />
 		</label>
 		<xsl:apply-templates select="form:constraint" />
 	</xsl:template>
@@ -72,6 +74,7 @@
 				</xsl:if>
 			</input>
 			<xsl:apply-templates select="form:label[ not( @position ) or @position = 'after' ]" />
+			<xsl:apply-templates select="form:info" />
 		</label>
 	</xsl:template>
 
@@ -126,6 +129,12 @@
 	<xsl:template match="form:field//form:label" priority="1">
 		<xsl:if test="not( @lang ) or @lang = //xmvc:lang">
 			<span><xsl:apply-templates /></span>
+		</xsl:if>
+	</xsl:template>
+
+	<xsl:template match="form:field//form:info" priority="1">
+		<xsl:if test="not( @lang ) or @lang = //xmvc:lang">
+			<input type="hidden" class="info" value="{ text() }" />
 		</xsl:if>
 	</xsl:template>
 
