@@ -13,10 +13,20 @@ var Constraints = new function()
 
 	this.BindFieldEvents = function()
 	{
-		$( "form input[ type='text' ], input[ type='password' ], textarea, select" ).change( function()
+		if( $.browser.msie )
 		{
-			Constraints.AskServer( $( this ) );
-		});
+			$( "form input[ type='text' ], input[ type='password' ], textarea, select" ).blur( function()
+			{
+				Constraints.AskServer( $( this ) );
+			});
+		}
+		else
+		{
+			$( "form input[ type='text' ], input[ type='password' ], textarea, select" ).change( function()
+			{
+				Constraints.AskServer( $( this ) );
+			});
+		}
 
 		$( "form input[ type='radio' ], input[ type='checkbox' ]" ).click( function()
 		{
@@ -57,10 +67,11 @@ var Constraints = new function()
 
 		if( receivedProperResponse )
 		{
-			var rootElement = $( "c\\:constraint-results", data );
+			var nsPrefix = $( "c\\:constraint-results", data ).attr( "success" ) == null ? "" : "c\\:";
+			var rootElement = $( nsPrefix + "constraint-results", data );
 			var fullSuccess = rootElement.attr( "success" ) == "true";
 
-			$( "c\\:field", data ).each( function()
+			$( nsPrefix + "field", data ).each( function()
 			{
 				var name = $( this ).attr( "name" );
 				var fieldSuccess = $( this ).attr( "success" ) == "true";
@@ -107,7 +118,7 @@ var Constraints = new function()
 		{
 			var name = $( this ).attr( "name" );
 
-			if( lookup.indexOf( name ) != -1 )
+			if( $.inArray( name, lookup ) != -1 )
 			{
 				return( false );
 			}
