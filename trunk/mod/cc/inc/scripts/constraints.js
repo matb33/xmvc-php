@@ -76,8 +76,22 @@ var Constraints = new function()
 				var name = $( this ).attr( "name" );
 				var fieldSuccess = $( this ).attr( "success" ) == "true";
 				var field = $( "form *[ name='" + Constraints.EscapeName( name ) + "' ], form *[ name='" + Constraints.EscapeName( name ) + "\\[\\]' ]" );
+				var failMessages = [];
+				var passMessages = [];
 
-				ConstraintVisuals.OnFieldConstraintResult( field, fieldSuccess );
+				$( nsPrefix + "constraint-result", this ).each( function()
+				{
+					if( $( this ).attr( "success" ) == "false" )
+					{
+						failMessages.push( $( this ).text() );
+					}
+					else
+					{
+						passMessages.push( $( this ).text() );
+					}
+				});
+
+				ConstraintVisuals.OnFieldConstraintResult( field, fieldSuccess, failMessages, passMessages );
 			});
 
 			if( eventField.is( "form" ) )
@@ -215,10 +229,12 @@ var ConstraintVisuals = new function()
 			closestLabel.addClass( "constraint-loading" );
 			closestLabel.removeClass( "constraint-success" );
 			closestLabel.removeClass( "constraint-fail" );
+
+			closestLabel.find( "input[ class='fail' ], input[ class='pass' ]" ).remove();
 		});
 	};
 
-	this.OnFieldConstraintResult = function( field, valid )
+	this.OnFieldConstraintResult = function( field, valid, failMessages, passMessages )
 	{
 		var closestLabel = field.closest( "label" );
 
@@ -231,6 +247,26 @@ var ConstraintVisuals = new function()
 		else
 		{
 			closestLabel.addClass( "constraint-fail" );
+		}
+
+		for( var key in failMessages )
+		{
+			if( failMessages[ key ].length > 0 )
+			{
+				var box = $( "<input class='fail' type='hidden' />" );
+				box.val( failMessages[ key ] );
+				closestLabel.append( box );
+			}
+		}
+
+		for( var key in passMessages )
+		{
+			if( passMessages[ key ].length > 0 )
+			{
+				var box = $( "<input class='pass' type='hidden' />" );
+				box.val( passMessages[ key ] );
+				closestLabel.append( box );
+			}
 		}
 	};
 }
