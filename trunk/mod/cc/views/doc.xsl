@@ -79,4 +79,16 @@
 		</xsl:if>
 	</xsl:template>
 
+	<xsl:template match="doc:emphasis">
+		<xsl:if test="not( @lang ) or @lang = //xmvc:lang">
+			<em><xsl:apply-templates /></em>
+		</xsl:if>
+	</xsl:template>
+
+	<xsl:template match="doc:strong">
+		<xsl:if test="not( @lang ) or @lang = //xmvc:lang">
+			<strong><xsl:apply-templates /></strong>
+		</xsl:if>
+	</xsl:template>
+
 </xsl:stylesheet>
