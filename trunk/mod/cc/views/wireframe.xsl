@@ -12,7 +12,9 @@
 	</xsl:template>
 
 	<xsl:template match="wireframe:*">
-		<xsl:apply-templates />
+		<xsl:if test="not( @lang ) or @lang = //xmvc:lang">
+			<xsl:apply-templates />
+		</xsl:if>
 	</xsl:template>
 
 	<xsl:template match="config:*" />

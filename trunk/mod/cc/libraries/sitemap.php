@@ -29,15 +29,15 @@ class Sitemap
 
 	private static function GatherLinksFromModels()
 	{
-		foreach( glob( "app/" . Loader::modelFolder . "/*/*.xwf" ) as $file )
+		foreach( glob( "app/" . Loader::modelFolder . "/*/*.xpg" ) as $file )
 		{
 			$model = new XMLModelDriver( $file );
 
 			$model->xPath->registerNamespace( "config", Config::$data[ "ccNamespaces" ][ "config" ] );
 
-			foreach( $model->xPath->query( "//config:page" ) as $pageNode )
+			foreach( $model->xPath->query( "//page:*" ) as $pageNode )
 			{
-				$name = $model->xPath->query( "//page:*" )->item( 0 )->localName;
+				$name = $pageNode->localName;
 				$parent = $pageNode->getAttribute( "parent" );
 
 				foreach( $model->xPath->query( "config:href", $pageNode ) as $linkNode )
