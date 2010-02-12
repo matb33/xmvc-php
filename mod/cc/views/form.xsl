@@ -21,8 +21,8 @@
 						<xsl:attribute name="value"><xsl:value-of select="form:value[ not( @lang ) or @lang = //xmvc:lang ]" /></xsl:attribute>
 					</xsl:when>
 				</xsl:choose>
-				<xsl:apply-templates select="form:info" />
 			</input>
+			<xsl:apply-templates select="form:info" />
 			<xsl:apply-templates select="form:label[ @position = 'after' ]" />
 		</label>
 		<xsl:for-each select=".//form:math-captcha">
@@ -35,11 +35,12 @@
 		<xsl:variable name="name" select="@name" />
 		<label for="{ @name }" class="{ @name }">
 			<xsl:apply-templates select="form:label[ not( @position ) or @position = 'before' ]" />
-			<textarea id="{ @name }" name="{ @name }"><xsl:apply-templates select="form:info" /><xsl:choose>
+			<textarea id="{ @name }" name="{ @name }"><xsl:choose>
 				<xsl:when test="//xmvc:strings/xmvc:*[ @key = $name ]"><xsl:value-of select="//xmvc:strings/xmvc:*[ @key = $name ]" /></xsl:when>
 				<xsl:when test="form:value"><xsl:value-of select="form:value[ not( @lang ) or @lang = //xmvc:lang ]" /></xsl:when>
 			</xsl:choose></textarea>
 			<xsl:apply-templates select="form:label[ @position = 'after' ]" />
+			<xsl:apply-templates select="form:info" />
 		</label>
 		<xsl:apply-templates select="form:constraint" />
 	</xsl:template>
@@ -71,8 +72,8 @@
 						<xsl:attribute name="checked">true</xsl:attribute>
 					</xsl:if>
 				</xsl:if>
-				<xsl:apply-templates select="form:info" />
 			</input>
+			<xsl:apply-templates select="form:info" />
 			<xsl:apply-templates select="form:label[ not( @position ) or @position = 'after' ]" />
 		</label>
 	</xsl:template>
@@ -133,7 +134,7 @@
 
 	<xsl:template match="form:field//form:info" priority="1">
 		<xsl:if test="not( @lang ) or @lang = //xmvc:lang">
-			<xsl:attribute name="title"><xsl:value-of select="text()" /></xsl:attribute>
+			<input type="hidden" class="info" value="{ text() }" />
 		</xsl:if>
 	</xsl:template>
 
