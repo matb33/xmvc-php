@@ -36,6 +36,13 @@ var Constraints = new function()
 			var field = $( this );
 			window.clearTimeout( $.data( this, "timeout" ) );
 			$.data( this, "timeout", window.setTimeout( function() { Constraints.AskServer( field ); }, Constraints.inputKeyUpDelay ) );
+
+			if( ConstraintVisuals.IsAngry( field ) )
+			{
+				ConstraintVisuals.Reset( field );
+				Constraints.TriggerResetEvent( field );
+			}
+
 		});
 
 		$( "form input[ type='radio' ], input[ type='checkbox' ]" ).click( function()
@@ -244,21 +251,33 @@ var Constraints = new function()
 		field.trigger( "loadcomplete.constraints" );
 		field.trigger( success ? "pass.constraints" : "fail.constraints" );
 	};
+
+	this.TriggerResetEvent = function( field )
+	{
+		field.trigger( "reset.constraints" );
+	};
 }
 
 var ConstraintVisuals = new function()
 {
+	this.Reset = function( field )
+	{
+		var closestLabel = field.closest( "label" );
+
+		closestLabel.removeClass( "constraint-loading" );
+		closestLabel.removeClass( "constraint-success" );
+		closestLabel.removeClass( "constraint-fail" );
+
+		closestLabel.find( "input[ class='fail' ], input[ class='pass' ]" ).remove();
+	};
+
 	this.OnAskServer = function( fieldCollection )
 	{
 		fieldCollection.each( function()
 		{
-			var closestLabel = $( this ).closest( "label" );
+			ConstraintVisuals.Reset( $( this ) );
 
-			closestLabel.addClass( "constraint-loading" );
-			closestLabel.removeClass( "constraint-success" );
-			closestLabel.removeClass( "constraint-fail" );
-
-			closestLabel.find( "input[ class='fail' ], input[ class='pass' ]" ).remove();
+			$( this ).closest( "label" ).addClass( "constraint-loading" );
 		});
 	};
 
@@ -282,5 +301,10 @@ var ConstraintVisuals = new function()
 			box.val( passMessages[ key ] );
 			closestLabel.append( box );
 		}
+	};
+
+	this.IsAngry = function( field )
+	{
+		return( field.closest( "label" ).hasClass( "constraint-fail" ) );
 	};
 }
