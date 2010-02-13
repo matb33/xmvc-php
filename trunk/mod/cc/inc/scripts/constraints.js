@@ -2,6 +2,7 @@ var Constraints = new function()
 {
 	this.ajaxURL = null;
 	this.allowOnNextSubmitEvent = false;
+	this.inputKeyUpDelay = 750;
 
 	this.Initialize = function( ajaxURL, form )
 	{
@@ -17,6 +18,7 @@ var Constraints = new function()
 		{
 			$( "form input[ type='text' ], input[ type='password' ], textarea, select" ).blur( function()
 			{
+				window.clearTimeout( $.data( this, "timeout" ) );
 				Constraints.AskServer( $( this ) );
 			});
 		}
@@ -24,9 +26,17 @@ var Constraints = new function()
 		{
 			$( "form input[ type='text' ], input[ type='password' ], textarea, select" ).change( function()
 			{
+				window.clearTimeout( $.data( this, "timeout" ) );
 				Constraints.AskServer( $( this ) );
 			});
 		}
+
+		$( "form input[ type='text' ], input[ type='password' ], textarea" ).keydown( function()
+		{
+			var field = $( this );
+			window.clearTimeout( $.data( this, "timeout" ) );
+			$.data( this, "timeout", window.setTimeout( function() { Constraints.AskServer( field ); }, Constraints.inputKeyUpDelay ) );
+		});
 
 		$( "form input[ type='radio' ], input[ type='checkbox' ]" ).click( function()
 		{
@@ -49,7 +59,10 @@ var Constraints = new function()
 
 	this.AskServer = function( field )
 	{
-		ConstraintVisuals.OnAskServer( this.GetFieldCollection( field ) );
+		var affectedFields = this.GetFieldCollection( field );
+
+		ConstraintVisuals.OnAskServer( affectedFields );
+		this.TriggerLoadEvents( affectedFields );
 
 		$.ajax( {
 			url: this.ajaxURL,
@@ -92,6 +105,7 @@ var Constraints = new function()
 				});
 
 				ConstraintVisuals.OnFieldConstraintResult( field, fieldSuccess, failMessages, passMessages );
+				Constraints.TriggerResponseEvents( field, fieldSuccess );
 			});
 
 			if( eventField.is( "form" ) )
@@ -215,7 +229,21 @@ var Constraints = new function()
 	this.StripBrackets = function( name )
 	{
 		return( name.replace( "[", "" ).replace( "]", "" ).replace( "\\[", "" ).replace( "\\]", "" ) );
-	}
+	};
+
+	this.TriggerLoadEvents = function( fieldCollection )
+	{
+		fieldCollection.each( function()
+		{
+			$( this ).trigger( "loadstart.constraints" );
+		});
+	};
+
+	this.TriggerResponseEvents = function( field, success )
+	{
+		field.trigger( "loadcomplete.constraints" );
+		field.trigger( success ? "pass.constraints" : "fail.constraints" );
+	};
 }
 
 var ConstraintVisuals = new function()
@@ -239,15 +267,7 @@ var ConstraintVisuals = new function()
 		var closestLabel = field.closest( "label" );
 
 		closestLabel.removeClass( "constraint-loading" );
-
-		if( valid )
-		{
-			closestLabel.addClass( "constraint-success" );
-		}
-		else
-		{
-			closestLabel.addClass( "constraint-fail" );
-		}
+		closestLabel.addClass( valid ? "constraint-success" : "constraint-fail" );
 
 		for( var key in failMessages )
 		{
