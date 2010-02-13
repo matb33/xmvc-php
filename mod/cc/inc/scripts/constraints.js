@@ -95,7 +95,7 @@ var Constraints = new function()
 			{
 				var name = $( this ).attr( "name" );
 				var fieldSuccess = $( this ).attr( "success" ) == "true";
-				var field = $( "form *[ name='" + Constraints.EscapeName( name ) + "' ], form *[ name='" + Constraints.EscapeName( name ) + "\\[\\]' ]" );
+				var field = $( "form *[ name='" + Constraints.EscapeName( name ) + "' ], form *[ name='" + Constraints.EscapeName( name + "[]" ) + "' ]" );
 				var failMessages = [];
 				var passMessages = [];
 
@@ -230,7 +230,12 @@ var Constraints = new function()
 
 	this.EscapeName = function( name )
 	{
-		return( name.replace( "[", "\\[" ).replace( "]", "\\]" ) );
+		if( ! $.browser.msie )
+		{
+			name = name.replace( "[", "\\[" ).replace( "]", "\\]" );
+		}
+
+		return( name );
 	};
 
 	this.StripBrackets = function( name )
