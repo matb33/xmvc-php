@@ -64,7 +64,7 @@ var Constraints = new function()
 		});
 	};
 
-	this.AskServer = function( field )
+	this.AskServer = function( field, submitCallback )
 	{
 		var affectedFields = this.GetFieldCollection( field );
 
@@ -77,11 +77,11 @@ var Constraints = new function()
 			async: true,
 			data: this.GetParameters( this.GetUniquelyNamedFieldCollection( field ) ),
 			dataType: "xml",
-			success: function( data, textStatus ) { Constraints.OnResponseFromServer( data, textStatus, field ) }
+			success: function( data, textStatus ) { Constraints.OnResponseFromServer( data, textStatus, field, submitCallback ) }
 		});
 	};
 
-	this.OnResponseFromServer = function( data, textStatus, eventField )
+	this.OnResponseFromServer = function( data, textStatus, eventField, submitCallback )
 	{
 		var receivedProperResponse = ( textStatus == "success" );
 
@@ -115,13 +115,20 @@ var Constraints = new function()
 				Constraints.TriggerResponseEvents( field, fieldSuccess );
 			});
 
-			if( eventField.is( "form" ) )
+			if( submitCallback )
 			{
-				this.allowOnNextSubmitEvent = fullSuccess;
-
-				if( fullSuccess )
+				submitCallback( fullSuccess );
+			}
+			else
+			{
+				if( eventField.is( "form" ) )
 				{
-					$( "form" ).submit();
+					this.allowOnNextSubmitEvent = fullSuccess;
+
+					if( fullSuccess )
+					{
+						$( "form" ).submit();
+					}
 				}
 			}
 		}

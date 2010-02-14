@@ -3,12 +3,24 @@
 	<!-- Generic form fields.  To override, match the same xpath but specify a higher priority number in your template -->
 
 	<xsl:template match="form:form" priority="0">
-		<form method="post" action="{ @href }">
+		<form>
+			<xsl:if test="@href">
+				<xsl:attribute name="action"><xsl:value-of select="@href" /></xsl:attribute>
+			</xsl:if>
+			<xsl:attribute name="method">
+				<xsl:choose>
+					<xsl:when test="@method"><xsl:value-of select="@method" /></xsl:when>
+					<xsl:otherwise>post</xsl:otherwise>
+				</xsl:choose>
+			</xsl:attribute>
+			<xsl:if test="@enctype">
+				<xsl:attribute name="enctype"><xsl:value-of select="@enctype" /></xsl:attribute>
+			</xsl:if>
 			<xsl:apply-templates />
 		</form>
 	</xsl:template>
 
-	<xsl:template match="form:field[ @type = 'text' or @type = 'password' ]" priority="0">
+	<xsl:template match="form:field[ @type = 'text' or @type = 'password' or @type = 'file' ]" priority="0">
 		<xsl:variable name="name" select="@name" />
 		<label for="{ @name }" class="{ @name }">
 			<xsl:apply-templates select="form:label[ not( @position ) or @position = 'before' ]" />
