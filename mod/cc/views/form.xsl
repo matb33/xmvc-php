@@ -91,17 +91,26 @@
 	</xsl:template>
 
 	<xsl:template match="form:field[ @type = 'select' ]" priority="0">
-		<select name="{ @name }" id="{ @name }">
-			<xsl:apply-templates select="*[ name() = 'form:option' or name() = 'form:group' ]" />
-		</select>
+		<label for="{ @name }" class="{ @name }">
+			<xsl:apply-templates select="form:label[ not( @position ) or @position = 'before' ]" />
+			<select name="{ @name }" id="{ @name }">
+				<xsl:apply-templates select="*[ name() = 'form:option' or name() = 'form:group' ]" />
+			</select>
+			<xsl:apply-templates select="form:label[ @position = 'after' ]" />
+			<xsl:apply-templates select="form:info" />
+		</label>
 		<xsl:apply-templates select="form:constraint" />
 	</xsl:template>
 
 	<xsl:template match="form:field[ @type = 'multi-select' ]" priority="0">
-		<input type="hidden" name="{ @name }" />
-		<select name="{ @name }[]" id="{ @name }" multiple="true">
-			<xsl:apply-templates select="*[ name() = 'form:option' or name() = 'form:group' ]" />
-		</select>
+		<label for="{ @name }" class="{ @name }">
+			<xsl:apply-templates select="form:label[ not( @position ) or @position = 'before' ]" />
+			<select name="{ @name }[]" id="{ @name }" multiple="true">
+				<xsl:apply-templates select="*[ name() = 'form:option' or name() = 'form:group' ]" />
+			</select>
+			<xsl:apply-templates select="form:label[ @position = 'after' ]" />
+			<xsl:apply-templates select="form:info" />
+		</label>
 		<xsl:apply-templates select="form:constraint" />
 	</xsl:template>
 
