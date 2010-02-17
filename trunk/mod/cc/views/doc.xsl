@@ -175,4 +175,10 @@
 		</xsl:if>
 	</xsl:template>
 
+	<xsl:template match="doc:linebreak">
+		<xsl:if test="not( @lang ) or @lang = //xmvc:lang">
+			<br />
+		</xsl:if>
+	</xsl:template>
+
 </xsl:stylesheet>
