@@ -2,7 +2,6 @@
 
 namespace Module\CC;
 
-use xMVC\Sys\Routing;
 use xMVC\Sys\Config;
 
 use Module\SVN\SVN;

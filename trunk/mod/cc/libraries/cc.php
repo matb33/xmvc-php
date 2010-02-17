@@ -14,7 +14,7 @@ use Module\Language\Language;
 
 class CC
 {
-	private static function RegisterNamespaces( $model )
+	public static function RegisterNamespaces( $model )
 	{
 		foreach( Config::$data[ "ccNamespaces" ] as $prefix => $namespace )
 		{
