@@ -184,6 +184,8 @@ class View
 			{
 				$result = Loader::ReadExternal( $xslViewFile );
 			}
+
+			Loader::AddToIncludePath( dirname( $xslViewFile ) );
 		}
 		else
 		{
