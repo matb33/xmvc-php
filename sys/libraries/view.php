@@ -7,6 +7,7 @@ class View
 	private $xmlData = null;
 	private $xslData = null;
 	private $xslViewName = null;
+	private $xslViewFile = null;
 	private $models = array();
 
 	public function __construct( $xslViewName = null, $namespace = null )
@@ -171,21 +172,23 @@ class View
 
 		if( is_null( $xslViewFile ) )
 		{
-			$xslViewFile = Loader::Resolve( Loader::viewFolder, $this->xslViewName, Loader::viewExtension );
+			$this->xslViewFile = Loader::Resolve( Loader::viewFolder, $this->xslViewName, Loader::viewExtension );
+		}
+		else
+		{
+			$this->xslViewFile = $xslViewFile;
 		}
 
-		if( file_exists( $xslViewFile ) )
+		if( file_exists( $this->xslViewFile ) )
 		{
 			if( Config::$data[ "enableInlinePHPInViews" ] )
 			{
-				$result = Loader::ParseExternal( $xslViewFile, $data );
+				$result = Loader::ParseExternal( $this->xslViewFile, $data );
 			}
 			else
 			{
-				$result = Loader::ReadExternal( $xslViewFile );
+				$result = Loader::ReadExternal( $this->xslViewFile );
 			}
-
-			Loader::AddToIncludePath( dirname( $xslViewFile ) );
 		}
 		else
 		{
@@ -241,7 +244,7 @@ class View
 		}
 		else
 		{
-			$result = XSL::Transform( $this->GetXMLData(), $this->GetXSLData() );
+			$result = $this->Transform();
 
 			if( ! $return )
 			{
@@ -250,6 +253,13 @@ class View
 				echo( $result );
 			}
 		}
+
+		return( $result );
+	}
+
+	private function Transform()
+	{
+		$result = XSL::Transform( $this->GetXMLData(), $this->GetXSLData(), dirname( $this->xslViewFile ) );
 
 		return( $result );
 	}

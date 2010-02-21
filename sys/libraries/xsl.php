@@ -5,8 +5,9 @@ namespace xMVC\Sys;
 class XSL
 {
 	private static $processor;
+	private static $originalWorkingFolder;
 
-	public static function Transform( $xmlData, $xslData )
+	public static function Transform( $xmlData, $xslData, $workingFolder = null )
 	{
 		self::$processor = new \XSLTProcessor();
 
@@ -14,6 +15,7 @@ class XSL
 
 		self::SetupPHPFunctions();
 		self::SetupProfiling();
+		self::SetupWorkingFolder( $workingFolder );
 
 		$xml = new \DOMDocument( "1.0", "UTF-8" );
 		$xsl = new \DOMDocument( "1.0", "UTF-8" );
@@ -24,6 +26,8 @@ class XSL
 		self::$processor->importStyleSheet( $xsl );
 
 		$result = self::$processor->transformToXML( $xml );
+
+		self::RestoreWorkingFolder();
 
 		if( empty( $result ) )
 		{
@@ -68,6 +72,21 @@ class XSL
 				}
 			}
 		}
+	}
+
+	private static function SetupWorkingFolder( $workingFolder )
+	{
+		self::$originalWorkingFolder = getcwd();
+
+		if( ! is_null( $workingFolder ) )
+		{
+			chdir( $workingFolder );
+		}
+	}
+
+	private static function RestoreWorkingFolder()
+	{
+		chdir( self::$originalWorkingFolder );
 	}
 
 	private static function DumpErrors()
