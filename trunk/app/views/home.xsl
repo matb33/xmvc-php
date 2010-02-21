@@ -5,9 +5,9 @@
 	xmlns:xmvc="http://www.xmvc.org/ns/xmvc/1.0"
 	xmlns:str="http://www.xmvc.org/ns/str/1.0">
 
-	<xsl:include href="app/views/common/xhtml.xsl" />
-	<xsl:include href="app/views/header.xsl" />
-	<xsl:include href="app/views/footer.xsl" />
+	<xsl:include href="common/xhtml.xsl" />
+	<xsl:include href="header.xsl" />
+	<xsl:include href="footer.xsl" />
 
 	<xsl:template name="title">
 		<title><xsl:value-of select="//str:title" /></title>

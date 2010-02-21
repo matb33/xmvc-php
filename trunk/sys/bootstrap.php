@@ -1,5 +1,8 @@
 <?php
 
+// TODO: Rename all methods across the board to camelCase so that it matches what appears to be the standard across PHP and JavaScript, which is what xMVC interacts with the most
+// TODO: Debate creating a standard "data" folder for what xMVC currently calls "models" (XML files), and renaming ModelDriver to Model.  Does this make more sense, or is the current method fine?
+
 namespace xMVC\Sys
 {
 	class Loader

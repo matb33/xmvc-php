@@ -2,7 +2,6 @@
 
 namespace xMVC\App;
 
-use xMVC\Sys\Loader;
 use xMVC\Sys\XMLModelDriver;
 use xMVC\Sys\View;
 

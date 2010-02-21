@@ -2,7 +2,6 @@
 
 namespace xMVC\App;
 
-use xMVC\Sys\Loader;
 use xMVC\Sys\XMLModelDriver;
 use xMVC\Sys\SQLModelDriver;
 use xMVC\Sys\View;
@@ -27,15 +26,12 @@ class Contact_us extends Website
 
 	public function Send()
 	{
-		$queryData = array();
-		$queryData[] = trim( $_POST[ "firstname" ] );
-		$queryData[] = trim( $_POST[ "lastname" ] );
-		$queryData[] = trim( $_POST[ "email" ] );
-		$queryData[] = $_SERVER[ "REMOTE_ADDR" ];
-
 		$entry = new SQLModelDriver( "queries/contact-us" );
 		$entry->UseQuery( "AddEntry" );
-		$entry->SetParameters( $queryData );
+		$entry->AddParameter( trim( $_POST[ "firstname" ] ) );
+		$entry->AddParameter( trim( $_POST[ "lastname" ] ) );
+		$entry->AddParameter( trim( $_POST[ "email" ] ) );
+		$entry->AddParameter( $_SERVER[ "REMOTE_ADDR" ] );
 		$entry->Execute();
 
 		if( $entry->IsSuccessful() )
