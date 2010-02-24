@@ -3,7 +3,7 @@
 	<xsl:template match="link:*">
 		<xsl:choose>
 			<xsl:when test="link:href[ not( @lang ) or @lang = //xmvc:lang ]">
-				<a id="{ local-name() }">
+				<a>
 					<xsl:if test="link:href != ''">
 						<xsl:attribute name="href"><xsl:value-of select="link:href[ not( @lang ) or @lang = //xmvc:lang ]" /></xsl:attribute>
 					</xsl:if>
@@ -15,6 +15,9 @@
 					</xsl:if>
 					<xsl:if test="link:class[ not( @lang ) or @lang = //xmvc:lang ]">
 						<xsl:attribute name="class"><xsl:value-of select="link:class[ not( @lang ) or @lang = //xmvc:lang ]" /></xsl:attribute>
+					</xsl:if>
+					<xsl:if test="local-name() != 'link'">
+						<xsl:attribute name="id"><xsl:value-of select="local-name()" /></xsl:attribute>
 					</xsl:if>
 					<xsl:apply-templates select="link:caption" />
 				</a>
