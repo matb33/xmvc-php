@@ -175,8 +175,9 @@ class CC
 	public static function InjectMathCaptcha( $model )
 	{
 		$model->xPath->registerNamespace( "cc", "urn:cc:root" );
+		$model->xPath->registerNamespace( "form", "urn:cc:form" );
 
-		foreach( $model->xPath->query( "//cc:math-captcha" ) as $mathCaptchaNode )
+		foreach( $model->xPath->query( "//form:math-captcha" ) as $mathCaptchaNode )
 		{
 			$type = $mathCaptchaNode->getAttribute( "type" );
 
