@@ -23,54 +23,74 @@ class XMLModelDriver extends ModelDriver implements ModelDriverInterface
 		}
 		else
 		{
-			if( is_a( $parameter, "ModelDriver" ) )
+			if( $this->IsInstanceOfModelDriver( $parameter ) )
 			{
-				// Treat parameter as an instance of a model
-
 				$xmlData = $parameter->GetXMLForStacking();
 			}
 			else
 			{
-				if( strpos( $parameter, "</" ) === false )
+				if( $this->IsURL( $parameter ) )
 				{
-					if( preg_match( '/^(http|https|ftp):\/\/[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,6}((:[0-9]{1,5})?\/.*)?$/i', $parameter ) )
-					{
-						// Treat parameter as a URL that we attempt to read as raw XML
-						$parameter = $this->file_get_contents_utf8( $parameter );
-					}
-					elseif( file_exists( $parameter ) )
-					{
-						// Treat parameter as a file on the file system
-						$parameter = $this->file_get_contents_utf8( $parameter );
-					}
+					$parameter = $this->file_get_contents_utf8( $parameter );
+				}
+				elseif( $this->IsFileOnFileSystem( $parameter ) )
+				{
+					$parameter = $this->file_get_contents_utf8( $parameter );
 				}
 
-				if( strpos( $parameter, "</" ) !== false )
+				if( $this->IsRawXML( $parameter ) )
 				{
-					// Treat parameter as raw XML.  However, we must strip out the xml declaration and xmvc:root tag if present.
-					// Otherwise this model won't play nice with other models when stacked.
-
 					$xmlData = Normalize::StripXMLRootTags( $parameter );
 				}
 				else
 				{
-					// Treat parameter as XML model name
-
-					$parameter = Loader::AssignDefaultNamespace( $parameter, $namespace );
-
-					if( ( $xmlModelFile = Loader::Resolve( Loader::modelFolder, $parameter, Loader::modelExtension ) ) !== false )
-					{
-						$xmlData = $this->LoadModelXML( $xmlModelFile, $data );
-					}
-					else
-					{
-						trigger_error( "XML model [" . $parameter . "] not found", E_USER_ERROR );
-					}
+					$xmlData = $this->LoadXMLFromModel( $parameter, $namespace, $data );
 				}
 			}
 		}
 
 		$this->SetXML( $xmlData );
+
+		return( $xmlData );
+	}
+
+	private function IsInstanceOfModelDriver( $parameter )
+	{
+		return( is_a( $parameter, "ModelDriver" ) );
+	}
+
+	private function IsRawXML( $parameter )
+	{
+		return( strpos( $parameter, "</" ) !== false );
+	}
+
+	private function IsURL( $parameter )
+	{
+		 return( preg_match( '/^(http|https|ftp):\/\/[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,6}((:[0-9]{1,5})?\/.*)?$/i', $parameter ) );
+	}
+
+	private function IsFileOnFileSystem( $parameter )
+	{
+		if( ! $this->IsRawXML( $parameter ) )
+		{
+			return( file_exists( $parameter ) );
+		}
+
+		return( false );
+	}
+
+	private function LoadXMLFromModel( $modelName, $namespace, $data )
+	{
+		$modelName = Loader::AssignDefaultNamespace( $modelName, $namespace );
+
+		if( ( $xmlModelFile = Loader::Resolve( Loader::modelFolder, $modelName, Loader::modelExtension ) ) !== false )
+		{
+			$xmlData = $this->LoadModelXML( $xmlModelFile, $data );
+		}
+		else
+		{
+			trigger_error( "XML model [" . $modelName . "] not found", E_USER_ERROR );
+		}
 
 		return( $xmlData );
 	}
