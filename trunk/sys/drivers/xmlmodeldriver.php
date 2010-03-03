@@ -31,15 +31,18 @@ class XMLModelDriver extends ModelDriver implements ModelDriverInterface
 			}
 			else
 			{
-				if( preg_match( '/^(http|https|ftp):\/\/[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,6}((:[0-9]{1,5})?\/.*)?$/i', $parameter ) )
+				if( strpos( $parameter, "</" ) === false )
 				{
-					// Treat parameter as a URL that we attempt to read as raw XML
-					$parameter = $this->file_get_contents_utf8( $parameter );
-				}
-				elseif( file_exists( $parameter ) )
-				{
-					// Treat parameter as a file on the file system
-					$parameter = $this->file_get_contents_utf8( $parameter );
+					if( preg_match( '/^(http|https|ftp):\/\/[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,6}((:[0-9]{1,5})?\/.*)?$/i', $parameter ) )
+					{
+						// Treat parameter as a URL that we attempt to read as raw XML
+						$parameter = $this->file_get_contents_utf8( $parameter );
+					}
+					elseif( file_exists( $parameter ) )
+					{
+						// Treat parameter as a file on the file system
+						$parameter = $this->file_get_contents_utf8( $parameter );
+					}
 				}
 
 				if( strpos( $parameter, "</" ) !== false )
