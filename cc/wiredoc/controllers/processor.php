@@ -29,7 +29,7 @@ class Processor extends \xMVC\App\Website
 
 		if( ( $linkData = Sitemap::GetLinkDataFromSitemapByPath( $currentPath ) ) !== false )
 		{
-			$this->RenderPageAsHTML( $linkData );
+			$this->RenderPage( $linkData );
 		}
 		else
 		{
@@ -42,13 +42,19 @@ class Processor extends \xMVC\App\Website
 		ErrorHandler::InvokeHTTPError( array( "errorCode" => "404", "controllerFile" => __CLASS__, "method" => $currentPath ) );
 	}
 
-	private function RenderPageAsHTML( $linkData )
+	private function RenderPage( $linkData )
 	{
 		$instance = $linkData[ "name" ];
 		$component = $linkData[ "component" ];
+		$viewName = $linkData[ "view" ];
+
+		if( strlen( trim( $viewName ) ) == 0 )
+		{
+			$viewName = __NAMESPACE__ . "\\xhtml1-strict";
+		}
 
 		$model = new XMLModelDriver( "xMVC\\App\\instances/" . $component . "/" . $instance );
-		$view = new View( "xMVC\\App\\" . $component );
+		$view = new View( $viewName );
 
 		$view->PushModel( CC::InjectDependencies( $model ) );
 		$view->PushModel( $this->stringData );
