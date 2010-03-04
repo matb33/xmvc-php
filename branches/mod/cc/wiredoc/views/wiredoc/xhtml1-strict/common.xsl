@@ -44,6 +44,7 @@
 	</xsl:template>
 
 	<xsl:template match="meta:href" />
+	<xsl:template match="meta:view" />
 
 	<xsl:template match="instance:*[ preceding-sibling::meta:head ]">
 		<body>

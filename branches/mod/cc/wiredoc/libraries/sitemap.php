@@ -37,15 +37,17 @@ class Sitemap
 			foreach( $model->xPath->query( "//meta:href" ) as $hrefNode )
 			{
 				$name = $model->xPath->query( "ancestor::instance:*/@name", $hrefNode )->item( 0 )->nodeValue;
-				$lang = $hrefNode->getAttribute( "lang" );
+				$lang = $hrefNode->getAttribute( "xml:lang" );
 				$parent = $model->xPath->query( "../meta:parent", $hrefNode )->item( 0 )->nodeValue;
 				$component = $model->xPath->query( "ancestor::instance:*", $hrefNode )->item( 0 )->localName;
+				$view = $model->xPath->query( "../meta:view", $hrefNode )->item( 0 )->nodeValue;
 
 				$links[ $lang ][ $name ] = array(
 					"path" => $hrefNode->nodeValue,
 					"parent" => $parent,
 					"file" => $file,
-					"component" => $component
+					"component" => $component,
+					"view" => $view
 				);
 			}
 		}
@@ -68,6 +70,7 @@ class Sitemap
 			$parent = $data[ "parent" ];
 			$file = $data[ "file" ];
 			$component = $data[ "component" ];
+			$view = $data[ "view" ];
 
 			$urlNode = $sitemapModel->createElementNS( Config::$data[ "sitemapNamespace" ], "url" );
 			$urlsetNode->appendChild( $urlNode );
@@ -92,8 +95,11 @@ class Sitemap
 			$pathNode = $sitemapModel->createElementNS( Config::$data[ "ccNamespaces" ][ "sitemap" ], "sitemap:path", $path );
 			$urlNode->appendChild( $pathNode );
 
-			$pathNode = $sitemapModel->createElementNS( Config::$data[ "ccNamespaces" ][ "sitemap" ], "sitemap:component", $component );
-			$urlNode->appendChild( $pathNode );
+			$componentNode = $sitemapModel->createElementNS( Config::$data[ "ccNamespaces" ][ "sitemap" ], "sitemap:component", $component );
+			$urlNode->appendChild( $componentNode );
+
+			$viewNode = $sitemapModel->createElementNS( Config::$data[ "ccNamespaces" ][ "sitemap" ], "sitemap:view", $view );
+			$urlNode->appendChild( $viewNode );
 		}
 
 		$sitemapXML = $sitemapModel->saveXML( $urlsetNode );
@@ -192,6 +198,7 @@ class Sitemap
 				$linkData[ "name" ] = $sitemapModel->xPath->query( "sitemap:name", $urlNode )->item( 0 )->nodeValue;
 				$linkData[ "path" ] = $sitemapModel->xPath->query( "sitemap:path", $urlNode )->item( 0 )->nodeValue;
 				$linkData[ "component" ] = $sitemapModel->xPath->query( "sitemap:component", $urlNode )->item( 0 )->nodeValue;
+				$linkData[ "view" ] = $sitemapModel->xPath->query( "sitemap:view", $urlNode )->item( 0 )->nodeValue;
 				$linkData[ "lang" ] = $lang;
 
 				return( $linkData );

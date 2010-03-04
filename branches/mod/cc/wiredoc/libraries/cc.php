@@ -128,15 +128,15 @@ class CC
 		{
 			$model = self::RegisterNamespaces( $model );
 
-			foreach( $model->xPath->query( "//*[ @inject:xml-lang != '' ]" ) as $itemNode )
+			foreach( $model->xPath->query( "//*[ @inject:lang != '' ]" ) as $itemNode )
 			{
-				$pageName = $itemNode->getAttribute( "inject:xml-lang" );
+				$attributeName = $itemNode->getAttribute( "inject:lang" );
 
-				$langNode = $model->createAttribute( "xml:lang" );
+				$langNode = $model->createAttribute( $attributeName );
 				$langNode->value = $lang;
 				$itemNode->appendChild( $langNode );
 
-				$itemNode->removeAttribute( "inject:xml-lang" );
+				$itemNode->removeAttribute( "inject:lang" );
 			}
 		}
 	}
