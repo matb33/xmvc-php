@@ -102,6 +102,11 @@ class Routing
 				$routes = array_merge( Config::$data[ "priorityRoutes" ], $routes );
 			}
 
+			if( isset( Config::$data[ "lowPriorityRoutes" ] ) && is_array( Config::$data[ "lowPriorityRoutes" ] ) )
+			{
+				$routes = array_merge( $routes, Config::$data[ "lowPriorityRoutes" ] );
+			}
+
 			if( ! Config::$data[ "useQueryInRoutes" ] )
 			{
 				$routedURI = preg_replace( "/\?.*$/", "", $routedURI );
