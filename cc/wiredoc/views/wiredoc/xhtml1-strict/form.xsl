@@ -1,7 +1,5 @@
 <xsl:stylesheet version="1.0" exclude-result-prefixes="xhtml xmvc page wireframe child head container dependency list item doc link inject c config form" xmlns="http://www.w3.org/1999/xhtml" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xmvc="http://www.xmvc.org/ns/xmvc/1.0" xmlns:page="urn:cc:page" xmlns:wireframe="urn:cc:wireframe" xmlns:child="urn:cc:child" xmlns:config="urn:cc:config" xmlns:head="urn:cc:head" xmlns:container="urn:cc:container" xmlns:dependency="urn:cc:dependency" xmlns:list="urn:cc:list" xmlns:item="urn:cc:item" xmlns:doc="urn:cc:doc" xmlns:link="urn:cc:link" xmlns:inject="urn:cc:inject" xmlns:form="urn:cc:form" xmlns:c="urn:cc:custom">
 
-	<!-- Generic form fields.  To override, match the same xpath but specify a higher priority number in your template -->
-
 	<xsl:template match="form:form" priority="0">
 		<form>
 			<xsl:if test="@href">
@@ -30,7 +28,7 @@
 						<xsl:attribute name="value"><xsl:value-of select="//xmvc:strings/xmvc:*[ @key = $name ]" /></xsl:attribute>
 					</xsl:when>
 					<xsl:when test="form:value">
-						<xsl:attribute name="value"><xsl:value-of select="form:value[ not( @lang ) or @lang = //xmvc:lang ]" /></xsl:attribute>
+						<xsl:attribute name="value"><xsl:value-of select="form:value[ lang( $lang ) ]" /></xsl:attribute>
 					</xsl:when>
 				</xsl:choose>
 			</input>
@@ -49,7 +47,7 @@
 			<xsl:apply-templates select="form:label[ not( @position ) or @position = 'before' ]" />
 			<textarea id="{ @name }" name="{ @name }"><xsl:choose>
 				<xsl:when test="//xmvc:strings/xmvc:*[ @key = $name ]"><xsl:value-of select="//xmvc:strings/xmvc:*[ @key = $name ]" /></xsl:when>
-				<xsl:when test="form:value"><xsl:value-of select="form:value[ not( @lang ) or @lang = //xmvc:lang ]" /></xsl:when>
+				<xsl:when test="form:value"><xsl:value-of select="form:value[ lang( $lang ) ]" /></xsl:when>
 			</xsl:choose></textarea>
 			<xsl:apply-templates select="form:label[ @position = 'after' ]" />
 			<xsl:apply-templates select="form:info" />
@@ -59,8 +57,8 @@
 
 	<xsl:template match="form:field[ @type = 'submit' or @type = 'reset' or @type = 'button' ]" priority="0">
 		<input type="{ @type }" name="{ @name }" id="{ @name }" class="{ @name }">
-			<xsl:if test="form:label[ not( @lang ) or @lang = //xmvc:lang ]">
-				<xsl:attribute name="value"><xsl:value-of select="form:label[ not( @lang ) or @lang = //xmvc:lang ]" /></xsl:attribute>
+			<xsl:if test="form:label[ lang( $lang ) ]">
+				<xsl:attribute name="value"><xsl:value-of select="form:label[ lang( $lang ) ]" /></xsl:attribute>
 			</xsl:if>
 		</input>
 		<xsl:apply-templates select="form:constraint" />
@@ -79,8 +77,8 @@
 			<xsl:apply-templates select="form:label[ @position = 'before' ]" />
 			<input type="{ $type }" id="{ $name }-{ position() }" name="{ $name }[]">
 				<xsl:if test="form:value">
-					<xsl:attribute name="value"><xsl:value-of select="form:value[ not( @lang ) or @lang = //xmvc:lang ]" /></xsl:attribute>
-					<xsl:if test="contains( //xmvc:strings/xmvc:*[ @key = $name ], concat( '|', form:value[ not( @lang ) or @lang = //xmvc:lang ], '|' ) )">
+					<xsl:attribute name="value"><xsl:value-of select="form:value[ lang( $lang ) ]" /></xsl:attribute>
+					<xsl:if test="contains( //xmvc:strings/xmvc:*[ @key = $name ], concat( '|', form:value[ lang( $lang ) ], '|' ) )">
 						<xsl:attribute name="checked">true</xsl:attribute>
 					</xsl:if>
 				</xsl:if>
@@ -120,15 +118,15 @@
 		<option>
 			<xsl:apply-templates select="form:label[ @position = 'before' ]" />
 			<xsl:if test="form:value">
-				<xsl:attribute name="value"><xsl:value-of select="form:value[ not( @lang ) or @lang = //xmvc:lang ]" /></xsl:attribute>
+				<xsl:attribute name="value"><xsl:value-of select="form:value[ lang( $lang ) ]" /></xsl:attribute>
 				<xsl:choose>
 					<xsl:when test="$type = 'select'">
-						<xsl:if test="//xmvc:strings/xmvc:*[ @key = $name ] = form:value[ not( @lang ) or @lang = //xmvc:lang ]">
+						<xsl:if test="//xmvc:strings/xmvc:*[ @key = $name ] = form:value[ lang( $lang ) ]">
 							<xsl:attribute name="selected">true</xsl:attribute>
 						</xsl:if>
 					</xsl:when>
 					<xsl:otherwise>
-						<xsl:if test="contains( //xmvc:strings/xmvc:*[ @key = $name ], concat( '|', form:value[ not( @lang ) or @lang = //xmvc:lang ], '|' ) )">
+						<xsl:if test="contains( //xmvc:strings/xmvc:*[ @key = $name ], concat( '|', form:value[ lang( $lang ) ], '|' ) )">
 							<xsl:attribute name="selected">true</xsl:attribute>
 						</xsl:if>
 					</xsl:otherwise>
@@ -140,21 +138,21 @@
 
 	<xsl:template match="form:field//form:group" priority="0">
 		<optgroup>
-			<xsl:if test="form:label[ not( @lang ) or @lang = //xmvc:lang ]">
-				<xsl:attribute name="label"><xsl:value-of select="form:label[ not( @lang ) or @lang = //xmvc:lang ]" /></xsl:attribute>
+			<xsl:if test="form:label[ lang( $lang ) ]">
+				<xsl:attribute name="label"><xsl:value-of select="form:label[ lang( $lang ) ]" /></xsl:attribute>
 			</xsl:if>
 			<xsl:apply-templates select="*[ name() = 'form:option' or name() = 'form:group' ]" />
 		</optgroup>
 	</xsl:template>
 
 	<xsl:template match="form:field//form:label" priority="1">
-		<xsl:if test="not( @lang ) or @lang = //xmvc:lang">
+		<xsl:if test="lang( $lang )">
 			<span><xsl:apply-templates /></span>
 		</xsl:if>
 	</xsl:template>
 
 	<xsl:template match="form:field//form:info" priority="1">
-		<xsl:if test="not( @lang ) or @lang = //xmvc:lang">
+		<xsl:if test="lang( $lang )">
 			<input type="hidden" class="info" value="{ text() }" />
 		</xsl:if>
 	</xsl:template>
@@ -166,7 +164,7 @@
 	</xsl:template>
 
 	<xsl:template match="form:fieldset/form:legend" priority="1">
-		<xsl:if test="not( @lang ) or @lang = //xmvc:lang">
+		<xsl:if test="lang( $lang )">
 			<legend><xsl:apply-templates /></legend>
 		</xsl:if>
 	</xsl:template>
