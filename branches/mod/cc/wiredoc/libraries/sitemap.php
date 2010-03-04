@@ -6,7 +6,6 @@ use xMVC\Sys\Loader;
 use xMVC\Sys\XMLModelDriver;
 use xMVC\Sys\Routing;
 use xMVC\Sys\Config;
-use xMVC\Sys\Core;
 use xMVC\Sys\OutputHeaders;
 
 use Module\Language\Language;
@@ -29,27 +28,25 @@ class Sitemap
 
 	private static function GatherLinksFromModels()
 	{
-		foreach( glob( "app/" . Loader::modelFolder . "/*/*.xpg" ) as $file )
+		$links = array();
+
+		foreach( glob( "app/" . Loader::modelFolder . "/instances/*/*.xml" ) as $file )
 		{
 			$model = new XMLModelDriver( $file );
 
-			$model->xPath->registerNamespace( "config", Config::$data[ "ccNamespaces" ][ "config" ] );
-
-			foreach( $model->xPath->query( "//page:*" ) as $pageNode )
+			foreach( $model->xPath->query( "//meta:href" ) as $hrefNode )
 			{
-				$name = $pageNode->localName;
-				$parent = $pageNode->getAttribute( "parent" );
+				$name = $model->xPath->query( "ancestor::instance:*/@name", $hrefNode )->item( 0 )->nodeValue;
+				$lang = $hrefNode->getAttribute( "lang" );
+				$parent = $model->xPath->query( "../meta:parent", $hrefNode )->item( 0 )->nodeValue;
+				$component = $model->xPath->query( "ancestor::instance:*", $hrefNode )->item( 0 )->localName;
 
-				foreach( $model->xPath->query( "config:href", $pageNode ) as $linkNode )
-				{
-					$lang = $linkNode->getAttribute( "lang" );
-
-					$links[ $lang ][ $name ] = array(
-						"path" => $linkNode->nodeValue,
-						"parent" => $parent,
-						"file" => $file
-					);
-				}
+				$links[ $lang ][ $name ] = array(
+					"path" => $hrefNode->nodeValue,
+					"parent" => $parent,
+					"file" => $file,
+					"component" => $component
+				);
 			}
 		}
 
@@ -70,6 +67,7 @@ class Sitemap
 			$path = $data[ "path" ];
 			$parent = $data[ "parent" ];
 			$file = $data[ "file" ];
+			$component = $data[ "component" ];
 
 			$urlNode = $sitemapModel->createElementNS( Config::$data[ "sitemapNamespace" ], "url" );
 			$urlsetNode->appendChild( $urlNode );
@@ -92,6 +90,9 @@ class Sitemap
 			}
 
 			$pathNode = $sitemapModel->createElementNS( Config::$data[ "ccNamespaces" ][ "sitemap" ], "sitemap:path", $path );
+			$urlNode->appendChild( $pathNode );
+
+			$pathNode = $sitemapModel->createElementNS( Config::$data[ "ccNamespaces" ][ "sitemap" ], "sitemap:component", $component );
 			$urlNode->appendChild( $pathNode );
 		}
 
@@ -156,18 +157,44 @@ class Sitemap
 
 	public static function GetCurrentPageName()
 	{
-		$pathData = Routing::PathData();
-		$currentPath = "/" . ( strlen( $pathData[ "pathOnlyOriginal" ] ) > 0 ? $pathData[ "pathOnlyOriginal" ] . "/" : "" );
+		$pathOnlyOriginal = Routing::GetPathOnlyOriginal();
+		$currentPath = "/" . ( strlen( $pathOnlyOriginal ) > 0 ? $pathOnlyOriginal . "/" : "" );
 
+		return( self::GetPageNameByPath( $currentPath ) );
+	}
+
+	public static function GetPageNameByPath( $path )
+	{
 		foreach( Language::GetDefinedLangs() as $lang )
 		{
 			$sitemapModel = self::Get( $lang );
 
-			foreach( $sitemapModel->xPath->query( "//s:url[ sitemap:path = '" . $currentPath . "' ]" ) as $urlNode )
+			foreach( $sitemapModel->xPath->query( "//s:url[ sitemap:path = '" . $path . "' ]" ) as $urlNode )
 			{
 				$pageName = $sitemapModel->xPath->query( "sitemap:name", $urlNode )->item( 0 )->nodeValue;
 
 				return( $pageName );
+			}
+		}
+
+		return( false );
+	}
+
+	public static function GetLinkDataFromSitemapByPath( $path )
+	{
+		foreach( Language::GetDefinedLangs() as $lang )
+		{
+			$sitemapModel = self::Get( $lang );
+
+			foreach( $sitemapModel->xPath->query( "//s:url[ sitemap:path = '" . $path . "' ]" ) as $urlNode )
+			{
+				$linkData = array();
+				$linkData[ "name" ] = $sitemapModel->xPath->query( "sitemap:name", $urlNode )->item( 0 )->nodeValue;
+				$linkData[ "path" ] = $sitemapModel->xPath->query( "sitemap:path", $urlNode )->item( 0 )->nodeValue;
+				$linkData[ "component" ] = $sitemapModel->xPath->query( "sitemap:component", $urlNode )->item( 0 )->nodeValue;
+				$linkData[ "lang" ] = $lang;
+
+				return( $linkData );
 			}
 		}
 

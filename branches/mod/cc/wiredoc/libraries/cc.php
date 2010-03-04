@@ -31,17 +31,17 @@ class CC
 		while( self::DependencyCount( $model, $dependencies ) > 0 )
 		{
 			$node = $dependencies->item( 0 );
-			$type = $node->localName;
-			$instance = $node->getAttribute( "instance" );
+			$component = $node->localName;
+			$instance = $node->getAttribute( "load" );
 
-			$modelName = Core::namespaceApp . $type . "/" . $instance . ".xwf";
+			$modelName = Core::namespaceApp . "instances/" . $component . "/" . $instance . ".xml";
 
 			$instanceModel = new XMLModelDriver( $modelName );
 			$instanceModel = self::RegisterNamespaces( $instanceModel );
 
 			$originalNode = $node->cloneNode( true );
 
-			$externalNode = $model->importNode( $instanceModel->xPath->query( "//wireframe:*" )->item( 0 ), true );
+			$externalNode = $model->importNode( $instanceModel->xPath->query( "//instance:*" )->item( 0 ), true );
 			$node->parentNode->replaceChild( $externalNode, $node );
 
 			$childRefNodeList = $model->xPath->query( "//child:reference", $node );
@@ -59,7 +59,7 @@ class CC
 
 	private static function DependencyCount( $model, &$dependencies )
 	{
-		$dependencies = $model->xPath->query( "//dependency:*[ @instance ]" );
+		$dependencies = $model->xPath->query( "//instance:*[ @load ]" );
 
 		return( $dependencies->length );
 	}
@@ -118,6 +118,27 @@ class CC
 		}
 
 		return( $model );
+	}
+
+	public static function InjectLang( &$view, $lang )
+	{
+		$models = $view->GetModels();
+
+		foreach( $models as $model )
+		{
+			$model = self::RegisterNamespaces( $model );
+
+			foreach( $model->xPath->query( "//*[ @inject:xml-lang != '' ]" ) as $itemNode )
+			{
+				$pageName = $itemNode->getAttribute( "inject:xml-lang" );
+
+				$langNode = $model->createAttribute( "xml:lang" );
+				$langNode->value = $lang;
+				$itemNode->appendChild( $langNode );
+
+				$itemNode->removeAttribute( "inject:xml-lang" );
+			}
+		}
 	}
 
 	public static function InjectLinkNextToPageName( &$view )

@@ -7,6 +7,8 @@
 
 	<xsl:include href="../../../sys/views/error.xsl" />
 
+	<!-- Global utility templates -->
+
 	<xsl:template match="xmvc:*" />
 
 	<!-- Strip namespaces from XHTML using an identity template -->
