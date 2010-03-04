@@ -58,6 +58,30 @@ class Routing
 		return( self::$pathData );
 	}
 
+	public static function GetPathPartsOriginal( $overrideURI = null )
+	{
+		$pathData = self::PathData( $overrideURI );
+		return( $pathData[ "pathPartsOriginal" ] );
+	}
+
+	public static function GetPathOnlyOriginal( $overrideURI = null )
+	{
+		$pathData = self::PathData( $overrideURI );
+		return( $pathData[ "pathOnlyOriginal" ] );
+	}
+
+	public static function GetPathParts( $overrideURI = null )
+	{
+		$pathData = self::PathData( $overrideURI );
+		return( $pathData[ "pathParts" ] );
+	}
+
+	public static function GetPathOnly( $overrideURI = null )
+	{
+		$pathData = self::PathData( $overrideURI );
+		return( $pathData[ "pathOnly" ] );
+	}
+
 	private static function GetPathData( $URI )
 	{
 		$routedURI = self::ApplyRoutingRules( $URI );
