@@ -7,7 +7,7 @@ var Constraints = new function()
 	this.Initialize = function( ajaxURL, form )
 	{
 		this.ajaxURL = ajaxURL;
-		this.form = form;	// not active -- investigate why this.form.find() barely ever works
+		this.form = form;	// not active -- investigate why this.form.find() barely ever works (NOTE: probably should use $( "whatever", form ) syntax)
 
 		this.BindFieldEvents();
 	};
