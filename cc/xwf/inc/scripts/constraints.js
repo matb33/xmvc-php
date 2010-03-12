@@ -2,7 +2,7 @@ var Constraints = new function()
 {
 	this.ajaxURL = null;
 	this.allowOnNextSubmitEvent = false;
-	this.inputKeyUpDelay = 750;
+	this.inputKeyUpDelay = 1000;
 
 	this.Initialize = function( ajaxURL, form )
 	{
