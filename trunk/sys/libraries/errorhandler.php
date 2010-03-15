@@ -38,7 +38,7 @@ class ErrorHandler
 	{
 		$headerPattern = "HTTP/1.0 #errorCode# #headerType#";
 
-		self::InvokeError( "xMVC\\Sys\\http-error", "xMVC\\Sys\\http-errors", $headerPattern, $data );
+		self::InvokeError( Config::$data[ "httpErrorView" ], Config::$data[ "httpErrorModel" ], $headerPattern, $data );
 	}
 
 	private static function InvokeError( $viewName, $modelName, $headerPattern, $data )
