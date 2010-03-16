@@ -1,6 +1,6 @@
 <?php
 
-namespace Module\YouTube;
+namespace Module\GData;
 
 use xMVC\Sys\XMLModelDriver;
 
