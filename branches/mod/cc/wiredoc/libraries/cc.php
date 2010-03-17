@@ -44,7 +44,7 @@ class CC
 			$externalNode = $model->importNode( $instanceModel->xPath->query( "//instance:*" )->item( 0 ), true );
 			$node->parentNode->replaceChild( $externalNode, $node );
 
-			$childRefNodeList = $model->xPath->query( "//child:reference", $node );
+			$childRefNodeList = $model->xPath->query( "//reference:child", $node );
 
 			if( $childRefNodeList->length > 0 )
 			{

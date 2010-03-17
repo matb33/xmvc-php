@@ -2,11 +2,20 @@
 
 namespace Module\CC;
 
+use xMVC\Sys\Core;
 use xMVC\Sys\Routing;
 use xMVC\Sys\Loader;
 use xMVC\Sys\ErrorHandler;
 use xMVC\Sys\XMLModelDriver;
 use xMVC\Sys\View;
+
+/*
+
+NOTES:
+1) Notice that Processor is hard-coded to extend \xMVC\App\Website.  For the time being, this is a requirement of the CC module. You will need to create this Website class in your app/controllers.
+2) Notice the protected function Call.  This is to be optionally called from your custom controller (called by writing a higher precedence route) to continue regular Processor operation.
+
+*/
 
 class Processor extends \xMVC\App\Website
 {
@@ -53,7 +62,7 @@ class Processor extends \xMVC\App\Website
 			$viewName = __NAMESPACE__ . "\\xhtml1-strict";
 		}
 
-		$model = new XMLModelDriver( "xMVC\\App\\instances/" . $component . "/" . $instance );
+		$model = new XMLModelDriver( Core::namespaceApp . "instances/" . $component . "/" . $instance );
 		$view = new View( $viewName );
 
 		$view->PushModel( CC::InjectDependencies( $model ) );
