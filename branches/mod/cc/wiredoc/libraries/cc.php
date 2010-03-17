@@ -31,8 +31,8 @@ class CC
 		while( self::DependencyCount( $model, $dependencies ) > 0 )
 		{
 			$node = $dependencies->item( 0 );
-			$component = $node->localName;
-			$instance = $node->getAttribute( "load" );
+			$component = $node->getAttribute( "component" );
+			$instance = $node->getAttribute( "name" );
 
 			$modelName = Core::namespaceApp . "instances/" . $component . "/" . $instance . ".xml";
 
@@ -59,7 +59,7 @@ class CC
 
 	private static function DependencyCount( $model, &$dependencies )
 	{
-		$dependencies = $model->xPath->query( "//instance:*[ @load ]" );
+		$dependencies = $model->xPath->query( "//reference:instance" );
 
 		return( $dependencies->length );
 	}
