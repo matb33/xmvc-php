@@ -139,6 +139,14 @@ var Tooltip = new function()
 		{
 			Tooltip.ShowTooltip();
 		}
+
+		// Note that this won't work as expected if there is more than one checkbox on the page.
+		// This should be fixed for a more long-term solution.
+		if( $( data.target ).is( ":checkbox" ) )
+		{
+			Tooltip.input = data.target;
+			Tooltip.ShowTooltip();
+		}
 	};
 
 	this.OnConstraintReset = function( data )
