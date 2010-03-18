@@ -147,6 +147,12 @@
 		</optgroup>
 	</xsl:template>
 
+	<xsl:template match="form:field[ @type = 'checkbox' ]//form:option/form:label" priority="3">
+		<xsl:if test="not( @lang ) or @lang = //xmvc:lang">
+			<span><xsl:apply-templates /></span>
+		</xsl:if>
+	</xsl:template>
+
 	<xsl:template match="form:field//form:option/form:label" priority="2">
 		<xsl:if test="not( @lang ) or @lang = //xmvc:lang">
 			<xsl:apply-templates />
