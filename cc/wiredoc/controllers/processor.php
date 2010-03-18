@@ -8,6 +8,7 @@ use xMVC\Sys\Loader;
 use xMVC\Sys\ErrorHandler;
 use xMVC\Sys\XMLModelDriver;
 use xMVC\Sys\View;
+use xMVC\Sys\Events\DefaultEventDispatcher;
 
 /*
 
@@ -65,7 +66,9 @@ class Processor extends \xMVC\App\Website
 		$model = new XMLModelDriver( Core::namespaceApp . "instances/" . $component . "/" . $instance );
 		$view = new View( $viewName );
 
-		$view->PushModel( CC::InjectDependencies( $model ) );
+		CC::InjectReferences( $model );
+
+		$view->PushModel( $model );
 		$view->PushModel( $this->stringData );
 
 		CC::InjectLinkNextToPageName( $view );
