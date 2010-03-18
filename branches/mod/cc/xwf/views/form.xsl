@@ -147,6 +147,12 @@
 		</optgroup>
 	</xsl:template>
 
+	<xsl:template match="form:field//form:option/form:label" priority="2">
+		<xsl:if test="not( @lang ) or @lang = //xmvc:lang">
+			<xsl:apply-templates />
+		</xsl:if>
+	</xsl:template>
+
 	<xsl:template match="form:field//form:label" priority="1">
 		<xsl:if test="not( @lang ) or @lang = //xmvc:lang">
 			<span><xsl:apply-templates /></span>
