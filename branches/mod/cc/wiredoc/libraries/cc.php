@@ -9,59 +9,95 @@ use xMVC\Sys\StringsModelDriver;
 use xMVC\Sys\View;
 use xMVC\Sys\Routing;
 use xMVC\Sys\Config;
+use xMVC\Sys\Events\DefaultEventDispatcher;
+use xMVC\Sys\Events\Event;
+use xMVC\Sys\Delegate;
 
 use Module\Language\Language;
 
 class CC
 {
-	public static function RegisterNamespaces( $model )
+	private static $eventPump = null;
+
+	public static function GetEventPump()
+	{
+		if( is_null( self::$eventPump ) )
+		{
+			self::InitializeEventHandling();
+		}
+
+		return( self::$eventPump );
+	}
+
+	private static function InitializeEventHandling()
+	{
+		self::$eventPump = new DefaultEventDispatcher();
+		self::$eventPump->addEventListener( "onComponentBuildComplete", new Delegate( "\\Module\\CC\\CC::OnComponentBuildComplete" ) );
+	}
+
+	public static function RegisterNamespaces( &$model )
 	{
 		foreach( Config::$data[ "ccNamespaces" ] as $prefix => $namespace )
 		{
 			$model->xPath->registerNamespace( $prefix, $namespace );
 		}
-
-		return( $model );
 	}
 
-	public static function InjectDependencies( $model )
+	public static function InjectReferences( &$model )
 	{
-		$model = self::RegisterNamespaces( $model );
+		self::RegisterNamespaces( $model );
+		self::InjectNextReference( $model );
+	}
 
-		while( self::DependencyCount( $model, $dependencies ) > 0 )
+	private static function InjectNextReference( &$model )
+	{
+		$references = $model->xPath->query( "//reference:*[ local-name() = 'instance' or local-name() = 'component' ]" );
+
+		if( $references->length > 0 )
 		{
-			$node = $dependencies->item( 0 );
-			$component = $node->getAttribute( "component" );
-			$instance = $node->getAttribute( "name" );
+			$node = $references->item( 0 );
 
-			$modelName = Core::namespaceApp . "instances/" . $component . "/" . $instance . ".xml";
-
-			$instanceModel = new XMLModelDriver( $modelName );
-			$instanceModel = self::RegisterNamespaces( $instanceModel );
-
-			$originalNode = $node->cloneNode( true );
-
-			$externalNode = $model->importNode( $instanceModel->xPath->query( "//instance:*" )->item( 0 ), true );
-			$node->parentNode->replaceChild( $externalNode, $node );
-
-			$childRefNodeList = $model->xPath->query( "//reference:child", $node );
-
-			if( $childRefNodeList->length > 0 )
+			switch( $node->localName )
 			{
-				$childRefNode = $childRefNodeList->item( 0 );
-				$importedNode = $model->importNode( $originalNode, true );
-				self::ReplaceNodeWithChildren( $model, $childRefNode, $importedNode );
+				case "instance":
+					self::InjectInstanceReference( $node, $model );
+				break;
+				case "component":
+					self::InjectComponentReference( $node, $model );
+				break;
 			}
 		}
-
-		return( $model );
 	}
 
-	private static function DependencyCount( $model, &$dependencies )
+	private static function InjectInstanceReference( $node, &$model )
 	{
-		$dependencies = $model->xPath->query( "//reference:instance" );
+		$component = $node->getAttribute( "component" );
+		$instance = $node->getAttribute( "name" );
 
-		return( $dependencies->length );
+		$modelName = Core::namespaceApp . "instances/" . $component . "/" . $instance . ".xml";
+		$instanceModel = new XMLModelDriver( $modelName );
+
+		self::InjectModel( $instanceModel, $node, $model );
+		self::InjectNextReference( $model );
+	}
+
+	private static function InjectModel( $instanceModel, $node, &$model )
+	{
+		self::RegisterNamespaces( $instanceModel );
+
+		$originalNode = $node->cloneNode( true );
+
+		$externalNode = $model->importNode( $instanceModel->xPath->query( "//instance:*" )->item( 0 ), true );
+		$node->parentNode->replaceChild( $externalNode, $node );
+
+		$childRefNodeList = $model->xPath->query( "//reference:child", $node );
+
+		if( $childRefNodeList->length > 0 )
+		{
+			$childRefNode = $childRefNodeList->item( 0 );
+			$importedNode = $model->importNode( $originalNode, true );
+			self::ReplaceNodeWithChildren( $model, $childRefNode, $importedNode );
+		}
 	}
 
 	private static function ReplaceNodeWithChildren( &$model, &$refNode, &$node )
@@ -79,9 +115,32 @@ class CC
 		$refNode->parentNode->removeChild( $refNode );
 	}
 
+	private static function InjectComponentReference( $node, &$model )
+	{
+		$component = $node->getAttribute( "name" );
+		$eventName = $node->getAttribute( "event" );
+
+		self::GetEventPump()->dispatchEvent( new Event( $eventName, array( "component" => $component, "node" => $node, "model" => $model ) ) );
+	}
+
+	public static function OnComponentBuildComplete( Event $event )
+	{
+		$sourceModel = $event->arguments[ "sourceModel" ];
+		$component = $event->arguments[ "data" ][ "component" ];
+		$node = $event->arguments[ "data" ][ "node" ];
+		$model = $event->arguments[ "data" ][ "model" ];
+
+		$view = new View( "components/" . $component );
+		$view->PushModel( $sourceModel );
+		$resultModel = new XMLModelDriver( $view->ProcessAsXML() );
+
+		self::InjectModel( $resultModel, $node, $model );
+		self::InjectNextReference( $model );
+	}
+
 	public static function InjectRSSFeed( $model )
 	{
-		$model = self::RegisterNamespaces( $model );
+		self::RegisterNamespaces( $model );
 
 		foreach( $model->xPath->query( "//inject:rss-feed" ) as $node )
 		{
@@ -103,7 +162,7 @@ class CC
 
 	public static function InjectStrings( $model, $stringModel )
 	{
-		$model = self::RegisterNamespaces( $model );
+		self::RegisterNamespaces( $model );
 
 		foreach( $model->xPath->query( "//inject:get-string" ) as $stringNode )
 		{
@@ -126,7 +185,7 @@ class CC
 
 		foreach( $models as $model )
 		{
-			$model = self::RegisterNamespaces( $model );
+			self::RegisterNamespaces( $model );
 
 			foreach( $model->xPath->query( "//*[ @inject:lang != '' ]" ) as $itemNode )
 			{
@@ -147,7 +206,7 @@ class CC
 
 		foreach( $models as $model )
 		{
-			$model = self::RegisterNamespaces( $model );
+			self::RegisterNamespaces( $model );
 
 			foreach( $model->xPath->query( "//*[ inject:href != '' ]" ) as $itemNode )
 			{
@@ -183,7 +242,7 @@ class CC
 
 		foreach( $models as $model )
 		{
-			$model = self::RegisterNamespaces( $model );
+			self::RegisterNamespaces( $model );
 
 			foreach( $model->xPath->query( "//*[ inject:lang-swap != '' ]" ) as $itemNode )
 			{
@@ -201,7 +260,7 @@ class CC
 
 	public static function InjectMathCaptcha( $model )
 	{
-		$model = self::RegisterNamespaces( $model );
+		self::RegisterNamespaces( $model );
 
 		foreach( $model->xPath->query( "//inject:math-captcha" ) as $mathCaptchaNode )
 		{
