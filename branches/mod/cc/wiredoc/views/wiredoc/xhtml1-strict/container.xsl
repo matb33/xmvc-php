@@ -4,7 +4,7 @@
 		<xsl:if test="lang( $lang )">
 			<div>
 				<xsl:if test="local-name() != 'container'">
-					<xsl:attribute name="id"><xsl:value-of select="local-name()" /></xsl:attribute>
+					<xsl:attribute name="class"><xsl:value-of select="local-name()" /></xsl:attribute>
 				</xsl:if>
 				<xsl:apply-templates />
 			</div>
