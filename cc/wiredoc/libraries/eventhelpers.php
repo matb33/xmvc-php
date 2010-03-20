@@ -2,7 +2,6 @@
 
 namespace Module\CC;
 
-use xMVC\Sys\Events\DefaultEventDispatcher;
 use xMVC\Sys\Events\Event;
 use xMVC\Sys\Delegate;
 
