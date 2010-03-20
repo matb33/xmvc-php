@@ -119,8 +119,9 @@ class CC
 	{
 		$component = $node->getAttribute( "name" );
 		$eventName = $node->getAttribute( "event" );
+		$instanceName = $node->getAttribute( "instance-name" );
 
-		self::GetEventPump()->dispatchEvent( new Event( $eventName, array( "component" => $component, "node" => $node, "model" => $model ) ) );
+		self::GetEventPump()->dispatchEvent( new Event( $eventName, array( "component" => $component, "node" => $node, "model" => $model, "instanceName" => $instanceName ) ) );
 	}
 
 	public static function OnComponentBuildComplete( Event $event )
@@ -129,10 +130,28 @@ class CC
 		$component = $event->arguments[ "data" ][ "component" ];
 		$node = $event->arguments[ "data" ][ "node" ];
 		$model = $event->arguments[ "data" ][ "model" ];
+		$instanceName = $event->arguments[ "data" ][ "instanceName" ];
 
 		$view = new View( "components/" . $component );
 		$view->PushModel( $sourceModel );
-		$resultModel = new XMLModelDriver( $view->ProcessAsXML() );
+		$result = new \DOMDocument();
+		$result->loadXML( $view->ProcessAsXML() );
+
+		$instance = new \DOMDocument();
+		$instanceNode = $instance->createElementNS( Config::$data[ "ccNamespaces" ][ "instance" ], "instance:" . $component );
+		$instance->appendChild( $instanceNode );
+
+		if( ! is_null( $instanceName ) && strlen( $instanceName ) > 0 )
+		{
+			$nameAttribute = $instance->createAttribute( "instance-name" );
+			$nameAttribute->value = $instanceName;
+			$instanceNode->appendChild( $nameAttribute );
+		}
+
+		$importedNode = $instance->importNode( $result->documentElement, true );
+		$instanceNode->appendChild( $importedNode );
+
+		$resultModel = new XMLModelDriver( $instance->saveXML() );
 
 		self::InjectModel( $resultModel, $node, $model );
 		self::InjectNextReference( $model );
