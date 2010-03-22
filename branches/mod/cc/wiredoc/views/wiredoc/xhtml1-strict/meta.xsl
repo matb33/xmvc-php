@@ -34,6 +34,12 @@
 			</xsl:comment>
 		</xsl:element>
 	</xsl:template>
+	
+	<xsl:template match="meta:style">
+		<xsl:element name="link">
+			<xsl:copy-of select="@*" />
+		</xsl:element>
+	</xsl:template>
 
 	<xsl:template match="meta:href" />
 	<xsl:template match="meta:view" />
