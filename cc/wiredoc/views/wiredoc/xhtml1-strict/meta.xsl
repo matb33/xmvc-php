@@ -36,8 +36,11 @@
 	</xsl:template>
 	
 	<xsl:template match="meta:style">
-		<xsl:element name="link">
+		<xsl:element name="style">
 			<xsl:copy-of select="@*" />
+			<xsl:comment>
+				<xsl:apply-templates />
+			</xsl:comment>
 		</xsl:element>
 	</xsl:template>
 
