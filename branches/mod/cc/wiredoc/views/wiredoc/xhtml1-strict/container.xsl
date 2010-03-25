@@ -2,12 +2,21 @@
 
 	<xsl:template match="container:*[ not( ../group:* ) ]">
 		<xsl:if test="lang( $lang )">
-			<div>
-				<xsl:if test="local-name() != 'container'">
-					<xsl:attribute name="class"><xsl:value-of select="local-name()" /></xsl:attribute>
-				</xsl:if>
-				<xsl:apply-templates />
-			</div>
+			<xsl:choose>
+				<xsl:when test="local-name() = 'iframe'">
+					<iframe class="{ @class }" src="{ @src }">			
+						<xsl:apply-templates />
+					</iframe>
+				</xsl:when>
+				<xsl:otherwise>
+					<div>
+						<xsl:if test="local-name() != 'container'">
+							<xsl:attribute name="class"><xsl:value-of select="local-name()" /></xsl:attribute>
+						</xsl:if>
+						<xsl:apply-templates />
+					</div>
+				</xsl:otherwise>
+			</xsl:choose>
 		</xsl:if>
 	</xsl:template>
 
