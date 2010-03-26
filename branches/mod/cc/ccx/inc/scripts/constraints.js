@@ -57,10 +57,11 @@ var Constraints = new function()
 
 		if( receivedProperResponse )
 		{
-			var rootElement = $( "cc\\:constraint-results", data );
+			var nsPrefix = $( "c\\:constraint-results", data ).attr( "success" ) == null ? "" : "c\\:";
+			var rootElement = $( nsPrefix + "constraint-results", data );
 			var fullSuccess = rootElement.attr( "success" ) == "true";
 
-			$( "cc\\:field", data ).each( function()
+			$( nsPrefix + "field", data ).each( function()
 			{
 				var name = $( this ).attr( "name" );
 				var fieldSuccess = $( this ).attr( "success" ) == "true";
