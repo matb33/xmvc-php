@@ -57,7 +57,7 @@ var Constraints = new function()
 
 		if( receivedProperResponse )
 		{
-			var nsPrefix = $( "c\\:constraint-results", data ).attr( "success" ) == null ? "" : "c\\:";
+			var nsPrefix = $( "cc\\:constraint-results", data ).attr( "success" ) == null ? "" : "cc\\:";
 			var rootElement = $( nsPrefix + "constraint-results", data );
 			var fullSuccess = rootElement.attr( "success" ) == "true";
 
