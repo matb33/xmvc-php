@@ -1,5 +1,19 @@
 <xsl:stylesheet version="1.0" exclude-result-prefixes="xhtml xmvc instance meta container group reference inject doc sitemap form" xmlns="http://www.w3.org/1999/xhtml" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xmvc="http://www.xmvc.org/ns/xmvc/1.0" xmlns:instance="urn:cc:instance" xmlns:meta="urn:cc:meta" xmlns:container="urn:cc:container" xmlns:group="urn:cc:group" xmlns:reference="urn:cc:reference" xmlns:inject="urn:cc:inject" xmlns:doc="urn:cc:doc" xmlns:sitemap="urn:cc:sitemap" xmlns:form="urn:cc:form">
 
+	<xsl:template match="doc:heading">
+		<xsl:variable name="depth" select="count( ancestor::*[ preceding-sibling::doc:heading | following-sibling::doc:heading ] ) + 1" />
+		<xsl:if test="lang( $lang )">
+			<xsl:choose>
+				<xsl:when test="$depth &gt; 6">
+					<h6><xsl:apply-templates /></h6>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:element name="h{ $depth }"><xsl:apply-templates /></xsl:element>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:if>
+	</xsl:template>
+
 	<xsl:template match="doc:heading1">
 		<xsl:if test="lang( $lang )">
 			<h1><xsl:apply-templates /></h1>
