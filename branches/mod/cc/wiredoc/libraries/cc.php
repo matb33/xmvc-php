@@ -121,7 +121,14 @@ class CC
 		$eventName = $node->getAttribute( "event" );
 		$instanceName = $node->getAttribute( "instance-name" );
 
-		self::GetEventPump()->dispatchEvent( new Event( $eventName, array( "component" => $component, "node" => $node, "model" => $model, "instanceName" => $instanceName ) ) );
+		$arguments = array( "component" => $component, "node" => $node, "model" => $model, "instanceName" => $instanceName );
+
+		while( $node->hasAttribute( "param" . ( ++$i ) ) )
+		{
+			$arguments[ "param" ][ $i ] = $node->getAttribute( "param" . $i );
+		}
+
+		self::GetEventPump()->dispatchEvent( new Event( $eventName, $arguments ) );
 	}
 
 	public static function OnComponentBuildComplete( Event $event )
