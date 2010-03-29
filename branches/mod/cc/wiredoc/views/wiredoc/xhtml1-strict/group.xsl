@@ -2,10 +2,13 @@
 
 	<xsl:template match="group:*">
 		<xsl:if test="lang( $lang )">
-			<ul class="layout">
-				<xsl:if test="local-name() != 'group'">
-					<xsl:attribute name="id"><xsl:value-of select="local-name()" /></xsl:attribute>
-				</xsl:if>
+			<ul>
+				<xsl:attribute name="class">
+					<xsl:if test="local-name() != 'group'">
+						<xsl:value-of select="local-name()" /><xsl:text> </xsl:text>
+					</xsl:if>
+					layout
+				</xsl:attribute>
 				<xsl:apply-templates select="*" />
 			</ul>
 		</xsl:if>
@@ -14,10 +17,10 @@
 	<xsl:template match="group:*/container:*">
 		<xsl:if test="lang( $lang )">
 			<li>
-				<xsl:if test="local-name() != 'container'">
-					<xsl:attribute name="id"><xsl:value-of select="local-name()" /></xsl:attribute>
-				</xsl:if>
 				<xsl:attribute name="class">
+					<xsl:if test="local-name() != 'container'">
+						<xsl:value-of select="local-name()" /><xsl:text> </xsl:text>
+					</xsl:if>
 					<xsl:choose>
 						<xsl:when test="last() = 1">first-child last-child</xsl:when>
 						<xsl:when test="position() = 1">first-child</xsl:when>
@@ -31,6 +34,7 @@
 						<xsl:otherwise>odd</xsl:otherwise>
 					</xsl:choose>
 					<xsl:text> layout</xsl:text>
+					<xsl:if test="descendant-or-self::doc:ulink/@href = //xmvc:strings/xmvc:uri"><xsl:text> selected</xsl:text></xsl:if>
 				</xsl:attribute>
 				<xsl:apply-templates />
 			</li>
