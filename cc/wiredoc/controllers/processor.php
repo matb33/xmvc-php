@@ -7,6 +7,7 @@ use xMVC\Sys\Routing;
 use xMVC\Sys\Loader;
 use xMVC\Sys\ErrorHandler;
 use xMVC\Sys\XMLModelDriver;
+use xMVC\Sys\StringsModelDriver;
 use xMVC\Sys\View;
 use xMVC\Sys\Events\DefaultEventDispatcher;
 
@@ -65,11 +66,26 @@ class Processor extends \xMVC\App\Website
 
 		$model = new XMLModelDriver( Core::namespaceApp . "instances/" . $component . "/" . $instance );
 		$view = new View( $viewName );
-
 		CC::InjectReferences( $model );
-
 		$view->PushModel( $model );
-		$view->PushModel( $this->stringData );
+
+		if( XMLModelDriver::Exists( Core::namespaceApp . "instances/" . $component . "/" . $instance, "xliff" ) )
+		{
+			$xliffModel = new XMLModelDriver( Core::namespaceApp . "instances/" . $component . "/" . $instance . ".xliff" );
+			$view->PushModel( $xliffModel );
+		}
+
+		$stringData = new StringsModelDriver();
+		$stringData->Add( "component", $component );
+		$stringData->Add( "instance", $instance );
+		$stringData->Add( "instance-file", $instance . "." . Loader::modelExtension );
+		$stringData->Add( "view-name", $viewName );
+		$view->PushModel( $stringData );
+
+		foreach( $this->additionalModels as $additionalModel )
+		{
+			$view->PushModel( $additionalModel );
+		}
 
 		CC::InjectLinkNextToPageName( $view );
 		CC::InjectLinkNextToLangSwap( $view );
