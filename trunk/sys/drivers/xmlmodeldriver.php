@@ -140,6 +140,11 @@ class XMLModelDriver extends ModelDriver implements ModelDriverInterface
 
 		return( $result );
 	}
+
+	public static function Exists( $modelName, $extension = Loader::modelExtension )
+	{
+		return( Loader::Resolve( Loader::modelFolder, $modelName, $extension ) !== false );
+	}
 }
 
 ?>
