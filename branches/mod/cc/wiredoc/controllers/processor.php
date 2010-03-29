@@ -69,9 +69,9 @@ class Processor extends \xMVC\App\Website
 		CC::InjectReferences( $model );
 		$view->PushModel( $model );
 
-		if( XMLModelDriver::Exists( Core::namespaceApp . "instances/" . $component . "/" . $instance, "xliff" ) )
+		if( XMLModelDriver::Exists( Core::namespaceApp . "instances/" . $component . "/xliff/" . $instance . "." . $this->lang, "xliff" ) )
 		{
-			$xliffModel = new XMLModelDriver( Core::namespaceApp . "instances/" . $component . "/" . $instance . ".xliff" );
+			$xliffModel = new XMLModelDriver( Core::namespaceApp . "instances/" . $component . "/xliff/" . $instance . "." . $this->lang . ".xliff" );
 			$view->PushModel( $xliffModel );
 		}
 

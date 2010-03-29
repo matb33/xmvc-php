@@ -20,9 +20,7 @@
 		<xsl:variable name="id1">&lt;<xsl:value-of select="name()" /> /&gt;</xsl:variable>
 		<xsl:variable name="id2">&lt;<xsl:value-of select="name()" />/&gt;</xsl:variable>
 		<xsl:variable name="id3">&lt;<xsl:value-of select="name()" />&gt;&lt;/<xsl:value-of select="name()" />&gt;</xsl:variable>
-		<xsl:for-each select="//xliff:header/xliff:skl/xliff:external-file[ @href = //xmvc:strings/xmvc:instance-file ]">
-			<xsl:value-of select="../../../xliff:body/xliff:trans-unit[ @resname = $id1 or @resname = $id2 or @resname = $id3 ]/xliff:source[ lang( $lang ) ]/text()" />
-		</xsl:for-each>
+		<xsl:value-of select="//xliff:body[ ../xliff:header/xliff:skl/xliff:external-file[ @href = //xmvc:strings/xmvc:instance-file ] ]/xliff:trans-unit[ @resname = $id1 or @resname = $id2 or @resname = $id3 ]/xliff:source[ lang( $lang ) ]/text()" />
 	</xsl:template>
 
 </xsl:stylesheet>
