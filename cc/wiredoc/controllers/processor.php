@@ -10,6 +10,7 @@ use xMVC\Sys\ErrorHandler;
 use xMVC\Sys\XMLModelDriver;
 use xMVC\Sys\StringsModelDriver;
 use xMVC\Sys\View;
+use xMVC\Sys\Events\Event;
 use xMVC\Sys\Events\DefaultEventDispatcher;
 
 use Module\Language\Language;
@@ -85,6 +86,15 @@ class Processor extends \xMVC\App\Website
 		$this->PushInstance( $view, $component, $instanceName );
 
 		$this->RenderPage( $view, $component, $instanceName, $viewName );
+	}
+
+	public function OnComponentInstanceGenerated( Event $event )
+	{
+		$model = $event->arguments[ "model" ];
+		$component = $event->arguments[ "component" ];
+		$instanceName = $event->arguments[ "instanceName" ];
+
+		$this->RenderPageWithModel( $model, $component, $instanceName );
 	}
 
 	private function RenderPage( $view, $component, $instanceName, $viewName )
