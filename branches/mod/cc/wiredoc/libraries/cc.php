@@ -33,7 +33,7 @@ class CC
 	private static function InitializeEventHandling()
 	{
 		self::$eventPump = new DefaultEventDispatcher();
-		self::$eventPump->addEventListener( "onComponentBuildComplete", new Delegate( "\\Module\\CC\\CC::OnComponentBuildComplete" ) );
+		self::$eventPump->addEventListener( "oncomponentbuildcomplete", new Delegate( "\\Module\\CC\\CC::OnComponentBuildComplete" ) );
 	}
 
 	public static function RegisterNamespaces( &$model )
@@ -132,16 +132,23 @@ class CC
 		self::GetEventPump()->dispatchEvent( new Event( $eventName, $arguments ) );
 	}
 
+	public static function RenderComponent( $component, $eventName, $instanceName, $scope, $parameters = array() )
+	{
+		$delegate = new Delegate( "OnComponentInstanceGenerated", $scope );
+
+		self::GenerateComponentInstance( $component, $eventName, $instanceName, $delegate, $parameters );
+	}
+
 	public static function GenerateComponentInstance( $component, $eventName, $instanceName, $delegate, $parameters = array() )
 	{
-		$arguments = array( "component" => $component, "model" => $emptyModel, "instanceName" => $instanceName, "inject" => false );
+		$arguments = array( "component" => $component, "instanceName" => $instanceName, "inject" => false );
 
 		foreach( $parameters as $i => $parameter )
 		{
 			$arguments[ "param" ][ $i + 1 ] = $parameter;
 		}
 
-		self::GetEventPump()->addEventListener( "onComponentInstanceBuilt", $delegate );
+		self::GetEventPump()->addEventListener( "oncomponentinstancebuilt", $delegate );
 		self::GetEventPump()->dispatchEvent( new Event( $eventName, $arguments ) );
 	}
 
@@ -155,7 +162,7 @@ class CC
 		{
 			$model = self::TransformBuiltComponentToInstance( $event );
 
-			CC::GetEventPump()->dispatchEvent( new Event( "onComponentInstanceBuilt", array( "model" => $model, "component" => $event->arguments[ "data" ][ "component" ], "instanceName" => $event->arguments[ "data" ][ "instanceName" ] ) ) );
+			CC::GetEventPump()->dispatchEvent( new Event( "oncomponentinstancebuilt", array( "model" => $model, "component" => $event->arguments[ "data" ][ "component" ], "instanceName" => $event->arguments[ "data" ][ "instanceName" ] ) ) );
 		}
 	}
 
@@ -204,7 +211,7 @@ class CC
 
 	public static function Talk( $sourceModel, Event &$event )
 	{
-		self::GetEventPump()->dispatchEvent( new Event( "onComponentBuildComplete", array( "sourceModel" => $sourceModel, "data" => $event->arguments ) ) );
+		self::GetEventPump()->dispatchEvent( new Event( "oncomponentbuildcomplete", array( "sourceModel" => $sourceModel, "data" => $event->arguments ) ) );
 	}
 
 	public static function InjectRSSFeed( $model )
