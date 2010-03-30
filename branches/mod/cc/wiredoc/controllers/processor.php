@@ -29,10 +29,17 @@ class Processor extends \xMVC\App\Website
 
 	protected function Call()
 	{
+		$pathParts = $this->GetPathParts();
+
+		call_user_func_array( "self::Page", $pathParts );
+	}
+
+	protected function GetPathParts()
+	{
 		$pathParts = Routing::GetPathParts();
 		$pathParts[ 0 ] = Loader::StripNamespace( $pathParts[ 0 ] );
 
-		call_user_func_array( "self::Page", $pathParts );
+		return( $pathParts );
 	}
 
 	public function Page()
@@ -67,8 +74,7 @@ class Processor extends \xMVC\App\Website
 		$this->PushStringData( $view, $component, $instance, $viewName );
 		$this->PushAdditionalModels( $view );
 
-		CC::InjectLinkNextToPageName( $view );
-		CC::InjectLinkNextToLangSwap( $view );
+		CC::InjectHref( $view );
 		CC::InjectLang( $view, $this->lang );
 
 		$view->RenderAsHTML();

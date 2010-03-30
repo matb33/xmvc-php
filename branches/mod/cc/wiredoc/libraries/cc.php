@@ -226,7 +226,7 @@ class CC
 		}
 	}
 
-	public static function InjectLinkNextToPageName( &$view )
+	public static function InjectHref( &$view )
 	{
 		$models = $view->GetModels();
 
@@ -234,25 +234,16 @@ class CC
 		{
 			self::RegisterNamespaces( $model );
 
-			foreach( $model->xPath->query( "//*[ inject:href != '' ]" ) as $itemNode )
-			{
-				$pageNameNode = $model->xPath->query( "inject:href", $itemNode )->item( 0 );
-				$pageName = $pageNameNode->nodeValue;
-
-				$path = Sitemap::GetPathByPageNameAndLanguage( $pageName, Language::GetLang() );
-
-				$linkNode = $model->createElementNS( Config::$data[ "ccNamespaces" ][ "link" ], "link:href", $path );
-				$itemNode->appendChild( $linkNode );
-			}
-
 			foreach( $model->xPath->query( "//*[ @inject:href != '' ]" ) as $itemNode )
 			{
 				$pageName = $itemNode->getAttribute( "inject:href" );
+				$prefix = $itemNode->hasAttribute( "inject:href-prefix" ) ? $itemNode->getAttribute( "inject:href-prefix" ) : "";
+				$suffix = $itemNode->hasAttribute( "inject:href-suffix" ) ? $itemNode->getAttribute( "inject:href-suffix" ) : "";
 
 				$path = Sitemap::GetPathByPageNameAndLanguage( $pageName, Language::GetLang() );
 
 				$linkNode = $model->createAttribute( "href" );
-				$linkNode->value = $path;
+				$linkNode->value = $prefix . $path . $suffix;
 				$itemNode->appendChild( $linkNode );
 
 				$itemNode->removeAttribute( "inject:href" );
