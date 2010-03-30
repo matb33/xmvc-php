@@ -12,6 +12,7 @@ use xMVC\Sys\Config;
 use xMVC\Sys\Events\DefaultEventDispatcher;
 use xMVC\Sys\Events\Event;
 use xMVC\Sys\Delegate;
+use xMVC\Sys\Filesystem;
 
 use Module\Language\Language;
 
@@ -96,11 +97,11 @@ class CC
 		{
 			$childRefNode = $childRefNodeList->item( 0 );
 			$importedNode = $model->importNode( $originalNode, true );
-			self::ReplaceNodeWithChildren( $model, $childRefNode, $importedNode );
+			self::ReplaceNodeWithChildren( $childRefNode, $importedNode );
 		}
 	}
 
-	private static function ReplaceNodeWithChildren( &$model, &$refNode, &$node )
+	private static function ReplaceNodeWithChildren( &$refNode, &$node )
 	{
 		for( $i = 0; $i < $node->childNodes->length; $i++ )
 		{
@@ -121,7 +122,7 @@ class CC
 		$eventName = $node->getAttribute( "event" );
 		$instanceName = $node->getAttribute( "instance-name" );
 
-		$arguments = array( "component" => $component, "node" => $node, "model" => $model, "instanceName" => $instanceName );
+		$arguments = array( "component" => $component, "node" => $node, "model" => $model, "instanceName" => $instanceName, "inject" => true );
 
 		while( $node->hasAttribute( "param" . ( ++$i ) ) )
 		{
@@ -131,37 +132,79 @@ class CC
 		self::GetEventPump()->dispatchEvent( new Event( $eventName, $arguments ) );
 	}
 
+	public static function GenerateComponentInstance( $component, $eventName, $instanceName, $delegate, $parameters = array() )
+	{
+		$arguments = array( "component" => $component, "model" => $emptyModel, "instanceName" => $instanceName, "inject" => false );
+
+		foreach( $parameters as $i => $parameter )
+		{
+			$arguments[ "param" ][ $i + 1 ] = $parameter;
+		}
+
+		self::GetEventPump()->addEventListener( "onComponentInstanceBuilt", $delegate );
+		self::GetEventPump()->dispatchEvent( new Event( $eventName, $arguments ) );
+	}
+
 	public static function OnComponentBuildComplete( Event $event )
 	{
-		$sourceModel = $event->arguments[ "sourceModel" ];
-		$component = $event->arguments[ "data" ][ "component" ];
+		if( $event->arguments[ "data" ][ "inject" ] )
+		{
+			self::InjectBuiltComponent( $event );
+		}
+		else
+		{
+			$model = self::TransformBuiltComponentToInstance( $event );
+
+			CC::GetEventPump()->dispatchEvent( new Event( "onComponentInstanceBuilt", array( "model" => $model, "component" => $event->arguments[ "data" ][ "component" ], "instanceName" => $event->arguments[ "data" ][ "instanceName" ] ) ) );
+		}
+	}
+
+	private static function InjectBuiltComponent( Event $event )
+	{
 		$node = $event->arguments[ "data" ][ "node" ];
 		$model = $event->arguments[ "data" ][ "model" ];
+
+		$resultModel = self::TransformBuiltComponentToInstance( $event );
+
+		self::InjectModel( $resultModel, $node, $model );
+		self::InjectNextReference( $model );
+	}
+
+	private static function TransformBuiltComponentToInstance( Event $event )
+	{
+		$component = $event->arguments[ "data" ][ "component" ];
 		$instanceName = $event->arguments[ "data" ][ "instanceName" ];
+		$sourceModel = $event->arguments[ "sourceModel" ];
 
 		$view = new View( "components/" . $component );
 		$view->PushModel( $sourceModel );
 		$result = new \DOMDocument();
 		$result->loadXML( $view->ProcessAsXML() );
 
-		$instance = new \DOMDocument();
-		$instanceNode = $instance->createElementNS( Config::$data[ "ccNamespaces" ][ "instance" ], "instance:" . $component );
-		$instance->appendChild( $instanceNode );
-
 		if( ! is_null( $instanceName ) && strlen( $instanceName ) > 0 )
 		{
-			$nameAttribute = $instance->createAttribute( "instance-name" );
+			$nameAttribute = $result->createAttribute( "name" );
 			$nameAttribute->value = $instanceName;
-			$instanceNode->appendChild( $nameAttribute );
+			$result->documentElement->appendChild( $nameAttribute );
 		}
 
-		$importedNode = $instance->importNode( $result->documentElement, true );
-		$instanceNode->appendChild( $importedNode );
+		$injectLangAttribute = $result->createAttributeNS( Config::$data[ "ccNamespaces" ][ "inject" ], "inject:lang" );
+		$injectLangAttribute->value = "xml:lang";
+		$result->documentElement->appendChild( $injectLangAttribute );
 
-		$resultModel = new XMLModelDriver( $instance->saveXML() );
+		$resultModel = new XMLModelDriver( $result->saveXML() );
 
-		self::InjectModel( $resultModel, $node, $model );
-		self::InjectNextReference( $model );
+		return( $resultModel );
+	}
+
+	public static function Listen( $eventName, Delegate $delegate )
+	{
+		self::GetEventPump()->addEventListener( $eventName, $delegate );
+	}
+
+	public static function Talk( $sourceModel, Event &$event )
+	{
+		self::GetEventPump()->dispatchEvent( new Event( "onComponentBuildComplete", array( "sourceModel" => $sourceModel, "data" => $event->arguments ) ) );
 	}
 
 	public static function InjectRSSFeed( $model )
@@ -314,6 +357,31 @@ class CC
 
 			$formulaTextNode = $model->createTextNode( $formula );
 			$mathCaptchaNode->appendChild( $formulaTextNode );
+		}
+
+		return( $model );
+	}
+
+	// Should evolve this function to work with any model driver
+	public static function GetCachedXMLModelDriver( $modelName, Event &$event, $updateCacheEveryXMinutes = 1440 )
+	{
+		$cacheFolder = "app/inc/cache/" .  $event->type . "/";
+		$cacheFile = md5( $modelName . floor( time() / ( $updateCacheEveryXMinutes * 60 ) ) ) . ".xml";
+
+		if( file_exists( $cacheFolder . $cacheFile ) )
+		{
+			$model = new XMLModelDriver( $cacheFolder . $cacheFile );
+		}
+		else
+		{
+			$model = new XMLModelDriver( $modelName );
+
+			FileSystem::CreateFolderStructure( $cacheFolder );
+
+			if( FileSystem::TestPermissions( $cacheFolder, FileSystem::FS_PERM_WRITE ) )
+			{
+				file_put_contents( $cacheFolder . $cacheFile, $model->saveXML() );
+			}
 		}
 
 		return( $model );
