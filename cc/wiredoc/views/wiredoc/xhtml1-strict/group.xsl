@@ -7,7 +7,7 @@
 					<xsl:if test="local-name() != 'group'">
 						<xsl:value-of select="local-name()" /><xsl:text> </xsl:text>
 					</xsl:if>
-					layout
+					<xsl:text>layout</xsl:text>
 				</xsl:attribute>
 				<xsl:apply-templates select="*" />
 			</ul>
