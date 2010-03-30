@@ -20,9 +20,9 @@
 
 	<xsl:template match="form:field[ @type = 'text' or @type = 'password' or @type = 'file' ]" priority="0">
 		<xsl:variable name="name" select="@name" />
-		<label for="{ @name }" class="{ @name }">
+		<label for="{ @name }" class="{ @name } { @type }">
 			<xsl:apply-templates select="form:label[ not( @position ) or @position = 'before' ]" />
-			<input type="{ @type }" id="{ @name }" name="{ @name }">
+			<input type="{ @type }" id="{ @name }" name="{ @name }" class="{ @name } { @type }">
 				<xsl:choose>
 					<xsl:when test="//xmvc:strings/xmvc:*[ @key = $name ]">
 						<xsl:attribute name="value"><xsl:value-of select="//xmvc:strings/xmvc:*[ @key = $name ]" /></xsl:attribute>
@@ -43,9 +43,9 @@
 
 	<xsl:template match="form:field[ @type = 'textarea' ]" priority="0">
 		<xsl:variable name="name" select="@name" />
-		<label for="{ @name }" class="{ @name }">
+		<label for="{ @name }" class="{ @name } { @type }">
 			<xsl:apply-templates select="form:label[ not( @position ) or @position = 'before' ]" />
-			<textarea id="{ @name }" name="{ @name }"><xsl:choose>
+			<textarea id="{ @name }" name="{ @name }" class="{ @name } { @type }"><xsl:choose>
 				<xsl:when test="//xmvc:strings/xmvc:*[ @key = $name ]"><xsl:value-of select="//xmvc:strings/xmvc:*[ @key = $name ]" /></xsl:when>
 				<xsl:when test="form:value"><xsl:value-of select="form:value[ lang( $lang ) ]" /></xsl:when>
 			</xsl:choose></textarea>
@@ -56,7 +56,7 @@
 	</xsl:template>
 
 	<xsl:template match="form:field[ @type = 'submit' or @type = 'reset' or @type = 'button' ]" priority="0">
-		<input type="{ @type }" name="{ @name }" id="{ @name }" class="{ @name }">
+		<input type="{ @type }" name="{ @name }" id="{ @name }" class="{ @name } { @type }">
 			<xsl:if test="form:label[ lang( $lang ) ]">
 				<xsl:attribute name="value"><xsl:value-of select="form:label[ lang( $lang ) ]" /></xsl:attribute>
 			</xsl:if>
@@ -65,7 +65,7 @@
 	</xsl:template>
 
 	<xsl:template match="form:field[ @type = 'checkbox' or @type = 'radio' ]" priority="0">
-		<input type="hidden" name="{ @name }" />
+		<input type="hidden" name="{ @name }" class="{ @name } { @type }" />
 		<xsl:apply-templates select="form:option" />
 		<xsl:apply-templates select="form:constraint" />
 	</xsl:template>
@@ -73,9 +73,9 @@
 	<xsl:template match="form:field/form:option[ ancestor::form:field[1]/@type = 'checkbox' or ancestor::form:field[1]/@type = 'radio' ]" priority="0">
 		<xsl:variable name="name" select="ancestor::form:field[1]/@name" />
 		<xsl:variable name="type" select="ancestor::form:field[1]/@type" />
-		<label for="{ $name }-{ position() }" class="{ $name }">
+		<label for="{ $name }-{ position() }" class="{ $name } { $type }">
 			<xsl:apply-templates select="form:label[ @position = 'before' ]" />
-			<input type="{ $type }" id="{ $name }-{ position() }" name="{ $name }[]">
+			<input type="{ $type }" id="{ $name }-{ position() }" name="{ $name }[]" class="{ $name } { $type }">
 				<xsl:if test="form:value">
 					<xsl:attribute name="value"><xsl:value-of select="form:value[ lang( $lang ) ]" /></xsl:attribute>
 					<xsl:if test="contains( //xmvc:strings/xmvc:*[ @key = $name ], concat( '|', form:value[ lang( $lang ) ], '|' ) )">
@@ -89,9 +89,9 @@
 	</xsl:template>
 
 	<xsl:template match="form:field[ @type = 'select' ]" priority="0">
-		<label for="{ @name }" class="{ @name }">
+		<label for="{ @name }" class="{ @name } { @type }">
 			<xsl:apply-templates select="form:label[ not( @position ) or @position = 'before' ]" />
-			<select name="{ @name }" id="{ @name }">
+			<select name="{ @name }" id="{ @name }" class="{ @name } { @type }">
 				<xsl:apply-templates select="*[ name() = 'form:option' or name() = 'form:group' ]" />
 			</select>
 			<xsl:apply-templates select="form:label[ @position = 'after' ]" />
@@ -101,9 +101,9 @@
 	</xsl:template>
 
 	<xsl:template match="form:field[ @type = 'multi-select' ]" priority="0">
-		<label for="{ @name }" class="{ @name }">
+		<label for="{ @name }" class="{ @name } { @type }">
 			<xsl:apply-templates select="form:label[ not( @position ) or @position = 'before' ]" />
-			<select name="{ @name }[]" id="{ @name }" multiple="true">
+			<select name="{ @name }[]" id="{ @name }" multiple="true" class="{ @name } { @type }">
 				<xsl:apply-templates select="*[ name() = 'form:option' or name() = 'form:group' ]" />
 			</select>
 			<xsl:apply-templates select="form:label[ @position = 'after' ]" />
@@ -116,6 +116,20 @@
 		<xsl:variable name="name" select="ancestor::form:field[1]/@name" />
 		<xsl:variable name="type" select="ancestor::form:field[1]/@type" />
 		<option>
+			<xsl:attribute name="class">
+				<xsl:choose>
+					<xsl:when test="last() = 1">first-child last-child</xsl:when>
+					<xsl:when test="position() = 1">first-child</xsl:when>
+					<xsl:when test="position() = last()">last-child</xsl:when>
+					<xsl:otherwise>middle-child</xsl:otherwise>
+				</xsl:choose>
+				<xsl:text> item-</xsl:text><xsl:value-of select="position()" />
+				<xsl:text> </xsl:text>
+				<xsl:choose>
+					<xsl:when test="position() mod 2 = 1">even</xsl:when>
+					<xsl:otherwise>odd</xsl:otherwise>
+				</xsl:choose>
+			</xsl:attribute>
 			<xsl:apply-templates select="form:label[ @position = 'before' ]" />
 			<xsl:if test="form:value">
 				<xsl:attribute name="value"><xsl:value-of select="form:value[ lang( $lang ) ]" /></xsl:attribute>
@@ -158,7 +172,7 @@
 	</xsl:template>
 
 	<xsl:template match="form:fieldset" priority="0">
-		<fieldset id="{ @name }">
+		<fieldset id="{ @name }" class="{ @name }">
 			<xsl:apply-templates />
 		</fieldset>
 	</xsl:template>
