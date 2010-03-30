@@ -126,7 +126,7 @@ class ErrorHandler
 
 		if( ( $errorNumber & self::$errorReporting ) == $errorNumber )
 		{
-			echo( "[" . date( "Y-m-d H:i:s" ) . "] " . self::$errorTypes[ $errorNumber ] . ": " . $errorMessage . ". Line " . $lineNum . " in " . $filename ."\n" . $errorException->getTraceAsString() );
+			echo( "[" . date( "Y-m-d H:i:s" ) . "] " . self::$errorTypes[ $errorNumber ] . ": " . $errorMessage . ". Line " . $lineNum . " in " . $filename ."\n" . $errorException->getTraceAsString() ) . "\n";
 		}
 
 		return( true );
