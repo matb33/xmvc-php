@@ -12,6 +12,8 @@ use xMVC\Sys\StringsModelDriver;
 use xMVC\Sys\View;
 use xMVC\Sys\Events\DefaultEventDispatcher;
 
+use Module\Language\Language;
+
 /*
 
 NOTES:
@@ -48,7 +50,7 @@ class Processor extends \xMVC\App\Website
 
 		if( ( $linkData = Sitemap::GetLinkDataFromSitemapByPath( $currentPath ) ) !== false )
 		{
-			$this->RenderPage( $linkData );
+			$this->RenderPageWithLinkData( $linkData );
 		}
 		else
 		{
@@ -61,21 +63,38 @@ class Processor extends \xMVC\App\Website
 		ErrorHandler::InvokeHTTPError( array( "errorCode" => "404", "controllerFile" => __CLASS__, "method" => $currentPath ) );
 	}
 
-	private function RenderPage( $linkData )
+	public function RenderPageWithModel( $model, $component, $instanceName )
 	{
-		$instance = $linkData[ "name" ];
+		$viewName = $model->xPath->query( "//meta:view" )->item( 0 )->nodeValue;
+		$viewName = $this->FallbackViewNameIfNecessary( $viewName );
+
+		$view = new View( $viewName );
+		CC::InjectReferences( $model );
+		$view->PushModel( $model );
+
+		$this->RenderPage( $view, $component, $instanceName, $viewName );
+	}
+
+	public function RenderPageWithLinkData( $linkData )
+	{
+		$instanceName = $linkData[ "name" ];
 		$component = $linkData[ "component" ];
 		$viewName = $this->FallbackViewNameIfNecessary( $linkData[ "view" ] );
 
 		$view = new View( $viewName );
+		$this->PushInstance( $view, $component, $instanceName );
 
-		$this->PushInstance( $view, $component, $instance );
-		$this->PushXLIFF( $view, $component, $instance );
-		$this->PushStringData( $view, $component, $instance, $viewName );
+		$this->RenderPage( $view, $component, $instanceName, $viewName );
+	}
+
+	private function RenderPage( $view, $component, $instanceName, $viewName )
+	{
+		$this->PushXLIFF( $view, $component, $instanceName );
+		$this->PushStringData( $view, $component, $instanceName, $viewName );
 		$this->PushAdditionalModels( $view );
 
 		CC::InjectHref( $view );
-		CC::InjectLang( $view, $this->lang );
+		CC::InjectLang( $view, Language::GetLang() );
 
 		$view->RenderAsHTML();
 	}
@@ -90,31 +109,31 @@ class Processor extends \xMVC\App\Website
 		return( $viewName );
 	}
 
-	private function PushInstance( &$view, $component, $instance )
+	private function PushInstance( &$view, $component, $instanceName )
 	{
-		$model = new XMLModelDriver( Core::namespaceApp . "instances/" . $component . "/" . $instance );
+		$model = new XMLModelDriver( Core::namespaceApp . "instances/" . $component . "/" . $instanceName );
 		CC::InjectReferences( $model );
 		$view->PushModel( $model );
 	}
 
-	private function PushXLIFF( &$view, $component, $instance )
+	private function PushXLIFF( &$view, $component, $instanceName )
 	{
-		if( XMLModelDriver::Exists( Core::namespaceApp . "instances/" . $component . "/xliff/" . $instance . "." . $this->lang, "xliff" ) )
+		if( XMLModelDriver::Exists( Core::namespaceApp . "instances/" . $component . "/xliff/" . $instanceName . "." . $this->lang, "xliff" ) )
 		{
-			$xliffModel = new XMLModelDriver( Core::namespaceApp . "instances/" . $component . "/xliff/" . $instance . "." . $this->lang . ".xliff" );
+			$xliffModel = new XMLModelDriver( Core::namespaceApp . "instances/" . $component . "/xliff/" . $instanceName . "." . $this->lang . ".xliff" );
 			$view->PushModel( $xliffModel );
 		}
 	}
 
-	private function PushStringData( &$view, $component, $instance, $viewName )
+	private function PushStringData( &$view, $component, $instanceName, $viewName )
 	{
 		$basePath = Routing::URIProtocol() . "://" . $_SERVER[ "HTTP_HOST" ];
 		$link = $basePath . Routing::URI();
 
 		$stringData = new StringsModelDriver();
 		$stringData->Add( "component", $component );
-		$stringData->Add( "instance", $instance );
-		$stringData->Add( "instance-file", $instance . "." . Loader::modelExtension );
+		$stringData->Add( "instance", $instanceName );
+		$stringData->Add( "instance-file", $instanceName . "." . Loader::modelExtension );
 		$stringData->Add( "view-name", $viewName );
 		$stringData->Add( "base-path", $basePath );
 		$stringData->Add( "http-host", $_SERVER[ "HTTP_HOST" ] );
