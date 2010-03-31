@@ -1,5 +1,5 @@
 <?php
 
-$routes[ "/^\/svn(.*)/" ] = "Module\\SVN\\svntest%1";
+$routes[ "/^\/svn(.*)/" ] = "xMVC\\Mod\\SVN\\svntest%1";
 
 ?>
