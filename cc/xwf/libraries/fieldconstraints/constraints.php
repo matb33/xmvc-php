@@ -1,8 +1,8 @@
 <?php
 
-namespace Module\CC\FieldConstraints;
+namespace xMVC\Mod\CC\FieldConstraints;
 
-use Module\Language\Language;
+use xMVC\Mod\Language\Language;
 
 class Constraints
 {
