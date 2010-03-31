@@ -1,6 +1,6 @@
 <?php
 
-namespace Module\CC;
+namespace xMVC\Mod\CC;
 
 use xMVC\Sys\Loader;
 use xMVC\Sys\Core;
@@ -14,7 +14,7 @@ use xMVC\Sys\Events\Event;
 use xMVC\Sys\Delegate;
 use xMVC\Sys\Filesystem;
 
-use Module\Language\Language;
+use xMVC\Mod\Language\Language;
 
 class CC
 {
@@ -33,7 +33,7 @@ class CC
 	private static function InitializeEventHandling()
 	{
 		self::$eventPump = new DefaultEventDispatcher();
-		self::$eventPump->addEventListener( "oncomponentbuildcomplete", new Delegate( "\\Module\\CC\\CC::OnComponentBuildComplete" ) );
+		self::$eventPump->addEventListener( "oncomponentbuildcomplete", new Delegate( "\\xMVC\\Mod\\CC\\CC::OnComponentBuildComplete" ) );
 	}
 
 	public static function RegisterNamespaces( &$model )
@@ -142,9 +142,9 @@ class CC
 		self::StartBuildingComponent( $eventName, $arguments );
 	}
 
-	public static function RenderComponent( $component, $eventName, $instanceName, $scope, $parameters = array(), $cache = 0 )
+	public static function RenderComponent( $component, $eventName, $instanceName, $dispatchScope, $parameters = array(), $cache = 0 )
 	{
-		$delegate = new Delegate( "OnComponentInstanceGenerated", $scope );
+		$delegate = new Delegate( "OnComponentInstanceGenerated", $dispatchScope );
 
 		self::GenerateComponentInstance( $component, $eventName, $instanceName, $delegate, $parameters, $cache );
 	}
@@ -234,13 +234,13 @@ class CC
 		else
 		{
 			$resultModel = self::TransformBuiltComponentToInstance( $event );
-			self::CacheResultModel( $event->arguments[ "data" ][ "cache" ], $event->arguments[ "data" ][ "cacheFile" ], $resultModel );
+			self::CacheResultModel( $event->arguments[ "data" ][ "cache" ], $event->arguments[ "data" ][ "cacheFile" ], $event->arguments[ "data" ][ "cacheid" ], $resultModel );
 		}
 
 		return( $resultModel );
 	}
 
-	private static function CacheResultModel( $cache, $cacheFile, $resultModel )
+	private static function CacheResultModel( $cache, $cacheFile, $cacheid, $resultModel )
 	{
 		if( $cache > 0 )
 		{
@@ -250,7 +250,7 @@ class CC
 
 			if( FileSystem::TestPermissions( $cacheFolder, FileSystem::FS_PERM_WRITE ) )
 			{
-				foreach( glob( $cacheFolder . $id . "-*" ) as $filename )
+				foreach( glob( $cacheFolder . $cacheid . "-*" ) as $filename )
 				{
 					unlink( $filename );
 				}
