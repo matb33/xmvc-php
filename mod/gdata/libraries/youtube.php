@@ -1,6 +1,6 @@
 <?php
 
-namespace Module\GData;
+namespace xMVC\Mod\GData;
 
 use xMVC\Sys\XMLModelDriver;
 
