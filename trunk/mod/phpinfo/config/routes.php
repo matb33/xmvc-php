@@ -1,5 +1,10 @@
 <?php
 
-$routes[ "/^\/phpinfo/" ] = "xMVC\\Mod\\Phpinfo\\phpinfo";
+use xMVC\Sys\Config;
+
+if( !Config::$data[ "isProduction" ] )
+{
+	$routes[ "/^\/phpinfo/" ] = "xMVC\\Mod\\Phpinfo\\phpinfo";
+}
 
 ?>
