@@ -1,9 +1,9 @@
 <?php
 
-$lowPriorityRoutes[ "/^\/robots\.txt$/" ] = "Module\\CC\\robotstxt";
-$lowPriorityRoutes[ "/^\/sitemap-([a-z]+)\.xml$/" ] = "Module\\CC\\sitemapxml/view/%1";
-$lowPriorityRoutes[ "/^\/--translate(.*)/" ] = "Module\\CC\\translate/lang%1";
+$lowPriorityRoutes[ "/^\/robots\.txt$/" ] = "xMVC\\Mod\\CC\\robotstxt";
+$lowPriorityRoutes[ "/^\/sitemap-([a-z]+)\.xml$/" ] = "xMVC\\Mod\\CC\\sitemapxml/view/%1";
+$lowPriorityRoutes[ "/^\/--translate(.*)/" ] = "xMVC\\Mod\\CC\\translate/lang%1";
 
-$lowPriorityRoutes[ "/^\/(.*)$/" ] = "Module\\CC\\processor/page/%1";
+$lowPriorityRoutes[ "/^\/(.*)$/" ] = "xMVC\\Mod\\CC\\processor/page/%1";
 
 ?>

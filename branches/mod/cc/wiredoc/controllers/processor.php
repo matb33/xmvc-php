@@ -1,6 +1,6 @@
 <?php
 
-namespace Module\CC;
+namespace xMVC\Mod\CC;
 
 use xMVC\Sys\Core;
 use xMVC\Sys\Routing;
@@ -13,7 +13,7 @@ use xMVC\Sys\View;
 use xMVC\Sys\Events\Event;
 use xMVC\Sys\Events\DefaultEventDispatcher;
 
-use Module\Language\Language;
+use xMVC\Mod\Language\Language;
 
 class Processor
 {
