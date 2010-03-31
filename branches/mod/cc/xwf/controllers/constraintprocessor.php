@@ -1,11 +1,11 @@
 <?php
 
-namespace Module\CC;
+namespace xMVC\Mod\CC;
 
 use xMVC\Sys\Core;
 use xMVC\Sys\XMLModelDriver;
 use xMVC\Sys\View;
-use Module\CC\FieldConstraints\Constraints;
+use xMVC\Mod\CC\FieldConstraints\Constraints;
 
 class ConstraintProcessor
 {
