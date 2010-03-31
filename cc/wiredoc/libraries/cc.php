@@ -119,37 +119,85 @@ class CC
 	private static function InjectComponentReference( $node, &$model )
 	{
 		$component = $node->getAttribute( "name" );
-		$eventName = $node->getAttribute( "event" );
 		$instanceName = $node->getAttribute( "instance-name" );
+		$eventName = $node->getAttribute( "event" );
+		$cache = ( int )$node->getAttribute( "cache" );
 
-		$arguments = array( "component" => $component, "node" => $node, "model" => $model, "instanceName" => $instanceName, "inject" => true );
+		$arguments = array();
+		$arguments[ "component" ] = $component;
+		$arguments[ "node" ] = $node;
+		$arguments[ "model" ] = $model;
+		$arguments[ "instanceName" ] = $instanceName;
+		$arguments[ "eventName" ] = $eventName;
+		$arguments[ "cache" ] = $cache;
+		$arguments[ "inject" ] = true;
 
 		while( $node->hasAttribute( "param" . ( ++$i ) ) )
 		{
 			$arguments[ "param" ][ $i ] = $node->getAttribute( "param" . $i );
 		}
 
-		self::GetEventPump()->dispatchEvent( new Event( $eventName, $arguments ) );
+		$arguments[ "cacheid" ] = $component . $instanceName . $eventName . implode( "", $arguments[ "param" ] );
+
+		self::StartBuildingComponent( $eventName, $arguments );
 	}
 
-	public static function RenderComponent( $component, $eventName, $instanceName, $scope, $parameters = array() )
+	public static function RenderComponent( $component, $eventName, $instanceName, $scope, $parameters = array(), $cache = 0 )
 	{
 		$delegate = new Delegate( "OnComponentInstanceGenerated", $scope );
 
-		self::GenerateComponentInstance( $component, $eventName, $instanceName, $delegate, $parameters );
+		self::GenerateComponentInstance( $component, $eventName, $instanceName, $delegate, $parameters, $cache );
 	}
 
-	public static function GenerateComponentInstance( $component, $eventName, $instanceName, $delegate, $parameters = array() )
+	public static function GenerateComponentInstance( $component, $eventName, $instanceName, $delegate, $parameters = array(), $cache = 0 )
 	{
-		$arguments = array( "component" => $component, "instanceName" => $instanceName, "inject" => false );
+		$cache = ( int )$cache;
+
+		$arguments = array();
+		$arguments[ "component" ] = $component;
+		$arguments[ "instanceName" ] = $instanceName;
+		$arguments[ "eventName" ] = $eventName;
+		$arguments[ "cache" ] = $cache;
+		$arguments[ "inject" ] = false;
 
 		foreach( $parameters as $i => $parameter )
 		{
 			$arguments[ "param" ][ $i + 1 ] = $parameter;
 		}
 
+		$arguments[ "cacheid" ] = $component . $instanceName . $eventName . implode( "", $arguments[ "param" ] );
+
 		self::GetEventPump()->addEventListener( "oncomponentinstancebuilt", $delegate );
-		self::GetEventPump()->dispatchEvent( new Event( $eventName, $arguments ) );
+		self::StartBuildingComponent( $eventName, $arguments );
+	}
+
+	private static function StartBuildingComponent( $eventName, $arguments )
+	{
+		$arguments[ "cacheFile" ] = self::GetCacheFilename( $eventName, $arguments[ "cache" ], $arguments[ "cacheid" ] );
+
+		if( $arguments[ "cache" ] == 0 || !file_exists( $arguments[ "cacheFile" ] ) )
+		{
+			self::GetEventPump()->dispatchEvent( new Event( $eventName, $arguments ) );
+		}
+		else
+		{
+			$arguments[ "cachedResultModel" ] = new XMLModelDriver( $arguments[ "cacheFile" ] );
+			self::Talk( null, new Event( $eventName, $arguments ) );
+		}
+	}
+
+	private static function GetCacheFilename( $eventName, $cache, $cacheid )
+	{
+		$cacheFile = null;
+
+		if( $cache > 0 )
+		{
+			$cacheFile = Config::$data[ "componentCacheFilePattern" ];
+			$cacheFile = str_replace( "#event#", $eventName, $cacheFile );
+			$cacheFile = str_replace( "#hash#", $cacheid . "-" . md5( $cacheid . floor( time() / ( $cache * 60 ) ) ), $cacheFile );
+		}
+
+		return( $cacheFile );
 	}
 
 	public static function OnComponentBuildComplete( Event $event )
@@ -160,27 +208,68 @@ class CC
 		}
 		else
 		{
-			$model = self::TransformBuiltComponentToInstance( $event );
+			$resultModel = self::ObtainResultModel( $event );
 
-			CC::GetEventPump()->dispatchEvent( new Event( "oncomponentinstancebuilt", array( "model" => $model, "component" => $event->arguments[ "data" ][ "component" ], "instanceName" => $event->arguments[ "data" ][ "instanceName" ] ) ) );
+			CC::GetEventPump()->dispatchEvent( new Event( "oncomponentinstancebuilt", array( "model" => $resultModel, "component" => $event->arguments[ "data" ][ "component" ], "instanceName" => $event->arguments[ "data" ][ "instanceName" ] ) ) );
 		}
 	}
 
 	private static function InjectBuiltComponent( Event $event )
 	{
+		$resultModel = self::ObtainResultModel( $event );
+
 		$node = $event->arguments[ "data" ][ "node" ];
 		$model = $event->arguments[ "data" ][ "model" ];
 
-		$resultModel = self::TransformBuiltComponentToInstance( $event );
-
 		self::InjectModel( $resultModel, $node, $model );
 		self::InjectNextReference( $model );
+	}
+
+	private static function ObtainResultModel( Event $event )
+	{
+		if( isset( $event->arguments[ "data" ][ "cachedResultModel" ] ) )
+		{
+			$resultModel = $event->arguments[ "data" ][ "cachedResultModel" ];
+		}
+		else
+		{
+			$resultModel = self::TransformBuiltComponentToInstance( $event );
+			self::CacheResultModel( $event->arguments[ "data" ][ "cache" ], $event->arguments[ "data" ][ "cacheFile" ], $resultModel );
+		}
+
+		return( $resultModel );
+	}
+
+	private static function CacheResultModel( $cache, $cacheFile, $resultModel )
+	{
+		if( $cache > 0 )
+		{
+			$cacheFolder = dirname( $cacheFile ) . "/";
+
+			FileSystem::CreateFolderStructure( $cacheFolder );
+
+			if( FileSystem::TestPermissions( $cacheFolder, FileSystem::FS_PERM_WRITE ) )
+			{
+				foreach( glob( $cacheFolder . $id . "-*" ) as $filename )
+				{
+					unlink( $filename );
+				}
+
+				file_put_contents( $cacheFile, $resultModel->saveXML() );
+			}
+			else
+			{
+				trigger_error( "Write permissions are needed on " . $cacheFolder . " in order to use the component caching feature.", E_USER_NOTICE );
+			}
+		}
 	}
 
 	private static function TransformBuiltComponentToInstance( Event $event )
 	{
 		$component = $event->arguments[ "data" ][ "component" ];
 		$instanceName = $event->arguments[ "data" ][ "instanceName" ];
+		$eventName = $event->arguments[ "data" ][ "eventName" ];
+		$cache = $event->arguments[ "data" ][ "cache" ];
 		$sourceModel = $event->arguments[ "sourceModel" ];
 
 		$view = new View( "components/" . $component );
@@ -188,7 +277,7 @@ class CC
 		$result = new \DOMDocument();
 		$result->loadXML( $view->ProcessAsXML() );
 
-		if( ! is_null( $instanceName ) && strlen( $instanceName ) > 0 )
+		if( !is_null( $instanceName ) && strlen( $instanceName ) > 0 )
 		{
 			$nameAttribute = $result->createAttribute( "name" );
 			$nameAttribute->value = $instanceName;
@@ -199,10 +288,37 @@ class CC
 		$injectLangAttribute->value = "xml:lang";
 		$result->documentElement->appendChild( $injectLangAttribute );
 
-		$resultModel = new XMLModelDriver( $result->saveXML() );
+		$resultXML = $result->saveXML();
+		$resultModel = new XMLModelDriver( $resultXML );
 
 		return( $resultModel );
 	}
+
+	/*
+	private static function GetResultModelPossiblyCached( $modelName, $eventType, $updateCacheEveryXMinutes )
+	{
+		$cacheFolder = "app/inc/cache/" .  $eventType . "/";
+		$cacheFile = md5( $modelName . floor( time() / ( $updateCacheEveryXMinutes * 60 ) ) ) . ".xml";
+
+		if( file_exists( $cacheFolder . $cacheFile ) )
+		{
+			$model = new XMLModelDriver( $cacheFolder . $cacheFile );
+		}
+		else
+		{
+			$model = new XMLModelDriver( $modelName );
+
+			FileSystem::CreateFolderStructure( $cacheFolder );
+
+			if( FileSystem::TestPermissions( $cacheFolder, FileSystem::FS_PERM_WRITE ) )
+			{
+				file_put_contents( $cacheFolder . $cacheFile, $model->saveXML() );
+			}
+		}
+
+		return( $model );
+	}
+	*/
 
 	public static function Listen( $eventName, Delegate $delegate )
 	{
@@ -364,31 +480,6 @@ class CC
 
 			$formulaTextNode = $model->createTextNode( $formula );
 			$mathCaptchaNode->appendChild( $formulaTextNode );
-		}
-
-		return( $model );
-	}
-
-	// Should evolve this function to work with any model driver
-	public static function GetCachedXMLModelDriver( $modelName, Event &$event, $updateCacheEveryXMinutes = 1440 )
-	{
-		$cacheFolder = "app/inc/cache/" .  $event->type . "/";
-		$cacheFile = md5( $modelName . floor( time() / ( $updateCacheEveryXMinutes * 60 ) ) ) . ".xml";
-
-		if( file_exists( $cacheFolder . $cacheFile ) )
-		{
-			$model = new XMLModelDriver( $cacheFolder . $cacheFile );
-		}
-		else
-		{
-			$model = new XMLModelDriver( $modelName );
-
-			FileSystem::CreateFolderStructure( $cacheFolder );
-
-			if( FileSystem::TestPermissions( $cacheFolder, FileSystem::FS_PERM_WRITE ) )
-			{
-				file_put_contents( $cacheFolder . $cacheFile, $model->saveXML() );
-			}
 		}
 
 		return( $model );
