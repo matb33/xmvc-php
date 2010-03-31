@@ -1,6 +1,6 @@
 <?php
 
-namespace Module\SVN;
+namespace xMVC\Mod\SVN;
 
 use xMVC\Sys\Config;
 use xMVC\Sys\Debug;
