@@ -236,21 +236,27 @@ class Sitemap
 		echo( file_get_contents( self::NormalizeSitemapXMLFilePattern( $lang ) ) );
 	}
 
-	public static function ReplacePageNameTokensWithPath( &$routes )
+	public static function ReplacePageNameTokensWithPath()
 	{
-		foreach( array_keys( $routes ) as $pattern )
+		foreach( array( "routes", "priorityRoutes", "lowPriorityRoutes" ) as $routeGroup )
 		{
-			preg_match_all( "/#([A-Za-z0-9-_]+)#/", $pattern, $matches );
-
-			$updatedPattern = $pattern;
-
-			foreach( $matches[ 0 ] as $key => $match )
+			foreach( array_keys( Config::$data[ $routeGroup ] ) as $pattern )
 			{
-				$updatedPattern = str_replace( $match,  addcslashes( self::GetPathByPageNameAndLanguage( $matches[ 1 ][ $key ], Language::GetLang() ), "/" ), $updatedPattern );
-			}
+				preg_match_all( "/#([A-Za-z0-9-_]+)#/", $pattern, $matches );
 
-			$routes[ $updatedPattern ] = $routes[ $pattern ];
-			unset( $routes[ $pattern ] );
+				if( count( $matches[ 0 ] ) )
+				{
+					$updatedPattern = $pattern;
+
+					foreach( $matches[ 0 ] as $key => $match )
+					{
+						$updatedPattern = str_replace( $match, addcslashes( self::GetPathByPageNameAndLanguage( $matches[ 1 ][ $key ], Language::GetLang() ), "/" ), $updatedPattern );
+					}
+
+					Config::$data[ $routeGroup ][ $updatedPattern ] = Config::$data[ $routeGroup ][ $pattern ];
+					unset( Config::$data[ $routeGroup ][ $pattern ] );
+				}
+			}
 		}
 	}
 }
