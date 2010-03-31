@@ -15,19 +15,16 @@ use xMVC\Sys\Events\DefaultEventDispatcher;
 
 use Module\Language\Language;
 
-/*
-
-NOTES:
-1) Notice that Processor is hard-coded to extend \xMVC\App\Website.  For the time being, this is a requirement of the CC module. You will need to create this Website class in your app/controllers.
-2) Notice the protected function Call.  This is to be optionally called from your custom controller (called by writing a higher precedence route) to continue regular Processor operation.
-
-*/
-
-class Processor extends \xMVC\App\Website
+class Processor
 {
+	private $application;
+	private $view;
+	private $modelStack;
+
 	public function __construct()
 	{
-		parent::__construct();
+		$this->modelStack = array();
+		$this->application = new Config::$data[ "applicationClass" ]( $this->modelStack );
 	}
 
 	protected function Call()
@@ -55,13 +52,13 @@ class Processor extends \xMVC\App\Website
 		}
 		else
 		{
-			$this->Invoke404();
+			$this->Invoke404( $currentPath );
 		}
 	}
 
-	private function Invoke404()
+	private function Invoke404( $path )
 	{
-		ErrorHandler::InvokeHTTPError( array( "errorCode" => "404", "controllerFile" => __CLASS__, "method" => $currentPath ) );
+		ErrorHandler::InvokeHTTPError( array( "errorCode" => "404", "controllerFile" => __CLASS__, "method" => $path ) );
 	}
 
 	public function RenderPageWithModel( $model, $component, $instanceName )
@@ -69,11 +66,11 @@ class Processor extends \xMVC\App\Website
 		$viewName = $model->xPath->query( "//meta:view" )->item( 0 )->nodeValue;
 		$viewName = $this->FallbackViewNameIfNecessary( $viewName );
 
-		$view = new View( $viewName );
+		$this->view = new View( $viewName );
 		CC::InjectReferences( $model );
-		$view->PushModel( $model );
+		$this->view->PushModel( $model );
 
-		$this->RenderPage( $view, $component, $instanceName, $viewName );
+		$this->RenderPage( $component, $instanceName, $viewName );
 	}
 
 	public function RenderPageWithLinkData( $linkData )
@@ -82,10 +79,10 @@ class Processor extends \xMVC\App\Website
 		$component = $linkData[ "component" ];
 		$viewName = $this->FallbackViewNameIfNecessary( $linkData[ "view" ] );
 
-		$view = new View( $viewName );
-		$this->PushInstance( $view, $component, $instanceName );
+		$this->view = new View( $viewName );
+		$this->PushInstance( $component, $instanceName );
 
-		$this->RenderPage( $view, $component, $instanceName, $viewName );
+		$this->RenderPage( $component, $instanceName, $viewName );
 	}
 
 	public function OnComponentInstanceGenerated( Event $event )
@@ -97,16 +94,16 @@ class Processor extends \xMVC\App\Website
 		$this->RenderPageWithModel( $model, $component, $instanceName );
 	}
 
-	private function RenderPage( $view, $component, $instanceName, $viewName )
+	private function RenderPage( $component, $instanceName, $viewName )
 	{
-		$this->PushXLIFF( $view, $component, $instanceName );
-		$this->PushStringData( $view, $component, $instanceName, $viewName );
-		$this->PushAdditionalModels( $view );
+		$this->PushXLIFF( $component, $instanceName );
+		$this->PushStringData( $component, $instanceName, $viewName );
+		$this->PushModelStack();
 
-		CC::InjectHref( $view );
-		CC::InjectLang( $view, Language::GetLang() );
+		CC::InjectHref( $this->view );
+		CC::InjectLang( $this->view, Language::GetLang() );
 
-		$view->RenderAsHTML();
+		$this->view->RenderAsHTML();
 	}
 
 	private function FallbackViewNameIfNecessary( $viewName )
@@ -119,28 +116,29 @@ class Processor extends \xMVC\App\Website
 		return( $viewName );
 	}
 
-	private function PushInstance( &$view, $component, $instanceName )
+	private function PushInstance( $component, $instanceName )
 	{
 		$model = new XMLModelDriver( Core::namespaceApp . "instances/" . $component . "/" . $instanceName );
 		CC::InjectReferences( $model );
-		$view->PushModel( $model );
+		$this->view->PushModel( $model );
 	}
 
-	private function PushXLIFF( &$view, $component, $instanceName )
+	private function PushXLIFF( $component, $instanceName )
 	{
-		if( XMLModelDriver::Exists( Core::namespaceApp . "instances/" . $component . "/xliff/" . $instanceName . "." . $this->lang, "xliff" ) )
+		if( XMLModelDriver::Exists( Core::namespaceApp . "instances/" . $component . "/xliff/" . $instanceName . "." . Language::GetLang(), "xliff" ) )
 		{
-			$xliffModel = new XMLModelDriver( Core::namespaceApp . "instances/" . $component . "/xliff/" . $instanceName . "." . $this->lang . ".xliff" );
-			$view->PushModel( $xliffModel );
+			$xliffModel = new XMLModelDriver( Core::namespaceApp . "instances/" . $component . "/xliff/" . $instanceName . "." . Language::GetLang() . ".xliff" );
+			$this->view->PushModel( $xliffModel );
 		}
 	}
 
-	private function PushStringData( &$view, $component, $instanceName, $viewName )
+	private function PushStringData( $component, $instanceName, $viewName )
 	{
 		$basePath = Routing::URIProtocol() . "://" . $_SERVER[ "HTTP_HOST" ];
 		$link = $basePath . Routing::URI();
 
 		$stringData = new StringsModelDriver();
+		$stringData->Add( "lang", Language::GetLang() );
 		$stringData->Add( "component", $component );
 		$stringData->Add( "instance", $instanceName );
 		$stringData->Add( "instance-file", $instanceName . "." . Loader::modelExtension );
@@ -160,14 +158,14 @@ class Processor extends \xMVC\App\Website
 			$stringData->Add( "cache-buster", md5( date( "Y-m-d H:i:s" ) . rand( 0, 9999 ) ) );
 		}
 
-		$view->PushModel( $stringData );
+		$this->view->PushModel( $stringData );
 	}
 
-	private function PushAdditionalModels( &$view )
+	private function PushModelStack()
 	{
-		foreach( $this->additionalModels as $additionalModel )
+		foreach( $this->modelStack as $model )
 		{
-			$view->PushModel( $additionalModel );
+			$this->view->PushModel( $model );
 		}
 	}
 }
