@@ -1,6 +1,6 @@
 <?php
 
-namespace Module\Phpinfo;
+namespace xMVC\Mod\Phpinfo;
 
 use xMVC\Sys\Config;
 
