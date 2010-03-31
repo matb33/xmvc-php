@@ -1,6 +1,6 @@
 <?php
 
-namespace Module\CC\FieldConstraints;
+namespace xMVC\Mod\CC\FieldConstraints;
 
 class Field
 {
