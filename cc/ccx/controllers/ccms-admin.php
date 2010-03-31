@@ -1,6 +1,6 @@
 <?php
 
-namespace Module\CC;
+namespace xMVC\Mod\CC;
 
 use xMVC\Sys\Loader;
 use xMVC\Sys\View;
@@ -10,7 +10,7 @@ use xMVC\Sys\Core;
 use xMVC\Sys\OutputHeaders;
 use xMVC\Sys\Config;
 
-use Module\Language\Language;
+use xMVC\Mod\Language\Language;
 
 class Ccms_admin extends Ccms_root
 {

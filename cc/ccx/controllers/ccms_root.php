@@ -1,11 +1,11 @@
 <?php
 
-namespace Module\CC;
+namespace xMVC\Mod\CC;
 
 use xMVC\Sys\Routing;
 use xMVC\Sys\Config;
 
-use Module\SVN\SVN;
+use xMVC\Mod\SVN\SVN;
 
 class Ccms_root
 {
