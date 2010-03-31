@@ -1,6 +1,6 @@
 <?php
 
-namespace Module\TinyAuth;
+namespace xMVC\Mod\TinyAuth;
 
 use xMVC\Sys\Loader;
 use xMVC\Sys\StringsModelDriver;
