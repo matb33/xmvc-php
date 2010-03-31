@@ -83,9 +83,12 @@
 	<xsl:template match="doc:imagedata">
 		<xsl:if test="lang( $lang )">
 			<img>
-				<xsl:if test="@fileref">
-					<xsl:attribute name="src"><xsl:value-of select="@fileref" /></xsl:attribute>
-				</xsl:if>
+				<xsl:attribute name="src">
+					<xsl:choose>
+						<xsl:when test="@fileref"><xsl:value-of select="@fileref" /></xsl:when>
+						<xsl:otherwise><xsl:value-of select="@href" /></xsl:otherwise>
+					</xsl:choose>
+				</xsl:attribute>
 				<xsl:if test="@alt">
 					<xsl:attribute name="alt"><xsl:value-of select="@alt" /></xsl:attribute>
 				</xsl:if>
