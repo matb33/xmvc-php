@@ -20,7 +20,7 @@ class DB
 
 				self::$link = mysqli_init();
 
-				mysqli_real_connect( self::$link, Config::$data[ "databaseHost" ], Config::$data[ "databaseUser" ], Config::$data[ "databasePass" ], Config::$data[ "databaseName" ] );
+				@mysqli_real_connect( self::$link, Config::$data[ "databaseHost" ], Config::$data[ "databaseUser" ], Config::$data[ "databasePass" ], Config::$data[ "databaseName" ] );
 
 				if( mysqli_connect_errno() )
 				{
