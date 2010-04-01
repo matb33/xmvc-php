@@ -95,7 +95,12 @@ class View
 
 		if( is_null( $this->GetXMLData() ) )
 		{
-			$this->PrepareData( $data, $omitRoot );
+			$this->SetXMLData( $this->StackModelsForView( $data, $this->GetOmitRoot( $omitRoot ) ) );
+		}
+
+		if( is_null( $this->GetXSLData() ) )
+		{
+			$this->SetXSLData( $this->ImportXSL( $data ) );
 		}
 
 		if( ! is_null( $this->GetXSLData() ) && ! is_null( $this->GetXMLData() ) )
@@ -108,12 +113,6 @@ class View
 		}
 
 		return( $result );
-	}
-
-	private function PrepareData( $data = null, $omitRoot = null )
-	{
-		$this->SetXSLData( $this->ImportXSL( $data ) );
-		$this->SetXMLData( $this->StackModelsForView( $data, $this->GetOmitRoot( $omitRoot ) ) );
 	}
 
 	public function SetXSLData( $xslData )
