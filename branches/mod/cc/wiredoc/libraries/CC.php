@@ -15,6 +15,8 @@ use xMVC\Sys\Delegate;
 use xMVC\Sys\Filesystem;
 
 use xMVC\Mod\Language\Language;
+use xMVC\Mod\Utils\DOMUtils;
+use xMVC\Mod\Utils\StringUtils;
 
 class CC
 {

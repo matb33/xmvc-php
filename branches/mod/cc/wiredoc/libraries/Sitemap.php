@@ -9,6 +9,7 @@ use xMVC\Sys\Config;
 use xMVC\Sys\OutputHeaders;
 
 use xMVC\Mod\Language\Language;
+use xMVC\Mod\Utils\StringUtils;
 
 class Sitemap
 {

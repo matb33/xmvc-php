@@ -14,6 +14,7 @@ use xMVC\Sys\Events\Event;
 use xMVC\Sys\Events\DefaultEventDispatcher;
 
 use xMVC\Mod\Language\Language;
+use xMVC\Mod\Utils\StringUtils;
 
 class Processor
 {
