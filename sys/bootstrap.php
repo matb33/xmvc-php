@@ -180,7 +180,7 @@ namespace xMVC\Sys
 				return( self::Iterate() );
 			}
 
-			return( false );
+			return( array() );
 		}
 
 		private static function ResolveReplaceCallback( $matches )
