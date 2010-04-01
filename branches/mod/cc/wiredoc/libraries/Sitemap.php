@@ -20,108 +20,122 @@ class Sitemap
 
 		foreach( $sitemapModels as $lang => $sitemapModel )
 		{
-			self::WriteSitemapModelForLanguage( $lang, $sitemapModel );
+			self::WriteSitemapModelForLanguage( $sitemapModel, $lang );
 		}
 	}
 
 	private static function GenerateSitemapModels()
 	{
-		$links = self::GatherLinksFromModels();
+		$metaDataCollectionByLang = self::GetMetaDataCollectionByLangFromModels();
 
 		$sitemapModels = array();
 
-		foreach( $links as $lang => $data )
+		foreach( $metaDataCollectionByLang as $lang => $metaDataCollection )
 		{
-			$sitemapModels[ $lang ] = self::GenerateSitemapModelForLanguage( $lang, $data );
+			$sitemapModels[ $lang ] = self::GenerateSitemapModelForLanguage( $lang, $metaDataCollection );
 		}
 
 		return( $sitemapModels );
 	}
 
-	private static function GatherLinksFromModels()
+	private static function GetMetaDataCollectionByLangFromModels()
 	{
-		$links = array();
-
 		$instances = StringUtils::ReplaceTokensInPattern( Config::$data[ "componentInstanceFilePattern" ], array( "component" => "*", "instance" => "*" ) );
+
+		$metaDataCollectionByLang = array();
 
 		foreach( glob( $instances ) as $file )
 		{
 			$model = new XMLModelDriver( $file );
-
-			foreach( $model->xPath->query( "//meta:href" ) as $hrefNode )
-			{
-				$name = $model->xPath->query( "ancestor::component:*/@instance-name", $hrefNode )->item( 0 )->nodeValue;
-				$lang = $hrefNode->getAttribute( "xml:lang" );
-				$parent = $model->xPath->query( "../meta:parent", $hrefNode )->item( 0 )->nodeValue;
-				$component = $model->xPath->query( "ancestor::component:*", $hrefNode )->item( 0 )->localName;
-				$view = $model->xPath->query( "../meta:view", $hrefNode )->item( 0 )->nodeValue;
-
-				$links[ $lang ][ $name ] = array(
-					"path" => $hrefNode->nodeValue,
-					"parent" => $parent,
-					"file" => $file,
-					"component" => $component,
-					"view" => $view
-				);
-			}
+			$metaDataCollectionByLang = self::GetMetaData( $model, $file, $metaDataCollectionByLang );
 		}
 
-		return( $links );
+		return( $metaDataCollectionByLang );
 	}
 
-	private static function GenerateSitemapModelForLanguage( $lang, $linkData )
+	public static function GetMetaData( $model, $file = null, $metaDataCollectionByLang = array() )
+	{
+		foreach( $model->xPath->query( "//meta:href" ) as $hrefNode )
+		{
+			$name = $model->xPath->query( "ancestor::component:*/@instance-name", $hrefNode )->item( 0 )->nodeValue;
+			$lang = $hrefNode->getAttribute( "xml:lang" );
+			$parent = $model->xPath->query( "../meta:parent", $hrefNode )->item( 0 )->nodeValue;
+			$component = $model->xPath->query( "ancestor::component:*", $hrefNode )->item( 0 )->localName;
+			$view = $model->xPath->query( "../meta:view", $hrefNode )->item( 0 )->nodeValue;
+
+			$metaDataCollectionByLang[ $lang ][ $name ] = array(
+				"path" => $hrefNode->nodeValue,
+				"parent" => $parent,
+				"file" => $file,
+				"component" => $component,
+				"view" => $view
+			);
+		}
+
+		return( $metaDataCollectionByLang );
+	}
+
+	private static function GenerateSitemapModelForLanguage( $lang, $metaDataCollection )
 	{
 		$sitemapModel = new XMLModelDriver();
+
+		$sitemapModel->xPath->registerNamespace( "sitemap", Config::$data[ "ccNamespaces" ][ "sitemap" ] );
+		$sitemapModel->xPath->registerNamespace( "s", Config::$data[ "sitemapNamespace" ] );
 
 		$urlsetNode = $sitemapModel->createElementNS( Config::$data[ "sitemapNamespace" ], "urlset" );
 		$sitemapModel->xPath->query( "/xmvc:root" )->item( 0 )->appendChild( $urlsetNode );
 
 		$urlsetNode->setAttributeNS( "http://www.w3.org/2000/xmlns/", "xmlns:sitemap", Config::$data[ "ccNamespaces" ][ "sitemap" ] );
 
-		foreach( $linkData as $name => $data )
+		foreach( $metaDataCollection as $name => $metaData )
 		{
-			$path = $data[ "path" ];
-			$parent = $data[ "parent" ];
-			$file = $data[ "file" ];
-			$component = $data[ "component" ];
-			$view = $data[ "view" ];
-
-			$urlNode = $sitemapModel->createElementNS( Config::$data[ "sitemapNamespace" ], "url" );
-			$urlsetNode->appendChild( $urlNode );
-
-			$loc = Routing::URIProtocol() . "://" . $_SERVER[ "HTTP_HOST" ] . $path;
-			$locNode = $sitemapModel->createElementNS( Config::$data[ "sitemapNamespace" ], "loc", $loc );
-			$urlNode->appendChild( $locNode );
-
-			$lastMod = date( "Y-m-d", filemtime( $file ) );
-			$lastModNode = $sitemapModel->createElementNS( Config::$data[ "sitemapNamespace" ], "lastmod", $lastMod );
-			$urlNode->appendChild( $lastModNode );
-
-			$nameNode = $sitemapModel->createElementNS( Config::$data[ "ccNamespaces" ][ "sitemap" ], "sitemap:instance-name", $name );
-			$urlNode->appendChild( $nameNode );
-
-			if( strlen( $parent ) > 0 )
-			{
-				$parentNode = $sitemapModel->createElementNS( Config::$data[ "ccNamespaces" ][ "sitemap" ], "sitemap:parent", $parent );
-				$urlNode->appendChild( $parentNode );
-			}
-
-			$pathNode = $sitemapModel->createElementNS( Config::$data[ "ccNamespaces" ][ "sitemap" ], "sitemap:path", $path );
-			$urlNode->appendChild( $pathNode );
-
-			$componentNode = $sitemapModel->createElementNS( Config::$data[ "ccNamespaces" ][ "sitemap" ], "sitemap:component", $component );
-			$urlNode->appendChild( $componentNode );
-
-			$viewNode = $sitemapModel->createElementNS( Config::$data[ "ccNamespaces" ][ "sitemap" ], "sitemap:view", $view );
-			$urlNode->appendChild( $viewNode );
+			self::AppendLinkDataEntry( $sitemapModel, $name, $metaData );
 		}
-
-		$sitemapModel->xPath->registerNamespace( "sitemap", Config::$data[ "ccNamespaces" ][ "sitemap" ] );
 
 		return( $sitemapModel );
 	}
 
-	private static function WriteSitemapModelForLanguage( $lang, $sitemapModel )
+	private static function AppendLinkDataEntry( $sitemapModel, $name, $metaData )
+	{
+		$path = $metaData[ "path" ];
+		$parent = $metaData[ "parent" ];
+		$file = $metaData[ "file" ];
+		$component = $metaData[ "component" ];
+		$view = $metaData[ "view" ];
+
+		$urlsetNode = $sitemapModel->xPath->query( "//s:urlset" )->item( 0 );
+
+		$urlNode = $sitemapModel->createElementNS( Config::$data[ "sitemapNamespace" ], "url" );
+		$urlsetNode->appendChild( $urlNode );
+
+		$loc = Routing::URIProtocol() . "://" . $_SERVER[ "HTTP_HOST" ] . $path;
+		$locNode = $sitemapModel->createElementNS( Config::$data[ "sitemapNamespace" ], "loc", $loc );
+		$urlNode->appendChild( $locNode );
+
+		$lastMod = date( "Y-m-d", is_null( $file ) ? time() : filemtime( $file ) );
+		$lastModNode = $sitemapModel->createElementNS( Config::$data[ "sitemapNamespace" ], "lastmod", $lastMod );
+		$urlNode->appendChild( $lastModNode );
+
+		$nameNode = $sitemapModel->createElementNS( Config::$data[ "ccNamespaces" ][ "sitemap" ], "sitemap:instance-name", $name );
+		$urlNode->appendChild( $nameNode );
+
+		if( strlen( $parent ) > 0 )
+		{
+			$parentNode = $sitemapModel->createElementNS( Config::$data[ "ccNamespaces" ][ "sitemap" ], "sitemap:parent", $parent );
+			$urlNode->appendChild( $parentNode );
+		}
+
+		$pathNode = $sitemapModel->createElementNS( Config::$data[ "ccNamespaces" ][ "sitemap" ], "sitemap:path", $path );
+		$urlNode->appendChild( $pathNode );
+
+		$componentNode = $sitemapModel->createElementNS( Config::$data[ "ccNamespaces" ][ "sitemap" ], "sitemap:component", $component );
+		$urlNode->appendChild( $componentNode );
+
+		$viewNode = $sitemapModel->createElementNS( Config::$data[ "ccNamespaces" ][ "sitemap" ], "sitemap:view", $view );
+		$urlNode->appendChild( $viewNode );
+	}
+
+	private static function WriteSitemapModelForLanguage( $sitemapModel, $lang )
 	{
 		$filename = self::NormalizeSitemapXMLFilePattern( $lang );
 
@@ -276,6 +290,36 @@ class Sitemap
 					Config::$data[ $routeGroup ][ $updatedPattern ] = Config::$data[ $routeGroup ][ $pattern ];
 					unset( Config::$data[ $routeGroup ][ $pattern ] );
 				}
+			}
+		}
+	}
+
+	public static function MetaDataAlreadyPresent( $metaDataCollectionByLang, $lang )
+	{
+		$sitemapModel = self::$models[ $lang ];
+
+		if( !is_null( $sitemapModel ) )
+		{
+			$name = key( $metaDataCollectionByLang[ $lang ] );
+			$metaData = current( $metaDataCollectionByLang[ $lang ] );
+
+			return( $sitemapModel->xPath->query( "//s:url[ sitemap:instance-name = '" . $name . "' and sitemap:component = '" . $metaData[ "component" ]. "' ]" )->length > 0 );
+		}
+
+		return( false );
+	}
+
+	public static function AddMetaDataCollectionByLangToSitemap( $metaDataCollectionByLang )
+	{
+		foreach( array_keys( self::$models ) as $lang )
+		{
+			if( !is_null( self::$models[ $lang ] ) )
+			{
+				$name = key( $metaDataCollectionByLang[ $lang ] );
+				$metaData = current( $metaDataCollectionByLang[ $lang ] );
+
+				self::AppendLinkDataEntry( self::$models[ $lang ], $name, $metaData );
+				self::WriteSitemapModelForLanguage( self::$models[ $lang ], $lang );
 			}
 		}
 	}
