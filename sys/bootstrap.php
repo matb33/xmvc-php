@@ -223,8 +223,9 @@ namespace xMVC\Sys
 	{
 		public static function MethodOrClassName( $name )
 		{
-			$name = str_replace( "-", "_", $name );
-			$name = ucfirst( strtolower( preg_replace( "/ |\.|%20/", "", $name ) ) );
+			$name = str_replace( "-", " ", $name );
+			$name = str_replace( "_", " ", $name );
+			$name = preg_replace( "/ |\.|%20/", "", ucwords( $name ) );
 
 			return( $name );
 		}
@@ -232,7 +233,6 @@ namespace xMVC\Sys
 		public static function Filename( $name )
 		{
 			$name = str_replace( "\\", "/", $name );
-			$name = strtolower( $name );
 
 			return( $name );
 		}
