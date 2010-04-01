@@ -118,16 +118,20 @@ class Processor
 
 	private function PushInstance( $component, $instanceName )
 	{
-		$model = new XMLModelDriver( Core::namespaceApp . "instances/" . $component . "/" . $instanceName );
+		$modelName = StringUtils::ReplaceTokensInPattern( Config::$data[ "componentInstanceFilePattern" ], array( "component" => $component, "instance" => $instanceName ) );
+		$model = new XMLModelDriver( $modelName );
 		CC::InjectReferences( $model );
 		$this->view->PushModel( $model );
 	}
 
 	private function PushXLIFF( $component, $instanceName )
 	{
-		if( XMLModelDriver::Exists( Core::namespaceApp . "instances/" . $component . "/xliff/" . $instanceName . "." . Language::GetLang(), "xliff" ) )
+		$filename = StringUtils::ReplaceTokensInPattern( Config::$data[ "xliffFilePattern" ], array( "component" => $component, "instance" => $instanceName ) );
+		$pathInfo = pathinfo( $filename );
+
+		if( XMLModelDriver::Exists( $pathInfo[ "dirname" ] . "/" . $pathInfo[ "filename" ], $pathInfo[ "extension" ] ) )
 		{
-			$xliffModel = new XMLModelDriver( Core::namespaceApp . "instances/" . $component . "/xliff/" . $instanceName . "." . Language::GetLang() . ".xliff" );
+			$xliffModel = new XMLModelDriver( $filename );
 			$this->view->PushModel( $xliffModel );
 		}
 	}

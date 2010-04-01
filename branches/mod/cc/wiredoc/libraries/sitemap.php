@@ -16,21 +16,35 @@ class Sitemap
 
 	public static function Generate()
 	{
+		$sitemapModels = self::GenerateSitemapModels();
+
+		foreach( $sitemapModels as $lang => $sitemapModel )
+		{
+			self::WriteSitemapModelForLanguage( $lang, $sitemapModel );
+		}
+	}
+
+	private static function GenerateSitemapModels()
+	{
 		$links = self::GatherLinksFromModels();
+
+		$sitemapModels = array();
 
 		foreach( $links as $lang => $data )
 		{
-			$sitemapXML = self::GenerateSitemapXMLForLanguage( $lang, $data );
-
-			self::WriteSitemapXMLForLanguage( $lang, $sitemapXML );
+			$sitemapModels[ $lang ] = self::GenerateSitemapModelForLanguage( $lang, $data );
 		}
+
+		return( $sitemapModels );
 	}
 
 	private static function GatherLinksFromModels()
 	{
 		$links = array();
 
-		foreach( glob( "app/" . Loader::modelFolder . "/instances/*/*.xml" ) as $file )
+		$instances = StringUtils::ReplaceTokensInPattern( Config::$data[ "componentInstanceFilePattern" ], array( "component" => "*", "instance" => "*" ) );
+
+		foreach( glob( $instances ) as $file )
 		{
 			$model = new XMLModelDriver( $file );
 
@@ -55,7 +69,7 @@ class Sitemap
 		return( $links );
 	}
 
-	private static function GenerateSitemapXMLForLanguage( $lang, $linkData )
+	private static function GenerateSitemapModelForLanguage( $lang, $linkData )
 	{
 		$sitemapModel = new XMLModelDriver();
 
@@ -102,20 +116,19 @@ class Sitemap
 			$urlNode->appendChild( $viewNode );
 		}
 
-		$sitemapXML = $sitemapModel->saveXML( $urlsetNode );
+		$sitemapModel->xPath->registerNamespace( "sitemap", Config::$data[ "ccNamespaces" ][ "sitemap" ] );
 
-		return( $sitemapXML );
+		return( $sitemapModel );
 	}
 
-	private static function WriteSitemapXMLForLanguage( $lang, $sitemapXML )
+	private static function WriteSitemapModelForLanguage( $lang, $sitemapModel )
 	{
 		$filename = self::NormalizeSitemapXMLFilePattern( $lang );
 
-		$sitemapXML = "<?xml version=\"1.0\" encoding=\"utf-8\" ?>\n" . $sitemapXML;
-
-		if( file_put_contents( $filename, $sitemapXML, FILE_TEXT ) )
+		if( Cache::PrepCacheFolder( $filename ) )
 		{
-			return( true );
+			$sitemapXML = "<" . "?xml version=\"1.0\" encoding=\"utf-8\"?" . ">" . $sitemapModel->GetXMLForStacking();
+			return( file_put_contents( $filename, $sitemapXML, FILE_TEXT ) );
 		}
 
 		return( false );
@@ -135,7 +148,15 @@ class Sitemap
 		if( file_exists( $filename ) )
 		{
 			self::$models[ $lang ] = new XMLModelDriver( $filename );
-			self::$models[ $lang ]->xPath->registerNamespace( "s", Config::$data[ "sitemapNamespace" ] );
+		}
+		else
+		{
+			self::$models = self::GenerateSitemapModels();
+		}
+
+		foreach( array_keys( self::$models ) as $key )
+		{
+			self::$models[ $key ]->xPath->registerNamespace( "s", Config::$data[ "sitemapNamespace" ] );
 		}
 
 		return( self::$models[ $lang ] );
@@ -143,8 +164,7 @@ class Sitemap
 
 	public static function NormalizeSitemapXMLFilePattern( $lang )
 	{
-		$filename = str_replace( "#lang#", $lang, Config::$data[ "sitemapXMLFilePattern" ] );
-		$filename = str_replace( "#modelFolder#", Loader::modelFolder, $filename );
+		$filename = StringUtils::ReplaceTokensInPattern( Config::$data[ "sitemapXMLFilePattern" ], array( "lang" => $lang ) );
 
 		return( $filename );
 	}

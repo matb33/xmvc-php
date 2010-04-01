@@ -75,7 +75,7 @@ class CC
 		$component = $node->getAttribute( "component" );
 		$instance = $node->getAttribute( "name" );
 
-		$modelName = Core::namespaceApp . "instances/" . $component . "/" . $instance . ".xml";
+		$modelName = StringUtils::ReplaceTokensInPattern( Config::$data[ "componentInstanceFilePattern" ], array( "component" => $component, "instance" => $instance ) );
 		$instanceModel = new XMLModelDriver( $modelName );
 
 		self::InjectModel( $instanceModel, $node, $model );
@@ -97,23 +97,8 @@ class CC
 		{
 			$childRefNode = $childRefNodeList->item( 0 );
 			$importedNode = $model->importNode( $originalNode, true );
-			self::ReplaceNodeWithChildren( $childRefNode, $importedNode );
+			DOMUtils::ReplaceNodeWithChildren( $childRefNode, $importedNode );
 		}
-	}
-
-	private static function ReplaceNodeWithChildren( &$refNode, &$node )
-	{
-		for( $i = 0; $i < $node->childNodes->length; $i++ )
-		{
-			$childNode = $node->childNodes->item( $i );
-
-			if( !( $childNode instanceof \DOMText ) )
-			{
-				$refNode->parentNode->insertBefore( $childNode, $refNode );
-			}
-		}
-
-		$refNode->parentNode->removeChild( $refNode );
 	}
 
 	private static function InjectComponentReference( $node, &$model )
@@ -192,9 +177,8 @@ class CC
 
 		if( $cache > 0 )
 		{
-			$cacheFile = Config::$data[ "componentCacheFilePattern" ];
-			$cacheFile = str_replace( "#event#", $eventName, $cacheFile );
-			$cacheFile = str_replace( "#hash#", $cacheid . "-" . md5( $cacheid . floor( time() / ( $cache * 60 ) ) ), $cacheFile );
+			$hash = $cacheid . "-" . md5( $cacheid . floor( time() / ( $cache * 60 ) ) );
+			$cacheFile = StringUtils::ReplaceTokensInPattern( Config::$data[ "componentCacheFilePattern" ], array( "event" => $eventName, "hash" => $hash ) );
 		}
 
 		return( $cacheFile );
@@ -244,22 +228,9 @@ class CC
 	{
 		if( $cache > 0 )
 		{
-			$cacheFolder = dirname( $cacheFile ) . "/";
-
-			FileSystem::CreateFolderStructure( $cacheFolder );
-
-			if( FileSystem::TestPermissions( $cacheFolder, FileSystem::FS_PERM_WRITE ) )
+			if( Cache::PrepCacheFolder( $cacheFile, $cacheid . "-*" ) )
 			{
-				foreach( glob( $cacheFolder . $cacheid . "-*" ) as $filename )
-				{
-					unlink( $filename );
-				}
-
 				file_put_contents( $cacheFile, $resultModel->saveXML() );
-			}
-			else
-			{
-				trigger_error( "Write permissions are needed on " . $cacheFolder . " in order to use the component caching feature.", E_USER_NOTICE );
 			}
 		}
 	}
@@ -272,7 +243,8 @@ class CC
 		$cache = $event->arguments[ "data" ][ "cache" ];
 		$sourceModel = $event->arguments[ "sourceModel" ];
 
-		$view = new View( "components/" . $component );
+		$view = new View();
+		$view->SetXSLData( $view->ImportXSL( null, StringUtils::ReplaceTokensInPattern( Config::$data[ "componentFilePattern" ], array( "component" => $component ) ) ) );
 		$view->PushModel( $sourceModel );
 		$result = new \DOMDocument();
 		$result->loadXML( $view->ProcessAsXML() );
@@ -293,32 +265,6 @@ class CC
 
 		return( $resultModel );
 	}
-
-	/*
-	private static function GetResultModelPossiblyCached( $modelName, $eventType, $updateCacheEveryXMinutes )
-	{
-		$cacheFolder = "app/inc/cache/" .  $eventType . "/";
-		$cacheFile = md5( $modelName . floor( time() / ( $updateCacheEveryXMinutes * 60 ) ) ) . ".xml";
-
-		if( file_exists( $cacheFolder . $cacheFile ) )
-		{
-			$model = new XMLModelDriver( $cacheFolder . $cacheFile );
-		}
-		else
-		{
-			$model = new XMLModelDriver( $modelName );
-
-			FileSystem::CreateFolderStructure( $cacheFolder );
-
-			if( FileSystem::TestPermissions( $cacheFolder, FileSystem::FS_PERM_WRITE ) )
-			{
-				file_put_contents( $cacheFolder . $cacheFile, $model->saveXML() );
-			}
-		}
-
-		return( $model );
-	}
-	*/
 
 	public static function Listen( $eventName, Delegate $delegate )
 	{
