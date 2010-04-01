@@ -4,6 +4,8 @@ namespace xMVC\Mod\Image;
 
 use xMVC\Sys\Config;
 use xMVC\Sys\FileSystem;
+use xMVC\Mod\CC\StringUtils;
+use xMVC\Mod\CC\Cache;
 
 class Image
 {
@@ -22,7 +24,7 @@ class Image
 		}
 
 		$imagePath = implode( "/", $args );
-		$imageFile = str_replace( "#image#", $imagePath, Config::$data[ "imageProcessorFolderPattern" ] );
+		$imageFile = StringUtils::ReplaceTokensInPattern( Config::$data[ "imageProcessorFolderPattern" ], array( "image" => $imagePath ) );
 
 		if( $this->VerifyResizeParameters( $width, $height, $imageFile ) )
 		{
@@ -48,12 +50,7 @@ class Image
 		list( $fullSizeWidth, $fullSizeHeight, $mimeType, $lastModified, $basename, $filename, $extension ) = ImageProcessor::GetImageData( $imageFile );
 
 		$cacheid = $width . "x" . $height . "-" . $fullSizeWidth . "x" . $fullSizeHeight . "-" . $imageFile . "-" . $lastModified;
-		$cacheFile = Config::$data[ "imageCacheFilePattern" ];
-		$cacheFile = str_replace( "#basename#", $basename, $cacheFile );
-		$cacheFile = str_replace( "#filename#", $filename, $cacheFile );
-		$cacheFile = str_replace( "#hash#", md5( $cacheid ), $cacheFile );
-		$cacheFile = str_replace( "#extension#", $extension, $cacheFile );
-		$cacheFolder = dirname( $cacheFile ) . "/";
+		$cacheFile = StringUtils::ReplaceTokensInPattern( Config::$data[ "imageCacheFilePattern" ], array( "basename" => $basename, "filename" => $filename, "hash" => md5( $cacheid ), "extension" => $extension ) );
 
 		if( file_exists( $cacheFile ) && !$force )
 		{
@@ -63,15 +60,9 @@ class Image
 		{
 			$image = ImageProcessor::Resize( $width, $height, $imageFile );
 
-			FileSystem::CreateFolderStructure( $cacheFolder );
-
-			if( FileSystem::TestPermissions( $cacheFolder, FileSystem::FS_PERM_WRITE ) )
+			if( Cache::PrepCacheFolder( $cacheFile ) )
 			{
 				ImageProcessor::WriteImage( $image, $mimeType, $cacheFile );
-			}
-			else
-			{
-				trigger_error( "Write permissions are needed on " . $cacheFolder . " in order to use the image caching feature.", E_USER_NOTICE );
 			}
 		}
 
