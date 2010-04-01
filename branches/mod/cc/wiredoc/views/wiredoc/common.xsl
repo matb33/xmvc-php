@@ -1,14 +1,14 @@
-<xsl:stylesheet version="1.0" exclude-result-prefixes="xhtml xmvc instance meta container xcontainer group reference inject doc sitemap form" xmlns="http://www.w3.org/1999/xhtml" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xmvc="http://www.xmvc.org/ns/xmvc/1.0" xmlns:instance="urn:cc:instance" xmlns:meta="urn:cc:meta" xmlns:container="urn:cc:container" xmlns:xcontainer="urn:cc:xcontainer" xmlns:group="urn:cc:group" xmlns:reference="urn:cc:reference" xmlns:inject="urn:cc:inject" xmlns:doc="urn:cc:doc" xmlns:sitemap="urn:cc:sitemap" xmlns:form="urn:cc:form" xmlns:loc="urn:cc:loc" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+<xsl:stylesheet version="1.0" exclude-result-prefixes="xhtml xmvc component meta container xcontainer group reference inject doc sitemap form" xmlns="http://www.w3.org/1999/xhtml" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xmvc="http://www.xmvc.org/ns/xmvc/1.0" xmlns:component="urn:cc:component" xmlns:meta="urn:cc:meta" xmlns:container="urn:cc:container" xmlns:xcontainer="urn:cc:xcontainer" xmlns:group="urn:cc:group" xmlns:reference="urn:cc:reference" xmlns:inject="urn:cc:inject" xmlns:doc="urn:cc:doc" xmlns:sitemap="urn:cc:sitemap" xmlns:form="urn:cc:form" xmlns:loc="urn:cc:loc" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
 	<xsl:include href="../common.xsl" />
 
 	<!-- Global wiredoc templates for xMVC -->
 
 	<xsl:template match="/xmvc:root">
-		<xsl:apply-templates select="instance:*" />
+		<xsl:apply-templates select="component:*" />
 	</xsl:template>
 
-	<xsl:template match="instance:*">
+	<xsl:template match="component:*">
 		<xsl:if test="lang( $lang )">
 			<xsl:apply-templates />
 		</xsl:if>
