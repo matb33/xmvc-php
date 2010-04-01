@@ -163,6 +163,7 @@ class Processor
 		}
 
 		$this->view->PushModel( $stringData );
+		$this->view->PushModel( Sitemap::Get( Language::GetLang() ) );
 	}
 
 	private function PushModelStack()

@@ -20,6 +20,16 @@ class CC
 {
 	private static $eventPump = null;
 
+	public static function Listen( $eventName, Delegate $delegate )
+	{
+		self::GetEventPump()->addEventListener( $eventName, $delegate );
+	}
+
+	public static function Talk( $sourceModel, Event &$event )
+	{
+		self::GetEventPump()->dispatchEvent( new Event( "oncomponentbuildcomplete", array( "sourceModel" => $sourceModel, "data" => $event->arguments ) ) );
+	}
+
 	public static function GetEventPump()
 	{
 		if( is_null( self::$eventPump ) )
@@ -36,18 +46,25 @@ class CC
 		self::$eventPump->addEventListener( "oncomponentbuildcomplete", new Delegate( "\\xMVC\\Mod\\CC\\CC::OnComponentBuildComplete" ) );
 	}
 
-	public static function RegisterNamespaces( &$model )
+	public static function RenderComponent( $component, $eventName, $instanceName, $dispatchScope, $parameters = array(), $cache = 0 )
 	{
-		foreach( Config::$data[ "ccNamespaces" ] as $prefix => $namespace )
-		{
-			$model->xPath->registerNamespace( $prefix, $namespace );
-		}
+		$delegate = new Delegate( "OnComponentInstanceGenerated", $dispatchScope );
+
+		self::GenerateComponentInstance( $component, $eventName, $instanceName, $delegate, $parameters, $cache );
 	}
 
 	public static function InjectReferences( &$model )
 	{
 		self::RegisterNamespaces( $model );
 		self::InjectNextReference( $model );
+	}
+
+	public static function RegisterNamespaces( &$model )
+	{
+		foreach( Config::$data[ "ccNamespaces" ] as $prefix => $namespace )
+		{
+			$model->xPath->registerNamespace( $prefix, $namespace );
+		}
 	}
 
 	private static function InjectNextReference( &$model )
@@ -125,13 +142,6 @@ class CC
 		$arguments[ "cacheid" ] = $component . $instanceName . $eventName . implode( "", $arguments[ "param" ] );
 
 		self::StartBuildingComponent( $eventName, $arguments );
-	}
-
-	public static function RenderComponent( $component, $eventName, $instanceName, $dispatchScope, $parameters = array(), $cache = 0 )
-	{
-		$delegate = new Delegate( "OnComponentInstanceGenerated", $dispatchScope );
-
-		self::GenerateComponentInstance( $component, $eventName, $instanceName, $delegate, $parameters, $cache );
 	}
 
 	public static function GenerateComponentInstance( $component, $eventName, $instanceName, $delegate, $parameters = array(), $cache = 0 )
@@ -221,6 +231,8 @@ class CC
 			self::CacheResultModel( $event->arguments[ "data" ][ "cache" ], $event->arguments[ "data" ][ "cacheFile" ], $event->arguments[ "data" ][ "cacheid" ], $resultModel );
 		}
 
+		self::ConsultSitemapWithInstance( $resultModel );
+
 		return( $resultModel );
 	}
 
@@ -269,14 +281,17 @@ class CC
 		return( $resultModel );
 	}
 
-	public static function Listen( $eventName, Delegate $delegate )
+	private static function ConsultSitemapWithInstance( $model )
 	{
-		self::GetEventPump()->addEventListener( $eventName, $delegate );
-	}
+		if( $model->xPath->query( "//meta:href" )->length > 0 )
+		{
+			$metaDataCollectionByLang = Sitemap::GetMetaData( $model );
 
-	public static function Talk( $sourceModel, Event &$event )
-	{
-		self::GetEventPump()->dispatchEvent( new Event( "oncomponentbuildcomplete", array( "sourceModel" => $sourceModel, "data" => $event->arguments ) ) );
+			if( !Sitemap::MetaDataAlreadyPresent( $metaDataCollectionByLang, Language::GetLang() ) )
+			{
+				Sitemap::AddMetaDataCollectionByLangToSitemap( $metaDataCollectionByLang );
+			}
+		}
 	}
 
 	public static function InjectRSSFeed( $model )
