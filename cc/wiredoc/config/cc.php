@@ -1,6 +1,6 @@
 <?php
 
-$ccNamespaces[ "instance" ] = "urn:cc:instance";
+$ccNamespaces[ "component" ] = "urn:cc:component";
 $ccNamespaces[ "meta" ] = "urn:cc:meta";
 $ccNamespaces[ "container" ] = "urn:cc:container";
 $ccNamespaces[ "xcontainer" ] = "urn:cc:xcontainer";

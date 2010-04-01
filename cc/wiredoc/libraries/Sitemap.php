@@ -50,10 +50,10 @@ class Sitemap
 
 			foreach( $model->xPath->query( "//meta:href" ) as $hrefNode )
 			{
-				$name = $model->xPath->query( "ancestor::instance:*/@name", $hrefNode )->item( 0 )->nodeValue;
+				$name = $model->xPath->query( "ancestor::component:*/@instance-name", $hrefNode )->item( 0 )->nodeValue;
 				$lang = $hrefNode->getAttribute( "xml:lang" );
 				$parent = $model->xPath->query( "../meta:parent", $hrefNode )->item( 0 )->nodeValue;
-				$component = $model->xPath->query( "ancestor::instance:*", $hrefNode )->item( 0 )->localName;
+				$component = $model->xPath->query( "ancestor::component:*", $hrefNode )->item( 0 )->localName;
 				$view = $model->xPath->query( "../meta:view", $hrefNode )->item( 0 )->nodeValue;
 
 				$links[ $lang ][ $name ] = array(
@@ -97,7 +97,7 @@ class Sitemap
 			$lastModNode = $sitemapModel->createElementNS( Config::$data[ "sitemapNamespace" ], "lastmod", $lastMod );
 			$urlNode->appendChild( $lastModNode );
 
-			$nameNode = $sitemapModel->createElementNS( Config::$data[ "ccNamespaces" ][ "sitemap" ], "sitemap:name", $name );
+			$nameNode = $sitemapModel->createElementNS( Config::$data[ "ccNamespaces" ][ "sitemap" ], "sitemap:instance-name", $name );
 			$urlNode->appendChild( $nameNode );
 
 			if( strlen( $parent ) > 0 )
@@ -197,7 +197,7 @@ class Sitemap
 
 			foreach( $sitemapModel->xPath->query( "//s:url[ sitemap:path = '" . $path . "' ]" ) as $urlNode )
 			{
-				$pageName = $sitemapModel->xPath->query( "sitemap:name", $urlNode )->item( 0 )->nodeValue;
+				$pageName = $sitemapModel->xPath->query( "sitemap:instance-name", $urlNode )->item( 0 )->nodeValue;
 
 				return( $pageName );
 			}
@@ -215,7 +215,7 @@ class Sitemap
 			foreach( $sitemapModel->xPath->query( "//s:url[ sitemap:path = '" . $path . "' ]" ) as $urlNode )
 			{
 				$linkData = array();
-				$linkData[ "name" ] = $sitemapModel->xPath->query( "sitemap:name", $urlNode )->item( 0 )->nodeValue;
+				$linkData[ "name" ] = $sitemapModel->xPath->query( "sitemap:instance-name", $urlNode )->item( 0 )->nodeValue;
 				$linkData[ "path" ] = $sitemapModel->xPath->query( "sitemap:path", $urlNode )->item( 0 )->nodeValue;
 				$linkData[ "component" ] = $sitemapModel->xPath->query( "sitemap:component", $urlNode )->item( 0 )->nodeValue;
 				$linkData[ "view" ] = $sitemapModel->xPath->query( "sitemap:view", $urlNode )->item( 0 )->nodeValue;
@@ -232,7 +232,7 @@ class Sitemap
 	{
 		$sitemapModel = self::Get( $lang );
 
-		$path = $sitemapModel->xPath->query( "//s:url/sitemap:path[ ../sitemap:name = '" . $name . "' ]" )->item( 0 )->nodeValue;
+		$path = $sitemapModel->xPath->query( "//s:url/sitemap:path[ ../sitemap:instance-name = '" . $name . "' ]" )->item( 0 )->nodeValue;
 
 		return( $path );
 	}

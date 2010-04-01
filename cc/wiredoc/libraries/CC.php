@@ -88,7 +88,7 @@ class CC
 
 		$originalNode = $node->cloneNode( true );
 
-		$externalNode = $model->importNode( $instanceModel->xPath->query( "//instance:*" )->item( 0 ), true );
+		$externalNode = $model->importNode( $instanceModel->xPath->query( "//component:*" )->item( 0 ), true );
 		$node->parentNode->replaceChild( $externalNode, $node );
 
 		$childRefNodeList = $model->xPath->query( "//reference:child", $node );
@@ -251,9 +251,12 @@ class CC
 
 		if( !is_null( $instanceName ) && strlen( $instanceName ) > 0 )
 		{
-			$nameAttribute = $result->createAttribute( "name" );
-			$nameAttribute->value = $instanceName;
-			$result->documentElement->appendChild( $nameAttribute );
+			if( !$result->documentElement->hasAttribute( "instance-name" ) )
+			{
+				$nameAttribute = $result->createAttribute( "instance-name" );
+				$nameAttribute->value = $instanceName;
+				$result->documentElement->appendChild( $nameAttribute );
+			}
 		}
 
 		$injectLangAttribute = $result->createAttributeNS( Config::$data[ "ccNamespaces" ][ "inject" ], "inject:lang" );

@@ -1,4 +1,4 @@
-<xsl:stylesheet version="1.0" exclude-result-prefixes="xhtml xmvc instance meta container xcontainer group reference inject doc sitemap form" xmlns="http://www.w3.org/1999/xhtml" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xmvc="http://www.xmvc.org/ns/xmvc/1.0" xmlns:instance="urn:cc:instance" xmlns:meta="urn:cc:meta" xmlns:container="urn:cc:container" xmlns:xcontainer="urn:cc:xcontainer" xmlns:group="urn:cc:group" xmlns:reference="urn:cc:reference" xmlns:inject="urn:cc:inject" xmlns:doc="urn:cc:doc" xmlns:sitemap="urn:cc:sitemap" xmlns:form="urn:cc:form">
+<xsl:stylesheet version="1.0" exclude-result-prefixes="xhtml xmvc component meta container xcontainer group reference inject doc sitemap form" xmlns="http://www.w3.org/1999/xhtml" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xmvc="http://www.xmvc.org/ns/xmvc/1.0" xmlns:component="urn:cc:component" xmlns:meta="urn:cc:meta" xmlns:container="urn:cc:container" xmlns:xcontainer="urn:cc:xcontainer" xmlns:group="urn:cc:group" xmlns:reference="urn:cc:reference" xmlns:inject="urn:cc:inject" xmlns:doc="urn:cc:doc" xmlns:sitemap="urn:cc:sitemap" xmlns:form="urn:cc:form">
 
 	<!-- XHTML 1.0 Strict wiredoc templates -->
 
@@ -19,10 +19,10 @@
 	<xsl:include href="meta.xsl" />
 
 	<xsl:variable name="lang">
-		<xsl:value-of select="//instance:*[ not( ancestor::instance:* ) ]/@xml:lang" />
+		<xsl:value-of select="//component:*[ not( ancestor::component:* ) ]/@xml:lang" />
 	</xsl:variable>
 
-	<xsl:template match="instance:*[ not( ancestor::instance:* ) ]">
+	<xsl:template match="component:*[ not( ancestor::component:* ) ]">
 		<xsl:if test="lang( $lang )">
 			<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="{ $lang }" lang="{ $lang }">
 				<xsl:apply-templates />
@@ -30,7 +30,7 @@
 		</xsl:if>
 	</xsl:template>
 
-	<xsl:template match="instance:*[ preceding-sibling::meta:head ]">
+	<xsl:template match="component:*[ preceding-sibling::meta:head ]">
 		<body>
 			<xsl:apply-templates />
 		</body>
