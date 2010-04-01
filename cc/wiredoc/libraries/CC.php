@@ -135,6 +135,7 @@ class CC
 		$arguments[ "eventName" ] = $eventName;
 		$arguments[ "cache" ] = $cache;
 		$arguments[ "inject" ] = true;
+		$arguments[ "param" ] = array();
 
 		while( $node->hasAttribute( "param" . ( ++$i ) ) )
 		{
