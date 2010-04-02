@@ -109,7 +109,7 @@ class Routing
 
 			if( ! Config::$data[ "useQueryInRoutes" ] )
 			{
-				$routedURI = preg_replace( "/\?.*$/", "", $routedURI );
+				$routedURI = Normalize::StripQueryInURI( $routedURI );
 			}
 
 			foreach( $routes as $preg => $replace )

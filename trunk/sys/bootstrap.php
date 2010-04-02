@@ -261,6 +261,11 @@ namespace xMVC\Sys
 
 			return( $xml );
 		}
+
+		public static function StripQueryInURI( $uri )
+		{
+			return( preg_replace( "/\?.*$/", "", $uri ) );
+		}
 	}
 }
 
