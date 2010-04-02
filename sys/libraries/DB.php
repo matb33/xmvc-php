@@ -14,6 +14,8 @@ class DB
 
 				self::$link = mysql_connect( Config::$data[ "databaseHost" ], Config::$data[ "databaseUser" ], Config::$data[ "databasePass" ] ) or trigger_error( "Could not connect: [" . mysql_error() . "]", E_USER_ERROR );
 
+				mysql_set_charset( "utf8", self::$link );
+
 			break;
 
 			case "mysqli":
@@ -26,6 +28,8 @@ class DB
 				{
 					trigger_error( "Connect failed: [" . mysqli_connect_error() . "]", E_USER_ERROR );
 				}
+
+				mysqli_set_charset( self::$link, "utf8" );
 
 			break;
 		}
