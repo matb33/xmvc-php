@@ -7,7 +7,7 @@
 					<xsl:if test="local-name() != 'nav'">
 						<xsl:value-of select="local-name()" /><xsl:text> </xsl:text>
 					</xsl:if>
-					<xsl:text>layout</xsl:text>
+					<xsl:text>layout navigation</xsl:text>
 				</xsl:attribute>
 				<xsl:apply-templates select="*" />
 			</ul>
@@ -16,11 +16,7 @@
 
 	<xsl:template match="nav:*/container:*">
 		<xsl:if test="lang( $lang )">
-			<xsl:variable name="current-uri" select="//xmvc:strings/xmvc:uri" />
-			<xsl:variable name="current-path" select="concat( //s:url/sitemap:component[ ../sitemap:path = $current-uri ], '/', //s:url/sitemap:instance-name[ ../sitemap:path = $current-uri ] )" />
-			<xsl:variable name="current-parent" select="//s:url/sitemap:parent[ ../sitemap:path = $current-uri ]" />
-			<xsl:variable name="this-uri" select="doc:ulink/@href" />
-			<xsl:variable name="this-path" select="concat( //s:url/sitemap:component[ ../sitemap:path = $this-uri ], '/', //s:url/sitemap:instance-name[ ../sitemap:path = $this-uri ] )" />
+			<xsl:variable name="this-uri" select=".//@href" />
 			<li>
 				<xsl:attribute name="class">
 					<xsl:if test="local-name() != 'container'">
@@ -38,8 +34,8 @@
 						<xsl:when test="position() mod 2 = 1">even</xsl:when>
 						<xsl:otherwise>odd</xsl:otherwise>
 					</xsl:choose>
-					<xsl:text> layout</xsl:text>
-					<xsl:if test="$this-path = $current-path or $this-path = $current-parent"><xsl:text> selected</xsl:text></xsl:if>
+					<xsl:text> layout navigation</xsl:text>
+					<xsl:if test="//sitemap:hierarchy/sitemap:path[ text() = $this-uri ]"><xsl:text> selected</xsl:text></xsl:if>
 				</xsl:attribute>
 				<xsl:apply-templates />
 			</li>

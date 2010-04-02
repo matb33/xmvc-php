@@ -10,6 +10,7 @@ use xMVC\Sys\ErrorHandler;
 use xMVC\Sys\XMLModelDriver;
 use xMVC\Sys\StringsModelDriver;
 use xMVC\Sys\View;
+use xMVC\Sys\Normalize;
 use xMVC\Sys\Events\Event;
 use xMVC\Sys\Events\DefaultEventDispatcher;
 
@@ -140,7 +141,8 @@ class Processor
 	private function PushStringData( $component, $instanceName, $viewName )
 	{
 		$basePath = Routing::URIProtocol() . "://" . $_SERVER[ "HTTP_HOST" ];
-		$link = $basePath . Routing::URI();
+		$uri = Normalize::StripQueryInURI( Routing::URI() );
+		$link = $basePath . $uri;
 
 		$stringData = new StringsModelDriver();
 		$stringData->Add( "lang", Language::GetLang() );
@@ -150,7 +152,7 @@ class Processor
 		$stringData->Add( "view-name", $viewName );
 		$stringData->Add( "base-path", $basePath );
 		$stringData->Add( "http-host", $_SERVER[ "HTTP_HOST" ] );
-		$stringData->Add( "uri", Routing::URI() );
+		$stringData->Add( "uri", $uri );
 		$stringData->Add( "link", $link );
 		$stringData->Add( "link-urlencoded", urlencode( $link ) );
 
@@ -164,7 +166,7 @@ class Processor
 		}
 
 		$this->view->PushModel( $stringData );
-		$this->view->PushModel( Sitemap::Get( Language::GetLang() ) );
+		$this->view->PushModel( new HierarchyModelDriver( $component, $instanceName ) );
 	}
 
 	private function PushModelStack()
