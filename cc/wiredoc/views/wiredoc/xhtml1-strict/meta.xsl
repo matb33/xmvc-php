@@ -43,12 +43,6 @@
 		</xsl:if>
 	</xsl:template>
 
-	<xsl:template match="meta:title" />
-	<xsl:template match="meta:link" />
-	<xsl:template match="meta:meta" />
-	<xsl:template match="meta:script" />
-	<xsl:template match="meta:style" />
-	<xsl:template match="meta:href" />
-	<xsl:template match="meta:view" />
+	<xsl:template match="meta:*" />
 
 </xsl:stylesheet>

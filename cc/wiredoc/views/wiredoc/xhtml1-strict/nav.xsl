@@ -9,6 +9,9 @@
 					</xsl:if>
 					<xsl:text>layout navigation</xsl:text>
 				</xsl:attribute>
+				<xsl:if test="@id">
+					<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
+				</xsl:if>
 				<xsl:apply-templates select="*" />
 			</ul>
 		</xsl:if>
@@ -37,6 +40,9 @@
 					<xsl:text> layout navigation</xsl:text>
 					<xsl:if test="//sitemap:hierarchy/sitemap:path[ text() = $this-uri ]"><xsl:text> selected</xsl:text></xsl:if>
 				</xsl:attribute>
+				<xsl:if test="@id">
+					<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
+				</xsl:if>
 				<xsl:apply-templates />
 			</li>
 		</xsl:if>
