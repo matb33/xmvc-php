@@ -89,9 +89,16 @@
 						<xsl:otherwise><xsl:value-of select="@href" /></xsl:otherwise>
 					</xsl:choose>
 				</xsl:attribute>
-				<xsl:if test="@alt">
-					<xsl:attribute name="alt"><xsl:value-of select="@alt" /></xsl:attribute>
-				</xsl:if>
+				<xsl:attribute name="alt">
+					<xsl:choose>
+						<xsl:when test="@alt">
+							<xsl:value-of select="@alt" />
+						</xsl:when>
+						<xsl:otherwise>
+							<xsl:value-of select="." />
+						</xsl:otherwise>
+					</xsl:choose>
+				</xsl:attribute>
 			</img>
 		</xsl:if>
 	</xsl:template>

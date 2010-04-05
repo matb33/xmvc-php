@@ -6,6 +6,9 @@
 				<xsl:if test="local-name() != 'container'">
 					<xsl:attribute name="class"><xsl:value-of select="local-name()" /></xsl:attribute>
 				</xsl:if>
+				<xsl:if test="@id">
+					<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
+				</xsl:if>
 				<xsl:apply-templates />
 			</div>
 		</xsl:if>
@@ -16,6 +19,9 @@
 			<iframe src="{ @href }" frameborder="0">
 				<xsl:if test="local-name() != 'xcontainer'">
 					<xsl:attribute name="class"><xsl:value-of select="local-name()" /></xsl:attribute>
+				</xsl:if>
+				<xsl:if test="@id">
+					<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
 				</xsl:if>
 				<xsl:apply-templates />
 			</iframe>
