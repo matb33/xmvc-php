@@ -223,9 +223,12 @@ namespace xMVC\Sys
 	{
 		public static function MethodOrClassName( $name )
 		{
-			$name = str_replace( "-", " ", $name );
-			$name = str_replace( "_", " ", $name );
-			$name = preg_replace( "/ |\.|%20/", "", ucwords( $name ) );
+			$name = preg_replace( "/-|_/", " ", $name );
+			$name = str_replace( "\\", "          ", $name );
+			$name = ucwords( $name );
+			$name = str_replace( "          ", "\\", $name );
+			$name = preg_replace( "/ |\.|%20/", "", $name );
+			$name = str_replace( "XMVC", "xMVC", $name );
 
 			return( $name );
 		}
