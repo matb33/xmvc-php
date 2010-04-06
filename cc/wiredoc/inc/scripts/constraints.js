@@ -282,7 +282,7 @@ var ConstraintVisuals = new function()
 		closestLabel.removeClass( "constraint-success" );
 		closestLabel.removeClass( "constraint-fail" );
 
-		closestLabel.find( "input[ class='fail' ], input[ class='pass' ]" ).remove();
+		$( "input[ class='fail' ], input[ class='pass' ]", closestLabel ).remove();
 	};
 
 	this.OnAskServer = function( fieldCollection )
