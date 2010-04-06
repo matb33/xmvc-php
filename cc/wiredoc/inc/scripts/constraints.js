@@ -18,15 +18,15 @@ function Constraints( ajaxURL, context )
 
 		$( "input[ type='text' ], input[ type='password' ], textarea, select", this.context ).bind( eventName, function()
 		{
-			window.clearTimeout( $.data( this, "timeout" ) );
+			window.clearTimeout( $.data( document.body, "timeout" ) );
 			thisConstraints.AskServer( $( this ) );
 		});
 
 		$( "input[ type='text' ], input[ type='password' ], textarea", this.context ).keydown( function()
 		{
 			var field = $( this );
-			window.clearTimeout( $.data( this, "timeout" ) );
-			$.data( this, "timeout", window.setTimeout( function() { thisConstraints.AskServer( $( field ) ); }, thisConstraints.inputKeyUpDelay ) );
+			window.clearTimeout( $.data( document.body, "timeout" ) );
+			$.data( document.body, "timeout", window.setTimeout( function() { thisConstraints.AskServer( $( field ) ); }, thisConstraints.inputKeyUpDelay ) );
 
 			if( ConstraintVisuals.IsAngry( field ) )
 			{
@@ -38,6 +38,7 @@ function Constraints( ajaxURL, context )
 
 		$( "input[ type='radio' ], input[ type='checkbox' ]", this.context ).click( function()
 		{
+			window.clearTimeout( $.data( document.body, "timeout" ) );
 			thisConstraints.AskServer( $( this ) );
 		});
 
@@ -49,6 +50,7 @@ function Constraints( ajaxURL, context )
 			}
 			else
 			{
+				window.clearTimeout( $.data( document.body, "timeout" ) );
 				thisConstraints.AskServer( $( this ) );
 				return( false );
 			}
@@ -304,16 +306,22 @@ var ConstraintVisuals = new function()
 
 		for( var key in failMessages )
 		{
-			var box = $( "<input class='fail' type='hidden' />" );
-			box.val( failMessages[ key ] );
-			closestLabel.append( box );
+			if( $( "input[ value=" + failMessages[ key ].replace( "\"", "\\\"" ) + " ]", closestLabel ).length == 0 )
+			{
+				var box = $( "<input class='fail' type='hidden' />" );
+				box.val( failMessages[ key ] );
+				closestLabel.append( box );
+			}
 		}
 
 		for( var key in passMessages )
 		{
-			var box = $( "<input class='pass' type='hidden' />" );
-			box.val( passMessages[ key ] );
-			closestLabel.append( box );
+			if( $( "input[ value=" + passMessages[ key ].replace( "\"", "\\\"" ) + " ]", closestLabel ).length == 0 )
+			{
+				var box = $( "<input class='pass' type='hidden' />" );
+				box.val( passMessages[ key ] );
+				closestLabel.append( box );
+			}
 		}
 	};
 
