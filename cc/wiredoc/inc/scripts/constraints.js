@@ -1,64 +1,55 @@
-var Constraints = new function()
+function Constraints( ajaxURL, context )
 {
-	this.ajaxURL = null;
+	this.context = context;
+	this.ajaxURL = ajaxURL;
 	this.allowOnNextSubmitEvent = false;
 	this.inputKeyUpDelay = 750;
 
-	this.Initialize = function( ajaxURL, form )
+	this.Initialize = function()
 	{
-		this.ajaxURL = ajaxURL;
-		this.form = form;	// not active -- investigate why this.form.find() barely ever works
-
 		this.BindFieldEvents();
 	};
 
 	this.BindFieldEvents = function()
 	{
-		if( $.browser.msie )
-		{
-			$( "form input[ type='text' ], input[ type='password' ], textarea, select" ).blur( function()
-			{
-				window.clearTimeout( $.data( this, "timeout" ) );
-				Constraints.AskServer( $( this ) );
-			});
-		}
-		else
-		{
-			$( "form input[ type='text' ], input[ type='password' ], textarea, select" ).change( function()
-			{
-				window.clearTimeout( $.data( this, "timeout" ) );
-				Constraints.AskServer( $( this ) );
-			});
-		}
+		var thisConstraints = this;
 
-		$( "form input[ type='text' ], input[ type='password' ], textarea" ).keydown( function()
+		var eventName = $.browser.msie ? "blur" : "change";
+
+		$( "input[ type='text' ], input[ type='password' ], textarea, select", this.context ).bind( eventName, function()
+		{
+			window.clearTimeout( $.data( this, "timeout" ) );
+			thisConstraints.AskServer( $( this ) );
+		});
+
+		$( "input[ type='text' ], input[ type='password' ], textarea", this.context ).keydown( function()
 		{
 			var field = $( this );
 			window.clearTimeout( $.data( this, "timeout" ) );
-			$.data( this, "timeout", window.setTimeout( function() { Constraints.AskServer( field ); }, Constraints.inputKeyUpDelay ) );
+			$.data( this, "timeout", window.setTimeout( function() { thisConstraints.AskServer( $( field ) ); }, thisConstraints.inputKeyUpDelay ) );
 
 			if( ConstraintVisuals.IsAngry( field ) )
 			{
 				ConstraintVisuals.Reset( field );
-				Constraints.TriggerResetEvent( field );
+				thisConstraints.TriggerResetEvent( field );
 			}
 
 		});
 
-		$( "form input[ type='radio' ], input[ type='checkbox' ]" ).click( function()
+		$( "input[ type='radio' ], input[ type='checkbox' ]", this.context ).click( function()
 		{
-			Constraints.AskServer( $( this ) );
+			thisConstraints.AskServer( $( this ) );
 		});
 
-		$( "form" ).submit( function()
+		this.context.submit( function()
 		{
-			if( Constraints.allowOnNextSubmitEvent )
+			if( thisConstraints.allowOnNextSubmitEvent )
 			{
 				return( true );
 			}
 			else
 			{
-				Constraints.AskServer( $( this ) );
+				thisConstraints.AskServer( $( this ) );
 				return( false );
 			}
 		});
@@ -71,23 +62,26 @@ var Constraints = new function()
 		ConstraintVisuals.OnAskServer( affectedFields );
 		this.TriggerLoadEvents( affectedFields );
 
+		var thisConstraints = this;
+
 		$.ajax( {
 			url: this.ajaxURL,
 			type: "POST",
 			async: true,
 			data: this.GetParameters( this.GetUniquelyNamedFieldCollection( field ) ),
 			dataType: "xml",
-			success: function( data, textStatus ) { Constraints.OnResponseFromServer( data, textStatus, field, submitCallback ) }
+			success: function( data, textStatus ) { thisConstraints.OnResponseFromServer( data, textStatus, field, submitCallback ) }
 		});
 	};
 
 	this.OnResponseFromServer = function( data, textStatus, eventField, submitCallback )
 	{
 		var receivedProperResponse = ( textStatus == "success" );
+		var thisConstraints = this;
 
 		if( receivedProperResponse )
 		{
-			var nsPrefix = $( "c\\:constraint-results", data ).attr( "success" ) == null ? "" : "c\\:";
+			var nsPrefix = "";
 			var rootElement = $( nsPrefix + "constraint-results", data );
 			var fullSuccess = rootElement.attr( "success" ) == "true";
 
@@ -95,7 +89,7 @@ var Constraints = new function()
 			{
 				var name = $( this ).attr( "name" );
 				var fieldSuccess = $( this ).attr( "success" ) == "true";
-				var field = $( "form *[ name='" + Constraints.EscapeName( name ) + "' ], form *[ name='" + Constraints.EscapeName( name + "[]" ) + "' ]" );
+				var field = $( "form *[ name='" + thisConstraints.EscapeName( name ) + "' ], form *[ name='" + thisConstraints.EscapeName( name + "[]" ) + "' ]" );
 				var failMessages = [];
 				var passMessages = [];
 
@@ -112,7 +106,7 @@ var Constraints = new function()
 				});
 
 				ConstraintVisuals.OnFieldConstraintResult( field, fieldSuccess, failMessages, passMessages );
-				Constraints.TriggerResponseEvents( field, fieldSuccess );
+				thisConstraints.TriggerResponseEvents( field, fieldSuccess );
 			});
 
 			if( submitCallback )
@@ -127,7 +121,7 @@ var Constraints = new function()
 
 					if( fullSuccess )
 					{
-						$( "form" ).submit();
+						this.context.submit();
 					}
 				}
 			}
@@ -136,15 +130,16 @@ var Constraints = new function()
 
 	this.GetParameters = function( fieldCollection )
 	{
+		var thisConstraints = this;
 		var fieldList = {};
 
 		fieldCollection.each( function()
 		{
-			fieldList[ Constraints.StripBrackets( this.name ) ] = Constraints.GetValue( $( this ) );
+			fieldList[ thisConstraints.StripBrackets( this.name ) ] = thisConstraints.GetValue( $( this ) );
 
-			Constraints.GetDependencyFieldCollection( this.name ).each( function()
+			thisConstraints.GetDependencyFieldCollection( this.name ).each( function()
 			{
-				fieldList[ Constraints.StripBrackets( this.name ) ] = Constraints.GetValue( $( this ) );
+				fieldList[ thisConstraints.StripBrackets( this.name ) ] = thisConstraints.GetValue( $( this ) );
 			});
 		});
 
@@ -178,11 +173,11 @@ var Constraints = new function()
 	{
 		if( field.is( ":submit" ) || field.is( "form" ) )
 		{
-			var fieldCollection = $( "form input[ type != 'hidden' ], form textarea, form select" );
+			var fieldCollection = $( "input[ type != 'hidden' ], form textarea, form select", this.context );
 		}
 		else
 		{
-			var fieldCollection = $( "form *[ name='" + Constraints.EscapeName( field.attr( "name" ) ) + "' ]" );
+			var fieldCollection = $( "*[ name='" + this.EscapeName( field.attr( "name" ) ) + "' ]", this.context );
 		}
 
 		return( fieldCollection );
@@ -190,9 +185,11 @@ var Constraints = new function()
 
 	this.GetDependencyFieldCollection = function( name )
 	{
-		var dependencyFieldCollection = $( "input[ name='" + Constraints.EscapeName( this.StripBrackets( name ) + "--dependency[]" ) + "' ]" ).map( function()
+		var thisConstraints = this;
+
+		var dependencyFieldCollection = $( "input[ name='" + this.EscapeName( this.StripBrackets( name ) + "--dependency[]" ) + "' ]", this.context ).map( function()
 		{
-			return( $( "form *[ name='" + Constraints.EscapeName( this.value ) + "' ]" ).get() );
+			return( $( "*[ name='" + thisConstraints.EscapeName( this.value ) + "' ]", thisConstraints.context ).get() );
 		});
 
 		return( dependencyFieldCollection );
@@ -202,7 +199,7 @@ var Constraints = new function()
 	{
 		if( field.is( ":radio" ) || field.is( ":checkbox" ) )
 		{
-			var checkedFields = $( "form input[ name='" + Constraints.EscapeName( field.attr( "name" ) ) + "' ]:checked" );
+			var checkedFields = $( "input[ name='" + this.EscapeName( field.attr( "name" ) ) + "' ]:checked", this.context );
 
 			if( checkedFields.length > 0 )
 			{
@@ -239,7 +236,10 @@ var Constraints = new function()
 	{
 		if( ! $.browser.msie )
 		{
-			name = name.replace( "[", "\\[" ).replace( "]", "\\]" );
+			if( name != null )
+			{
+				name = name.replace( "[", "\\[" ).replace( "]", "\\]" );
+			}
 		}
 
 		return( name );
@@ -268,6 +268,8 @@ var Constraints = new function()
 	{
 		field.trigger( "reset.constraints" );
 	};
+
+	this.Initialize();
 }
 
 var ConstraintVisuals = new function()
