@@ -17,6 +17,8 @@ form label.constraint-pass span
 #tooltip
 {
 	position: absolute;
+	top: 0px;
+	left: 0px;
     display: none;
 	background-color: transparent;
 	background-repeat: no-repeat;
