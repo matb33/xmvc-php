@@ -157,6 +157,7 @@ class CC
 		$arguments[ "eventName" ] = $eventName;
 		$arguments[ "cache" ] = $cache;
 		$arguments[ "inject" ] = false;
+		$arguments[ "param" ] = array();
 
 		foreach( $parameters as $i => $parameter )
 		{
