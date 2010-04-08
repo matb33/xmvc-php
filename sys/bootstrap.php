@@ -171,7 +171,7 @@ namespace xMVC\Sys
 
 				if( preg_match( $pattern, self::$name, self::$matches ) )
 				{
-					$mappedFile = preg_replace_callback( "/%([0-9]+)/", array( self, "ResolveReplaceCallback" ), $mapping );
+					$mappedFile = preg_replace_callback( "/%([0-9]+)/", "self::ResolveReplaceCallback", $mapping );
 					$mappedFile = str_replace( "%f", self::$folder, $mappedFile );
 
 					return( array( $mappedFile ) );

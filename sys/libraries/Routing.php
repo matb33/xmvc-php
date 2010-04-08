@@ -119,7 +119,7 @@ class Routing
 					if( preg_match( $preg, $routedURI, $routeMatches ) )
 					{
 						self::$routeMatches = $routeMatches;
-						$routedURI = preg_replace_callback( "/%([0-9]+)/", array( self, "RouteReplaceCallback" ), $replace );
+						$routedURI = preg_replace_callback( "/%([0-9]+)/", "self::RouteReplaceCallback", $replace );
 						break;
 					}
 				}
