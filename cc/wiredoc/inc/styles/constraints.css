@@ -48,23 +48,23 @@ form label span
 
 form label.constraint-loading span
 {
-	background-image: url( /cc/inc/images/constraints/constraint-loading.gif );
+	background-image: url( /CC/inc/images/constraints/constraint-loading.gif );
 }
 
 form label.constraint-fail span
 {
-	background-image: url( /cc/inc/images/constraints/constraint-fail.gif );
+	background-image: url( /CC/inc/images/constraints/constraint-fail.gif );
 }
 
 #tooltip
 {
     width: 200px;
-    background-image: url( /cc/inc/images/constraints/tooltip-top.gif );
+    background-image: url( /CC/inc/images/constraints/tooltip-top.gif );
 }
 
 	#tooltip .tooltip
 	{
-		background-image: url( /cc/inc/images/constraints/tooltip-tray.gif );
+		background-image: url( /CC/inc/images/constraints/tooltip-tray.gif );
 		width: 170px;
 		padding: 0px 15px 41px 15px;
 		margin-top: 9px;
@@ -72,12 +72,12 @@ form label.constraint-fail span
 
 #tooltip.angry
 {
-    background-image: url( /cc/inc/images/constraints/tooltip-error-top.gif );
+    background-image: url( /CC/inc/images/constraints/tooltip-error-top.gif );
 }
 
 	#tooltip.angry .tooltip
 	{
-		background-image: url( /cc/inc/images/constraints/tooltip-error-tray.gif );
+		background-image: url( /CC/inc/images/constraints/tooltip-error-tray.gif );
 		color: #fff;
 	}
 
