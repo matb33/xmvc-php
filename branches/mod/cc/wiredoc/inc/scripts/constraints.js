@@ -14,6 +14,8 @@ function Constraints( ajaxURL, context )
 	{
 		var thisConstraints = this;
 
+		/*
+		// DISABLED BECAUSE IT SEEMS TO COLLIDE WITH KEYDOWN, AND KEYDOWN IS SUFFICIENT AS FAR AS I CAN TELL
 		var eventName = $.browser.msie ? "blur" : "change";
 
 		$( "input[ type='text' ], input[ type='password' ], textarea, select", this.context ).bind( eventName, function()
@@ -21,6 +23,7 @@ function Constraints( ajaxURL, context )
 			window.clearTimeout( $.data( document.body, "timeout" ) );
 			thisConstraints.AskServer( $( this ) );
 		});
+		*/
 
 		$( "input[ type='text' ], input[ type='password' ], textarea", this.context ).keydown( function()
 		{
