@@ -1,5 +1,5 @@
 <?php
 
-$routes[ "/^\/image\/(.+)\/(.*)$/" ] = "xMVC\\Mod\\Image\\image/%1/%2";
+$routes[ "/^\/image\/(.+)\/(.*)$/" ] = "xMVC\\Mod\\Image\\Image/%1/%2";
 
 ?>
