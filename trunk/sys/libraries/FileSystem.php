@@ -263,7 +263,7 @@ class FileSystem
 			$pathParts					= @pathinfo( $file );
 			$meta[ "dirname" ]			= $pathParts[ "dirname" ];
 			$meta[ "basename" ]			= $pathParts[ "basename" ];
-			$meta[ "extension" ]		= $pathParts[ "extension" ];
+			$meta[ "extension" ]		= isset( $pathParts[ "extension" ] ) ? $pathParts[ "extension" ] : "";
 			$meta[ "filename" ]			= $pathParts[ "filename" ];
 
 			$meta[ "fileatime-nice" ]	= date( "Y-m-d H:i:s", $meta[ "fileatime" ] );
