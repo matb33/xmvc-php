@@ -61,7 +61,9 @@ class Language
 			foreach( self::$languages->xPath->query( "//lang:languages/lang:language-list/lang:language" ) as $node )
 			{
 				$id = $node->getAttribute( "id" );
-				$hostMatch = self::$languages->xPath->query( "lang:host-match", $node )->item( 0 )->nodeValue;
+
+				$hostMatchNodeList = self::$languages->xPath->query( "lang:host-match", $node );
+				$hostMatch = $hostMatchNodeList->length > 0 ? $hostMatchNodeList->item( 0 )->nodeValue : "";
 
 				self::$data[ $id ] = array(
 					"host-match" => $hostMatch
@@ -87,11 +89,14 @@ class Language
 	{
 		foreach( self::$data as $key => $info )
 		{
-			if( strpos( $_SERVER[ "HTTP_HOST" ], $info[ "host-match" ] ) !== false )
+			if( strlen( $info[ "host-match" ] ) > 0 )
 			{
-				self::$language = $key;
+				if( strpos( $_SERVER[ "HTTP_HOST" ], $info[ "host-match" ] ) !== false )
+				{
+					self::$language = $key;
 
-				return( true );
+					return( true );
+				}
 			}
 		}
 
