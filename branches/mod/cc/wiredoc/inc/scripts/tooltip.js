@@ -106,7 +106,7 @@ var Tooltip = new function()
 	this.DetermineTooltipPosition = function()
 	{
 		var inputPos = $( this.input ).offset();
-		inputPos.left += ( $( this.input ).width() - $( "#tooltip" ).width() + 55 );
+		inputPos.left += ( $( this.input ).width() - ( $( "#tooltip" ).width() / 2 ) );
 		inputPos.top -= ( $( "#tooltip" ).height() );
 
 		return( inputPos );
@@ -114,7 +114,11 @@ var Tooltip = new function()
 
 	this.HideTooltip = function()
 	{
-		$( "#tooltip" ).fadeOut();
+		if( $( "#tooltip:visible" ).length > 0 )
+		{
+			$( "#tooltip" ).stop();
+			$( "#tooltip" ).fadeOut();
+		}
 	};
 
 	this.OnConstraintLoadStart = function( data )
