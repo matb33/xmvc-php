@@ -20,11 +20,11 @@ class Language
 		self::LoadLanguageData();
 		self::VerifyDefaultLanguage();
 
-		if( ! self::FindLanguageBasedOnHost() )
+		if( ! self::FindLanguageBasedOnGET() )
 		{
-			if( ! self::FindLanguageBasedOnGET() )
+			if( ! self::FindLanguageBasedOnSession() )
 			{
-				if( ! self::FindLanguageBasedOnSession() )
+				if( ! self::FindLanguageBasedOnHost() )
 				{
 					self::SetLanguageToDefault();
 				}
@@ -91,7 +91,7 @@ class Language
 		{
 			if( strlen( $info[ "host-match" ] ) > 0 )
 			{
-				if( strpos( $_SERVER[ "HTTP_HOST" ], $info[ "host-match" ] ) !== false )
+				if( preg_match( $info[ "host-match" ], $_SERVER[ "HTTP_HOST" ] ) )
 				{
 					self::$language = $key;
 
