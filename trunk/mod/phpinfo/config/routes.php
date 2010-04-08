@@ -4,7 +4,7 @@ use xMVC\Sys\Config;
 
 if( !Config::$data[ "isProduction" ] )
 {
-	$routes[ "/^\/phpinfo/" ] = "xMVC\\Mod\\Phpinfo\\phpinfo";
+	$routes[ "/^\/phpinfo/" ] = "xMVC\\Mod\\Phpinfo\\Phpinfo";
 }
 
 ?>
