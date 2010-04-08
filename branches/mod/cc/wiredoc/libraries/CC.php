@@ -137,6 +137,8 @@ class CC
 		$arguments[ "inject" ] = true;
 		$arguments[ "param" ] = array();
 
+		$i = 0;
+
 		while( $node->hasAttribute( "param" . ( ++$i ) ) )
 		{
 			$arguments[ "param" ][ $i ] = $node->getAttribute( "param" . $i );

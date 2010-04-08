@@ -58,11 +58,16 @@ class Sitemap
 	{
 		foreach( $model->xPath->query( "//meta:href" ) as $hrefNode )
 		{
-			$name = $model->xPath->query( "ancestor::component:*/@instance-name", $hrefNode )->item( 0 )->nodeValue;
 			$lang = $hrefNode->getAttribute( "xml:lang" );
-			$parent = $model->xPath->query( "../meta:parent", $hrefNode )->item( 0 )->nodeValue;
-			$component = $model->xPath->query( "ancestor::component:*", $hrefNode )->item( 0 )->localName;
-			$view = $model->xPath->query( "../meta:view", $hrefNode )->item( 0 )->nodeValue;
+			$nameNodeList = $model->xPath->query( "ancestor::component:*/@instance-name", $hrefNode );
+			$componentNodeList = $model->xPath->query( "ancestor::component:*", $hrefNode );
+			$viewNodeList = $model->xPath->query( "../meta:view", $hrefNode );
+			$parentNodeList = $model->xPath->query( "../meta:parent", $hrefNode );
+
+			$name = $nameNodeList->length > 0 ? $nameNodeList->item( 0 )->nodeValue : "";
+			$component = $componentNodeList->length > 0 ? $componentNodeList->item( 0 )->localName : "";
+			$view = $viewNodeList->length > 0 ? $viewNodeList->item( 0 )->nodeValue : "";
+			$parent = $parentNodeList->length > 0 ? $parentNodeList->item( 0 )->nodeValue : "";
 
 			$metaDataCollectionByLang[ $lang ][ $name ] = array(
 				"path" => $hrefNode->nodeValue,
