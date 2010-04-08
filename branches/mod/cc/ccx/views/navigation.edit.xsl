@@ -5,7 +5,7 @@
 	xmlns:xmvc="http://www.xmvc.org/ns/xmvc/1.0"
 	xmlns:cc="urn:cc:root">
 
-	<xsl:include href="mod/cc/views/base-editor.xsl" />
+	<xsl:include href="mod/CC/views/base-editor.xsl" />
 
 	<xsl:template name="style">
 		<style type="text/css">
