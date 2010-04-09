@@ -103,6 +103,8 @@ class View
 			$this->SetXSLData( $this->ImportXSL( $data ) );
 		}
 
+		$result = null;
+
 		if( ! is_null( $this->GetXSLData() ) && ! is_null( $this->GetXMLData() ) )
 		{
 			$result = $this->ProcessView( $return, $outputType );
@@ -235,6 +237,8 @@ class View
 
 	public function ProcessView( $return, $outputType )
 	{
+		$result = null;
+
 		if( self::ShouldRenderClientSide( $return ) )
 		{
 			OutputHeaders::XML();
