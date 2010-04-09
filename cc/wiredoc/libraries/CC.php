@@ -145,7 +145,7 @@ class CC
 			$arguments[ "param" ][ $i ] = $node->getAttribute( "param" . $i );
 		}
 
-		$arguments[ "cacheid" ] = $component . $instanceName . $eventName . implode( "", $arguments[ "param" ] );
+		$arguments[ "cacheid" ] = str_replace( "\\", "_", $component ) . $instanceName . $eventName . implode( "", $arguments[ "param" ] );
 
 		self::StartBuildingComponent( $eventName, $arguments );
 	}
@@ -182,7 +182,7 @@ class CC
 			$arguments[ "param" ][ $i + 1 ] = $parameter;
 		}
 
-		$arguments[ "cacheid" ] = $component . $instanceName . $eventName . implode( "", $arguments[ "param" ] );
+		$arguments[ "cacheid" ] = str_replace( "\\", "_", $component ) . $instanceName . $eventName . implode( "", $arguments[ "param" ] );
 
 		self::GetEventPump()->addEventListener( "oncomponentinstancebuilt", $delegate );
 		self::StartBuildingComponent( $eventName, $arguments );
