@@ -85,7 +85,7 @@ class XMLModelDriver extends ModelDriver implements ModelDriverInterface
 	{
 		if( ! $this->IsRawXML( $parameter ) )
 		{
-			return( file_exists( $parameter ) );
+			return( file_exists( Normalize::Filename( $parameter ) ) );
 		}
 
 		return( false );
@@ -109,7 +109,7 @@ class XMLModelDriver extends ModelDriver implements ModelDriverInterface
 
 	private function FileGetContentsUTF8( $filename )
 	{
-		$contents = file_get_contents( $filename );
+		$contents = file_get_contents( Normalize::Filename( $filename ) );
 
 		return( mb_convert_encoding( $contents, "UTF-8", mb_detect_encoding( $contents, "UTF-8, ISO-8859-1", true ) ) );
 	}
