@@ -13,6 +13,7 @@ use xMVC\Sys\Events\DefaultEventDispatcher;
 use xMVC\Sys\Events\Event;
 use xMVC\Sys\Delegate;
 use xMVC\Sys\Filesystem;
+use xMVC\Sys\Normalize;
 
 use xMVC\Mod\Language\Language;
 use xMVC\Mod\Utils\DOMUtils;
@@ -262,7 +263,7 @@ class CC
 		$sourceModel = $event->arguments[ "sourceModel" ];
 		$componentOnly = array_pop( explode( "\\", $component ) );
 
-		$xslFile = StringUtils::ReplaceTokensInPattern( Config::$data[ "componentFilePattern" ], array( "component" => $component, "component-only" => $componentOnly ) );
+		$xslFile = Normalize::Filename( StringUtils::ReplaceTokensInPattern( Config::$data[ "componentFilePattern" ], array( "component" => $component, "component-only" => $componentOnly ) ) );
 
 		$view = new View();
 		$view->SetXSLData( $view->ImportXSL( null, $xslFile ) );
