@@ -65,7 +65,7 @@ class Processor
 
 	public function RenderPageWithModel( $model, $component, $instanceName )
 	{
-		$viewName = $model->xPath->query( "//meta:view" )->item( 0 )->nodeValue;
+		$viewName = $model->xPath->query( "//component:definition/@view" )->item( 0 )->nodeValue;
 		$viewName = $this->FallbackViewNameIfNecessary( $viewName );
 
 		$this->view = new View( $viewName );
