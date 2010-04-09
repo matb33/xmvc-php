@@ -187,6 +187,26 @@ namespace xMVC\Sys
 		{
 			return( self::$matches[ $matches[ 1 ] ] );
 		}
+
+		public static function NamespaceToFolder( $namespace )
+		{
+			NamespaceMap::SetName( $namespace );
+			NamespaceMap::SetFolder( "" );
+			NamespaceMap::RewindIterator();
+
+			foreach( NamespaceMap::Iterate() as $mappedFile )
+			{
+				$path = Normalize::Filename( $mappedFile );
+				$path = realpath( $path );
+
+				if( $path !== false )
+				{
+					return( $path );
+				}
+			}
+
+			return( false );
+		}
 	}
 
 	class AutoLoad
