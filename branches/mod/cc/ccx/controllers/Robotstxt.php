@@ -26,7 +26,7 @@ class Robotstxt
 
 	private function DoNotSpider()
 	{
-		if( preg_match( Config::$data[ "noSpiderHostMatch" ], $_SERVER[ "HTTP_HOST" ] ) !== false )
+		if( preg_match( Config::$data[ "noSpiderHostMatch" ], $_SERVER[ "HTTP_HOST" ] ) )
 		{
 			return( true );
 		}
