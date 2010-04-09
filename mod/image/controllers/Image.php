@@ -48,8 +48,9 @@ class Image
 	private function ResizeImage( $width, $height, $imageFile, $force )
 	{
 		list( $fullSizeWidth, $fullSizeHeight, $mimeType, $lastModified, $basename, $filename, $extension ) = ImageProcessor::GetImageData( $imageFile );
+		list( $newWidth, $newHeight ) = ImageProcessor::DetermineNewWidthAndHeight( $width, $height, $fullSizeWidth, $fullSizeHeight );
 
-		$cacheid = $width . "x" . $height . "-" . $fullSizeWidth . "x" . $fullSizeHeight . "-" . $imageFile . "-" . $lastModified;
+		$cacheid = $newWidth . "x" . $newHeight . "-" . $fullSizeWidth . "x" . $fullSizeHeight . "-" . $imageFile . "-" . $lastModified;
 		$cacheFile = StringUtils::ReplaceTokensInPattern( Config::$data[ "imageCacheFilePattern" ], array( "basename" => $basename, "filename" => $filename, "hash" => md5( $cacheid ), "extension" => $extension ) );
 
 		if( file_exists( $cacheFile ) && !$force )
@@ -58,7 +59,14 @@ class Image
 		}
 		else
 		{
-			$image = ImageProcessor::Resize( $width, $height, $imageFile );
+			if( $newWidth == $fullSizeWidth && $newHeight == $fullSizeHeight )
+			{
+				$image = $imageFile;
+			}
+			else
+			{
+				$image = ImageProcessor::Resize( $width, $height, $imageFile );
+			}
 
 			if( Cache::PrepCacheFolder( $cacheFile ) )
 			{
