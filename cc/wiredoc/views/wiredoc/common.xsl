@@ -5,10 +5,10 @@
 	<!-- Global wiredoc templates for xMVC -->
 
 	<xsl:template match="/xmvc:root">
-		<xsl:apply-templates select="component:*" />
+		<xsl:apply-templates select="component:definition" />
 	</xsl:template>
 
-	<xsl:template match="component:*">
+	<xsl:template match="component:definition">
 		<xsl:if test="lang( $lang )">
 			<xsl:apply-templates />
 		</xsl:if>

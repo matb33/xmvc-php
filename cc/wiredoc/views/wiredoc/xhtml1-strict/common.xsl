@@ -20,10 +20,10 @@
 	<xsl:include href="nav.xsl" />
 
 	<xsl:variable name="lang">
-		<xsl:value-of select="//component:*[ not( ancestor::component:* ) ]/@xml:lang" />
+		<xsl:value-of select="//component:definition[ not( ancestor::component:definition ) ]/@xml:lang" />
 	</xsl:variable>
 
-	<xsl:template match="component:*[ not( ancestor::component:* ) ]">
+	<xsl:template match="component:definition[ not( ancestor::component:definition ) ]">
 		<xsl:if test="lang( $lang )">
 			<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="{ $lang }" lang="{ $lang }">
 				<xsl:apply-templates />
@@ -31,7 +31,7 @@
 		</xsl:if>
 	</xsl:template>
 
-	<xsl:template match="component:*[ preceding-sibling::meta:head ]">
+	<xsl:template match="component:definition[ preceding-sibling::meta:head ]">
 		<body>
 			<xsl:apply-templates />
 		</body>

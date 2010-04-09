@@ -7,6 +7,8 @@ use xMVC\Sys\XMLModelDriver;
 use xMVC\Sys\Routing;
 use xMVC\Sys\Config;
 use xMVC\Sys\OutputHeaders;
+use xMVC\Sys\FileSystem;
+use xMVC\Sys\NamespaceMap;
 
 use xMVC\Mod\Language\Language;
 use xMVC\Mod\Utils\StringUtils;
@@ -17,9 +19,9 @@ class Sitemap
 
 	public static function Generate()
 	{
-		$sitemapModels = self::GenerateSitemapModels();
+		self::GenerateSitemapModels();
 
-		foreach( $sitemapModels as $lang => $sitemapModel )
+		foreach( self::$models as $lang => $sitemapModel )
 		{
 			self::WriteSitemapModelForLanguage( $sitemapModel, $lang );
 		}
@@ -29,23 +31,22 @@ class Sitemap
 	{
 		$metaDataCollectionByLang = self::GetMetaDataCollectionByLangFromModels();
 
-		$sitemapModels = array();
+		self::$models = array();
 
 		foreach( $metaDataCollectionByLang as $lang => $metaDataCollection )
 		{
-			$sitemapModels[ $lang ] = self::GenerateSitemapModelForLanguage( $lang, $metaDataCollection );
+			self::$models[ $lang ] = self::GenerateSitemapModelForLanguage( $lang, $metaDataCollection );
 		}
-
-		return( $sitemapModels );
 	}
 
 	private static function GetMetaDataCollectionByLangFromModels()
 	{
-		$instances = StringUtils::ReplaceTokensInPattern( Config::$data[ "componentInstanceFilePattern" ], array( "component" => "*", "instance" => "*" ) );
+		$list = FileSystem::GetDirListRecursive( Config::$data[ "sitemapCrawlFolder" ], Config::$data[ "sitemapCrawlFileRegExp" ], Config::$data[ "sitemapCrawlFolderRegExp" ], false );
+		$flatList = FileSystem::FlattenDirListIntoFileList( $list[ Config::$data[ "sitemapCrawlFolder" ] ] );
 
 		$metaDataCollectionByLang = array();
 
-		foreach( glob( $instances ) as $file )
+		foreach( $flatList as $file )
 		{
 			$model = new XMLModelDriver( $file );
 			$metaDataCollectionByLang = self::GetMetaData( $model, $file, $metaDataCollectionByLang );
@@ -59,17 +60,17 @@ class Sitemap
 		foreach( $model->xPath->query( "//meta:href" ) as $hrefNode )
 		{
 			$lang = $hrefNode->getAttribute( "xml:lang" );
-			$nameNodeList = $model->xPath->query( "ancestor::component:*/@instance-name", $hrefNode );
-			$componentNodeList = $model->xPath->query( "ancestor::component:*", $hrefNode );
-			$viewNodeList = $model->xPath->query( "../meta:view", $hrefNode );
-			$parentNodeList = $model->xPath->query( "../meta:parent", $hrefNode );
+			$componentNodeList = $model->xPath->query( "ancestor::component:definition/@name", $hrefNode );
+			$instanceNameNodeList = $model->xPath->query( "ancestor::component:definition/@instance-name", $hrefNode );
+			$viewNodeList = $model->xPath->query( "ancestor::component:definition/@view", $hrefNode );
+			$parentNodeList = $model->xPath->query( "ancestor::component:definition/@parent", $hrefNode );
 
-			$name = $nameNodeList->length > 0 ? $nameNodeList->item( 0 )->nodeValue : "";
-			$component = $componentNodeList->length > 0 ? $componentNodeList->item( 0 )->localName : "";
+			$component = $componentNodeList->length > 0 ? $componentNodeList->item( 0 )->nodeValue : "";
+			$instanceName = $instanceNameNodeList->length > 0 ? $instanceNameNodeList->item( 0 )->nodeValue : "";
 			$view = $viewNodeList->length > 0 ? $viewNodeList->item( 0 )->nodeValue : "";
 			$parent = $parentNodeList->length > 0 ? $parentNodeList->item( 0 )->nodeValue : "";
 
-			$metaDataCollectionByLang[ $lang ][ $name ] = array(
+			$metaDataCollectionByLang[ $lang ][ $instanceName ] = array(
 				"path" => $hrefNode->nodeValue,
 				"parent" => $parent,
 				"file" => $file,
@@ -148,7 +149,9 @@ class Sitemap
 		if( Cache::PrepCacheFolder( $filename ) )
 		{
 			$sitemapXML = "<" . "?xml version=\"1.0\" encoding=\"utf-8\"?" . ">" . $sitemapModel->GetXMLForStacking();
-			return( file_put_contents( $filename, $sitemapXML, FILE_TEXT ) );
+			$bytesWritten = file_put_contents( $filename, $sitemapXML, FILE_TEXT );
+
+			return( $bytesWritten );
 		}
 
 		return( false );
@@ -171,7 +174,7 @@ class Sitemap
 		}
 		else
 		{
-			self::$models = self::GenerateSitemapModels();
+			self::GenerateSitemapModels();
 		}
 
 		foreach( array_keys( self::$models ) as $key )
@@ -248,11 +251,12 @@ class Sitemap
 		return( false );
 	}
 
-	public static function GetPathByPageNameAndLanguage( $name, $lang )
+	public static function GetPathByPageNameAndLanguage( $namespacedInstanceName, $lang )
 	{
 		$sitemapModel = self::Get( $lang );
 
-		$path = $sitemapModel->xPath->query( "//s:url/sitemap:path[ ../sitemap:instance-name = '" . $name . "' ]" )->item( 0 )->nodeValue;
+		$pathNodeList = $sitemapModel->xPath->query( "//s:url/sitemap:path[ concat( ../sitemap:component, '\\', ../sitemap:instance-name ) = '" . $namespacedInstanceName . "' ]" );
+		$path = $pathNodeList->length > 0 ? $pathNodeList->item( 0 )->nodeValue : "";
 
 		return( $path );
 	}
@@ -282,7 +286,7 @@ class Sitemap
 		{
 			foreach( array_keys( Config::$data[ $routeGroup ] ) as $pattern )
 			{
-				preg_match_all( "/#([A-Za-z0-9-_]+)#/", $pattern, $matches );
+				preg_match_all( "/#([A-Za-z0-9-_\\\\]+)#/", $pattern, $matches );
 
 				if( count( $matches[ 0 ] ) )
 				{

@@ -107,7 +107,7 @@ class CC
 
 		$originalNode = $node->cloneNode( true );
 
-		$externalNode = $model->importNode( $instanceModel->xPath->query( "//component:*" )->item( 0 ), true );
+		$externalNode = $model->importNode( $instanceModel->xPath->query( "//component:definition" )->item( 0 ), true );
 		$node->parentNode->replaceChild( $externalNode, $node );
 
 		$childRefNodeList = $model->xPath->query( "//reference:child", $node );
@@ -149,6 +149,21 @@ class CC
 		self::StartBuildingComponent( $eventName, $arguments );
 	}
 
+	private static function StartBuildingComponent( $eventName, $arguments )
+	{
+		$arguments[ "cacheFile" ] = self::GetCacheFilename( $eventName, $arguments[ "cache" ], $arguments[ "cacheid" ] );
+
+		if( $arguments[ "cache" ] == 0 || !file_exists( $arguments[ "cacheFile" ] ) )
+		{
+			self::GetEventPump()->dispatchEvent( new Event( $eventName, $arguments ) );
+		}
+		else
+		{
+			$arguments[ "cachedResultModel" ] = new XMLModelDriver( $arguments[ "cacheFile" ] );
+			self::Talk( null, new Event( $eventName, $arguments ) );
+		}
+	}
+
 	public static function GenerateComponentInstance( $component, $eventName, $instanceName, $delegate, $parameters = array(), $cache = 0 )
 	{
 		$cache = ( int )$cache;
@@ -170,21 +185,6 @@ class CC
 
 		self::GetEventPump()->addEventListener( "oncomponentinstancebuilt", $delegate );
 		self::StartBuildingComponent( $eventName, $arguments );
-	}
-
-	private static function StartBuildingComponent( $eventName, $arguments )
-	{
-		$arguments[ "cacheFile" ] = self::GetCacheFilename( $eventName, $arguments[ "cache" ], $arguments[ "cacheid" ] );
-
-		if( $arguments[ "cache" ] == 0 || !file_exists( $arguments[ "cacheFile" ] ) )
-		{
-			self::GetEventPump()->dispatchEvent( new Event( $eventName, $arguments ) );
-		}
-		else
-		{
-			$arguments[ "cachedResultModel" ] = new XMLModelDriver( $arguments[ "cacheFile" ] );
-			self::Talk( null, new Event( $eventName, $arguments ) );
-		}
 	}
 
 	private static function GetCacheFilename( $eventName, $cache, $cacheid )
@@ -260,9 +260,12 @@ class CC
 		$eventName = $event->arguments[ "data" ][ "eventName" ];
 		$cache = $event->arguments[ "data" ][ "cache" ];
 		$sourceModel = $event->arguments[ "sourceModel" ];
+		$componentOnly = array_pop( explode( "\\", $component ) );
+
+		$xslFile = StringUtils::ReplaceTokensInPattern( Config::$data[ "componentFilePattern" ], array( "component" => $component, "component-only" => $componentOnly ) );
 
 		$view = new View();
-		$view->SetXSLData( $view->ImportXSL( null, StringUtils::ReplaceTokensInPattern( Config::$data[ "componentFilePattern" ], array( "component" => $component ) ) ) );
+		$view->SetXSLData( $view->ImportXSL( null, $xslFile ) );
 		$view->PushModel( $sourceModel );
 		$result = new \DOMDocument();
 		$result->loadXML( $view->ProcessAsXML() );
