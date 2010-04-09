@@ -3,7 +3,6 @@
 $ccNamespaces[ "component" ] = "urn:cc:component";
 $ccNamespaces[ "meta" ] = "urn:cc:meta";
 $ccNamespaces[ "container" ] = "urn:cc:container";
-$ccNamespaces[ "xcontainer" ] = "urn:cc:xcontainer";
 $ccNamespaces[ "group" ] = "urn:cc:group";
 $ccNamespaces[ "nav" ] = "urn:cc:nav";
 $ccNamespaces[ "reference" ] = "urn:cc:reference";
