@@ -262,7 +262,7 @@ namespace xMVC\Sys
 
 		public static function Path( $path )
 		{
-			$path = str_replace( "\\", "/", realpath( $path ) );
+			$path = str_replace( "\\", "/", realpath( str_replace( "\\", "/", $path ) ) );
 			$path = substr( $path, -1 ) != "/" ? $path . "/" : $path;
 
 			return( $path );
