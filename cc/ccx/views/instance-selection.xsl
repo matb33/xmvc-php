@@ -21,7 +21,7 @@
 				<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 				<link rel="stylesheet" type="text/css" media="screen" href="/inc/styles/reset-0.0.7.css" />
 				<link rel="stylesheet" type="text/css" media="screen" href="/inc/styles/typography.css" />
-				<link rel="stylesheet" type="text/css" media="screen" href="/cc/inc/styles/ccms.css" />
+				<link rel="stylesheet" type="text/css" media="screen" href="/CC/inc/styles/ccms.css" />
 			</head>
 			<body>
 				<div id="ccms">

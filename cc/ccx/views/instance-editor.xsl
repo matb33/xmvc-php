@@ -21,9 +21,9 @@
 				<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 				<link rel="stylesheet" type="text/css" media="screen" href="/inc/styles/reset-0.0.7.css" />
 				<link rel="stylesheet" type="text/css" media="screen" href="/inc/styles/typography.css" />
-				<link rel="stylesheet" type="text/css" media="screen" href="/cc/inc/styles/ccms.css" />
-				<script type="text/javascript" src="/cc/inc/scripts/jquery-1.4.1.tools.min.js" />
-				<script type="text/javascript" src="/cc/inc/scripts/tiny_mce/jquery.tinymce.js" />
+				<link rel="stylesheet" type="text/css" media="screen" href="/CC/inc/styles/ccms.css" />
+				<script type="text/javascript" src="/CC/inc/scripts/jquery-1.4.1.tools.min.js" />
+				<script type="text/javascript" src="/CC/inc/scripts/tiny_mce/jquery.tinymce.js" />
 				<script type="text/javascript">
 					$( document ).ready( function()
 					{
