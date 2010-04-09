@@ -9,20 +9,7 @@ class ImageProcessor
 		list( $fullSizeWidth, $fullSizeHeight, $mimeType, $lastModified, $b, $f, $e ) = self::GetImageData( $imageFile );
 		list( $newWidth, $newHeight ) = self::DetermineNewWidthAndHeight( $width, $height, $fullSizeWidth, $fullSizeHeight );
 
-		switch( $mimeType )
-		{
-			case "image/jpeg":
-				$fullSizeImage = imagecreatefromjpeg( $imageFile );
-			break;
-			case "image/gif":
-				$fullSizeImage = imagecreatefromgif( $imageFile );
-			break;
-			case "image/png":
-				$fullSizeImage = imagecreatefrompng( $imageFile );
-			break;
-			default:
-				return( false );
-		}
+		$fullSizeImage = self::GetImage( $imageFile );
 
 		$resizedImage = imagecreatetruecolor( $newWidth, $newHeight );
 		$whiteColor = imagecolorallocate( $resizedImage, 255, 255, 255 );
@@ -89,7 +76,7 @@ class ImageProcessor
 			switch( $mimeType )
 			{
 				case "image/jpeg":
-					return( imagejpeg( $image ) );
+					return( imagejpeg( $image, null, 100 ) );
 				break;
 				case "image/gif":
 					return( imagegif( $image ) );
@@ -107,18 +94,45 @@ class ImageProcessor
 		}
 	}
 
-	public static function WriteImage( $imageData, $mimeType, $filename )
+	public static function WriteImage( $image, $mimeType, $filename )
 	{
+		if( is_resource( $image ) )
+		{
+			switch( $mimeType )
+			{
+				case "image/jpeg":
+					return( imagejpeg( $image, $filename, 100 ) );
+				break;
+				case "image/gif":
+					return( imagegif( $image, $filename ) );
+				break;
+				case "image/png":
+					return( imagepng( $image, $filename ) );
+				break;
+				default:
+					return( false );
+			}
+		}
+		else
+		{
+			file_put_contents( $filename, file_get_contents( $image, FILE_BINARY ), FILE_BINARY );
+		}
+	}
+
+	public static function GetImage( $imageFile )
+	{
+		list( $fullSizeWidth, $fullSizeHeight, $mimeType, $lastModified, $b, $f, $e ) = self::GetImageData( $imageFile );
+
 		switch( $mimeType )
 		{
 			case "image/jpeg":
-				return( imagejpeg( $imageData, $filename ) );
+				return( imagecreatefromjpeg( $imageFile ) );
 			break;
 			case "image/gif":
-				return( imagegif( $imageData, $filename ) );
+				return( imagecreatefromgif( $imageFile ) );
 			break;
 			case "image/png":
-				return( imagepng( $imageData, $filename ) );
+				return( imagecreatefrompng( $imageFile ) );
 			break;
 			default:
 				return( false );
