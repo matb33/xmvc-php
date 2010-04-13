@@ -78,6 +78,11 @@ class ErrorHandler
 	{
 		foreach( $data as $key => $value )
 		{
+			if( is_array( $value ) || is_object( $value ) )
+			{
+				$value = serialize( $value );
+			}
+
 			$pattern = str_replace( "#" . $key . "#", $value, $pattern );
 		}
 
