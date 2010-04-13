@@ -56,6 +56,15 @@ class CC
 		self::GenerateComponentInstance( $component, $eventName, $instanceName, $delegate, $parameters, $cache );
 	}
 
+	public static function RenderInstance( $component, $instanceName, $dispatchScope, $cache = 0 )
+	{
+		$delegate = new Delegate( "OnComponentInstanceGenerated", $dispatchScope );
+		$instanceModel = self::LoadComponentInstance( $component, $instanceName, $cache );
+
+		self::GetEventPump()->addEventListener( "oncomponentinstancebuilt", $delegate );
+		self::GetEventPump()->dispatchEvent( new Event( "oncomponentinstancebuilt", array( "model" => $instanceModel, "component" => $component, "instanceName" => $instanceName ) ) );
+	}
+
 	public static function InjectReferences( &$model )
 	{
 		self::RegisterNamespaces( $model );
@@ -93,13 +102,33 @@ class CC
 	private static function InjectInstanceReference( $node, &$model )
 	{
 		$component = $node->getAttribute( "component" );
-		$instance = $node->getAttribute( "name" );
+		$instanceName = $node->getAttribute( "name" );
+		$cache = $node->hasAttribute( "cache" ) ? ( int )$node->getAttribute( "cache" ) : 0;
 
-		$modelName = StringUtils::ReplaceTokensInPattern( Config::$data[ "componentInstanceFilePattern" ], array( "component" => $component, "instance" => $instance ) );
-		$instanceModel = new XMLModelDriver( $modelName );
+		$instanceModel = self::LoadComponentInstance( $component, $instanceName, $cache );
 
 		self::InjectModel( $instanceModel, $node, $model );
 		self::InjectNextReference( $model );
+	}
+
+	private static function LoadComponentInstance( $component, $instanceName, $cache = 0 )
+	{
+		$modelName = StringUtils::ReplaceTokensInPattern( Config::$data[ "componentInstanceFilePattern" ], array( "component" => $component, "instance" => $instanceName ) );
+
+		$componentInstanceAlias = str_replace( "\\", "_", $component ) . "_" . $instanceName;
+		$cacheFile = self::GetCacheFilename( "instances", $name = $componentInstanceAlias, $cache, $cacheid = $componentInstanceAlias );
+
+		if( $cache == 0 || !file_exists( $cacheFile ) )
+		{
+			$instanceModel = new XMLModelDriver( $modelName );
+			self::CacheResultModel( $cache, $cacheFile, $componentInstanceAlias, $instanceModel );
+		}
+		else
+		{
+			$instanceModel = new XMLModelDriver( $cacheFile );
+		}
+
+		return( $instanceModel );
 	}
 
 	private static function InjectModel( $instanceModel, $node, &$model )
@@ -152,7 +181,7 @@ class CC
 
 	private static function StartBuildingComponent( $eventName, $arguments )
 	{
-		$arguments[ "cacheFile" ] = self::GetCacheFilename( $eventName, $arguments[ "cache" ], $arguments[ "cacheid" ] );
+		$arguments[ "cacheFile" ] = self::GetCacheFilename( "events", $eventName, $arguments[ "cache" ], $arguments[ "cacheid" ] );
 
 		if( $arguments[ "cache" ] == 0 || !file_exists( $arguments[ "cacheFile" ] ) )
 		{
@@ -188,14 +217,14 @@ class CC
 		self::StartBuildingComponent( $eventName, $arguments );
 	}
 
-	private static function GetCacheFilename( $eventName, $cache, $cacheid )
+	private static function GetCacheFilename( $type, $name, $cache, $cacheid )
 	{
 		$cacheFile = null;
 
 		if( $cache > 0 )
 		{
 			$hash = $cacheid . "-" . md5( $cacheid . floor( time() / ( $cache * 60 ) ) );
-			$cacheFile = StringUtils::ReplaceTokensInPattern( Config::$data[ "componentCacheFilePattern" ], array( "event" => $eventName, "hash" => $hash ) );
+			$cacheFile = StringUtils::ReplaceTokensInPattern( Config::$data[ "componentCacheFilePattern" ], array( "type" => $type, "name" => $name, "hash" => $hash ) );
 		}
 
 		return( $cacheFile );
@@ -211,7 +240,7 @@ class CC
 		{
 			$resultModel = self::ObtainResultModel( $event );
 
-			CC::GetEventPump()->dispatchEvent( new Event( "oncomponentinstancebuilt", array( "model" => $resultModel, "component" => $event->arguments[ "data" ][ "component" ], "instanceName" => $event->arguments[ "data" ][ "instanceName" ] ) ) );
+			self::GetEventPump()->dispatchEvent( new Event( "oncomponentinstancebuilt", array( "model" => $resultModel, "component" => $event->arguments[ "data" ][ "component" ], "instanceName" => $event->arguments[ "data" ][ "instanceName" ] ) ) );
 		}
 	}
 
