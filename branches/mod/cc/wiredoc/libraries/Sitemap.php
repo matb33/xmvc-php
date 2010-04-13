@@ -159,8 +159,6 @@ class Sitemap
 
 	public static function Load( $lang )
 	{
-		self::$models[ $lang ] = null;
-
 		$filename = self::NormalizeSitemapXMLFilePattern( $lang );
 
 		if( ! file_exists( $filename ) )
@@ -182,6 +180,11 @@ class Sitemap
 			self::$models[ $key ]->xPath->registerNamespace( "s", Config::$data[ "sitemapNamespace" ] );
 		}
 
+		if( !isset( self::$models[ $lang ] ) )
+		{
+			self::$models[ $lang ] = null;
+		}
+
 		return( self::$models[ $lang ] );
 	}
 
@@ -194,7 +197,7 @@ class Sitemap
 
 	public static function Get( $lang )
 	{
-		if( is_null( self::$models[ $lang ] ) )
+		if( !isset( self::$models[ $lang ] ) || is_null( self::$models[ $lang ] ) )
 		{
 			return( self::Load( $lang ) );
 		}
@@ -235,16 +238,19 @@ class Sitemap
 		{
 			$sitemapModel = self::Get( $lang );
 
-			foreach( $sitemapModel->xPath->query( "//s:url[ sitemap:path = '" . $path . "' ]" ) as $urlNode )
+			if( !is_null( $sitemapModel ) )
 			{
-				$linkData = array();
-				$linkData[ "name" ] = $sitemapModel->xPath->query( "sitemap:instance-name", $urlNode )->item( 0 )->nodeValue;
-				$linkData[ "path" ] = $sitemapModel->xPath->query( "sitemap:path", $urlNode )->item( 0 )->nodeValue;
-				$linkData[ "component" ] = $sitemapModel->xPath->query( "sitemap:component", $urlNode )->item( 0 )->nodeValue;
-				$linkData[ "view" ] = $sitemapModel->xPath->query( "sitemap:view", $urlNode )->item( 0 )->nodeValue;
-				$linkData[ "lang" ] = $lang;
+				foreach( $sitemapModel->xPath->query( "//s:url[ sitemap:path = '" . $path . "' ]" ) as $urlNode )
+				{
+					$linkData = array();
+					$linkData[ "name" ] = $sitemapModel->xPath->query( "sitemap:instance-name", $urlNode )->item( 0 )->nodeValue;
+					$linkData[ "path" ] = $sitemapModel->xPath->query( "sitemap:path", $urlNode )->item( 0 )->nodeValue;
+					$linkData[ "component" ] = $sitemapModel->xPath->query( "sitemap:component", $urlNode )->item( 0 )->nodeValue;
+					$linkData[ "view" ] = $sitemapModel->xPath->query( "sitemap:view", $urlNode )->item( 0 )->nodeValue;
+					$linkData[ "lang" ] = $lang;
 
-				return( $linkData );
+					return( $linkData );
+				}
 			}
 		}
 
