@@ -275,10 +275,19 @@ namespace xMVC\Sys
 
 		public static function StripXMLRootTags( $xml )
 		{
-			// Strip xml declaration
-			$xml = preg_replace( "|<\?xml(.+?)\?>[\n\r]?|i", "", $xml );
+			$xml = self::StripXMLDeclaration( $xml );
+			$xml = self::StripRootTag( $xml );
 
-			// Strip xmvc:root
+			return( $xml );
+		}
+
+		public static function StripXMLDeclaration( $xml )
+		{
+			return( preg_replace( "|<\?xml(.+?)\?>[\n\r]?|i", "", $xml ) );
+		}
+
+		public static function StripRootTag( $xml )
+		{
 			$xml = preg_replace( "|<xmvc:root(.+?)>[\n\r]?|", "", $xml );
 			$xml = preg_replace( "|<\/xmvc:root>[\n\r]?|", "", $xml );
 
