@@ -71,11 +71,12 @@ class Sitemap
 			$view = $viewNodeList->length > 0 ? $viewNodeList->item( 0 )->nodeValue : "";
 			$parent = $parentNodeList->length > 0 ? $parentNodeList->item( 0 )->nodeValue : "";
 
-			$metaDataCollectionByLang[ $lang ][ $instanceName ] = array(
+			$metaDataCollectionByLang[ $lang ][ $component . "\\" . $instanceName ] = array(
 				"path" => $hrefNode->nodeValue,
 				"parent" => $parent,
 				"file" => $file,
 				"component" => $component,
+				"instanceName" => $instanceName,
 				"view" => $view
 			);
 		}
@@ -95,20 +96,21 @@ class Sitemap
 
 		$urlsetNode->setAttributeNS( "http://www.w3.org/2000/xmlns/", "xmlns:sitemap", Config::$data[ "ccNamespaces" ][ "sitemap" ] );
 
-		foreach( $metaDataCollection as $name => $metaData )
+		foreach( $metaDataCollection as $metaData )
 		{
-			self::AppendLinkDataEntry( $sitemapModel, $name, $metaData );
+			self::AppendLinkDataEntry( $sitemapModel, $metaData );
 		}
 
 		return( $sitemapModel );
 	}
 
-	private static function AppendLinkDataEntry( $sitemapModel, $name, $metaData )
+	private static function AppendLinkDataEntry( $sitemapModel, $metaData )
 	{
 		$path = $metaData[ "path" ];
 		$parent = $metaData[ "parent" ];
 		$file = $metaData[ "file" ];
 		$component = $metaData[ "component" ];
+		$instanceName = $metaData[ "instanceName" ];
 		$view = $metaData[ "view" ];
 
 		$urlsetNode = $sitemapModel->xPath->query( "//s:urlset" )->item( 0 );
@@ -124,8 +126,8 @@ class Sitemap
 		$lastModNode = $sitemapModel->createElementNS( Config::$data[ "sitemapNamespace" ], "lastmod", $lastMod );
 		$urlNode->appendChild( $lastModNode );
 
-		$nameNode = $sitemapModel->createElementNS( Config::$data[ "ccNamespaces" ][ "sitemap" ], "sitemap:instance-name", $name );
-		$urlNode->appendChild( $nameNode );
+		$instanceNameNode = $sitemapModel->createElementNS( Config::$data[ "ccNamespaces" ][ "sitemap" ], "sitemap:instance-name", $instanceName );
+		$urlNode->appendChild( $instanceNameNode );
 
 		if( strlen( $parent ) > 0 )
 		{
@@ -319,10 +321,9 @@ class Sitemap
 
 		if( !is_null( $sitemapModel ) )
 		{
-			$name = key( $metaDataCollectionByLang[ $lang ] );
 			$metaData = current( $metaDataCollectionByLang[ $lang ] );
 
-			return( $sitemapModel->xPath->query( "//s:url[ sitemap:instance-name = '" . $name . "' and sitemap:component = '" . $metaData[ "component" ]. "' ]" )->length > 0 );
+			return( $sitemapModel->xPath->query( "//s:url[ sitemap:instance-name = '" . $metaData[ "instanceName" ] . "' and sitemap:component = '" . $metaData[ "component" ]. "' ]" )->length > 0 );
 		}
 
 		return( false );
@@ -334,10 +335,9 @@ class Sitemap
 		{
 			if( !is_null( self::$models[ $lang ] ) )
 			{
-				$name = key( $metaDataCollectionByLang[ $lang ] );
 				$metaData = current( $metaDataCollectionByLang[ $lang ] );
 
-				self::AppendLinkDataEntry( self::$models[ $lang ], $name, $metaData );
+				self::AppendLinkDataEntry( self::$models[ $lang ], $metaData );
 				self::CacheSitemapModelForLanguage( self::$models[ $lang ], $lang );
 			}
 		}

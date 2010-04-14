@@ -8,36 +8,30 @@ class Authenticator
 {
 	private static $authenticated = null;
 
-	public static function Authenticate()
+	public static function Authenticate( $username, $password )
 	{
 		$userID = null;
 		$authenticated = false;
 
 		if( ! self::IsAuthenticated() )
 		{
-			if( isset( $_POST[ "username" ] ) )
+			$authModel = new SQLModelDriver( __NAMESPACE__ . "\\authentication" );
+			$authModel->UseQuery( "IsUserPasswordValid" );
+			$authModel->SetParameters( array( ( string )$username, md5( ( string )$password ) ) );
+			$authModel->Execute();
+
+			$userNodeList = $authModel->xPath->query( "//xmvc:column[ @name='userid' ]" );
+
+			if( $userNodeList->length > 0 )
 			{
-				$username = $_POST[ "username" ];
-				$password = $_POST[ "password" ];
+				$userID = $userNodeList->item( 0 )->nodeValue;
+			}
 
-				$authModel = new SQLModelDriver( __NAMESPACE__ . "\\authentication" );
-				$authModel->UseQuery( "IsUserPasswordValid" );
-				$authModel->SetParameters( array( ( string )$username, md5( ( string )$password ) ) );
-				$authModel->Execute();
+			$authenticated = ( ! is_null( $userID ) );
 
-				$userNodeList = $authModel->xPath->query( "//xmvc:column[ @name='userid' ]" );
-
-				if( $userNodeList->length > 0 )
-				{
-					$userID = $userNodeList->item( 0 )->nodeValue;
-				}
-
-				$authenticated = ( ! is_null( $userID ) );
-
-				if( $authenticated )
-				{
-					self::SetAuthenticated( $userID );
-				}
+			if( $authenticated )
+			{
+				self::SetAuthenticated( $userID );
 			}
 		}
 		else
@@ -90,6 +84,14 @@ class Authenticator
 		}
 
 		return( self::$authenticated );
+	}
+
+	public function GetStateFromModel( $model )
+	{
+		$stateNodeList = $model->xPath->query( "//component:definition/@state" );
+		$state = $stateNodeList->length > 0 ? $stateNodeList->item( 0 )->nodeValue : "neutral";
+
+		return( $state );
 	}
 }
 
