@@ -1,5 +1,7 @@
 <?php
 
+$applicationClass = "xMVC\\App\\Website";	// IMPORTANT: This must be overriden in app/config
+
 $componentCacheFilePattern = "app/inc/cache/#type#/#name#/#hash#.txt";
 $componentFilePattern = "app/components/#component#/#component-only#.xsl";
 $componentInstanceFilePattern = "app/components/#component#/#instance#.xml";
