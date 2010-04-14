@@ -125,7 +125,11 @@ class CC
 		else
 		{
 			$instanceModel = new XMLModelDriver( $modelName );
-			$cache->Write( $instanceModel );
+
+			if( $cacheMinutes > 0 )
+			{
+				$cache->Write( $instanceModel );
+			}
 		}
 
 		return( $instanceModel );
@@ -268,7 +272,11 @@ class CC
 		else
 		{
 			$resultModel = self::TransformBuiltComponentToInstance( $event );
-			$event->arguments[ "data" ][ "cache" ]->Write( $resultModel );
+
+			if( $event->arguments[ "data" ][ "cacheMinutes" ] > 0 )
+			{
+				$event->arguments[ "data" ][ "cache" ]->Write( $resultModel );
+			}
 		}
 
 		self::ConsultSitemapWithInstance( $resultModel );
