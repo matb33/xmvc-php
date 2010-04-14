@@ -2,7 +2,7 @@
 
 namespace xMVC\Mod\CC;
 
-use xMVC\Sys\Loader;
+use xMVC\Sys\Normalize;
 use xMVC\Sys\XMLModelDriver;
 use xMVC\Sys\Routing;
 use xMVC\Sys\Config;
@@ -16,6 +16,7 @@ use xMVC\Mod\Utils\StringUtils;
 class Sitemap
 {
 	private static $models;
+	private static $caches;
 
 	public static function Generate()
 	{
@@ -23,7 +24,7 @@ class Sitemap
 
 		foreach( self::$models as $lang => $sitemapModel )
 		{
-			self::WriteSitemapModelForLanguage( $sitemapModel, $lang );
+			self::CacheSitemapModelForLanguage( $sitemapModel, $lang );
 		}
 	}
 
@@ -142,53 +143,55 @@ class Sitemap
 		$urlNode->appendChild( $viewNode );
 	}
 
-	private static function WriteSitemapModelForLanguage( $sitemapModel, $lang )
+	private static function CacheSitemapModelForLanguage( $sitemapModel, $lang )
 	{
-		$filename = self::NormalizeSitemapXMLFilePattern( $lang );
+		self::$caches[ $lang ] = new Cache( Config::$data[ "sitemapXMLFilePattern" ], array( "lang" => $lang ), "", false );
 
-		if( Cache::PrepCacheFolder( $filename ) )
-		{
-			$sitemapXML = "<" . "?xml version=\"1.0\" encoding=\"utf-8\"?" . ">" . $sitemapModel->GetXMLForStacking();
-			$bytesWritten = file_put_contents( $filename, $sitemapXML, FILE_TEXT );
-
-			return( $bytesWritten );
-		}
-
-		return( false );
+		return( self::$caches[ $lang ]->Write( $sitemapModel ) );
 	}
 
 	public static function Load( $lang )
 	{
-		$filename = self::NormalizeSitemapXMLFilePattern( $lang );
-
-		if( ! file_exists( $filename ) )
+		if( !isset( self::$models[ $lang ] ) )
 		{
-			self::Generate();
+			// Sitemap isn't available in local memory, check the cache
+			if( !isset( self::$caches[ $lang ] ) || !self::$caches[ $lang ]->IsCached() )
+			{
+				// Nothing is cached, load into local memory and attempt to cache
+				self::Generate();
+			}
+
+			if( isset( self::$caches[ $lang ] ) && self::$caches[ $lang ]->IsCached() )
+			{
+				// Available in cache, grab it from there and store in local memory
+				self::$models[ $lang ] = self::$caches[ $lang ]->Read();
+			}
+			else
+			{
+				// Still unable to grab from cache, might be a write permission problem etc.
+				// Ignore cache, load to local memory and continue
+				self::GenerateSitemapModels();
+			}
 		}
 
-		if( file_exists( $filename ) )
+		// Sitemap in local memory should finally be available
+		if( isset( self::$models[ $lang ] ) )
 		{
-			self::$models[ $lang ] = new XMLModelDriver( $filename );
+			foreach( array_keys( self::$models ) as $key )
+			{
+				self::$models[ $key ]->xPath->registerNamespace( "s", Config::$data[ "sitemapNamespace" ] );
+			}
 		}
 		else
 		{
-			self::GenerateSitemapModels();
-		}
-
-		foreach( array_keys( self::$models ) as $key )
-		{
-			self::$models[ $key ]->xPath->registerNamespace( "s", Config::$data[ "sitemapNamespace" ] );
-		}
-
-		if( !isset( self::$models[ $lang ] ) )
-		{
+			// Final fallback in case we still couldn't load sitemap despite all measures taken
 			self::$models[ $lang ] = null;
 		}
 
 		return( self::$models[ $lang ] );
 	}
 
-	public static function NormalizeSitemapXMLFilePattern( $lang )
+	public static function GetSitemapXMLFilePattern( $lang )
 	{
 		$filename = StringUtils::ReplaceTokensInPattern( Config::$data[ "sitemapXMLFilePattern" ], array( "lang" => $lang ) );
 
@@ -271,7 +274,7 @@ class Sitemap
 	{
 		$filenames = array();
 
-		foreach( glob( self::NormalizeSitemapXMLFilePattern( "*" ) ) as $filename )
+		foreach( glob( self::GetSitemapXMLFilePattern( "*" ) ) as $filename )
 		{
 			$filenames[] = Routing::URIProtocol() . "://" . $_SERVER[ "HTTP_HOST" ] . "/" . basename( $filename );
 		}
@@ -283,7 +286,7 @@ class Sitemap
 	{
 		OutputHeaders::XML();
 
-		echo( file_get_contents( self::NormalizeSitemapXMLFilePattern( $lang ) ) );
+		echo( Normalize::StripRootTag( self::Get( $lang )->saveXML() ) );
 	}
 
 	public static function ReplacePageNameTokensWithPath()
@@ -335,7 +338,7 @@ class Sitemap
 				$metaData = current( $metaDataCollectionByLang[ $lang ] );
 
 				self::AppendLinkDataEntry( self::$models[ $lang ], $name, $metaData );
-				self::WriteSitemapModelForLanguage( self::$models[ $lang ], $lang );
+				self::CacheSitemapModelForLanguage( self::$models[ $lang ], $lang );
 			}
 		}
 	}

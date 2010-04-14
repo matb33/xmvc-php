@@ -49,17 +49,17 @@ class CC
 		self::$eventPump->addEventListener( "oncomponentbuildcomplete", new Delegate( "\\xMVC\\Mod\\CC\\CC::OnComponentBuildComplete" ) );
 	}
 
-	public static function RenderComponent( $component, $eventName, $instanceName, $dispatchScope, $parameters = array(), $cache = 0 )
+	public static function RenderComponent( $component, $eventName, $instanceName, $dispatchScope, $parameters = array(), $cacheMinutes = 0 )
 	{
 		$delegate = new Delegate( "OnComponentInstanceGenerated", $dispatchScope );
 
-		self::GenerateComponentInstance( $component, $eventName, $instanceName, $delegate, $parameters, $cache );
+		self::GenerateComponentInstance( $component, $eventName, $instanceName, $delegate, $parameters, $cacheMinutes );
 	}
 
-	public static function RenderInstance( $component, $instanceName, $dispatchScope, $cache = 0 )
+	public static function RenderInstance( $component, $instanceName, $dispatchScope, $cacheMinutes = 0 )
 	{
 		$delegate = new Delegate( "OnComponentInstanceGenerated", $dispatchScope );
-		$instanceModel = self::LoadComponentInstance( $component, $instanceName, $cache );
+		$instanceModel = self::LoadComponentInstance( $component, $instanceName, $cacheMinutes );
 
 		self::GetEventPump()->addEventListener( "oncomponentinstancebuilt", $delegate );
 		self::GetEventPump()->dispatchEvent( new Event( "oncomponentinstancebuilt", array( "model" => $instanceModel, "component" => $component, "instanceName" => $instanceName ) ) );
@@ -103,29 +103,29 @@ class CC
 	{
 		$component = $node->getAttribute( "component" );
 		$instanceName = $node->getAttribute( "name" );
-		$cache = $node->hasAttribute( "cache" ) ? ( int )$node->getAttribute( "cache" ) : 0;
+		$cacheMinutes = $node->hasAttribute( "cache" ) ? ( int )$node->getAttribute( "cache" ) : 0;
 
-		$instanceModel = self::LoadComponentInstance( $component, $instanceName, $cache );
+		$instanceModel = self::LoadComponentInstance( $component, $instanceName, $cacheMinutes );
 
 		self::InjectModel( $instanceModel, $node, $model );
 		self::InjectNextReference( $model );
 	}
 
-	private static function LoadComponentInstance( $component, $instanceName, $cache = 0 )
+	private static function LoadComponentInstance( $component, $instanceName, $cacheMinutes = 0 )
 	{
 		$modelName = StringUtils::ReplaceTokensInPattern( Config::$data[ "componentInstanceFilePattern" ], array( "component" => $component, "instance" => $instanceName ) );
 
-		$componentInstanceAlias = str_replace( "\\", "_", $component ) . "_" . $instanceName;
-		$cacheFile = self::GetCacheFilename( "instances", $name = $componentInstanceAlias, $cache, $cacheid = $componentInstanceAlias );
+		$cacheID = self::GenerateCacheID( $component, $instanceName );
+		$cache = new Cache( Config::$data[ "componentCacheFilePattern" ], array( "type" => "instances", "name" => $cacheID ), $cacheID, true, $cacheMinutes );
 
-		if( $cache == 0 || !file_exists( $cacheFile ) )
+		if( $cache->IsCached() )
 		{
-			$instanceModel = new XMLModelDriver( $modelName );
-			self::CacheResultModel( $cache, $cacheFile, $componentInstanceAlias, $instanceModel );
+			$instanceModel = $cache->Read();
 		}
 		else
 		{
-			$instanceModel = new XMLModelDriver( $cacheFile );
+			$instanceModel = new XMLModelDriver( $modelName );
+			$cache->Write( $instanceModel );
 		}
 
 		return( $instanceModel );
@@ -155,7 +155,7 @@ class CC
 		$component = $node->getAttribute( "name" );
 		$instanceName = $node->getAttribute( "instance-name" );
 		$eventName = $node->getAttribute( "event" );
-		$cache = ( int )$node->getAttribute( "cache" );
+		$cacheMinutes = ( int )$node->getAttribute( "cache" );
 
 		$arguments = array();
 		$arguments[ "component" ] = $component;
@@ -163,7 +163,7 @@ class CC
 		$arguments[ "model" ] = $model;
 		$arguments[ "instanceName" ] = $instanceName;
 		$arguments[ "eventName" ] = $eventName;
-		$arguments[ "cache" ] = $cache;
+		$arguments[ "cacheMinutes" ] = $cacheMinutes;
 		$arguments[ "inject" ] = true;
 		$arguments[ "param" ] = array();
 
@@ -174,35 +174,35 @@ class CC
 			$arguments[ "param" ][ $i ] = $node->getAttribute( "param" . $i );
 		}
 
-		$arguments[ "cacheid" ] = str_replace( "\\", "_", $component ) . $instanceName . $eventName . implode( "", $arguments[ "param" ] );
+		$arguments[ "cacheID" ] = self::GenerateCacheID( $component, $instanceName, $eventName, $arguments );
 
 		self::StartBuildingComponent( $eventName, $arguments );
 	}
 
 	private static function StartBuildingComponent( $eventName, $arguments )
 	{
-		$arguments[ "cacheFile" ] = self::GetCacheFilename( "events", $eventName, $arguments[ "cache" ], $arguments[ "cacheid" ] );
+		$arguments[ "cache" ] = new Cache( Config::$data[ "componentCacheFilePattern" ], array( "type" => "events", "name" => $eventName ), $arguments[ "cacheID" ], true, $arguments[ "cacheMinutes" ] );
 
-		if( $arguments[ "cache" ] == 0 || !file_exists( $arguments[ "cacheFile" ] ) )
+		if( $arguments[ "cache" ]->IsCached() )
 		{
-			self::GetEventPump()->dispatchEvent( new Event( $eventName, $arguments ) );
+			$arguments[ "cachedResultModel" ] = $arguments[ "cache" ]->Read();
+			self::Talk( null, new Event( $eventName, $arguments ) );
 		}
 		else
 		{
-			$arguments[ "cachedResultModel" ] = new XMLModelDriver( $arguments[ "cacheFile" ] );
-			self::Talk( null, new Event( $eventName, $arguments ) );
+			self::GetEventPump()->dispatchEvent( new Event( $eventName, $arguments ) );
 		}
 	}
 
-	public static function GenerateComponentInstance( $component, $eventName, $instanceName, $delegate, $parameters = array(), $cache = 0 )
+	public static function GenerateComponentInstance( $component, $eventName, $instanceName, $delegate, $parameters = array(), $cacheMinutes = 0 )
 	{
-		$cache = ( int )$cache;
+		$cacheMinutes = ( int )$cacheMinutes;
 
 		$arguments = array();
 		$arguments[ "component" ] = $component;
 		$arguments[ "instanceName" ] = $instanceName;
 		$arguments[ "eventName" ] = $eventName;
-		$arguments[ "cache" ] = $cache;
+		$arguments[ "cacheMinutes" ] = $cacheMinutes;
 		$arguments[ "inject" ] = false;
 		$arguments[ "param" ] = array();
 
@@ -211,23 +211,27 @@ class CC
 			$arguments[ "param" ][ $i + 1 ] = $parameter;
 		}
 
-		$arguments[ "cacheid" ] = str_replace( "\\", "_", $component ) . $instanceName . $eventName . implode( "", $arguments[ "param" ] );
+		$arguments[ "cacheID" ] = self::GenerateCacheID( $component, $instanceName, $eventName, $arguments );
 
 		self::GetEventPump()->addEventListener( "oncomponentinstancebuilt", $delegate );
 		self::StartBuildingComponent( $eventName, $arguments );
 	}
 
-	private static function GetCacheFilename( $type, $name, $cache, $cacheid )
+	private static function GenerateCacheID( $component, $instanceName, $eventName = null, $arguments = null )
 	{
-		$cacheFile = null;
+		$cacheID = str_replace( "\\", "_", $component ) . "_" . $instanceName;
 
-		if( $cache > 0 )
+		if( !is_null( $eventName ) )
 		{
-			$hash = $cacheid . "-" . md5( $cacheid . floor( time() / ( $cache * 60 ) ) );
-			$cacheFile = StringUtils::ReplaceTokensInPattern( Config::$data[ "componentCacheFilePattern" ], array( "type" => $type, "name" => $name, "hash" => $hash ) );
+			$cacheID .= "_" . $eventName;
 		}
 
-		return( $cacheFile );
+		if( !is_null( $arguments ) && isset( $arguments[ "param" ] ) )
+		{
+			$cacheID .= "_" . implode( "", $arguments[ "param" ] );
+		}
+
+		return( $cacheID );
 	}
 
 	public static function OnComponentBuildComplete( Event $event )
@@ -264,7 +268,7 @@ class CC
 		else
 		{
 			$resultModel = self::TransformBuiltComponentToInstance( $event );
-			self::CacheResultModel( $event->arguments[ "data" ][ "cache" ], $event->arguments[ "data" ][ "cacheFile" ], $event->arguments[ "data" ][ "cacheid" ], $resultModel );
+			$event->arguments[ "data" ][ "cache" ]->Write( $resultModel );
 		}
 
 		self::ConsultSitemapWithInstance( $resultModel );
@@ -272,23 +276,12 @@ class CC
 		return( $resultModel );
 	}
 
-	private static function CacheResultModel( $cache, $cacheFile, $cacheid, $resultModel )
-	{
-		if( $cache > 0 )
-		{
-			if( Cache::PrepCacheFolder( $cacheFile, $cacheid . "-*" ) )
-			{
-				file_put_contents( $cacheFile, $resultModel->saveXML() );
-			}
-		}
-	}
-
 	private static function TransformBuiltComponentToInstance( Event $event )
 	{
 		$component = $event->arguments[ "data" ][ "component" ];
 		$instanceName = $event->arguments[ "data" ][ "instanceName" ];
 		$eventName = $event->arguments[ "data" ][ "eventName" ];
-		$cache = $event->arguments[ "data" ][ "cache" ];
+		$cacheMinutes = $event->arguments[ "data" ][ "cacheMinutes" ];
 		$sourceModel = $event->arguments[ "sourceModel" ];
 		$componentOnly = array_pop( explode( "\\", $component ) );
 
@@ -331,161 +324,6 @@ class CC
 				Sitemap::AddMetaDataCollectionByLangToSitemap( $metaDataCollectionByLang );
 			}
 		}
-	}
-
-	public static function InjectRSSFeed( $model )
-	{
-		self::RegisterNamespaces( $model );
-
-		foreach( $model->xPath->query( "//inject:rss-feed" ) as $node )
-		{
-			$rssModel = new XMLModelDriver( $node->getAttribute( "url" ) );
-			$rssNodes = $rssModel->xPath->query( "//rss" );
-
-			if( $rssNodes->length > 0 )
-			{
-				$node->setAttribute( "xmlns", "http://www.w3.org/2005/Atom" );
-
-				$rssNode = $rssNodes->item( 0 );
-				$newNode = $model->importNode( $rssNode, true );
-				$node->appendChild( $newNode );
-			}
-		}
-
-		return( $model );
-	}
-
-	public static function InjectStrings( $model, $stringModel )
-	{
-		self::RegisterNamespaces( $model );
-
-		foreach( $model->xPath->query( "//inject:get-string" ) as $stringNode )
-		{
-			$currentKey = $stringNode->getAttribute( "name" );
-			$targetStringNode = $stringModel->xPath->query( "//xmvc:" . $currentKey );
-
-			if( $targetStringNode->length > 0 )
-			{
-				$textNode = $model->createTextNode( $targetStringNode->item( 0 )->nodeValue );
-				$stringNode->parentNode->replaceChild( $textNode, $stringNode );
-			}
-		}
-
-		return( $model );
-	}
-
-	public static function InjectLang( &$view, $lang )
-	{
-		$models = $view->GetModels();
-
-		foreach( $models as $model )
-		{
-			self::RegisterNamespaces( $model );
-
-			foreach( $model->xPath->query( "//*[ @inject:lang != '' ]" ) as $itemNode )
-			{
-				$attributeName = $itemNode->getAttribute( "inject:lang" );
-
-				$langNode = $model->createAttribute( $attributeName );
-				$langNode->value = $lang;
-				$itemNode->appendChild( $langNode );
-
-				$itemNode->removeAttribute( "inject:lang" );
-			}
-		}
-	}
-
-	public static function InjectHref( &$view )
-	{
-		$models = $view->GetModels();
-
-		foreach( $models as $model )
-		{
-			self::RegisterNamespaces( $model );
-
-			foreach( $model->xPath->query( "//*[ @inject:href != '' ]" ) as $itemNode )
-			{
-				$pageName = $itemNode->getAttribute( "inject:href" );
-				$prefix = $itemNode->hasAttribute( "inject:href-prefix" ) ? $itemNode->getAttribute( "inject:href-prefix" ) : "";
-				$suffix = $itemNode->hasAttribute( "inject:href-suffix" ) ? $itemNode->getAttribute( "inject:href-suffix" ) : "";
-
-				$path = Sitemap::GetPathByPageNameAndLanguage( $pageName, Language::GetLang() );
-
-				$linkNode = $model->createAttribute( "href" );
-				$linkNode->value = $prefix . $path . $suffix;
-				$itemNode->appendChild( $linkNode );
-
-				$itemNode->removeAttribute( "inject:href" );
-			}
-		}
-	}
-
-	public static function InjectLinkNextToLangSwap( &$view )
-	{
-		$currentPageName = Sitemap::GetCurrentPageName();
-
-		$models = $view->GetModels();
-
-		foreach( $models as $model )
-		{
-			self::RegisterNamespaces( $model );
-
-			foreach( $model->xPath->query( "//*[ inject:lang-swap != '' ]" ) as $itemNode )
-			{
-				$langSwapNode = $model->xPath->query( "inject:lang-swap[ @lang = '" . Language::GetLang() . "' ]", $itemNode )->item( 0 );
-				$targetLang = $langSwapNode->nodeValue;
-				$suffix = $langSwapNode->getAttribute( "suffix" );
-
-				$path = Sitemap::GetPathByPageNameAndLanguage( $currentPageName, $targetLang ) . $suffix;
-
-				$linkNode = $model->createElementNS( Config::$data[ "ccNamespaces" ][ "link" ], "link:href", $path );
-				$itemNode->appendChild( $linkNode );
-			}
-		}
-	}
-
-	public static function InjectMathCaptcha( $model )
-	{
-		self::RegisterNamespaces( $model );
-
-		foreach( $model->xPath->query( "//inject:math-captcha" ) as $mathCaptchaNode )
-		{
-			$type = $mathCaptchaNode->getAttribute( "type" );
-
-			switch( $type )
-			{
-				case "subtraction":
-					$formula = rand( 1, 9 ) . " - " . rand( 1, 9 );
-				break;
-
-				case "multiplication":
-					$formula = rand( 1, 9 ) . " x " . rand( 1, 9 );
-				break;
-
-				case "division":
-					$formula = rand( 1, 9 ) . " / " . rand( 1, 9 );
-				break;
-
-				case "addition":
-				default:
-					$formula = rand( 1, 9 ) . " + " . rand( 1, 9 );
-			}
-
-			eval( "\$answer = (" . str_replace( "x", "*", $formula ) . ");" );
-
-			$answerAttribute = $model->createAttribute( "answer" );
-			$answerAttribute->value = $answer;
-			$mathCaptchaNode->appendChild( $answerAttribute );
-
-			$answerMD5Attribute = $model->createAttribute( "answer-md5" );
-			$answerMD5Attribute->value = md5( $answer );
-			$mathCaptchaNode->appendChild( $answerMD5Attribute );
-
-			$formulaTextNode = $model->createTextNode( $formula );
-			$mathCaptchaNode->appendChild( $formulaTextNode );
-		}
-
-		return( $model );
 	}
 }
 

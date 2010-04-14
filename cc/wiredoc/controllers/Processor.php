@@ -102,8 +102,8 @@ class Processor
 		$this->PushStringData( $component, $instanceName, $viewName );
 		$this->PushModelStack();
 
-		CC::InjectHref( $this->view );
-		CC::InjectLang( $this->view, Language::GetLang() );
+		Inject::Href( $this->view );
+		Inject::Lang( $this->view, Language::GetLang() );
 
 		$this->view->RenderAsHTML();
 	}
