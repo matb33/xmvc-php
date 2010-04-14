@@ -53,6 +53,7 @@ class DB
 	public static function ExecutePreparedStatement( $sql, $parameters = null )
 	{
 		$rowList = null;
+		$returnValue = null;
 
 		switch( Config::$data[ "databaseType" ] )
 		{
