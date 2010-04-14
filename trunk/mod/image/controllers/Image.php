@@ -66,11 +66,11 @@ class Image
 			else
 			{
 				$image = ImageProcessor::Resize( $width, $height, $imageFile );
-			}
 
-			if( Cache::PrepCacheFolder( $cacheFile ) )
-			{
-				ImageProcessor::WriteImage( $image, $mimeType, $cacheFile );
+				if( Cache::PrepCacheFolder( $cacheFile, false ) )
+				{
+					ImageProcessor::WriteImage( $image, $mimeType, $cacheFile );
+				}
 			}
 		}
 
