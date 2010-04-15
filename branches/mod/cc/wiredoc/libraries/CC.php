@@ -2,12 +2,10 @@
 
 namespace xMVC\Mod\CC;
 
-use xMVC\Sys\Loader;
-use xMVC\Sys\Core;
+use xMVC\Sys\Routing;
 use xMVC\Sys\XMLModelDriver;
 use xMVC\Sys\StringsModelDriver;
 use xMVC\Sys\View;
-use xMVC\Sys\Routing;
 use xMVC\Sys\Config;
 use xMVC\Sys\Events\DefaultEventDispatcher;
 use xMVC\Sys\Events\Event;
@@ -30,7 +28,7 @@ class CC
 
 	public static function Talk( $sourceModel, Event &$event )
 	{
-		self::GetEventPump()->dispatchEvent( new Event( "oncomponentbuildcomplete", array( "sourceModel" => $sourceModel, "data" => $event->arguments ) ) );
+		self::GetEventPump()->dispatchEvent( new Event( "ontalk", array( "sourceModel" => $sourceModel, "data" => $event->arguments ) ) );
 	}
 
 	public static function GetEventPump()
@@ -46,23 +44,34 @@ class CC
 	private static function InitializeEventHandling()
 	{
 		self::$eventPump = new DefaultEventDispatcher();
-		self::$eventPump->addEventListener( "oncomponentbuildcomplete", new Delegate( "\\xMVC\\Mod\\CC\\CC::OnComponentBuildComplete" ) );
+		self::$eventPump->addEventListener( "ontalk", new Delegate( "\\xMVC\\Mod\\CC\\CC::OnTalk" ) );
 	}
 
-	public static function RenderComponent( $component, $eventName, $instanceName, $dispatchScope, $parameters = array(), $cacheMinutes = 0 )
+	public static function RenderComponent( $component, $eventName, $instanceName, $delegateOrScope, $parameters = array(), $cacheMinutes = 0 )
 	{
-		$delegate = new Delegate( "OnComponentInstanceGenerated", $dispatchScope );
-
-		self::GenerateComponentInstance( $component, $eventName, $instanceName, $delegate, $parameters, $cacheMinutes );
+		self::GenerateComponentInstance( $component, $eventName, $instanceName, self::GetDelegate( $delegateOrScope ), $parameters, $cacheMinutes );
 	}
 
-	public static function RenderInstance( $component, $instanceName, $dispatchScope, $cacheMinutes = 0 )
+	public static function RenderInstance( $component, $instanceName, $delegateOrScope, $cacheMinutes = 0 )
 	{
-		$delegate = new Delegate( "OnComponentInstanceGenerated", $dispatchScope );
+		$delegate = self::GetDelegate( $delegateOrScope );
 		$instanceModel = self::LoadComponentInstance( $component, $instanceName, $cacheMinutes );
 
-		self::GetEventPump()->addEventListener( "oncomponentinstancebuilt", $delegate );
-		self::GetEventPump()->dispatchEvent( new Event( "oncomponentinstancebuilt", array( "model" => $instanceModel, "component" => $component, "instanceName" => $instanceName ) ) );
+		self::GetEventPump()->removeAllEventListeners( "oncomponentreadyforprocessing" );
+		self::GetEventPump()->addEventListener( "oncomponentreadyforprocessing", $delegate );
+		self::GetEventPump()->dispatchEvent( new Event( "oncomponentreadyforprocessing", array( "model" => $instanceModel, "component" => $component, "instanceName" => $instanceName ) ) );
+	}
+
+	private static function GetDelegate( $delegateOrScope )
+	{
+		if( $delegateOrScope instanceof Delegate )
+		{
+			return( $delegateOrScope );
+		}
+		else
+		{
+			return( new Delegate( "OnComponentReadyForProcessing", $delegateOrScope ) );
+		}
 	}
 
 	public static function InjectReferences( &$model )
@@ -198,9 +207,11 @@ class CC
 		}
 	}
 
-	public static function GenerateComponentInstance( $component, $eventName, $instanceName, $delegate, $parameters = array(), $cacheMinutes = 0 )
+	private static function GenerateComponentInstance( $component, $eventName, $instanceName, $delegate, $parameters = array(), $cacheMinutes = 0 )
 	{
 		$cacheMinutes = ( int )$cacheMinutes;
+
+		$pathParts = Routing::GetPathParts();
 
 		$arguments = array();
 		$arguments[ "component" ] = $component;
@@ -208,6 +219,8 @@ class CC
 		$arguments[ "eventName" ] = $eventName;
 		$arguments[ "cacheMinutes" ] = $cacheMinutes;
 		$arguments[ "inject" ] = false;
+		$arguments[ "methodName" ] = Normalize::MethodOrClassName( $pathParts[ 1 ] );
+		$arguments[ "methodArguments" ] = array_slice( $pathParts, 2 );
 		$arguments[ "param" ] = array();
 
 		foreach( $parameters as $i => $parameter )
@@ -217,7 +230,8 @@ class CC
 
 		$arguments[ "cacheID" ] = self::GenerateCacheID( $component, $instanceName, $eventName, $arguments );
 
-		self::GetEventPump()->addEventListener( "oncomponentinstancebuilt", $delegate );
+		self::GetEventPump()->removeAllEventListeners( "oncomponentreadyforprocessing" );
+		self::GetEventPump()->addEventListener( "oncomponentreadyforprocessing", $delegate );
 		self::StartBuildingComponent( $eventName, $arguments );
 	}
 
@@ -238,7 +252,7 @@ class CC
 		return( $cacheID );
 	}
 
-	public static function OnComponentBuildComplete( Event $event )
+	public static function OnTalk( Event $event )
 	{
 		if( $event->arguments[ "data" ][ "inject" ] )
 		{
@@ -248,7 +262,7 @@ class CC
 		{
 			$resultModel = self::ObtainResultModel( $event );
 
-			self::GetEventPump()->dispatchEvent( new Event( "oncomponentinstancebuilt", array( "model" => $resultModel, "component" => $event->arguments[ "data" ][ "component" ], "instanceName" => $event->arguments[ "data" ][ "instanceName" ] ) ) );
+			self::GetEventPump()->dispatchEvent( new Event( "oncomponentreadyforprocessing", array( "model" => $resultModel, "component" => $event->arguments[ "data" ][ "component" ], "instanceName" => $event->arguments[ "data" ][ "instanceName" ] ) ) );
 		}
 	}
 
@@ -279,7 +293,7 @@ class CC
 			}
 		}
 
-		self::ConsultSitemapWithInstance( $resultModel );
+		Sitemap::EnsureInstanceInSitemap( $resultModel );
 
 		return( $resultModel );
 	}
@@ -319,19 +333,6 @@ class CC
 		$resultModel = new XMLModelDriver( $resultXML );
 
 		return( $resultModel );
-	}
-
-	private static function ConsultSitemapWithInstance( $model )
-	{
-		if( $model->xPath->query( "//meta:href" )->length > 0 )
-		{
-			$metaDataCollectionByLang = Sitemap::GetMetaData( $model );
-
-			if( !Sitemap::MetaDataAlreadyPresent( $metaDataCollectionByLang, Language::GetLang() ) )
-			{
-				Sitemap::AddMetaDataCollectionByLangToSitemap( $metaDataCollectionByLang );
-			}
-		}
 	}
 }
 

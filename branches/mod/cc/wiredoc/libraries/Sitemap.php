@@ -60,7 +60,8 @@ class Sitemap
 	{
 		foreach( $model->xPath->query( "//meta:href" ) as $hrefNode )
 		{
-			$lang = $hrefNode->getAttribute( "xml:lang" );
+			$lang = $hrefNode->hasAttribute( "xml:lang" ) ? $hrefNode->getAttribute( "xml:lang" ) : Language::GetLang();
+			$private = $hrefNode->hasAttribute( "private" ) ? $hrefNode->getAttribute( "private" ) : "0";
 			$componentNodeList = $model->xPath->query( "ancestor::component:definition/@name", $hrefNode );
 			$instanceNameNodeList = $model->xPath->query( "ancestor::component:definition/@instance-name", $hrefNode );
 			$viewNodeList = $model->xPath->query( "ancestor::component:definition/@view", $hrefNode );
@@ -70,14 +71,19 @@ class Sitemap
 			$instanceName = $instanceNameNodeList->length > 0 ? $instanceNameNodeList->item( 0 )->nodeValue : "";
 			$view = $viewNodeList->length > 0 ? $viewNodeList->item( 0 )->nodeValue : "";
 			$parent = $parentNodeList->length > 0 ? $parentNodeList->item( 0 )->nodeValue : "";
+			$private = ( $private == "true" || $private == 1 ? 1 : 0 );
 
-			$metaDataCollectionByLang[ $lang ][ $component . "\\" . $instanceName ] = array(
-				"path" => $hrefNode->nodeValue,
+			$fullyQualifiedName = self::BuildFullyQualifiedName( $component, $instanceName );
+
+			$metaDataCollectionByLang[ $lang ][ $fullyQualifiedName ] = array(
+				"path" => Normalize::URI( $hrefNode->nodeValue ),
 				"parent" => $parent,
 				"file" => $file,
 				"component" => $component,
 				"instanceName" => $instanceName,
-				"view" => $view
+				"fullyQualifiedName" => $fullyQualifiedName,
+				"view" => $view,
+				"private" => $private
 			);
 		}
 
@@ -111,7 +117,9 @@ class Sitemap
 		$file = $metaData[ "file" ];
 		$component = $metaData[ "component" ];
 		$instanceName = $metaData[ "instanceName" ];
+		$fullyQualifiedName = $metaData[ "fullyQualifiedName" ];
 		$view = $metaData[ "view" ];
+		$private = $metaData[ "private" ];
 
 		$urlsetNode = $sitemapModel->xPath->query( "//s:urlset" )->item( 0 );
 
@@ -126,8 +134,17 @@ class Sitemap
 		$lastModNode = $sitemapModel->createElementNS( Config::$data[ "sitemapNamespace" ], "lastmod", $lastMod );
 		$urlNode->appendChild( $lastModNode );
 
+		$pathNode = $sitemapModel->createElementNS( Config::$data[ "ccNamespaces" ][ "sitemap" ], "sitemap:path", $path );
+		$urlNode->appendChild( $pathNode );
+
+		$componentNode = $sitemapModel->createElementNS( Config::$data[ "ccNamespaces" ][ "sitemap" ], "sitemap:component", $component );
+		$urlNode->appendChild( $componentNode );
+
 		$instanceNameNode = $sitemapModel->createElementNS( Config::$data[ "ccNamespaces" ][ "sitemap" ], "sitemap:instance-name", $instanceName );
 		$urlNode->appendChild( $instanceNameNode );
+
+		$fullyQualifiedNameNode = $sitemapModel->createElementNS( Config::$data[ "ccNamespaces" ][ "sitemap" ], "sitemap:fully-qualified-name", $fullyQualifiedName );
+		$urlNode->appendChild( $fullyQualifiedNameNode );
 
 		if( strlen( $parent ) > 0 )
 		{
@@ -135,14 +152,11 @@ class Sitemap
 			$urlNode->appendChild( $parentNode );
 		}
 
-		$pathNode = $sitemapModel->createElementNS( Config::$data[ "ccNamespaces" ][ "sitemap" ], "sitemap:path", $path );
-		$urlNode->appendChild( $pathNode );
-
-		$componentNode = $sitemapModel->createElementNS( Config::$data[ "ccNamespaces" ][ "sitemap" ], "sitemap:component", $component );
-		$urlNode->appendChild( $componentNode );
-
 		$viewNode = $sitemapModel->createElementNS( Config::$data[ "ccNamespaces" ][ "sitemap" ], "sitemap:view", $view );
 		$urlNode->appendChild( $viewNode );
+
+		$privateNode = $sitemapModel->createElementNS( Config::$data[ "ccNamespaces" ][ "sitemap" ], "sitemap:private", $private );
+		$urlNode->appendChild( $privateNode );
 	}
 
 	private static function CacheSitemapModelForLanguage( $sitemapModel, $lang )
@@ -193,6 +207,23 @@ class Sitemap
 		return( self::$models[ $lang ] );
 	}
 
+	private static function BuildFullyQualifiedName( $component, $instanceName )
+	{
+		$pageNameList = array();
+
+		if( $component != "" )
+		{
+			$pageNameList[] = $component;
+		}
+
+		if( $instanceName != "" )
+		{
+			$pageNameList[] = $instanceName;
+		}
+
+		return( implode( "\\", $pageNameList ) );
+	}
+
 	public static function GetSitemapXMLFilePattern( $lang )
 	{
 		$filename = StringUtils::ReplaceTokensInPattern( Config::$data[ "sitemapXMLFilePattern" ], array( "lang" => $lang ) );
@@ -212,15 +243,15 @@ class Sitemap
 		}
 	}
 
-	public static function GetCurrentPageName()
+	public static function GetCurrentFullyQualifiedPageName()
 	{
 		$pathOnlyOriginal = Routing::GetPathOnlyOriginal();
 		$currentPath = "/" . ( strlen( $pathOnlyOriginal ) > 0 ? $pathOnlyOriginal . "/" : "" );
 
-		return( self::GetPageNameByPath( $currentPath ) );
+		return( self::GetFullyQualifiedNameByPath( $currentPath ) );
 	}
 
-	public static function GetPageNameByPath( $path )
+	public static function GetFullyQualifiedNameByPath( $path )
 	{
 		foreach( Language::GetDefinedLangs() as $lang )
 		{
@@ -228,9 +259,10 @@ class Sitemap
 
 			foreach( $sitemapModel->xPath->query( "//s:url[ sitemap:path = '" . $path . "' ]" ) as $urlNode )
 			{
-				$pageName = $sitemapModel->xPath->query( "sitemap:instance-name", $urlNode )->item( 0 )->nodeValue;
+				$fullyQualifiedNameNodeList = $sitemapModel->xPath->query( "sitemap:fully-qualified-name", $urlNode );
+				$fullyQualifiedName = $fullyQualifiedNameNodeList->length > 0 ? $fullyQualifiedNameNodeList->item( 0 )->nodeValue : "";
 
-				return( $pageName );
+				return( $fullyQualifiedName );
 			}
 		}
 
@@ -248,9 +280,10 @@ class Sitemap
 				foreach( $sitemapModel->xPath->query( "//s:url[ sitemap:path = '" . $path . "' ]" ) as $urlNode )
 				{
 					$linkData = array();
-					$linkData[ "name" ] = $sitemapModel->xPath->query( "sitemap:instance-name", $urlNode )->item( 0 )->nodeValue;
 					$linkData[ "path" ] = $sitemapModel->xPath->query( "sitemap:path", $urlNode )->item( 0 )->nodeValue;
+					$linkData[ "instanceName" ] = $sitemapModel->xPath->query( "sitemap:instance-name", $urlNode )->item( 0 )->nodeValue;
 					$linkData[ "component" ] = $sitemapModel->xPath->query( "sitemap:component", $urlNode )->item( 0 )->nodeValue;
+					$linkData[ "fullyQualifiedName" ] = $sitemapModel->xPath->query( "sitemap:fully-qualified-name", $urlNode )->item( 0 )->nodeValue;
 					$linkData[ "view" ] = $sitemapModel->xPath->query( "sitemap:view", $urlNode )->item( 0 )->nodeValue;
 					$linkData[ "lang" ] = $lang;
 
@@ -262,11 +295,11 @@ class Sitemap
 		return( false );
 	}
 
-	public static function GetPathByPageNameAndLanguage( $namespacedInstanceName, $lang )
+	public static function GetPathByFullyQualifiedNameAndLanguage( $fullyQualifiedName, $lang )
 	{
 		$sitemapModel = self::Get( $lang );
 
-		$pathNodeList = $sitemapModel->xPath->query( "//s:url/sitemap:path[ concat( ../sitemap:component, '\\', ../sitemap:instance-name ) = '" . $namespacedInstanceName . "' ]" );
+		$pathNodeList = $sitemapModel->xPath->query( "//s:url/sitemap:path[ ../sitemap:fully-qualified-name = '" . $fullyQualifiedName . "' ]" );
 		$path = $pathNodeList->length > 0 ? $pathNodeList->item( 0 )->nodeValue : "";
 
 		return( $path );
@@ -288,7 +321,14 @@ class Sitemap
 	{
 		OutputHeaders::XML();
 
-		echo( Normalize::StripRootTag( self::Get( $lang )->saveXML() ) );
+		$sitemapModel = self::Get( $lang );
+
+		foreach( $sitemapModel->xPath->query( "//s:url[ sitemap:private = '1' ]" ) as $node )
+		{
+			$node->parentNode->removeChild( $node );
+		}
+
+		echo( Normalize::StripRootTag( $sitemapModel->saveXML() ) );
 	}
 
 	public static function ReplacePageNameTokensWithPath()
@@ -305,12 +345,25 @@ class Sitemap
 
 					foreach( $matches[ 0 ] as $key => $match )
 					{
-						$updatedPattern = str_replace( $match, addcslashes( self::GetPathByPageNameAndLanguage( $matches[ 1 ][ $key ], Language::GetLang() ), "/" ), $updatedPattern );
+						$updatedPattern = str_replace( $match, addcslashes( self::GetPathByFullyQualifiedNameAndLanguage( $matches[ 1 ][ $key ], Language::GetLang() ), "/" ), $updatedPattern );
 					}
 
 					Config::$data[ $routeGroup ][ $updatedPattern ] = Config::$data[ $routeGroup ][ $pattern ];
 					unset( Config::$data[ $routeGroup ][ $pattern ] );
 				}
+			}
+		}
+	}
+
+	public static function EnsureInstanceInSitemap( $model )
+	{
+		if( $model->xPath->query( "//meta:href" )->length > 0 )
+		{
+			$metaDataCollectionByLang = self::GetMetaData( $model );
+
+			if( !self::MetaDataAlreadyPresent( $metaDataCollectionByLang, Language::GetLang() ) )
+			{
+				self::AddMetaDataCollectionByLangToSitemap( $metaDataCollectionByLang );
 			}
 		}
 	}
@@ -323,7 +376,7 @@ class Sitemap
 		{
 			$metaData = current( $metaDataCollectionByLang[ $lang ] );
 
-			return( $sitemapModel->xPath->query( "//s:url[ sitemap:instance-name = '" . $metaData[ "instanceName" ] . "' and sitemap:component = '" . $metaData[ "component" ]. "' ]" )->length > 0 );
+			return( $sitemapModel->xPath->query( "//s:url[ sitemap:fully-qualified-name = '" . $metaData[ "fullyQualifiedName" ] . "' ]" )->length > 0 );
 		}
 
 		return( false );

@@ -26,15 +26,14 @@
 	<xsl:template match="component:definition[ not( ancestor::component:definition ) ]">
 		<xsl:if test="lang( $lang )">
 			<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="{ $lang }" lang="{ $lang }">
-				<xsl:apply-templates />
+				<head>
+					<xsl:call-template name="meta" />
+				</head>
+				<body>
+					<xsl:apply-templates />
+				</body>
 			</html>
 		</xsl:if>
-	</xsl:template>
-
-	<xsl:template match="component:definition[ preceding-sibling::meta:head ]">
-		<body>
-			<xsl:apply-templates />
-		</body>
 	</xsl:template>
 
 </xsl:stylesheet>

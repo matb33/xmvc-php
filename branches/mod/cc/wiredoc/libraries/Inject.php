@@ -6,6 +6,31 @@ use xMVC\Mod\Language\Language;
 
 class Inject
 {
+	public static function Href( &$view )
+	{
+		$models = $view->GetModels();
+
+		foreach( $models as $model )
+		{
+			CC::RegisterNamespaces( $model );
+
+			foreach( $model->xPath->query( "//*[ @inject:href != '' ]" ) as $itemNode )
+			{
+				$fullyQualifiedName = $itemNode->getAttribute( "inject:href" );
+				$prefix = $itemNode->hasAttribute( "inject:href-prefix" ) ? $itemNode->getAttribute( "inject:href-prefix" ) : "";
+				$suffix = $itemNode->hasAttribute( "inject:href-suffix" ) ? $itemNode->getAttribute( "inject:href-suffix" ) : "";
+
+				$path = Sitemap::GetPathByFullyQualifiedNameAndLanguage( $fullyQualifiedName, Language::GetLang() );
+
+				$linkNode = $model->createAttribute( "href" );
+				$linkNode->value = $prefix . $path . $suffix;
+				$itemNode->appendChild( $linkNode );
+
+				$itemNode->removeAttribute( "inject:href" );
+			}
+		}
+	}
+
 	public static function RSSFeed( $model )
 	{
 		CC::RegisterNamespaces( $model );
@@ -64,31 +89,6 @@ class Inject
 				$itemNode->appendChild( $langNode );
 
 				$itemNode->removeAttribute( "inject:lang" );
-			}
-		}
-	}
-
-	public static function Href( &$view )
-	{
-		$models = $view->GetModels();
-
-		foreach( $models as $model )
-		{
-			CC::RegisterNamespaces( $model );
-
-			foreach( $model->xPath->query( "//*[ @inject:href != '' ]" ) as $itemNode )
-			{
-				$pageName = $itemNode->getAttribute( "inject:href" );
-				$prefix = $itemNode->hasAttribute( "inject:href-prefix" ) ? $itemNode->getAttribute( "inject:href-prefix" ) : "";
-				$suffix = $itemNode->hasAttribute( "inject:href-suffix" ) ? $itemNode->getAttribute( "inject:href-suffix" ) : "";
-
-				$path = Sitemap::GetPathByPageNameAndLanguage( $pageName, Language::GetLang() );
-
-				$linkNode = $model->createAttribute( "href" );
-				$linkNode->value = $prefix . $path . $suffix;
-				$itemNode->appendChild( $linkNode );
-
-				$itemNode->removeAttribute( "inject:href" );
 			}
 		}
 	}

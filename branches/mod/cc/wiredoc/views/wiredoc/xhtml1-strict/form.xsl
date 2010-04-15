@@ -78,9 +78,15 @@
 			<input type="{ $type }" id="{ $name }-{ position() }" name="{ $name }[]" class="{ $name } { $type }">
 				<xsl:if test="form:value">
 					<xsl:attribute name="value"><xsl:value-of select="form:value[ lang( $lang ) ]" /></xsl:attribute>
-					<xsl:if test="contains( //xmvc:strings/xmvc:*[ @key = $name ], concat( '|', form:value[ lang( $lang ) ], '|' ) )">
-						<xsl:attribute name="checked">true</xsl:attribute>
-					</xsl:if>
+					<xsl:choose>
+						<xsl:when test="form:checked">
+							<xsl:attribute name="checked"><xsl:value-of select="form:checked" /></xsl:attribute>
+						</xsl:when>
+						<xsl:when test="contains( //xmvc:strings/xmvc:*[ @key = $name ], concat( '|', form:value[ lang( $lang ) ], '|' ) )">
+							<xsl:attribute name="checked">true</xsl:attribute>
+						</xsl:when>
+						<xsl:otherwise />
+					</xsl:choose>
 				</xsl:if>
 			</input>
 			<xsl:apply-templates select="form:info" />
@@ -135,9 +141,15 @@
 				<xsl:attribute name="value"><xsl:value-of select="form:value[ lang( $lang ) ]" /></xsl:attribute>
 				<xsl:choose>
 					<xsl:when test="$type = 'select'">
-						<xsl:if test="//xmvc:strings/xmvc:*[ @key = $name ] = form:value[ lang( $lang ) ]">
-							<xsl:attribute name="selected">true</xsl:attribute>
-						</xsl:if>
+						<xsl:choose>
+							<xsl:when test="form:selected">
+								<xsl:attribute name="selected"><xsl:value-of select="form:selected" /></xsl:attribute>
+							</xsl:when>
+							<xsl:when test="//xmvc:strings/xmvc:*[ @key = $name ] = form:value[ lang( $lang ) ]">
+								<xsl:attribute name="selected">true</xsl:attribute>
+							</xsl:when>
+							<xsl:otherwise />
+						</xsl:choose>
 					</xsl:when>
 					<xsl:otherwise>
 						<xsl:if test="contains( //xmvc:strings/xmvc:*[ @key = $name ], concat( '|', form:value[ lang( $lang ) ], '|' ) )">
