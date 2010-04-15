@@ -26,7 +26,7 @@ use xMVC\Sys\Delegate;
     /**
      * Removes all event listeners listening to this event dispatcher.
      */
-    public function removeAllEventListeners();
+    public function removeAllEventListeners( $eventType = null );
 
     /**
      * Dispatches an event on this event dispatcher.

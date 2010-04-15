@@ -8,12 +8,52 @@ class Routing
 	private static $URIProtocol = null;
 	private static $pathData = null;
 	private static $routeMatches = null;
+	private static $routes = array();
+
+	public static function Initialize()
+	{
+		self::URI();
+		self::URIProtocol();
+		self::GatherRoutesFromConfigs();
+	}
 
 	public static function URI()
 	{
 		if( is_null( self::$URI ) )
 		{
-			self::$URI = self::DetermineURI();
+			if( $_SERVER[ "REQUEST_URI" ] != "" )
+			{
+				self::$URI = preg_replace( "/^https?:\/\/" . $_SERVER[ "HTTP_HOST" ] . "/i", "", $_SERVER[ "REQUEST_URI" ] );
+			}
+			else
+			{
+				if( $_SERVER[ "PATH_INFO" ] != "" )
+				{
+					self::$URI = $_SERVER[ "PATH_INFO" ];
+				}
+				else
+				{
+					if( $_SERVER[ "PHP_SELF" ] != "" )
+					{
+						self::$URI = $_SERVER[ "PHP_SELF" ];
+					}
+					else
+					{
+						if( $_SERVER[ "REDIRECT_URL" ] != "" )
+						{
+							self::$URI = $_SERVER[ "REDIRECT_URL" ];
+						}
+					}
+
+					if( $_SERVER[ "QUERY_STRING" ] != "" )
+					{
+						self::$URI .= ( "?" . $_SERVER[ "QUERY_STRING" ] );
+					}
+				}
+			}
+
+			self::$URI = Normalize::URI( self::$URI );
+			self::$URI = Normalize::StripQueryInURI( self::$URI );
 		}
 
 		return( self::$URI );
@@ -39,80 +79,90 @@ class Routing
 		return( self::$URIProtocol );
 	}
 
-	public static function PathData( $overrideURI = null )
+	private static function GatherRoutesFromConfigs()
 	{
-		$URI = self::URI();
-
-		if( !is_null( $overrideURI ) )
+		if( isset( Config::$data[ "routes" ] ) )
 		{
-			$URI = $overrideURI;
+			self::$routes = Config::$data[ "routes" ];
 
-			self::$pathData = null;
+			if( is_array( self::$routes ) )
+			{
+				if( isset( Config::$data[ "priorityRoutes" ] ) && is_array( Config::$data[ "priorityRoutes" ] ) )
+				{
+					self::$routes = array_merge( Config::$data[ "priorityRoutes" ], self::$routes );
+				}
+
+				if( isset( Config::$data[ "lowPriorityRoutes" ] ) && is_array( Config::$data[ "lowPriorityRoutes" ] ) )
+				{
+					self::$routes = array_merge( self::$routes, Config::$data[ "lowPriorityRoutes" ] );
+				}
+			}
 		}
+	}
 
-		if( is_null( self::$pathData ) )
-		{
-			self::$pathData = self::GetPathData( $URI );
-		}
-
+	public static function GetPathData()
+	{
 		return( self::$pathData );
 	}
 
-	public static function GetPathPartsOriginal( $overrideURI = null )
+	public static function GetPathPartsOriginal()
 	{
-		$pathData = self::PathData( $overrideURI );
+		$pathData = self::GetPathData();
 		return( $pathData[ "pathPartsOriginal" ] );
 	}
 
-	public static function GetPathOnlyOriginal( $overrideURI = null )
+	public static function GetPathOnlyOriginal()
 	{
-		$pathData = self::PathData( $overrideURI );
+		$pathData = self::GetPathData();
 		return( $pathData[ "pathOnlyOriginal" ] );
 	}
 
-	public static function GetPathParts( $overrideURI = null )
+	public static function GetPathParts()
 	{
-		$pathData = self::PathData( $overrideURI );
+		$pathData = self::GetPathData();
 		return( $pathData[ "pathParts" ] );
 	}
 
-	public static function GetPathOnly( $overrideURI = null )
+	public static function GetPathOnly()
 	{
-		$pathData = self::PathData( $overrideURI );
+		$pathData = self::GetPathData();
 		return( $pathData[ "pathOnly" ] );
 	}
 
-	private static function GetPathData( $URI )
+	public static function Route( $overrideURI = null, $resetRoutesCursor = false )
 	{
-		$routedURI = self::ApplyRoutingRules( $URI );
+		if( is_null( $overrideURI ) )
+		{
+			$URI = self::URI();
+		}
+		else
+		{
+			$URI = $overrideURI;
+		}
 
-		return( self::GetPathDataFromURIs( $URI, $routedURI ) );
+		$routedURI = self::ApplyRoutingRules( $URI, $resetRoutesCursor );
+		self::$pathData = self::GetPathDataFromURIs( $URI, $routedURI );
 	}
 
-	private static function ApplyRoutingRules( $URI )
+	private static function ApplyRoutingRules( $URI, $resetRoutesCursor = false )
 	{
-		$routedURI = $URI;
-
-		$routes = Config::$data[ "routes" ];
-
-		if( isset( $routes ) && is_array( $routes ) )
+		if( Config::$data[ "useQueryInRoutes" ] )
 		{
-			if( isset( Config::$data[ "priorityRoutes" ] ) && is_array( Config::$data[ "priorityRoutes" ] ) )
+			$routedURI = $URI;
+		}
+		else
+		{
+			$routedURI = Normalize::StripQueryInURI( $URI );
+		}
+
+		if( is_array( self::$routes ) )
+		{
+			if( $resetRoutesCursor )
 			{
-				$routes = array_merge( Config::$data[ "priorityRoutes" ], $routes );
+				reset( self::$routes );
 			}
 
-			if( isset( Config::$data[ "lowPriorityRoutes" ] ) && is_array( Config::$data[ "lowPriorityRoutes" ] ) )
-			{
-				$routes = array_merge( $routes, Config::$data[ "lowPriorityRoutes" ] );
-			}
-
-			if( ! Config::$data[ "useQueryInRoutes" ] )
-			{
-				$routedURI = Normalize::StripQueryInURI( $routedURI );
-			}
-
-			foreach( $routes as $preg => $replace )
+			while( list( $preg, $replace ) = each( self::$routes ) )
 			{
 				if( ! is_null( $replace ) )
 				{
@@ -138,8 +188,8 @@ class Routing
 
 	private static function GetPathDataFromURIs( $URI, $routedURI )
 	{
-		$pathOnlyOriginal = self::CleanURI( $URI );
-		$pathOnly = self::CleanURI( $routedURI );
+		$pathOnlyOriginal = self::CleanURIForPathData( $URI );
+		$pathOnly = self::CleanURIForPathData( $routedURI );
 
 		$pathPartsOriginal = explode( "/", $pathOnlyOriginal );
 		$pathParts = explode( "/", $pathOnly );
@@ -153,59 +203,21 @@ class Routing
 		return( $pathData );
 	}
 
-	private static function CleanURI( $path )
+	private static function CleanURIForPathData( $uri )
 	{
-		$path = substr( $path, 0, strpos( ( strpos( $path, "?" ) === false ? ( $path . "?" ) : $path ), "?" ) );
+		$uri = Normalize::URI( $uri );
+		$uri = Normalize::StripQueryInURI( $uri );
 
-		if( $path != "/" )
+		if( $uri != "/" )
 		{
-			$path = ( substr( $path, 0, 1 ) == "/" ? substr( $path, 1 ) : $path );
-			$path = ( substr( $path, -1 ) == "/" ? substr( $path, 0, -1 ) : $path );
+			$uri = ( substr( $uri, 0, 1 ) == "/" ? substr( $uri, 1 ) : $uri );
+			$uri = ( substr( $uri, -1 ) == "/" ? substr( $uri, 0, -1 ) : $uri );
 		}
 		else
 		{
-			$path = "";
+			$uri = "";
 		}
 
-		return( $path );
-	}
-
-	private static function DetermineURI()
-	{
-		if( $_SERVER[ "REQUEST_URI" ] != "" )
-		{
-			$URI = preg_replace( "/^https?:\/\/" . $_SERVER[ "HTTP_HOST" ] . "/i", "", $_SERVER[ "REQUEST_URI" ] );
-		}
-		else
-		{
-			if( $_SERVER[ "PATH_INFO" ] != "" )
-			{
-				$URI = $_SERVER[ "PATH_INFO" ];
-			}
-			else
-			{
-				if( $_SERVER[ "PHP_SELF" ] != "" )
-				{
-					$URI = $_SERVER[ "PHP_SELF" ];
-				}
-				else
-				{
-					if( $_SERVER[ "REDIRECT_URL" ] != "" )
-					{
-						$URI = $_SERVER[ "REDIRECT_URL" ];
-					}
-				}
-
-				if( $_SERVER[ "QUERY_STRING" ] != "" )
-				{
-					$URI .= ( "?" . $_SERVER[ "QUERY_STRING" ] );
-				}
-			}
-		}
-
-		$URI = str_replace( "/index.php", "/", $URI );
-		$URI = preg_replace( "/[\/]{2,}/", "/", $URI );
-
-		return( $URI );
+		return( $uri );
 	}
 }
