@@ -20,7 +20,10 @@ class Robotstxt
 		}
 		else
 		{
-			$this->WriteSitemapDisallows();
+			if( Config::$data[ "includeSitemapDisallows" ] )
+			{
+				$this->WriteSitemapDisallows();
+			}
 		}
 
 		if( Config::$data[ "includeSitemaps" ] )
