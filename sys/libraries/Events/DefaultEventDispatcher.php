@@ -90,11 +90,14 @@ class DefaultEventDispatcher implements EventDispatcher
         }
     }
 
-    public function removeAllEventListeners()
+    public function removeAllEventListeners( $eventType = null )
     {
-        foreach( $this->listeners as $key => $bucket )
+        foreach( array_keys( $this->listeners ) as $key )
         {
-            unset( $this->listeners[ $key ] );
+			if( is_null( $eventType ) || $key == $eventType )
+			{
+				unset( $this->listeners[ $key ] );
+			}
         }
     }
 

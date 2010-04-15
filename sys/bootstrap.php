@@ -7,7 +7,7 @@ namespace xMVC\Sys
 {
 	class Loader
 	{
-		private static $defaultNamespace = "xMVC\\App";
+		private static $defaultNamespace;
 
 		const controllerExtension = "php";
 		const modelExtension = "xml";
@@ -167,7 +167,7 @@ namespace xMVC\Sys
 			{
 				list( $pattern, $mapping ) = $pair;
 
-				$pattern = str_replace( "::", "\\\\", $pattern );
+				$pattern = str_replace( "\\", "\\\\", $pattern );
 
 				if( preg_match( $pattern, self::$name, self::$matches ) )
 				{
@@ -297,6 +297,14 @@ namespace xMVC\Sys
 		public static function StripQueryInURI( $uri )
 		{
 			return( preg_replace( "/\?.*$/", "", $uri ) );
+		}
+
+		public static function URI( $uri )
+		{
+			$uri = str_replace( "/index.php", "/", $uri );
+			$uri = preg_replace( "/[\/]{2,}/", "/", $uri );
+
+			return( $uri );
 		}
 	}
 }

@@ -5,8 +5,6 @@ namespace xMVC\Sys;
 class Core
 {
 	const namespaceXML = "http://www.xmvc.org/ns/xmvc/1.0";
-	const namespaceApp = "xMVC\\App\\";
-	const namespaceSys = "xMVC\\Sys\\";
 
 	private static $controllerName;
 	private static $controllerFile;
@@ -20,10 +18,11 @@ class Core
 			ErrorHandler::HandleErrors();
 		}
 
-		self::InstantiateRootController();
+		Routing::Initialize();
+		self::InstantiateController();
 	}
 
-	public static function InstantiateRootController()
+	public static function InstantiateController()
 	{
 		self::LoadControllerInstance();
 
@@ -35,6 +34,11 @@ class Core
 		{
 			self::InvokeMethod();
 		}
+	}
+
+	public static function InstantiateNextController()
+	{
+		self::InstantiateController();
 	}
 
 	private static function LoadControllerInstance()
@@ -67,7 +71,7 @@ class Core
 			$originalNamespace = Loader::ExtractNamespace( Config::$data[ "fallbackRoute" ] );
 			$routeAsURI = Loader::StripNamespace( Config::$data[ "fallbackRoute" ] );
 
-			Routing::PathData( $routeAsURI . Routing::URI() );
+			Routing::Route( $routeAsURI . Routing::URI(), true );
 
 			self::$controllerName = Loader::AssignDefaultNamespace( self::GetRoutedController(), $originalNamespace );
 			self::$controllerFile = Loader::Resolve( Loader::controllerFolder, self::$controllerName, Loader::controllerExtension );
@@ -76,8 +80,7 @@ class Core
 
 	private static function IsIndex()
 	{
-		$pathData = Routing::PathData();
-		$pathParts = $pathData[ "pathParts" ];
+		$pathParts = Routing::GetPathParts();
 
 		return( count( $pathParts ) <= 1 );
 	}
@@ -91,8 +94,7 @@ class Core
 
 	private static function InvokeMethod()
 	{
-		$pathData = Routing::PathData();
-		$pathParts = $pathData[ "pathParts" ];
+		$pathParts = Routing::GetPathParts();
 		$method	= self::GetMethod( Normalize::MethodOrClassName( $pathParts[ 1 ] ) );
 
 		self::CallMethod( $method, array_slice( $pathParts, 2 ) );
@@ -136,8 +138,9 @@ class Core
 
 	private static function DetermineController( $useRoutes = true )
 	{
-		$pathData = Routing::PathData();
-		$pathParts = $useRoutes ? $pathData[ "pathParts" ] : $pathData[ "pathPartsOriginal" ];
+		Routing::Route();
+
+		$pathParts = $useRoutes ? Routing::GetPathParts() : Routing::GetPathPartsOriginal();
 
 		if( $pathParts[ 0 ] != "" )
 		{
