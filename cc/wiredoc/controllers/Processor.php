@@ -77,7 +77,7 @@ class Processor
 
 	public function RenderPageWithLinkData( $linkData )
 	{
-		$instanceName = $linkData[ "name" ];
+		$instanceName = $linkData[ "instanceName" ];
 		$component = $linkData[ "component" ];
 		$viewName = $this->FallbackViewNameIfNecessary( $linkData[ "view" ] );
 
@@ -87,7 +87,7 @@ class Processor
 		$this->RenderPage( $component, $instanceName, $viewName );
 	}
 
-	public function OnComponentInstanceGenerated( Event $event )
+	public function OnComponentReadyForProcessing( Event $event )
 	{
 		$model = $event->arguments[ "model" ];
 		$component = $event->arguments[ "component" ];

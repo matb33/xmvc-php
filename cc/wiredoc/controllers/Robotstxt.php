@@ -4,6 +4,7 @@ namespace xMVC\Mod\CC;
 
 use xMVC\Sys\OutputHeaders;
 use xMVC\Sys\Config;
+use xMVC\Mod\Language\Language;
 
 class Robotstxt
 {
@@ -11,10 +12,15 @@ class Robotstxt
 	{
 		OutputHeaders::Custom( "Content-type: text/plain; charset=UTF-8" );
 
+		echo( "User-agent: *\n" );
+
 		if( $this->DoNotSpider() )
 		{
-			echo( "User-agent: *\n" );
 			echo( "Disallow: /\n" );
+		}
+		else
+		{
+			$this->WriteSitemapDisallows();
 		}
 
 		if( Config::$data[ "includeSitemaps" ] )
@@ -31,6 +37,19 @@ class Robotstxt
 		}
 
 		return( false );
+	}
+
+	private function WriteSitemapDisallows()
+	{
+		foreach( Language::GetDefinedLangs() as $lang )
+		{
+			$sitemapModel = Sitemap::Get( $lang );
+
+			foreach( $sitemapModel->xPath->query( "//s:url[ sitemap:private = '1' ]/sitemap:path" ) as $pathNode )
+			{
+				echo( "Disallow: " . $pathNode->nodeValue . "\n" );
+			}
+		}
 	}
 
 	private function WriteSitemapLines()
