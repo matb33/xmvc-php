@@ -10,7 +10,7 @@ use xMVC\Sys\Delegate;
  * @author Darren Schnare
  * @copyright 2010
  */
-class DefaultEventDispatcher implements EventDispatcher
+class DefaultEventDispatcher implements IEventDispatcher
 {
     private $target;
     private $listeners;
@@ -19,9 +19,9 @@ class DefaultEventDispatcher implements EventDispatcher
      * Constructs a new DefaultEventDispatcher with the optional event target.
      * The target can be used to change the event target when dispatching events using
      * this event dispatcher. This is useful for classes that cannot extend from DefaultEventDispatcher
-     * and can only implement the EventDispatcher interface.
+     * and can only implement the IEventDispatcher interface.
      */
-    public function __construct( EventDispatcher $target = NULL )
+    public function __construct( IEventDispatcher $target = NULL )
     {
         $this->target = ( $target == NULL ) ? $this : $target;
         $this->listeners = array();
