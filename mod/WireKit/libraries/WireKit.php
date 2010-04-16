@@ -47,6 +47,17 @@ class WireKit
 		self::$eventPump->addEventListener( "ontalk", new Delegate( "\\xMVC\\Mod\\WireKit\\WireKit::OnTalk" ) );
 	}
 
+	public static function RegisterNamespaces( &$model )
+	{
+		foreach( Config::$data[ "wirekitNamespaces" ] as $prefix => $namespace )
+		{
+			$model->xPath->registerNamespace( $prefix, $namespace );
+		}
+	}
+
+
+
+	/* Questionable... should this simply be using a Component class? */
 	public static function RenderComponent( $component, $eventName, $instanceName, $delegateOrScope, $parameters = array(), $cacheMinutes = 0 )
 	{
 		self::GenerateComponentInstance( $component, $eventName, $instanceName, self::GetDelegate( $delegateOrScope ), $parameters, $cacheMinutes );
@@ -61,6 +72,10 @@ class WireKit
 		self::GetEventPump()->addEventListener( "oncomponentreadyforprocessing", $delegate );
 		self::GetEventPump()->dispatchEvent( new Event( "oncomponentreadyforprocessing", array( "model" => $instanceModel, "component" => $component, "instanceName" => $instanceName ) ) );
 	}
+
+
+
+
 
 	private static function GetDelegate( $delegateOrScope )
 	{
@@ -78,14 +93,6 @@ class WireKit
 	{
 		self::RegisterNamespaces( $model );
 		self::InjectNextReference( $model );
-	}
-
-	public static function RegisterNamespaces( &$model )
-	{
-		foreach( Config::$data[ "wirekitNamespaces" ] as $prefix => $namespace )
-		{
-			$model->xPath->registerNamespace( $prefix, $namespace );
-		}
 	}
 
 	private static function InjectNextReference( &$model )
