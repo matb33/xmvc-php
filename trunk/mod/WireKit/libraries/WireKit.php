@@ -60,13 +60,11 @@ class WireKit
 		self::GenerateComponentInstance( $component, $eventName, $instanceName, self::GetDelegate( $delegateOrScope ), $parameters, $cacheMinutes );
 	}
 
-	public static function RenderInstance( $component, $instanceName, $delegateOrScope, $cacheMinutes = 0 )
+	public static function RenderInstance( $component, $instanceName, $delegateOrScope, $parameters = array(), $cacheMinutes = 0 )
 	{
 		$delegate = self::GetDelegate( $delegateOrScope );
 		$instanceModel = self::LoadComponentInstance( $component, $instanceName, $cacheMinutes );
-
-		self::GetEventPump()->removeAllEventListeners( "oncomponentreadyforprocessing" );
-		self::GetEventPump()->addEventListener( "oncomponentreadyforprocessing", $delegate );
+		self::ReplaceTokenParametersInAttributes( $instanceModel, $parameters );
 
 		$arguments = array(
 			"model" => $instanceModel,
@@ -74,6 +72,8 @@ class WireKit
 			"instanceName" => $instanceName
 		);
 
+		self::GetEventPump()->removeAllEventListeners( "oncomponentreadyforprocessing" );
+		self::GetEventPump()->addEventListener( "oncomponentreadyforprocessing", $delegate );
 		self::GetEventPump()->dispatchEvent( new Event( "oncomponentreadyforprocessing", $arguments ) );
 	}
 
@@ -149,6 +149,14 @@ class WireKit
 		}
 
 		return( $instanceModel );
+	}
+
+	private static function ReplaceTokenParametersInAttributes( &$model, $parameters )
+	{
+		foreach( $model->xPath->query( "//@*[ contains( name(), 'param' ) and contains( ., '#param' ) ]" ) as $paramNode )
+		{
+			$paramNode->nodeValue = $parameters[ substr( $paramNode->nodeValue, 6, -1 ) - 1 ];
+		}
 	}
 
 	private static function InjectModel( $instanceModel, $node, &$model )
@@ -272,6 +280,8 @@ class WireKit
 		else
 		{
 			$resultModel = self::ObtainResultModel( $event );
+
+			self::ReplaceTokenParametersInAttributes( $resultModel, $event->arguments[ "data" ][ "param" ] );
 
 			$arguments = array(
 				"model" => $resultModel,
