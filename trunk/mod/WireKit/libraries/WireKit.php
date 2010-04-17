@@ -55,9 +55,6 @@ class WireKit
 		}
 	}
 
-
-
-	/* Questionable... should this simply be using a Component class? */
 	public static function RenderComponent( $component, $eventName, $instanceName, $delegateOrScope, $parameters = array(), $cacheMinutes = 0 )
 	{
 		self::GenerateComponentInstance( $component, $eventName, $instanceName, self::GetDelegate( $delegateOrScope ), $parameters, $cacheMinutes );
@@ -70,12 +67,15 @@ class WireKit
 
 		self::GetEventPump()->removeAllEventListeners( "oncomponentreadyforprocessing" );
 		self::GetEventPump()->addEventListener( "oncomponentreadyforprocessing", $delegate );
-		self::GetEventPump()->dispatchEvent( new Event( "oncomponentreadyforprocessing", array( "model" => $instanceModel, "component" => $component, "instanceName" => $instanceName ) ) );
+
+		$arguments = array(
+			"model" => $instanceModel,
+			"component" => $component,
+			"instanceName" => $instanceName
+		);
+
+		self::GetEventPump()->dispatchEvent( new Event( "oncomponentreadyforprocessing", $arguments ) );
 	}
-
-
-
-
 
 	private static function GetDelegate( $delegateOrScope )
 	{
@@ -177,6 +177,8 @@ class WireKit
 		$eventName = $node->getAttribute( "event" );
 		$cacheMinutes = ( int )$node->getAttribute( "cache" );
 
+		$pathParts = Routing::GetPathParts();
+
 		$arguments = array();
 		$arguments[ "component" ] = $component;
 		$arguments[ "node" ] = $node;
@@ -185,6 +187,8 @@ class WireKit
 		$arguments[ "eventName" ] = $eventName;
 		$arguments[ "cacheMinutes" ] = $cacheMinutes;
 		$arguments[ "inject" ] = true;
+		$arguments[ "methodName" ] = Normalize::MethodOrClassName( $pathParts[ 1 ] );
+		$arguments[ "methodArguments" ] = array_slice( $pathParts, 2 );
 		$arguments[ "param" ] = array();
 
 		$i = 0;
@@ -269,7 +273,13 @@ class WireKit
 		{
 			$resultModel = self::ObtainResultModel( $event );
 
-			self::GetEventPump()->dispatchEvent( new Event( "oncomponentreadyforprocessing", array( "model" => $resultModel, "component" => $event->arguments[ "data" ][ "component" ], "instanceName" => $event->arguments[ "data" ][ "instanceName" ] ) ) );
+			$arguments = array(
+				"model" => $resultModel,
+				"component" => $event->arguments[ "data" ][ "component" ],
+				"instanceName" => $event->arguments[ "data" ][ "instanceName" ]
+			);
+
+			self::GetEventPump()->dispatchEvent( new Event( "oncomponentreadyforprocessing", $arguments ) );
 		}
 	}
 
@@ -284,7 +294,7 @@ class WireKit
 		self::InjectNextReference( $model );
 	}
 
-	private static function ObtainResultModel( Event $event )
+	private static function ObtainResultModel( Event &$event )
 	{
 		if( isset( $event->arguments[ "data" ][ "cachedResultModel" ] ) )
 		{
@@ -340,6 +350,30 @@ class WireKit
 		$resultModel = new XMLModelDriver( $resultXML );
 
 		return( $resultModel );
+	}
+
+	public static function GetHrefContextComponentAndInstanceName( $model )
+	{
+		// Href Context refers to the component that holds the meta:href
+
+		$hrefContextComponent = "";
+		$hrefContextInstanceName = "";
+
+		$hrefNodeList = $model->xPath->query( "//meta:href" );
+
+		if( $hrefNodeList->length > 0 )
+		{
+			$componentDefinitionNodeList = $model->xPath->query( "ancestor::component:definition[1]", $hrefNodeList->item( 0 ) );
+
+			if( $componentDefinitionNodeList->length > 0 )
+			{
+				$componentDefinitionNode = $componentDefinitionNodeList->item( 0 );
+				$hrefContextComponent = $componentDefinitionNode->hasAttribute( "name" ) ? $componentDefinitionNode->getAttribute( "name" ) : "";
+				$hrefContextInstanceName = $componentDefinitionNode->hasAttribute( "instance-name" ) ? $componentDefinitionNode->getAttribute( "instance-name" ) : "";
+			}
+		}
+
+		return( array( $hrefContextComponent, $hrefContextInstanceName ) );
 	}
 }
 

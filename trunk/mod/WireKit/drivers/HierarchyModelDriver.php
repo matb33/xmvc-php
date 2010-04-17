@@ -27,7 +27,6 @@ class HierarchyModelDriver extends ModelDriver implements ModelDriverInterface
 	{
 		$component = func_get_arg( 0 );
 		$instanceName = func_get_arg( 1 );
-		$componentInstance = $component . "\\" . $instanceName;
 
 		$urlNodeList = $this->sitemapModel->xPath->query( "//s:url[ sitemap:component = '" . $component . "' and sitemap:instance-name = '" . $instanceName . "' ]" );
 

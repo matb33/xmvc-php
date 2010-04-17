@@ -72,6 +72,9 @@ class Processor
 		WireKit::InjectReferences( $model );
 		$this->view->PushModel( $model );
 
+		list( $hrefContextComponent, $hrefContextInstanceName ) = WireKit::GetHrefContextComponentAndInstanceName( $model );
+		$this->PushHierarchy( $hrefContextComponent, $hrefContextInstanceName );
+
 		$this->RenderPage( $component, $instanceName, $viewName );
 	}
 
@@ -84,7 +87,7 @@ class Processor
 		$this->view = new View( $viewName );
 		$this->PushInstance( $component, $instanceName );
 
-		$this->RenderPage( $component, $instanceName, $viewName );
+		$this->RenderPage( $component, $instanceName, $component, $instanceName, $viewName );
 	}
 
 	public function OnComponentReadyForProcessing( Event $event )
@@ -166,6 +169,10 @@ class Processor
 		}
 
 		$this->view->PushModel( $stringData );
+	}
+
+	private function PushHierarchy( $component, $instanceName )
+	{
 		$this->view->PushModel( new HierarchyModelDriver( $component, $instanceName ) );
 	}
 
