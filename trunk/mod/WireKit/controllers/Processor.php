@@ -86,6 +86,7 @@ class Processor
 
 		$this->view = new View( $viewName );
 		$this->PushInstance( $component, $instanceName );
+		$this->PushHierarchy( $component, $instanceName );
 
 		$this->RenderPage( $component, $instanceName, $component, $instanceName, $viewName );
 	}
