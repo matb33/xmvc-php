@@ -193,7 +193,14 @@ class View
 		}
 		else
 		{
-			trigger_error( "XSL view [" . $this->xslViewName . "] not found", E_USER_ERROR );
+			if( $this->xslViewName != "" )
+			{
+				trigger_error( "XSL view name [" . $this->xslViewName . "] not found", E_USER_ERROR );
+			}
+			else
+			{
+				trigger_error( "XSL view file [" . $this->xslViewFile . "] not found", E_USER_ERROR );
+			}
 		}
 
 		return( $result );

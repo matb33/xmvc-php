@@ -108,6 +108,27 @@ class ModelDriver extends \DOMDocument
 			return( $completeXML );
 		}
 	}
+
+	public function dump( $exit = false, $caption = "MODEL XML DUMP", $rootNode = null, $height = "300" )
+	{
+		if( is_null( $rootNode ) )
+		{
+			$XML = $this->saveXML();
+		}
+		else
+		{
+			$XML = $this->saveXML( $rootNode );
+		}
+
+		echo( "<fieldset style=\"padding:5px 10px 10px 10px;width:960px;background-color:#666;\"><legend style=\"font-weight:bold;background-color:#666;color:#fff;padding:5px 10px 0px 10px;\">" . $caption . "</legend>" );
+		echo( "<textarea wrap=\"off\" style=\"font:12px Courier New;width:960px;height:" . $height . "px;background-color:#fff;\">" . htmlentities( $XML ) . "</textarea>" );
+		echo( "</fieldset>" );
+
+		if( $exit )
+		{
+			exit();
+		}
+	}
 }
 
 interface ModelDriverInterface
