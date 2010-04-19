@@ -5,10 +5,20 @@
 		<xsl:if test="lang( $lang )">
 			<xsl:choose>
 				<xsl:when test="$depth &gt; 6">
-					<h6><xsl:apply-templates /></h6>
+					<h6>
+					<xsl:if test="@id">
+						<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
+					</xsl:if>
+						<xsl:apply-templates />
+					</h6>
 				</xsl:when>
 				<xsl:otherwise>
-					<xsl:element name="h{ $depth }"><xsl:apply-templates /></xsl:element>
+					<xsl:element name="h{ $depth }">
+						<xsl:if test="@id">
+							<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
+						</xsl:if>
+						<xsl:apply-templates />
+					</xsl:element>
 				</xsl:otherwise>
 			</xsl:choose>
 		</xsl:if>
@@ -16,67 +26,128 @@
 
 	<xsl:template match="doc:heading1">
 		<xsl:if test="lang( $lang )">
-			<h1><xsl:apply-templates /></h1>
+			<h1>
+				<xsl:if test="@id">
+					<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
+				</xsl:if>
+				<xsl:apply-templates />
+			</h1>
 		</xsl:if>
 	</xsl:template>
 
 	<xsl:template match="doc:heading2">
 		<xsl:if test="lang( $lang )">
-			<h2><xsl:apply-templates /></h2>
+			<h2>
+				<xsl:if test="@id">
+					<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
+				</xsl:if>
+				<xsl:apply-templates />
+			</h2>
 		</xsl:if>
 	</xsl:template>
 
 	<xsl:template match="doc:heading3">
 		<xsl:if test="lang( $lang )">
-			<h3><xsl:apply-templates /></h3>
+			<h3>
+				<xsl:if test="@id">
+					<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
+				</xsl:if>
+				<xsl:apply-templates />
+			</h3>
 		</xsl:if>
 	</xsl:template>
 
 	<xsl:template match="doc:heading4">
 		<xsl:if test="lang( $lang )">
-			<h4><xsl:apply-templates /></h4>
+			<h4>
+				<xsl:if test="@id">
+					<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
+				</xsl:if>
+				<xsl:apply-templates />
+			</h4>
 		</xsl:if>
 	</xsl:template>
 
 	<xsl:template match="doc:heading5">
 		<xsl:if test="lang( $lang )">
-			<h5><xsl:apply-templates /></h5>
+			<h5>
+				<xsl:if test="@id">
+					<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
+				</xsl:if>
+				<xsl:apply-templates />
+			</h5>
 		</xsl:if>
 	</xsl:template>
 
 	<xsl:template match="doc:heading6">
 		<xsl:if test="lang( $lang )">
-			<h6><xsl:apply-templates /></h6>
+			<h6>
+				<xsl:if test="@id">
+					<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
+				</xsl:if>
+				<xsl:apply-templates />
+			</h6>
 		</xsl:if>
 	</xsl:template>
 
 	<xsl:template match="doc:para">
 		<xsl:if test="lang( $lang )">
-			<p><xsl:if test="@class"><xsl:attribute name="class"><xsl:value-of select="@class" /></xsl:attribute></xsl:if><xsl:apply-templates /></p>
+			<p>
+				<xsl:if test="@class">
+					<xsl:attribute name="class"><xsl:value-of select="@class" /></xsl:attribute>
+				</xsl:if>
+				<xsl:if test="@id">
+					<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
+				</xsl:if>
+				<xsl:apply-templates />
+			</p>
 		</xsl:if>
 	</xsl:template>
 
 	<xsl:template match="doc:itemizedlist">
 		<xsl:if test="lang( $lang )">
-			<ul><xsl:apply-templates /></ul>
+			<ul>
+				<xsl:if test="@id">
+					<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
+				</xsl:if>
+				<xsl:apply-templates />
+			</ul>
 		</xsl:if>
 	</xsl:template>
 
 	<xsl:template match="doc:orderedlist">
 		<xsl:if test="lang( $lang )">
-			<ol><xsl:apply-templates /></ol>
+			<ol>
+				<xsl:if test="@id">
+					<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
+				</xsl:if>
+				<xsl:apply-templates />
+			</ol>
 		</xsl:if>
 	</xsl:template>
 
 	<xsl:template match="doc:listitem">
 		<xsl:if test="lang( $lang )">
-			<li><xsl:apply-templates /></li>
+			<li>
+				<xsl:if test="@id">
+					<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
+				</xsl:if>
+				<xsl:apply-templates />
+			</li>
 		</xsl:if>
 	</xsl:template>
 
 	<xsl:template match="doc:span">
 		<xsl:if test="lang( $lang )">
-			<span><xsl:if test="@class"><xsl:attribute name="class"><xsl:value-of select="@class" /></xsl:attribute></xsl:if><xsl:apply-templates /></span>
+			<span>
+				<xsl:if test="@class">
+					<xsl:attribute name="class"><xsl:value-of select="@class" /></xsl:attribute>
+				</xsl:if>
+				<xsl:if test="@id">
+					<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
+				</xsl:if>
+				<xsl:apply-templates />
+			</span>
 		</xsl:if>
 	</xsl:template>
 
@@ -99,109 +170,196 @@
 						</xsl:otherwise>
 					</xsl:choose>
 				</xsl:attribute>
+				<xsl:if test="@id">
+					<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
+				</xsl:if>
 			</img>
 		</xsl:if>
 	</xsl:template>
 
 	<xsl:template match="doc:emphasis">
 		<xsl:if test="lang( $lang )">
-			<em><xsl:apply-templates /></em>
+			<em>
+				<xsl:if test="@id">
+					<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
+				</xsl:if>
+				<xsl:apply-templates />
+			</em>
 		</xsl:if>
 	</xsl:template>
 
 	<xsl:template match="doc:strong">
 		<xsl:if test="lang( $lang )">
-			<strong><xsl:apply-templates /></strong>
+			<strong>
+				<xsl:if test="@id">
+					<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
+				</xsl:if>
+				<xsl:apply-templates />
+			</strong>
 		</xsl:if>
 	</xsl:template>
 
 	<xsl:template match="doc:address">
 		<xsl:if test="lang( $lang )">
-			<address><xsl:apply-templates /></address>
+			<address>
+				<xsl:if test="@id">
+					<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
+				</xsl:if>
+				<xsl:apply-templates />
+			</address>
 		</xsl:if>
 	</xsl:template>
 
 	<xsl:template match="doc:copyright">
 		<xsl:if test="lang( $lang )">
-			<span class="copyright"><xsl:apply-templates /></span>
+			<span class="copyright">
+				<xsl:if test="@id">
+					<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
+				</xsl:if>
+				<xsl:apply-templates />
+			</span>
 		</xsl:if>
 	</xsl:template>
 
 	<xsl:template match="doc:phone">
 		<xsl:if test="lang( $lang )">
-			<span class="phone"><xsl:apply-templates /></span>
+			<span class="phone">
+				<xsl:if test="@id">
+					<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
+				</xsl:if>
+				<xsl:apply-templates />
+			</span>
 		</xsl:if>
 	</xsl:template>
 
 	<xsl:template match="doc:fax">
 		<xsl:if test="lang( $lang )">
-			<span class="fax"><xsl:apply-templates /></span>
+			<span class="fax">
+				<xsl:if test="@id">
+					<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
+				</xsl:if>
+				<xsl:apply-templates />
+			</span>
 		</xsl:if>
 	</xsl:template>
 
 	<xsl:template match="doc:postcode">
 		<xsl:if test="lang( $lang )">
-			<span class="postcode"><xsl:apply-templates /></span>
+			<span class="postcode">
+				<xsl:if test="@id">
+					<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
+				</xsl:if>
+				<xsl:apply-templates />
+			</span>
 		</xsl:if>
 	</xsl:template>
 
 	<xsl:template match="doc:street">
 		<xsl:if test="lang( $lang )">
-			<span class="street"><xsl:apply-templates /></span>
+			<span class="street">
+				<xsl:if test="@id">
+					<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
+				</xsl:if>
+				<xsl:apply-templates />
+			</span>
 		</xsl:if>
 	</xsl:template>
 
 	<xsl:template match="doc:city">
 		<xsl:if test="lang( $lang )">
-			<span class="city"><xsl:apply-templates /></span>
+			<span class="city">
+				<xsl:if test="@id">
+					<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
+				</xsl:if>
+				<xsl:apply-templates />
+			</span>
 		</xsl:if>
 	</xsl:template>
 
 	<xsl:template match="doc:country">
 		<xsl:if test="lang( $lang )">
-			<span class="country"><xsl:apply-templates /></span>
+			<span class="country">
+				<xsl:if test="@id">
+					<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
+				</xsl:if>
+				<xsl:apply-templates />
+			</span>
 		</xsl:if>
 	</xsl:template>
 
 	<xsl:template match="doc:date">
 		<xsl:if test="lang( $lang )">
-			<span class="date"><xsl:apply-templates /></span>
+			<span class="date">
+				<xsl:if test="@id">
+					<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
+				</xsl:if>
+				<xsl:apply-templates />
+			</span>
 		</xsl:if>
 	</xsl:template>
 
 	<xsl:template match="doc:year">
 		<xsl:if test="lang( $lang )">
-			<span class="year"><xsl:apply-templates /></span>
+			<span class="year">
+				<xsl:if test="@id">
+					<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
+				</xsl:if>
+				<xsl:apply-templates />
+			</span>
 		</xsl:if>
 	</xsl:template>
 
 	<xsl:template match="doc:email">
 		<xsl:if test="lang( $lang )">
-			<span class="email"><xsl:apply-templates /></span>
+			<span class="email">
+				<xsl:if test="@id">
+					<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
+				</xsl:if>
+				<xsl:apply-templates />
+			</span>
 		</xsl:if>
 	</xsl:template>
 
 	<xsl:template match="doc:abbrev">
 		<xsl:if test="lang( $lang )">
-			<abbr><xsl:apply-templates /></abbr>
+			<abbr>
+				<xsl:if test="@id">
+					<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
+				</xsl:if>
+				<xsl:apply-templates />
+			</abbr>
 		</xsl:if>
 	</xsl:template>
 
 	<xsl:template match="doc:acronym">
 		<xsl:if test="lang( $lang )">
-			<acronym><xsl:apply-templates /></acronym>
+			<acronym>
+				<xsl:if test="@id">
+					<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
+				</xsl:if>
+				<xsl:apply-templates />
+			</acronym>
 		</xsl:if>
 	</xsl:template>
 
 	<xsl:template match="doc:quote">
 		<xsl:if test="lang( $lang )">
-			<q><xsl:apply-templates /></q>
+			<q>
+				<xsl:if test="@id">
+					<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
+				</xsl:if>
+				<xsl:apply-templates />
+			</q>
 		</xsl:if>
 	</xsl:template>
 
 	<xsl:template match="doc:linebreak">
 		<xsl:if test="lang( $lang )">
-			<br />
+			<br>
+				<xsl:if test="@id">
+					<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
+				</xsl:if>
+			</br>
 		</xsl:if>
 	</xsl:template>
 
@@ -219,8 +377,100 @@
 						<xsl:value-of select="@target" />
 					</xsl:attribute>
 				</xsl:if>
+				<xsl:if test="@id">
+					<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
+				</xsl:if>
 				<xsl:apply-templates />
 			</a>
+		</xsl:if>
+	</xsl:template>
+
+	<xsl:template match="doc:informaltable">
+		<xsl:if test="lang( $lang )">
+			<table>
+				<xsl:if test="@id">
+					<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
+				</xsl:if>
+				<xsl:apply-templates select="doc:*" />
+			</table>
+		</xsl:if>
+	</xsl:template>
+
+	<xsl:template match="doc:informaltable/doc:thead">
+		<xsl:if test="lang( $lang )">
+			<thead>
+				<xsl:if test="@id">
+					<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
+				</xsl:if>
+				<xsl:apply-templates select="doc:row" />
+			</thead>
+		</xsl:if>
+	</xsl:template>
+
+	<xsl:template match="doc:informaltable/doc:tbody">
+		<xsl:if test="lang( $lang )">
+			<tbody>
+				<xsl:if test="@id">
+					<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
+				</xsl:if>
+				<xsl:apply-templates select="doc:row" />
+			</tbody>
+		</xsl:if>
+	</xsl:template>
+
+	<xsl:template match="doc:row">
+		<xsl:if test="lang( $lang )">
+			<tr>
+				<xsl:attribute name="class">
+					<xsl:choose>
+						<xsl:when test="last() = 1">first-child last-child</xsl:when>
+						<xsl:when test="position() = 1">first-child</xsl:when>
+						<xsl:when test="position() = last()">last-child</xsl:when>
+						<xsl:otherwise>middle-child</xsl:otherwise>
+					</xsl:choose>
+					<xsl:text> item-</xsl:text><xsl:value-of select="position()" />
+					<xsl:text> </xsl:text>
+					<xsl:choose>
+						<xsl:when test="position() mod 2 = 1">even</xsl:when>
+						<xsl:otherwise>odd</xsl:otherwise>
+					</xsl:choose>
+				</xsl:attribute>
+				<xsl:if test="@id">
+					<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
+				</xsl:if>
+				<xsl:apply-templates select="doc:entry" />
+			</tr>
+		</xsl:if>
+	</xsl:template>
+
+	<xsl:template match="doc:row/doc:entry">
+		<xsl:if test="lang( $lang )">
+			<xsl:variable name="cell-name">
+				<xsl:choose>
+					<xsl:when test="../../../doc:thead">th</xsl:when>
+					<xsl:otherwise>td</xsl:otherwise>
+				</xsl:choose>
+			</xsl:variable>
+			<xsl:element name="{ $cell-name }">
+				<xsl:attribute name="class">
+					<xsl:choose>
+						<xsl:when test="last() = 1">first-child last-child</xsl:when>
+						<xsl:when test="position() = 1">first-child</xsl:when>
+						<xsl:when test="position() = last()">last-child</xsl:when>
+						<xsl:otherwise>middle-child</xsl:otherwise>
+					</xsl:choose>
+					<xsl:text> item-</xsl:text><xsl:value-of select="position()" />
+					<xsl:text> </xsl:text>
+					<xsl:choose>
+						<xsl:when test="position() mod 2 = 1">even</xsl:when>
+						<xsl:otherwise>odd</xsl:otherwise>
+					</xsl:choose>
+				</xsl:attribute>
+				<xsl:if test="@id">
+					<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
+				</xsl:if>
+				<xsl:apply-templates />
+			</xsl:element>
 		</xsl:if>
 	</xsl:template>
 
