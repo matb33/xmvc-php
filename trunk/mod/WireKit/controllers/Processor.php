@@ -27,6 +27,11 @@ class Processor
 	{
 		$this->modelStack = array();
 		$this->application = new Config::$data[ "applicationClass" ]( $this->modelStack );
+
+		if( Config::$data[ "isLocal" ] )
+		{
+			Sitemap::Generate();
+		}
 	}
 
 	protected function Call()

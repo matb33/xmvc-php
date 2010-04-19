@@ -337,18 +337,27 @@ class WireKit
 		$xslFile = Normalize::Filename( StringUtils::ReplaceTokensInPattern( Config::$data[ "componentFilePattern" ], array( "component" => $component, "component-only" => $componentOnly ) ) );
 
 		$view = new View();
-		$view->SetXSLData( $view->ImportXSL( null, $xslFile ) );
+		$xslData = $view->ImportXSL( null, $xslFile );
+		$view->SetXSLData( $xslData );
 		$view->PushModel( $sourceModel );
 		$result = new \DOMDocument();
-		$result->loadXML( $view->ProcessAsXML() );
+		$resultXML = $view->ProcessAsXML();
+		$result->loadXML( $resultXML );
 
 		if( !is_null( $instanceName ) && strlen( $instanceName ) > 0 )
 		{
-			if( !$result->documentElement->hasAttribute( "instance-name" ) )
+			if( !is_null( $result->documentElement ) )
 			{
-				$nameAttribute = $result->createAttribute( "instance-name" );
-				$nameAttribute->value = $instanceName;
-				$result->documentElement->appendChild( $nameAttribute );
+				if( !$result->documentElement->hasAttribute( "instance-name" ) )
+				{
+					$nameAttribute = $result->createAttribute( "instance-name" );
+					$nameAttribute->value = $instanceName;
+					$result->documentElement->appendChild( $nameAttribute );
+				}
+			}
+			else
+			{
+				self::OnComponentTransformationError( $view, $component, $instanceName, $xslData, $xslFile, $resultXML );
 			}
 		}
 
@@ -362,9 +371,22 @@ class WireKit
 		return( $resultModel );
 	}
 
+	private static function OnComponentTransformationError( $view, $component, $instanceName, $xslData, $xslFile, $resultXML )
+	{
+		$stackModel = new XMLModelDriver( $view->GetStackedModels() );
+		$stackModel->dump( false, $component . "\\" . $instanceName  );
+
+		$viewModel = new XMLModelDriver( $xslData );
+		$viewModel->dump( false, $xslFile );
+
+		echo( "<pre>" . htmlentities( $resultXML ) . "</pre>" );
+
+		trigger_error( "There was an unspecified error while tranforming the model above using the XSL component also displayed above. Finally displayed is the resulting XML causing this error", E_USER_ERROR );
+	}
+
 	public static function GetHrefContextComponentAndInstanceName( $model )
 	{
-		// Href Context refers to the component that holds the meta:href
+		// Href Context refers to the component that holds the meta:href (specifically the last occurence (should it be the deepest??))
 
 		$hrefContextComponent = "";
 		$hrefContextInstanceName = "";
@@ -373,7 +395,7 @@ class WireKit
 
 		if( $hrefNodeList->length > 0 )
 		{
-			$componentDefinitionNodeList = $model->xPath->query( "ancestor::component:definition[1]", $hrefNodeList->item( 0 ) );
+			$componentDefinitionNodeList = $model->xPath->query( "ancestor::component:definition[1]", $hrefNodeList->item( $hrefNodeList->length - 1 ) );
 
 			if( $componentDefinitionNodeList->length > 0 )
 			{

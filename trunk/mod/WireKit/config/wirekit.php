@@ -2,7 +2,7 @@
 
 $applicationClass = "";	// IMPORTANT: This must be set in app/config!
 
-$componentCacheFilePattern = "app/inc/cache/#type#/#name#/#hash#.txt";
+$componentCacheFilePattern = "app/cache/#type#/#name#/#hash#.txt";
 $componentFilePattern = "app/components/#component#/#component-only#.xsl";
 $componentInstanceFilePattern = "app/components/#component#/#instance#.xml";
 $xliffFilePattern = "app/components/#component#/xliff/#instance#.#lang#.xliff";

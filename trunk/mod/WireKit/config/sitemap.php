@@ -1,6 +1,6 @@
 <?php
 
-$sitemapXMLFilePattern = "app/inc/cache/sitemaps/sitemap-#lang#.xml";
+$sitemapXMLFilePattern = "app/cache/sitemaps/sitemap-#lang#.xml";
 $sitemapCrawlFolder = "app/components/";
 $sitemapCrawlFolderRegExp = "/[^\.svn]/";
 $sitemapCrawlFileRegExp = "/.*\.xml/";
