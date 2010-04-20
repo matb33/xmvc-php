@@ -8,6 +8,15 @@ use xMVC\Mod\Language\Language;
 
 class Robotstxt
 {
+	private $lookup;
+	private $sitemap;
+
+	public function __construct()
+	{
+		$this->lookup = new ComponentLookup();
+		$this->sitemap = new Sitemap( $this->lookup->Get() );
+	}
+
 	public function Index()
 	{
 		OutputHeaders::Custom( "Content-type: text/plain; charset=UTF-8" );
@@ -44,20 +53,20 @@ class Robotstxt
 
 	private function WriteSitemapDisallows()
 	{
-		foreach( Language::GetDefinedLangs() as $lang )
-		{
-			$sitemapModel = Sitemap::Get( $lang );
+		$lookupModel = $this->lookup->Get();
 
-			foreach( $sitemapModel->xPath->query( "//s:url[ sitemap:private = '1' ]/sitemap:path" ) as $pathNode )
-			{
-				echo( "Disallow: " . $pathNode->nodeValue . "\n" );
-			}
+		foreach( $lookupModel->xPath->query( "//lookup:entry/lookup:href[ lookup:private = '1' ]" ) as $hrefNode )
+		{
+			$locNodeList = $lookupModel->xPath->query( "lookup:fully-qualified-uri", $hrefNode );
+			$loc = $locNodeList->length > 0 ? $locNodeList->item( 0 )->nodeValue : "";
+
+			echo( "Disallow: " . $loc . "\n" );
 		}
 	}
 
 	private function WriteSitemapLines()
 	{
-		foreach( Sitemap::GetSitemapXMLFilenames() as $filename )
+		foreach( $this->sitemap->GetSitemapXMLFilenames() as $filename )
 		{
 			echo( "Sitemap: " . $filename . "\n" );
 		}

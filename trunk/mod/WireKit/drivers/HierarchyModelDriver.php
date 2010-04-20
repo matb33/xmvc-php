@@ -9,16 +9,16 @@ use xMVC\Mod\Language\Language;
 
 class HierarchyModelDriver extends ModelDriver implements ModelDriverInterface
 {
-	private $sitemapModel;
+	private $lookupModel;
 
-	public function __construct( $component, $instanceName )
+	public function __construct( $component, $instanceName, $lookupModel )
 	{
 		parent::__construct();
 
 		$this->rootElement = $this->createElementNS( Config::$data[ "wirekitNamespaces" ][ "sitemap" ], "sitemap:hierarchy" );
 		$this->appendChild( $this->rootElement );
 
-		$this->sitemapModel = Sitemap::Get( Language::GetLang() );
+		$this->lookupModel = $lookupModel;
 
 		$this->TransformForeignToXML( $component, $instanceName );
 	}
@@ -28,21 +28,21 @@ class HierarchyModelDriver extends ModelDriver implements ModelDriverInterface
 		$component = func_get_arg( 0 );
 		$instanceName = func_get_arg( 1 );
 
-		$urlNodeList = $this->sitemapModel->xPath->query( "//s:url[ sitemap:component = '" . $component . "' and sitemap:instance-name = '" . $instanceName . "' ]" );
+		$nodeList = $this->lookupModel->xPath->query( "//lookup:entry[ lookup:component = '" . $component . "' and lookup:instance-name = '" . $instanceName . "' ]" );
 
-		if( $urlNodeList->length > 0 )
+		if( $nodeList->length > 0 )
 		{
-			$urlNode = $urlNodeList->item( 0 );
-			$this->AddHierarchyEntry( $urlNode );
-			$this->CrawlSitemapFollowingParentsOf( $urlNode );
+			$node = $nodeList->item( 0 );
+			$this->AddHierarchyEntry( $node );
+			$this->CrawlSitemapFollowingParentsOf( $node );
 		}
 
 		parent::TransformForeignToXML();
 	}
 
-	private function CrawlSitemapFollowingParentsOf( $urlNode )
+	private function CrawlSitemapFollowingParentsOf( $node )
 	{
-		$parentNodeList = $this->sitemapModel->xPath->query( "sitemap:parent", $urlNode );
+		$parentNodeList = $this->lookupModel->xPath->query( "lookup:parent", $node );
 
 		if( $parentNodeList->length > 0 )
 		{
@@ -50,26 +50,26 @@ class HierarchyModelDriver extends ModelDriver implements ModelDriverInterface
 			$parentInstanceName = array_pop( $componentParts );
 			$parentComponent = implode( "\\", $componentParts );
 
-			$parentUrlNodeList = $this->sitemapModel->xPath->query( "//s:url[ sitemap:component = '" . $parentComponent . "' and sitemap:instance-name = '" . $parentInstanceName . "' ]" );
+			$parentNodeList = $this->lookupModel->xPath->query( "//lookup:entry[ lookup:component = '" . $parentComponent . "' and lookup:instance-name = '" . $parentInstanceName . "' ]" );
 
-			if( $parentUrlNodeList->length > 0 )
+			if( $parentNodeList->length > 0 )
 			{
-				$parentUrlNode = $parentUrlNodeList->item( 0 );
-				$this->AddHierarchyEntry( $parentUrlNode );
-				$this->CrawlSitemapFollowingParentsOf( $parentUrlNode );
+				$parentNode = $parentNodeList->item( 0 );
+				$this->AddHierarchyEntry( $parentNode );
+				$this->CrawlSitemapFollowingParentsOf( $parentNode );
 			}
 		}
 
 	}
 
-	private function AddHierarchyEntry( $urlNode )
+	private function AddHierarchyEntry( $node )
 	{
-		$path = $this->sitemapModel->xPath->query( "sitemap:path", $urlNode )->item( 0 )->nodeValue;
+		$uri = $this->lookupModel->xPath->query( "lookup:href[ lang( '" . Language::GetLang() . "' ) ]/lookup:uri", $node )->item( 0 )->nodeValue;
 
-		$node = $this->createElementNS( Config::$data[ "wirekitNamespaces" ][ "sitemap" ], "sitemap:path" );
-		$data = $this->createCDATASection( ( string )$path );
-		$node->appendChild( $data );
-		$this->rootElement->appendChild( $node );
+		$pathNode = $this->createElementNS( Config::$data[ "wirekitNamespaces" ][ "sitemap" ], "sitemap:path" );
+		$data = $this->createCDATASection( ( string )$uri );
+		$pathNode->appendChild( $data );
+		$this->rootElement->appendChild( $pathNode );
 	}
 }
 

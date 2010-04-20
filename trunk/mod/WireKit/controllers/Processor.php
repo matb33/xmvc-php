@@ -22,16 +22,23 @@ class Processor
 	private $application;
 	private $view;
 	private $modelStack;
+	private $lookup;
+	private $sitemap;
 
 	public function __construct()
 	{
 		$this->modelStack = array();
 		$this->application = new Config::$data[ "applicationClass" ]( $this->modelStack );
+		$this->lookup = new ComponentLookup();
 
 		if( Config::$data[ "isLocal" ] )
 		{
-			Sitemap::Generate();
+			$this->lookup->Generate();
 		}
+
+		$lookupModel = $this->lookup->Get();
+		$this->sitemap = new Sitemap( $lookupModel );
+		Inject::SetSitemap( $this->sitemap );
 	}
 
 	protected function Call()
@@ -53,7 +60,7 @@ class Processor
 	{
 		$currentPath = "/" . ( func_num_args() ? implode( "/", func_get_args() ) . "/" : "" );
 
-		if( ( $linkData = Sitemap::GetLinkDataFromSitemapByPath( $currentPath ) ) !== false )
+		if( ( $linkData = $this->sitemap->GetLinkDataFromSitemapByPath( $currentPath ) ) !== false )
 		{
 			$this->RenderPageWithLinkData( $linkData );
 		}
@@ -179,7 +186,8 @@ class Processor
 
 	private function PushHierarchy( $component, $instanceName )
 	{
-		$this->view->PushModel( new HierarchyModelDriver( $component, $instanceName ) );
+		$this->lookup->Refresh();	// necessary because of our currently disjointed approaches with components and wirekit in general... in WireKit, a new instance of ComponentLookup is created and thus we lose sync
+		$this->view->PushModel( new HierarchyModelDriver( $component, $instanceName, $this->lookup->Get() ) );
 	}
 
 	private function PushModelStack()
