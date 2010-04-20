@@ -320,7 +320,8 @@ class WireKit
 			}
 		}
 
-		Sitemap::EnsureInstanceInSitemap( $resultModel );
+		$lookup = new ComponentLookup();
+		$lookup->EnsureInstanceInLookup( $resultModel );
 
 		return( $resultModel );
 	}

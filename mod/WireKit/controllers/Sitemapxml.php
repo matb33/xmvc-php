@@ -6,7 +6,9 @@ class Sitemapxml
 {
 	public function View( $lang )
 	{
-		Sitemap::Output( $lang );
+		$lookup = new ComponentLookup();
+		$sitemap = new Sitemap( $lookup->Get() );
+		$sitemap->Output( $lang );
 	}
 }
 

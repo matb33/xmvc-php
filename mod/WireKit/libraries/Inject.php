@@ -6,6 +6,13 @@ use xMVC\Mod\Language\Language;
 
 class Inject
 {
+	private static $sitemap;
+
+	public static function SetSitemap( &$sitemap )
+	{
+		self::$sitemap = $sitemap;
+	}
+
 	public static function Href( &$view )
 	{
 		$models = $view->GetModels();
@@ -20,7 +27,7 @@ class Inject
 				$prefix = $itemNode->hasAttribute( "inject:href-prefix" ) ? $itemNode->getAttribute( "inject:href-prefix" ) : "";
 				$suffix = $itemNode->hasAttribute( "inject:href-suffix" ) ? $itemNode->getAttribute( "inject:href-suffix" ) : "";
 
-				$path = Sitemap::GetPathByFullyQualifiedNameAndLanguage( $fullyQualifiedName, Language::GetLang() );
+				$path = self::$sitemap->GetPathByFullyQualifiedNameAndLanguage( $fullyQualifiedName, Language::GetLang() );
 
 				$linkNode = $model->createAttribute( "href" );
 				$linkNode->value = $prefix . $path . $suffix;

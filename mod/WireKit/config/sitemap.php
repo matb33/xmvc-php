@@ -1,9 +1,6 @@
 <?php
 
-$sitemapXMLFilePattern = "app/cache/sitemaps/sitemap-#lang#.xml";
-$sitemapCrawlFolder = "app/components/";
-$sitemapCrawlFolderRegExp = "/[^\.svn]/";
-$sitemapCrawlFileRegExp = "/.*\.xml/";
+$sitemapXMLFilePattern = "#protocol#://#host#/sitemap-#lang#.xml";
 
 $sitemapNamespace = "http://www.sitemaps.org/schemas/sitemap/0.9";
 
