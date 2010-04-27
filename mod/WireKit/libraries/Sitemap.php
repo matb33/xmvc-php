@@ -29,7 +29,7 @@ class Sitemap
 
 	public function GetFullyQualifiedNameByPath( $path )
 	{
-		foreach( $this->lookupModel->xPath->query( "//lookup:entry/lookup:href[ lookup:uri = '" . $path . "' ]" ) as $entryNode )
+		foreach( $this->lookupModel->xPath->query( "//lookup:entry[ lookup:instance-name != '' ]/lookup:href[ lookup:uri = '" . $path . "' ]" ) as $entryNode )
 		{
 			$fullyQualifiedNameNodeList = $this->lookupModel->xPath->query( "../lookup:fully-qualified-name", $entryNode );
 			$fullyQualifiedName = $fullyQualifiedNameNodeList->length > 0 ? $fullyQualifiedNameNodeList->item( 0 )->nodeValue : "";
@@ -42,7 +42,7 @@ class Sitemap
 
 	public function GetLinkDataFromSitemapByPath( $path )
 	{
-		foreach( $this->lookupModel->xPath->query( "//lookup:entry/lookup:href[ lookup:uri = '" . $path . "' ]" ) as $entryNode )
+		foreach( $this->lookupModel->xPath->query( "//lookup:entry[ lookup:instance-name != '' ]/lookup:href[ lookup:uri = '" . $path . "' ]" ) as $entryNode )
 		{
 			$linkData = array();
 			$linkData[ "component" ] = $this->lookupModel->xPath->query( "../lookup:component", $entryNode )->item( 0 )->nodeValue;
