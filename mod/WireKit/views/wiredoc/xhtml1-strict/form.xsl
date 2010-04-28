@@ -14,7 +14,9 @@
 			<xsl:if test="@enctype">
 				<xsl:attribute name="enctype"><xsl:value-of select="@enctype" /></xsl:attribute>
 			</xsl:if>
-			<xsl:apply-templates />
+			<div class="form">
+				<xsl:apply-templates />
+			</div>
 		</form>
 	</xsl:template>
 
