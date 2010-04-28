@@ -2,7 +2,7 @@
 
 namespace xMVC\Sys;
 
-class XMLModelDriver extends ModelDriver implements ModelDriverInterface
+class XMLModelDriver extends ModelDriver implements IModelDriver
 {
 	public function __construct( $parameter = null, $namespace = null, $data = null )
 	{

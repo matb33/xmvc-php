@@ -2,7 +2,7 @@
 
 namespace xMVC\Sys;
 
-class FileSystemModelDriver extends ModelDriver implements ModelDriverInterface
+class FileSystemModelDriver extends ModelDriver implements IModelDriver
 {
 	public function __construct()
 	{

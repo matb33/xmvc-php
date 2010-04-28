@@ -4,7 +4,7 @@ namespace xMVC\Sys;
 
 // TO-DO: Make this an abstract class where TransformForeignToXML is abstract
 
-class ModelDriver extends \DOMDocument
+abstract class ModelDriver extends \DOMDocument
 {
 	public $xPath;
 	protected $rootElement;
@@ -131,7 +131,7 @@ class ModelDriver extends \DOMDocument
 	}
 }
 
-interface ModelDriverInterface
+interface IModelDriver
 {
 	public function TransformForeignToXML();
 }

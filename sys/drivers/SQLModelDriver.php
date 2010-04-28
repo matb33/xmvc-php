@@ -2,7 +2,7 @@
 
 namespace xMVC\Sys;
 
-class SQLModelDriver extends ModelDriver implements ModelDriverInterface
+class SQLModelDriver extends ModelDriver implements IModelDriver
 {
 	private $currentQueryName = null;
 	private $currentParameters = null;
