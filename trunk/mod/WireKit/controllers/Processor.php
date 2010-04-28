@@ -11,34 +11,31 @@ use xMVC\Sys\XMLModelDriver;
 use xMVC\Sys\StringsModelDriver;
 use xMVC\Sys\View;
 use xMVC\Sys\Normalize;
+use xMVC\Sys\Delegate;
 use xMVC\Sys\Events\Event;
 use xMVC\Sys\Events\DefaultEventDispatcher;
 
 use xMVC\Mod\Language\Language;
 use xMVC\Mod\Utils\StringUtils;
+use xMVC\Mod\WireKit\Components\ComponentLookup;
+use xMVC\Mod\WireKit\Components\ComponentFactory;
+use xMVC\Mod\WireKit\Components\ComponentUtils;
 
 class Processor
 {
 	private $application;
 	private $view;
 	private $modelStack;
-	private $lookup;
-	private $sitemap;
 
 	public function __construct()
 	{
 		$this->modelStack = array();
 		$this->application = new Config::$data[ "applicationClass" ]( $this->modelStack );
-		$this->lookup = new ComponentLookup();
 
-		if( Config::$data[ "isLocal" ] )
+		if( Config::$data[ "isLocal" ] || ComponentLookup::getInstance()->HostsDontMatch() )
 		{
-			$this->lookup->Generate();
+			ComponentLookup::getInstance()->Generate();
 		}
-
-		$lookupModel = $this->lookup->Get();
-		$this->sitemap = new Sitemap( $lookupModel );
-		Inject::SetSitemap( $this->sitemap );
 	}
 
 	protected function Call()
@@ -60,14 +57,59 @@ class Processor
 	{
 		$currentPath = "/" . ( func_num_args() ? implode( "/", func_get_args() ) . "/" : "" );
 
-		if( ( $linkData = $this->sitemap->GetLinkDataFromSitemapByPath( $currentPath ) ) !== false )
+		if( ( $componentData = ComponentLookup::getInstance()->GetComponentDataByPath( $currentPath ) ) !== false )
 		{
-			$this->RenderPageWithLinkData( $linkData );
+			$this->RenderPageUsingComponentData( $componentData );
 		}
 		else
 		{
 			$this->Invoke404( $currentPath );
 		}
+	}
+
+	public function RenderComponent( $fullyQualifiedName, $eventName = null, $parameters = array(), $delegate = null, $cacheMinutes = 0 )
+	{
+		$fullyQualifiedName = ComponentUtils::GetFullyQualifiedComponent( $fullyQualifiedName );
+
+		if( ( $componentData = ComponentLookup::getInstance()->GetComponentDataByFullyQualifiedName( $fullyQualifiedName ) ) !== false )
+		{
+			$componentData[ "eventName" ] = $eventName;
+			$componentData[ "parameters" ] = $parameters;
+			$componentData[ "cacheMinutes" ] = $cacheMinutes;
+
+			$this->RenderPageUsingComponentData( $componentData, $delegate );
+		}
+		else
+		{
+			$this->Invoke404( $fullyQualifiedName );
+		}
+	}
+
+	public function RenderPageUsingComponentData( $componentData, $delegate = null )
+	{
+		$component = $componentData[ "component" ];
+		$instanceName = isset( $componentData[ "instanceName" ] ) ? $componentData[ "instanceName" ] : null;
+		$eventName = isset( $componentData[ "eventName" ] ) ? $componentData[ "eventName" ] : null;
+		$parameters = isset( $componentData[ "parameters" ] ) ? $componentData[ "parameters" ] : array();
+		$cacheMinutes = isset( $componentData[ "cacheMinutes" ] ) ? $componentData[ "cacheMinutes" ] : 0;
+
+		if( is_null( $delegate ) )
+		{
+			$delegate = new Delegate( "OnComponentReadyForRender", $this );
+		}
+
+		$factory = new ComponentFactory();
+		$factory->addEventListener( "onreadyforrender.components", $delegate );
+		$factory->GetComponent( $component, $instanceName, $eventName, $parameters, $cacheMinutes );
+	}
+
+	public function OnComponentReadyForRender( Event $event )
+	{
+		$model = $event->arguments[ "model" ];
+		$component = $event->arguments[ "component" ];
+		$instanceName = $event->arguments[ "instanceName" ];
+
+		$this->RenderPageWithModel( $model, $component, $instanceName );
 	}
 
 	private function Invoke404( $path )
@@ -77,39 +119,16 @@ class Processor
 
 	public function RenderPageWithModel( $model, $component, $instanceName )
 	{
-		$viewName = $model->xPath->query( "//component:definition/@view" )->item( 0 )->nodeValue;
-		$viewName = $this->FallbackViewNameIfNecessary( $viewName );
+		$viewNameNodeList = $model->xPath->query( "//component:definition/@view" );
+		$viewName = $viewNameNodeList->length > 0 ? $viewNameNodeList->item( 0 )->nodeValue : "";
+		$viewName = ComponentUtils::FallbackViewNameIfNecessary( $viewName );
 
 		$this->view = new View( $viewName );
-		WireKit::InjectReferences( $model );
 		$this->view->PushModel( $model );
 
-		list( $hrefContextComponent, $hrefContextInstanceName ) = WireKit::GetHrefContextComponentAndInstanceName( $model );
+		list( $hrefContextComponent, $hrefContextInstanceName ) = ComponentUtils::GetHrefContextComponentAndInstanceName( $model );
 		$this->PushHierarchy( $hrefContextComponent, $hrefContextInstanceName );
-
 		$this->RenderPage( $component, $instanceName, $viewName );
-	}
-
-	public function RenderPageWithLinkData( $linkData )
-	{
-		$instanceName = $linkData[ "instanceName" ];
-		$component = $linkData[ "component" ];
-		$viewName = $this->FallbackViewNameIfNecessary( $linkData[ "view" ] );
-
-		$this->view = new View( $viewName );
-		$this->PushInstance( $component, $instanceName );
-		$this->PushHierarchy( $component, $instanceName );
-
-		$this->RenderPage( $component, $instanceName, $component, $instanceName, $viewName );
-	}
-
-	public function OnComponentReadyForProcessing( Event $event )
-	{
-		$model = $event->arguments[ "model" ];
-		$component = $event->arguments[ "component" ];
-		$instanceName = $event->arguments[ "instanceName" ];
-
-		$this->RenderPageWithModel( $model, $component, $instanceName );
 	}
 
 	private function RenderPage( $component, $instanceName, $viewName )
@@ -118,28 +137,7 @@ class Processor
 		$this->PushStringData( $component, $instanceName, $viewName );
 		$this->PushModelStack();
 
-		Inject::Href( $this->view );
-		Inject::Lang( $this->view, Language::GetLang() );
-
 		$this->view->RenderAsHTML();
-	}
-
-	private function FallbackViewNameIfNecessary( $viewName )
-	{
-		if( strlen( trim( $viewName ) ) == 0 )
-		{
-			$viewName = __NAMESPACE__ . "\\xhtml1-strict";
-		}
-
-		return( $viewName );
-	}
-
-	private function PushInstance( $component, $instanceName )
-	{
-		$modelName = StringUtils::ReplaceTokensInPattern( Config::$data[ "componentInstanceFilePattern" ], array( "component" => $component, "instance" => $instanceName ) );
-		$model = new XMLModelDriver( $modelName );
-		WireKit::InjectReferences( $model );
-		$this->view->PushModel( $model );
 	}
 
 	private function PushXLIFF( $component, $instanceName )
@@ -186,8 +184,7 @@ class Processor
 
 	private function PushHierarchy( $component, $instanceName )
 	{
-		$this->lookup->Refresh();	// necessary because of our currently disjointed approaches with components and wirekit in general... in WireKit, a new instance of ComponentLookup is created and thus we lose sync
-		$this->view->PushModel( new HierarchyModelDriver( $component, $instanceName, $this->lookup->Get() ) );
+		$this->view->PushModel( new HierarchyModelDriver( $component, $instanceName ) );
 	}
 
 	private function PushModelStack()

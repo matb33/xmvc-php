@@ -4,11 +4,11 @@ namespace xMVC\Mod\WireKit;
 
 use xMVC\Sys\Core;
 use xMVC\Sys\ModelDriver;
-use xMVC\Sys\ModelDriverInterface;
+use xMVC\Sys\IModelDriver;
 use xMVC\Sys\Config;
 use xMVC\Mod\WireKit\Authenticator;
 
-class AuthenticationModelDriver extends ModelDriver implements ModelDriverInterface
+class AuthenticationModelDriver extends ModelDriver implements IModelDriver
 {
 	public function __construct( $username, $password )
 	{

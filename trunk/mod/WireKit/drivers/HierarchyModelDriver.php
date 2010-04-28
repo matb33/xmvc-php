@@ -3,22 +3,24 @@
 namespace xMVC\Mod\WireKit;
 
 use xMVC\Sys\ModelDriver;
-use xMVC\Sys\ModelDriverInterface;
+use xMVC\Sys\IModelDriver;
 use xMVC\Sys\Config;
 use xMVC\Mod\Language\Language;
+use xMVC\Mod\WireKit\Components\ComponentLookup;
+use xMVC\Mod\WireKit\Components\ComponentUtils;
 
-class HierarchyModelDriver extends ModelDriver implements ModelDriverInterface
+class HierarchyModelDriver extends ModelDriver implements IModelDriver
 {
 	private $lookupModel;
 
-	public function __construct( $component, $instanceName, $lookupModel )
+	public function __construct( $component, $instanceName )
 	{
 		parent::__construct();
 
 		$this->rootElement = $this->createElementNS( Config::$data[ "wirekitNamespaces" ][ "sitemap" ], "sitemap:hierarchy" );
 		$this->appendChild( $this->rootElement );
 
-		$this->lookupModel = $lookupModel;
+		$this->lookupModel = ComponentLookup::getInstance()->Get();
 
 		$this->TransformForeignToXML( $component, $instanceName );
 	}
@@ -46,11 +48,9 @@ class HierarchyModelDriver extends ModelDriver implements ModelDriverInterface
 
 		if( $parentNodeList->length > 0 )
 		{
-			$componentParts = explode( "\\", $parentNodeList->item( 0 )->nodeValue );
-			$parentInstanceName = array_pop( $componentParts );
-			$parentComponent = implode( "\\", $componentParts );
+			$fullyQualifiedParentName = ComponentUtils::GetFullyQualifiedComponent( $parentNodeList->item( 0 )->nodeValue );
 
-			$parentNodeList = $this->lookupModel->xPath->query( "//lookup:entry[ lookup:component = '" . $parentComponent . "' and lookup:instance-name = '" . $parentInstanceName . "' ]" );
+			$parentNodeList = $this->lookupModel->xPath->query( "//lookup:entry[ lookup:fully-qualified-name = '" . $fullyQualifiedParentName . "' ]" );
 
 			if( $parentNodeList->length > 0 )
 			{

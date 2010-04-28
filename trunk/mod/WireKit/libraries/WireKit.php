@@ -19,6 +19,7 @@ use xMVC\Mod\Utils\StringUtils;
 
 class WireKit
 {
+	/*
 	private static $eventPump = null;
 
 	public static function Listen( $eventName, Delegate $delegate )
@@ -46,15 +47,9 @@ class WireKit
 		self::$eventPump = new DefaultEventDispatcher();
 		self::$eventPump->addEventListener( "ontalk", new Delegate( "\\xMVC\\Mod\\WireKit\\WireKit::OnTalk" ) );
 	}
+	*/
 
-	public static function RegisterNamespaces( &$model )
-	{
-		foreach( Config::$data[ "wirekitNamespaces" ] as $prefix => $namespace )
-		{
-			$model->xPath->registerNamespace( $prefix, $namespace );
-		}
-	}
-
+	/*
 	public static function RenderComponent( $component, $eventName, $instanceName, $delegateOrScope, $parameters = array(), $cacheMinutes = 0 )
 	{
 		self::GenerateComponentInstance( $component, $eventName, $instanceName, self::GetDelegate( $delegateOrScope ), $parameters, $cacheMinutes );
@@ -76,7 +71,9 @@ class WireKit
 		self::GetEventPump()->addEventListener( "oncomponentreadyforprocessing", $delegate );
 		self::GetEventPump()->dispatchEvent( new Event( "oncomponentreadyforprocessing", $arguments ) );
 	}
+	*/
 
+	/*
 	private static function GetDelegate( $delegateOrScope )
 	{
 		if( $delegateOrScope instanceof Delegate )
@@ -88,13 +85,18 @@ class WireKit
 			return( new Delegate( "OnComponentReadyForProcessing", $delegateOrScope ) );
 		}
 	}
+	*/
+
+	/*
 
 	public static function InjectReferences( &$model )
 	{
 		self::RegisterNamespaces( $model );
 		self::InjectNextReference( $model );
 	}
+	*/
 
+	/*
 	private static function InjectNextReference( &$model )
 	{
 		$references = $model->xPath->query( "//reference:*[ local-name() = 'instance' or local-name() = 'component' ]" );
@@ -150,7 +152,9 @@ class WireKit
 
 		return( $instanceModel );
 	}
+	*/
 
+	/*
 	private static function ReplaceTokenParametersInAttributes( &$model, $parameters )
 	{
 		foreach( $model->xPath->query( "//@*[ contains( name(), 'param' ) and contains( ., '#param' ) ]" ) as $paramNode )
@@ -253,7 +257,9 @@ class WireKit
 		self::GetEventPump()->addEventListener( "oncomponentreadyforprocessing", $delegate );
 		self::StartBuildingComponent( $eventName, $arguments );
 	}
+	*/
 
+	/*
 	private static function GenerateCacheID( $component, $instanceName, $eventName = null, $arguments = null )
 	{
 		$cacheID = str_replace( "\\", "_", $component ) . "_" . $instanceName;
@@ -270,7 +276,9 @@ class WireKit
 
 		return( $cacheID );
 	}
+	*/
 
+	/*
 	public static function OnTalk( Event $event )
 	{
 		if( $event->arguments[ "data" ][ "inject" ] )
@@ -385,6 +393,17 @@ class WireKit
 		trigger_error( "There was an unspecified error while tranforming the model above using the XSL component also displayed above. Finally displayed is the resulting XML causing this error", E_USER_ERROR );
 	}
 
+
+
+	private function RegisterNamespaces( &$model )
+	{
+		foreach( Config::$data[ "wirekitNamespaces" ] as $prefix => $namespace )
+		{
+			$model->xPath->registerNamespace( $prefix, $namespace );
+		}
+	}
+
+
 	public static function GetHrefContextComponentAndInstanceName( $model )
 	{
 		// Href Context refers to the component that holds the meta:href (specifically the last occurence (should it be the deepest??))
@@ -408,6 +427,7 @@ class WireKit
 
 		return( array( $hrefContextComponent, $hrefContextInstanceName ) );
 	}
+	*/
 }
 
 ?>

@@ -3,8 +3,6 @@
 $applicationClass = "";	// IMPORTANT: This must be set in app/config!
 
 $componentCacheFilePattern = "app/cache/components/#type#/#name#/#hash#.txt";
-$componentFilePattern = "app/components/#component#/#component-only#.xsl";
-$componentInstanceFilePattern = "app/components/#component#/#instance#.xml";
 $xliffFilePattern = "app/components/#component#/xliff/#instance#.#lang#.xliff";
 
 $componentLookupFilePattern = "app/cache/components/lookup.xml";
