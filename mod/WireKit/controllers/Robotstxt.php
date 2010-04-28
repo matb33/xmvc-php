@@ -5,16 +5,12 @@ namespace xMVC\Mod\WireKit;
 use xMVC\Sys\OutputHeaders;
 use xMVC\Sys\Config;
 use xMVC\Mod\Language\Language;
+use xMVC\Mod\WireKit\Components\ComponentLookup;
 
 class Robotstxt
 {
-	private $lookup;
-	private $sitemap;
-
 	public function __construct()
 	{
-		$this->lookup = new ComponentLookup();
-		$this->sitemap = new Sitemap( $this->lookup->Get() );
 	}
 
 	public function Index()
@@ -53,7 +49,7 @@ class Robotstxt
 
 	private function WriteSitemapDisallows()
 	{
-		$lookupModel = $this->lookup->Get();
+		$lookupModel = ComponentLookup::getInstance()->Get();
 
 		foreach( $lookupModel->xPath->query( "//lookup:entry/lookup:href[ lookup:private = '1' ]" ) as $hrefNode )
 		{
@@ -66,7 +62,7 @@ class Robotstxt
 
 	private function WriteSitemapLines()
 	{
-		foreach( $this->sitemap->GetSitemapXMLFilenames() as $filename )
+		foreach( Sitemap::getInstance()->GetSitemapXMLFilenames() as $filename )
 		{
 			echo( "Sitemap: " . $filename . "\n" );
 		}

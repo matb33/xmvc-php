@@ -3,10 +3,10 @@
 namespace xMVC\Mod\WireKit\FieldConstraints;
 
 use xMVC\Sys\ModelDriver;
-use xMVC\Sys\ModelDriverInterface;
+use xMVC\Sys\IModelDriver;
 use xMVC\Sys\Config;
 
-class ConstraintResultsModelDriver extends ModelDriver implements ModelDriverInterface
+class ConstraintResultsModelDriver extends ModelDriver implements IModelDriver
 {
 	public function __construct( array $constraintResultsList )
 	{
