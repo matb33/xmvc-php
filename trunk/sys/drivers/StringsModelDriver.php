@@ -2,7 +2,7 @@
 
 namespace xMVC\Sys;
 
-class StringsModelDriver extends ModelDriver implements ModelDriverInterface
+class StringsModelDriver extends ModelDriver implements IModelDriver
 {
 	public function __construct()
 	{
