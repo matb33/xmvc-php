@@ -373,7 +373,7 @@
 					</xsl:choose>
 				</xsl:attribute>
 				<xsl:if test="@target">
-					<xsl:attribute name="target">
+					<xsl:attribute name="rel">
 						<xsl:value-of select="@target" />
 					</xsl:attribute>
 				</xsl:if>
