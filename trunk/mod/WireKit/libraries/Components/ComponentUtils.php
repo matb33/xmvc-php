@@ -42,6 +42,10 @@ class ComponentUtils
 		{
 			return( $component );
 		}
+		elseif( Loader::Resolve( null, $component, Loader::modelExtension ) !== false )
+		{
+			return( $component );
+		}
 
 		return( Config::$data[ "componentNamespace" ] . "\\" . $component );
 	}

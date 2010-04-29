@@ -64,12 +64,17 @@ class HierarchyModelDriver extends ModelDriver implements IModelDriver
 
 	private function AddHierarchyEntry( $node )
 	{
-		$uri = $this->lookupModel->xPath->query( "lookup:href[ lang( '" . Language::GetLang() . "' ) ]/lookup:uri", $node )->item( 0 )->nodeValue;
+		$URINodeList = $this->lookupModel->xPath->query( "lookup:href[ lang( '" . Language::GetLang() . "' ) ]/lookup:uri", $node );
 
-		$pathNode = $this->createElementNS( Config::$data[ "wirekitNamespaces" ][ "sitemap" ], "sitemap:path" );
-		$data = $this->createCDATASection( ( string )$uri );
-		$pathNode->appendChild( $data );
-		$this->rootElement->appendChild( $pathNode );
+		if( $URINodeList->length > 0 )
+		{
+			$URI = $URINodeList->item( 0 )->nodeValue;
+
+			$pathNode = $this->createElementNS( Config::$data[ "wirekitNamespaces" ][ "sitemap" ], "sitemap:path" );
+			$data = $this->createCDATASection( ( string )$URI );
+			$pathNode->appendChild( $data );
+			$this->rootElement->appendChild( $pathNode );
+		}
 	}
 }
 
