@@ -1,4 +1,4 @@
-<xsl:stylesheet version="1.0" exclude-result-prefixes="xhtml xmvc component meta container group nav reference inject doc sitemap form" xmlns="http://www.w3.org/1999/xhtml" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xmvc="http://www.xmvc.org/ns/xmvc/1.0" xmlns:component="urn:wirekit:component" xmlns:meta="urn:wirekit:meta" xmlns:container="urn:wirekit:container" xmlns:group="urn:wirekit:group" xmlns:nav="urn:wirekit:nav" xmlns:reference="urn:wirekit:reference" xmlns:inject="urn:wirekit:inject" xmlns:doc="urn:wirekit:doc" xmlns:sitemap="urn:wirekit:sitemap" xmlns:form="urn:wirekit:form">
+<xsl:stylesheet version="1.0" exclude-result-prefixes="xhtml xmvc component meta container group nav reference inject doc sitemap form goto" xmlns="http://www.w3.org/1999/xhtml" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xmvc="http://www.xmvc.org/ns/xmvc/1.0" xmlns:component="urn:wirekit:component" xmlns:meta="urn:wirekit:meta" xmlns:container="urn:wirekit:container" xmlns:group="urn:wirekit:group" xmlns:nav="urn:wirekit:nav" xmlns:reference="urn:wirekit:reference" xmlns:inject="urn:wirekit:inject" xmlns:doc="urn:wirekit:doc" xmlns:sitemap="urn:wirekit:sitemap" xmlns:form="urn:wirekit:form" xmlns:goto="urn:wirekit:goto">
 
 	<xsl:template match="form:form" priority="0">
 		<form>
@@ -82,10 +82,10 @@
 					<xsl:attribute name="value"><xsl:value-of select="form:value[ lang( $lang ) ]" /></xsl:attribute>
 					<xsl:choose>
 						<xsl:when test="form:checked">
-							<xsl:attribute name="checked"><xsl:value-of select="form:checked" /></xsl:attribute>
+							<xsl:attribute name="checked">checked</xsl:attribute>
 						</xsl:when>
 						<xsl:when test="contains( //xmvc:strings/xmvc:*[ @key = $name ], concat( '|', form:value[ lang( $lang ) ], '|' ) )">
-							<xsl:attribute name="checked">true</xsl:attribute>
+							<xsl:attribute name="checked">checked</xsl:attribute>
 						</xsl:when>
 						<xsl:otherwise />
 					</xsl:choose>
@@ -145,17 +145,17 @@
 					<xsl:when test="$type = 'select'">
 						<xsl:choose>
 							<xsl:when test="form:selected">
-								<xsl:attribute name="selected"><xsl:value-of select="form:selected" /></xsl:attribute>
+								<xsl:attribute name="selected">selected</xsl:attribute>
 							</xsl:when>
 							<xsl:when test="//xmvc:strings/xmvc:*[ @key = $name ] = form:value[ lang( $lang ) ]">
-								<xsl:attribute name="selected">true</xsl:attribute>
+								<xsl:attribute name="selected">selected</xsl:attribute>
 							</xsl:when>
 							<xsl:otherwise />
 						</xsl:choose>
 					</xsl:when>
 					<xsl:otherwise>
 						<xsl:if test="contains( //xmvc:strings/xmvc:*[ @key = $name ], concat( '|', form:value[ lang( $lang ) ], '|' ) )">
-							<xsl:attribute name="selected">true</xsl:attribute>
+							<xsl:attribute name="selected">selected</xsl:attribute>
 						</xsl:if>
 					</xsl:otherwise>
 				</xsl:choose>

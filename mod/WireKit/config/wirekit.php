@@ -1,6 +1,7 @@
 <?php
 
-$applicationClass = "";	// IMPORTANT: This must be set in app/config!
+$applicationClass = "";		// IMPORTANT: This must be set in app/config!
+$componentNamespace = "";	// IMPORTANT: This must be set in app/config!
 
 $componentCacheFilePattern = "app/cache/components/#type#/#name#/#hash#.txt";
 $xliffFilePattern = "app/components/#component#/xliff/#instance#.#lang#.xliff";
@@ -21,5 +22,7 @@ $wirekitNamespaces[ "doc" ] = "urn:wirekit:doc";
 $wirekitNamespaces[ "sitemap" ] = "urn:wirekit:sitemap";
 $wirekitNamespaces[ "loc" ] = "urn:wirekit:loc";
 $wirekitNamespaces[ "lookup" ] = "urn:wirekit:lookup";
+$wirekitNamespaces[ "form" ] = "urn:wirekit:form";
+$wirekitNamespaces[ "goto" ] = "urn:wirekit:goto";
 
 ?>
