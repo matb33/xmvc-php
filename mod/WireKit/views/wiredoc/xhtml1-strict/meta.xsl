@@ -2,14 +2,22 @@
 
 	<xsl:template name="meta">
 		<xsl:if test="//meta:title[ lang( $lang ) ]">
-			<xsl:variable name="glue" select="//meta:title-options/@glue" />
-			<xsl:variable name="sort-order" select="//meta:title-options/@sort-order" />
+			<xsl:variable name="default-glue" select="' | '" />
+			<xsl:variable name="sort-order">
+				<xsl:choose>
+					<xsl:when test="//meta:title/@sort-order"><xsl:value-of select="//meta:title/@sort-order[ 1 ]" /></xsl:when>
+					<xsl:otherwise>ascending</xsl:otherwise>
+				</xsl:choose>
+			</xsl:variable>
 			<title>
 				<xsl:for-each select="//meta:title[ lang( $lang ) ]">
 					<xsl:sort select="position()" data-type="number" order="{ $sort-order }" />
 					<xsl:value-of select="." />
 					<xsl:if test="position() != last()">
-						<xsl:value-of select="$glue" />
+						<xsl:choose>
+							<xsl:when test="@glue"><xsl:value-of select="@glue" /></xsl:when>
+							<xsl:otherwise><xsl:value-of select="$default-glue" /></xsl:otherwise>
+						</xsl:choose>
 					</xsl:if>
 				</xsl:for-each>
 			</title>
