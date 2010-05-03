@@ -72,7 +72,7 @@
 		<xsl:apply-templates select="form:constraint" />
 	</xsl:template>
 
-	<xsl:template match="form:field/form:option[ ancestor::form:field[1]/@type = 'checkbox' or ancestor::form:field[1]/@type = 'radio' ]" priority="0">
+	<xsl:template match="form:field//form:option[ ancestor::form:field[1]/@type = 'checkbox' or ancestor::form:field[1]/@type = 'radio' ]" priority="0">
 		<xsl:variable name="name" select="ancestor::form:field[1]/@name" />
 		<xsl:variable name="type" select="ancestor::form:field[1]/@type" />
 		<label for="{ $name }-{ position() }" class="{ $name } { $type }">
@@ -100,7 +100,7 @@
 		<label for="{ @name }" class="{ @name } { @type }">
 			<xsl:apply-templates select="form:label[ not( @position ) or @position = 'before' ]" />
 			<select name="{ @name }" id="{ @name }" class="{ @name } { @type }">
-				<xsl:apply-templates select="*[ name() = 'form:option' or name() = 'form:group' ]" />
+				<xsl:apply-templates select="*[ name() != 'form:label' and name() != 'form:info' and name() != 'form:constraint' ]" />
 			</select>
 			<xsl:apply-templates select="form:label[ @position = 'after' ]" />
 			<xsl:apply-templates select="form:info" />
@@ -112,7 +112,7 @@
 		<label for="{ @name }" class="{ @name } { @type }">
 			<xsl:apply-templates select="form:label[ not( @position ) or @position = 'before' ]" />
 			<select name="{ @name }[]" id="{ @name }" multiple="true" class="{ @name } { @type }">
-				<xsl:apply-templates select="*[ name() = 'form:option' or name() = 'form:group' ]" />
+				<xsl:apply-templates select="*[ name() != 'form:label' and name() != 'form:info' and name() != 'form:constraint' ]" />
 			</select>
 			<xsl:apply-templates select="form:label[ @position = 'after' ]" />
 			<xsl:apply-templates select="form:info" />
@@ -169,7 +169,7 @@
 			<xsl:if test="form:label[ lang( $lang ) ]">
 				<xsl:attribute name="label"><xsl:value-of select="form:label[ lang( $lang ) ]" /></xsl:attribute>
 			</xsl:if>
-			<xsl:apply-templates select="*[ name() = 'form:option' or name() = 'form:group' ]" />
+			<xsl:apply-templates select="*[ name() != 'form:label' ]" />
 		</optgroup>
 	</xsl:template>
 
