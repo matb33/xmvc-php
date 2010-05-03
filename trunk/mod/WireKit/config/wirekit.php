@@ -23,6 +23,6 @@ $wirekitNamespaces[ "sitemap" ] = "urn:wirekit:sitemap";
 $wirekitNamespaces[ "loc" ] = "urn:wirekit:loc";
 $wirekitNamespaces[ "lookup" ] = "urn:wirekit:lookup";
 $wirekitNamespaces[ "form" ] = "urn:wirekit:form";
-$wirekitNamespaces[ "goto" ] = "urn:wirekit:goto";
+$wirekitNamespaces[ "interact" ] = "urn:wirekit:interact";
 
 ?>
