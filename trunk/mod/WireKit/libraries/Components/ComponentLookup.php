@@ -64,8 +64,10 @@ class ComponentLookup extends Singleton
 				$hrefList[ $lang ] = array( "path" => $path, "private" => $private, "lang" => $lang );
 			}
 
+			$parentNodeList = $model->xPath->query( "//meta:parent", $componentNode );
+			$parent = $parentNodeList->length > 0 ? $parentNodeList->item( 0 )->nodeValue : "";
+
 			$view = $componentNode->hasAttribute( "view" ) ? $componentNode->getAttribute( "view" ) : "";
-			$parent = $componentNode->hasAttribute( "parent" ) ? $componentNode->getAttribute( "parent" ) : "";
 
 			if( is_null( $file ) )
 			{
