@@ -107,7 +107,7 @@ class ComponentFactory extends DefaultEventDispatcher
 		$externalNode = $this->rootModel->importNode( $componentModel->xPath->query( "//component:definition" )->item( 0 ), true );
 		$this->referenceNode->parentNode->replaceChild( $externalNode, $this->referenceNode );
 
-		$childRefNodeList = $this->rootModel->xPath->query( "//reference:child", $this->referenceNode );
+		$childRefNodeList = $this->rootModel->xPath->query( "//reference:parent-children", $this->referenceNode );
 
 		if( $childRefNodeList->length > 0 )
 		{
