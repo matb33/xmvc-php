@@ -92,6 +92,12 @@ class Processor
 		$eventName = isset( $componentData[ "eventName" ] ) ? $componentData[ "eventName" ] : null;
 		$parameters = isset( $componentData[ "parameters" ] ) ? $componentData[ "parameters" ] : array();
 		$cacheMinutes = isset( $componentData[ "cacheMinutes" ] ) ? $componentData[ "cacheMinutes" ] : 0;
+		$matchingLang = isset( $componentData[ "matchingLang" ] ) && strlen( $componentData[ "matchingLang" ] ) > 0 ? $componentData[ "matchingLang" ] : null;
+
+		if( ! is_null( $matchingLang ) )
+		{
+			Language::SetLang( $matchingLang );
+		}
 
 		if( is_null( $delegate ) )
 		{

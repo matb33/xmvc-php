@@ -282,7 +282,7 @@ class ComponentLookup extends Singleton
 
 		if( $entryNodeList->length > 0 )
 		{
-			return( $this->GetComponentData( $entryNodeList->item( $index ) ) );
+			return( $this->GetComponentData( $entryNodeList->item( $index ), $path ) );
 		}
 
 		return( false );
@@ -312,18 +312,20 @@ class ComponentLookup extends Singleton
 		return( $path );
 	}
 
-	private function GetComponentData( $entryNode )
+	private function GetComponentData( $entryNode, $path = "" )
 	{
 		$lookupModel = $this->Get();
 
 		$componentNodeList = $lookupModel->xPath->query( "lookup:component", $entryNode );
 		$instanceNameNodeList = $lookupModel->xPath->query( "lookup:instance-name", $entryNode );
 		$FQNNodeList = $lookupModel->xPath->query( "lookup:fully-qualified-name", $entryNode );
+		$matchingLang = $lookupModel->xPath->query( "lookup:href[ lookup:uri = '" . $path . "' ]/lookup:lang", $entryNode );
 
 		$data = array();
 		$data[ "component" ] = $componentNodeList->length > 0 ? $componentNodeList->item( 0 )->nodeValue : "";
 		$data[ "instanceName" ] = $instanceNameNodeList->length > 0 ? $instanceNameNodeList->item( 0 )->nodeValue : "";
 		$data[ "fullyQualifiedName" ] = $FQNNodeList->length > 0 ? $FQNNodeList->item( 0 )->nodeValue : "";
+		$data[ "matchingLang" ] = $matchingLang->length == 1 ? $matchingLang->item( 0 )->nodeValue : "";
 
 		return( $data );
 	}
