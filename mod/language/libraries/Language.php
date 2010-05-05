@@ -36,6 +36,15 @@ class Language
 		return( self::$language );
 	}
 
+	public static function SetLang( $lang )
+	{
+		if( in_array( $lang, array_keys( self::$data ) ) )
+		{
+			self::$language = $lang;
+			self::SetLanguageSession();
+		}
+	}
+
 	public static function GetDefinedLangs()
 	{
 		self::LoadLanguageModel();
