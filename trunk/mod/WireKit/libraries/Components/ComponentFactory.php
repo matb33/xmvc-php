@@ -121,13 +121,19 @@ class ComponentFactory extends DefaultEventDispatcher
 
 	private function InjectHref()
 	{
-		foreach( $this->rootModel->xPath->query( "//*[ @inject:href != '' ]" ) as $itemNode )
+		foreach( $this->rootModel->xPath->query( "//*[ @inject:href ]" ) as $itemNode )
 		{
 			$fullyQualifiedName = $itemNode->getAttribute( "inject:href" );
 			$prefix = $itemNode->hasAttribute( "inject:href-prefix" ) ? $itemNode->getAttribute( "inject:href-prefix" ) : "";
 			$suffix = $itemNode->hasAttribute( "inject:href-suffix" ) ? $itemNode->getAttribute( "inject:href-suffix" ) : "";
+			$targetLang = $itemNode->hasAttribute( "inject:href-lang" ) ? $itemNode->getAttribute( "inject:href-lang" ) : Language::GetLang();
 
-			$path = ComponentLookup::getInstance()->GetPathByFullyQualifiedNameAndLanguage( $fullyQualifiedName, Language::GetLang() );
+			if( strlen( $fullyQualifiedName ) == 0 )
+			{
+				$fullyQualifiedName = implode( "\\", ComponentUtils::GetHrefContextComponentAndInstanceName( $this->rootModel ) );
+			}
+
+			$path = ComponentLookup::getInstance()->GetPathByFullyQualifiedNameAndLanguage( $fullyQualifiedName, $targetLang );
 
 			$linkNode = $this->rootModel->createAttribute( "href" );
 			$linkNode->value = $prefix . $path . $suffix;
