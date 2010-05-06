@@ -228,23 +228,25 @@
 
 	<xsl:template match="doc:phone">
 		<xsl:if test="lang( $lang )">
-			<span class="phone">
+			<a class="phone">
 				<xsl:if test="@id">
 					<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
 				</xsl:if>
+				<xsl:attribute name="href">tel:<xsl:value-of select="text()" /></xsl:attribute>
 				<xsl:apply-templates />
-			</span>
+			</a>
 		</xsl:if>
 	</xsl:template>
 
 	<xsl:template match="doc:fax">
 		<xsl:if test="lang( $lang )">
-			<span class="fax">
+			<a class="fax">
 				<xsl:if test="@id">
 					<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
 				</xsl:if>
+				<xsl:attribute name="href">fax:<xsl:value-of select="text()" /></xsl:attribute>
 				<xsl:apply-templates />
-			</span>
+			</a>
 		</xsl:if>
 	</xsl:template>
 
