@@ -1,17 +1,11 @@
 <?php
 
-namespace xMVC\Sys;
+namespace System;
 
-require_once( "sys/bootstrap.php" );
+include( "namespaces.php" );
 
-NamespaceMap::Register( "/^xMVC::Sys::(.*)$/", "./sys/%f/%1" );
-NamespaceMap::Register( "/^xMVC::App::(.*)$/", "./app/%f/%1" );
-NamespaceMap::Register( "/^Module::(.*?)::(.*)$/", "./mod/%1/%f/%2" );
+Libraries\Routing::singletonOverride( "Application\\Libraries\\MyRouting" );
+Libraries\FrontController::singletonOverride( "Application\\Libraries\\MyFrontController" );
 
-Config::Load( "./sys" );
-Config::Load( "./app" );
-Config::Load( "./mod/*" );
-
-Core::Load();
-
-?>
+Libraries\Routing::getInstance()->helloWorld();
+Libraries\FrontController::getInstance()->helloWorld();
