@@ -11,7 +11,7 @@ abstract class OverrideableSingleton
 	protected function __construct() {}
 	final private function __clone() {}
 
-	final static public function singletonOverride( $override )
+	final static public function override( $override )
 	{
 		$calledClass = get_called_class();
 
