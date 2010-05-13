@@ -33,9 +33,10 @@ abstract class Component extends DefaultEventDispatcher
 	{
 		$cacheMinutes = ( int )$cacheMinutes;
 		$eventName = ComponentUtils::DefaultEventNameIfNecessary( $eventName );
+		$component = ComponentUtils::ExtractComponentFromComponentClass( $componentClass );
 
 		$pathParts = Routing::GetPathParts();
-		list( $this->component, $this->instanceName, $this->fullyQualifiedName ) = ComponentUtils::ExtractComponentNameParts( $componentClass, $instanceName );
+		list( $this->component, $this->instanceName, $this->fullyQualifiedName ) = ComponentUtils::ExtractComponentNameParts( $component, $instanceName );
 		$this->eventName = $eventName;
 		$this->parameters = $parameters;
 		$this->cacheMinutes = $cacheMinutes;
