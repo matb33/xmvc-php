@@ -46,6 +46,10 @@ class ComponentUtils
 		{
 			return( $component );
 		}
+		elseif( Loader::Resolve( "libraries", $component, Loader::libraryExtension ) !== false )
+		{
+			return( $component );
+		}
 
 		return( Config::$data[ "componentNamespace" ] . "\\" . $component );
 	}

@@ -1,25 +1,5 @@
 <xsl:stylesheet version="1.0" exclude-result-prefixes="xhtml xmvc component meta container group nav reference inject doc sitemap form interact" xmlns="http://www.w3.org/1999/xhtml" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xmvc="http://www.xmvc.org/ns/xmvc/1.0" xmlns:component="urn:wirekit:component" xmlns:meta="urn:wirekit:meta" xmlns:container="urn:wirekit:container" xmlns:group="urn:wirekit:group" xmlns:nav="urn:wirekit:nav" xmlns:reference="urn:wirekit:reference" xmlns:inject="urn:wirekit:inject" xmlns:doc="urn:wirekit:doc" xmlns:sitemap="urn:wirekit:sitemap" xmlns:form="urn:wirekit:form" xmlns:interact="urn:wirekit:interact">
 
-	<xsl:template match="form:form" priority="0">
-		<form>
-			<xsl:if test="@href">
-				<xsl:attribute name="action"><xsl:value-of select="@href" /></xsl:attribute>
-			</xsl:if>
-			<xsl:attribute name="method">
-				<xsl:choose>
-					<xsl:when test="@method"><xsl:value-of select="@method" /></xsl:when>
-					<xsl:otherwise>post</xsl:otherwise>
-				</xsl:choose>
-			</xsl:attribute>
-			<xsl:if test="@enctype">
-				<xsl:attribute name="enctype"><xsl:value-of select="@enctype" /></xsl:attribute>
-			</xsl:if>
-			<div class="form">
-				<xsl:apply-templates />
-			</div>
-		</form>
-	</xsl:template>
-
 	<xsl:template match="form:field[ @type = 'text' or @type = 'password' or @type = 'file' ]" priority="0">
 		<xsl:variable name="name" select="@name" />
 		<label for="{ @name }" class="{ @name } { @type }">
@@ -213,6 +193,32 @@
 		<xsl:if test="substring( @type, 1, 6 ) = 'match-'">
 			<input type="hidden" name="{ ../@name }--dependency[]" value="{ @against }" />
 		</xsl:if>
+	</xsl:template>
+
+	<xsl:template match="form:*" priority="0">
+		<form>
+			<xsl:if test="@href">
+				<xsl:attribute name="action"><xsl:value-of select="@href" /></xsl:attribute>
+			</xsl:if>
+			<xsl:attribute name="method">
+				<xsl:choose>
+					<xsl:when test="@method"><xsl:value-of select="@method" /></xsl:when>
+					<xsl:otherwise>post</xsl:otherwise>
+				</xsl:choose>
+			</xsl:attribute>
+			<xsl:if test="@enctype">
+				<xsl:attribute name="enctype"><xsl:value-of select="@enctype" /></xsl:attribute>
+			</xsl:if>
+			<xsl:if test="local-name() != 'form'">
+				<xsl:attribute name="class"><xsl:value-of select="local-name()" /></xsl:attribute>
+			</xsl:if>
+			<xsl:if test="@id">
+				<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
+			</xsl:if>
+			<div class="form">
+				<xsl:apply-templates />
+			</div>
+		</form>
 	</xsl:template>
 
 </xsl:stylesheet>

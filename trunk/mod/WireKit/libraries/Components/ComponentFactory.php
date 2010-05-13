@@ -25,20 +25,19 @@ class ComponentFactory extends DefaultEventDispatcher
 		$componentClass = ComponentUtils::GetComponentClassName( $component );
 		$eventName = ComponentUtils::DefaultEventNameIfNecessary( $eventName );
 
-		if( class_exists( $componentClass, true ) && is_subclass_of( $componentClass, "xMVC\Mod\WireKit\Components\Component" ) )
+		if( class_exists( $componentClass, true ) )
 		{
 			$instance = new $componentClass( $instanceName, $eventName, $parameters, $cacheMinutes );
-			$instance->addEventListener( "onreadyforprocessing.components", new Delegate( "OnComponentReadyForExpansion", $this ) );
-			$instance->Build();
-
-			return( true );
 		}
 		else
 		{
-			trigger_error( "Could not find component class: [" . $componentClass . "]", E_USER_ERROR );
+			$instance = new GenericComponent( $componentClass, $instanceName, $eventName, $parameters, $cacheMinutes );
 		}
 
-		return( false );
+		$instance->addEventListener( "onreadyforprocessing.components", new Delegate( "OnComponentReadyForExpansion", $this ) );
+		$instance->Build();
+
+		return( true );
 	}
 
 	public function OnComponentReadyForExpansion( Event $event )
