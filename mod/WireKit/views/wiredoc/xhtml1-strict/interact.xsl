@@ -29,9 +29,15 @@
 	<xsl:template match="interact:action">
 		<xsl:if test="lang( $lang )">
 			<button>
-				<xsl:if test="@id">
-					<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
-				</xsl:if>
+				<xsl:choose>
+					<xsl:when test="@handle">
+						<xsl:attribute name="id"><xsl:value-of select="@handle" /></xsl:attribute>
+					</xsl:when>
+					<xsl:when test="@id">
+						<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
+					</xsl:when>
+					<xsl:otherwise />
+				</xsl:choose>
 				<span class="button">
 					<xsl:apply-templates />
 				</span>
