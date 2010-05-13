@@ -17,18 +17,10 @@ class ComponentUtils
 
 	public static function GetComponentClassName( $component )
 	{
-		if( strpos( $component, "\\" ) !== false )
-		{
-			$component .= strrchr( $component, "\\" );
-		}
-		else
-		{
-			$component .= "\\" . $component;
-		}
+		$fullyQualifiedName = self::GetFullyQualifiedComponent( $component );
+		$componentClass = $fullyQualifiedName . strrchr( $fullyQualifiedName, "\\" );
 
-		$component = self::GetFullyQualifiedComponent( $component );
-
-		return( $component );
+		return( $componentClass );
 	}
 
 	public static function GetComponentDefinitionFilename( $component )
@@ -38,15 +30,17 @@ class ComponentUtils
 
 	public static function GetFullyQualifiedComponent( $component )
 	{
-		if( Loader::Resolve( null, $component, Loader::libraryExtension ) !== false )
+		if( Loader::Resolve( null, $component, Loader::modelExtension ) !== false )
 		{
-			return( $component );
-		}
-		elseif( Loader::Resolve( null, $component, Loader::modelExtension ) !== false )
-		{
+			// Is an FQN with instance-name specified
 			return( $component );
 		}
 		elseif( Loader::Resolve( "libraries", $component, Loader::libraryExtension ) !== false )
+		{
+			// Is likely the GenericComponent class found in the libraries/Components structure
+			return( $component );
+		}
+		elseif( ComponentLookup::getInstance()->GetComponentDataByComponentName( $component ) !== false )
 		{
 			return( $component );
 		}
@@ -123,24 +117,27 @@ class ComponentUtils
 		}
 	}
 
+	// TODO: This function should probably check against ComponentLookup instead of assuming stuff
 	public static function ExtractComponentNameParts( $componentString, $instanceName = null )
 	{
 		$fullyQualifiedName = self::GetFullyQualifiedComponent( $componentString );
 
-		$parts = explode( "\\", $fullyQualifiedName );
-
-		if( count( $parts ) >= 2 && $parts[ count( $parts ) - 1 ] == $parts[ count( $parts ) - 2 ] )
-		{
-			$component = substr( $fullyQualifiedName, 0, strrpos( $fullyQualifiedName, "\\" ) );
-			$instanceName = is_null( $instanceName ) ? "" : $instanceName;
-			$fullyQualifiedName = strlen( $instanceName ) > 0 ? $component . "\\" . $instanceName : $component;
-		}
-		else
+		if( is_null( $instanceName ) || strlen( $instanceName ) == 0 )
 		{
 			$component = substr( $fullyQualifiedName, 0, strrpos( $fullyQualifiedName, "\\" ) );
 			$instanceName = substr( strrchr( $fullyQualifiedName, "\\" ), 1 );
 		}
+		else
+		{
+			$component = $fullyQualifiedName;
+			$fullyQualifiedName .= "\\" . $instanceName;
+		}
 
 		return( array( $component, $instanceName, $fullyQualifiedName ) );
+	}
+
+	public static function ExtractComponentFromComponentClass( $componentClass )
+	{
+		return( substr( $componentClass, 0, strrpos( $componentClass, "\\" ) ) );
 	}
 }

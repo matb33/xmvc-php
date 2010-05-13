@@ -232,9 +232,16 @@ class ComponentLookup extends Singleton
 
 	private function ExtractComponentNaming( $file )
 	{
-		$fileAtComponentRoot = str_replace( "/", "\\", str_replace( Normalize::Path( realpath( Config::$data[ "componentLookupCrawlFolder" ] ) ), "", $file ) );
-		$componentString = str_replace( ".xsl", "", $fileAtComponentRoot );
-		$componentString = str_replace( ".xml", "", $componentString );
+		$componentString = str_replace( "/", "\\", str_replace( Normalize::Path( realpath( Config::$data[ "componentLookupCrawlFolder" ] ) ), "", $file ) );
+
+		if( strpos( $componentString, ".xsl" ) !== false )
+		{
+			$componentString = ComponentUtils::ExtractComponentFromComponentClass( $componentString );
+		}
+		else
+		{
+			$componentString = str_replace( ".xml", "", $componentString );
+		}
 
 		return( ComponentUtils::ExtractComponentNameParts( $componentString ) );
 	}
@@ -310,6 +317,19 @@ class ComponentLookup extends Singleton
 		$path = $URINodeList->length > 0 ? $URINodeList->item( $index )->nodeValue : "";
 
 		return( $path );
+	}
+
+	public function GetComponentDataByComponentName( $component, $index = 0 )
+	{
+		$lookupModel = $this->Get();
+		$entryNodeList = $lookupModel->xPath->query( "//lookup:entry[ lookup:component = '" . $component . "' ]" );
+
+		if( $entryNodeList->length > 0 )
+		{
+			return( $this->GetComponentData( $entryNodeList->item( $index ) ) );
+		}
+
+		return( false );
 	}
 
 	private function GetComponentData( $entryNode, $path = "" )
