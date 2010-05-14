@@ -1,10 +1,10 @@
 <?php
 
-namespace Application\Libraries;
+namespace Libraries;
 
-use System\Libraries\Routing;
+//use System\Libraries\Routing;
 
-class MyRouting extends Routing
+class MyRouting
 {
 	protected function __construct()
 	{

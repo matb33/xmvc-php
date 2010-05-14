@@ -1,11 +1,14 @@
 <?php
 
-namespace System;
+namespace
+{
+	$moduleRegistry = array( "Application", "System" );
 
-include( "namespaces.php" );
+	include( "autoload.php" );
 
-Libraries\Routing::override( "Application\\Libraries\\MyRouting" );
-Libraries\FrontController::override( "Application\\Libraries\\MyFrontController" );
+	Libraries\Routing::override( "Libraries\\MyRouting" );
+	Libraries\FrontController::override( "Libraries\\MyFrontController" );
 
-Libraries\Routing::getInstance()->helloWorld();
-Libraries\FrontController::getInstance()->helloWorld();
+	Libraries\Routing::getInstance()->helloWorld();
+	Libraries\FrontController::getInstance()->helloWorld();
+}
