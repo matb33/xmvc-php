@@ -133,7 +133,7 @@ Any interactive (action-reaction) elements are defined using this namespace.  Cu
 form
 ================================
 
-<form:form method="[ACTION]" href="[ACTION]" enctype="[ENCTYPE]" />
+<form:form method="[ACTION]" href="[ACTION]" enctype="[ENCTYPE]">
 	<form:fieldset>
 		<form:legend />
 
