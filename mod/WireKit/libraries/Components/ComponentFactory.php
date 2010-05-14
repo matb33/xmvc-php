@@ -27,7 +27,7 @@ class ComponentFactory extends DefaultEventDispatcher
 
 		if( class_exists( $componentClass, true ) )
 		{
-			$instance = new $componentClass( $instanceName, $eventName, $parameters, $cacheMinutes );
+			$instance = new $componentClass( null, $instanceName, $eventName, $parameters, $cacheMinutes );
 		}
 		else
 		{

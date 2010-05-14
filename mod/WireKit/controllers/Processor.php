@@ -125,7 +125,7 @@ class Processor
 
 	public function RenderPageWithModel( $model, $component, $instanceName )
 	{
-		$viewNameNodeList = $model->xPath->query( "//component:definition/@view" );
+		$viewNameNodeList = $model->xPath->query( "//meta:view" );
 		$viewName = $viewNameNodeList->length > 0 ? $viewNameNodeList->item( 0 )->nodeValue : "";
 		$viewName = ComponentUtils::FallbackViewNameIfNecessary( $viewName );
 

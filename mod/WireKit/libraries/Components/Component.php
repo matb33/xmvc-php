@@ -234,7 +234,7 @@ abstract class Component extends DefaultEventDispatcher
 
 interface IComponent
 {
-	public function __construct( $instanceName = null, $eventName = null, $parameters = array(), $cacheMinutes = 0 );
+	public function __construct( $componentClass = null, $instanceName = null, $eventName = null, $parameters = array(), $cacheMinutes = 0 );
 }
 
 ?>
