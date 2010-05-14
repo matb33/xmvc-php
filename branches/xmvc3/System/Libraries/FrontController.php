@@ -1,6 +1,6 @@
 <?php
 
-namespace System\Libraries;
+namespace Libraries;
 
 class FrontController extends OverrideableSingleton
 {

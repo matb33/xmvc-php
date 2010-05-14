@@ -1,8 +1,6 @@
 <?php
 
-namespace Application\Libraries;
-
-use System\Libraries\FrontController;
+namespace Libraries;
 
 class MyFrontController extends FrontController
 {
