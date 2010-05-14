@@ -62,13 +62,13 @@ class DefaultEventDispatcher implements IEventDispatcher
 
     private function tryToCreateListenerBucket( $eventType )
     {
-        if( $this->buckDoesNotExist( $eventType ) )
+        if( $this->bucketDoesNotExist( $eventType ) )
         {
             $this->listeners[ $eventType ] = array();
         }
     }
 
-    private function buckDoesNotExist( $eventType )
+    private function bucketDoesNotExist( $eventType )
     {
         return( !$this->bucketExists( $eventType ) );
     }
