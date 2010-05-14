@@ -3,11 +3,11 @@
 spl_autoload_extensions( ".php" );
 spl_autoload_register();
 
-if( isset( $moduleRegistry ) && is_array( $moduleRegistry ) )
+if( isset( $rootNamespaceFolders ) && is_array( $rootNamespaceFolders ) )
 {
 	$path = get_include_path();
 
-	foreach( $moduleRegistry as $folder )
+	foreach( $rootNamespaceFolders as $folder )
 	{
 		$path .= ( PATH_SEPARATOR . $folder );
 	}
