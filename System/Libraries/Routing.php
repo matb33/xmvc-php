@@ -1,6 +1,6 @@
 <?php
 
-namespace Libraries;
+namespace System\Libraries;
 
 class Routing extends OverrideableSingleton
 {

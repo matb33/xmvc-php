@@ -1,6 +1,6 @@
 <?php
 
-namespace Libraries;
+namespace System\Libraries;
 
 // Original author: Quentin Berlemont <quentinberlemont@gmail.com>
 
