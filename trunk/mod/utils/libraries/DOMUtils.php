@@ -19,14 +19,16 @@ class DOMUtils
 
 	public static function ReplaceNodeWithChildren( &$refNode, &$node )
 	{
+		$childNodes = array();
+
 		for( $i = 0; $i < $node->childNodes->length; $i++ )
 		{
-			$childNode = $node->childNodes->item( $i );
+			$childNodes[] = $node->childNodes->item( $i );
+		}
 
-			if( !( $childNode instanceof \DOMText ) )
-			{
-				$refNode->parentNode->insertBefore( $childNode, $refNode );
-			}
+		foreach( $childNodes as $childNode )
+		{
+			$refNode->parentNode->insertBefore( $childNode, $refNode );
 		}
 
 		$refNode->parentNode->removeChild( $refNode );
