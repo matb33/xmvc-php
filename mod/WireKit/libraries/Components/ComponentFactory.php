@@ -108,9 +108,9 @@ class ComponentFactory extends DefaultEventDispatcher
 
 		$childRefNodeList = $this->rootModel->xPath->query( "//reference:parent-children", $this->referenceNode );
 
-		if( $childRefNodeList->length > 0 )
+		for( $i = 0; $i < $childRefNodeList->length; $i++ )
 		{
-			$childRefNode = $childRefNodeList->item( 0 );
+			$childRefNode = $childRefNodeList->item( $i );
 			$importedNode = $this->rootModel->importNode( $originalNode, true );
 			DOMUtils::ReplaceNodeWithChildren( $childRefNode, $importedNode );
 		}
