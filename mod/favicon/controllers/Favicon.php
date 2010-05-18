@@ -4,27 +4,39 @@ namespace xMVC\Mod\Favicon;
 
 class Favicon
 {
+	private $favIconFolder;
+	
 	public function Index()
 	{
+		$this->favIconFolder =  "./app/inc/images/";
 		$this->Ico();
 	}
 
 	public function Ico()
 	{
-		header( "Content-type: image/vnd.microsoft.icon" );
-		echo( file_get_contents( "./app/inc/images/favicon.ico" ) );
+		if( file_exists( $this->favIconFolder . "favicon.ico" ) )
+		{
+			header( "Content-type: image/vnd.microsoft.icon" );
+			echo( file_get_contents( $this->favIconFolder . "favicon.ico" ) );
+		}
 	}
 
 	public function Gif()
 	{
-		header( "Content-type: image/gif" );
-		echo( file_get_contents( "./app/inc/images/favicon.gif" ) );
+		if( file_exists( $this->favIconFolder . "favicon.gif" ) )
+		{
+			header( "Content-type: image/gif" );
+			echo( file_get_contents( $this->favIconFolder . "favicon.gif" ) );
+		}
 	}
 
 	public function Png()
 	{
-		header( "Content-type: image/png" );
-		echo( file_get_contents( "./app/inc/images/favicon.png" ) );
+		if( file_exists( $this->favIconFolder . "favicon.png" ) )
+		{
+			header( "Content-type: image/png" );
+			echo( file_get_contents( $this->favIconFolder . "favicon.png" ) );
+		}
 	}
 }
 
