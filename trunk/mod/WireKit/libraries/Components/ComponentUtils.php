@@ -28,24 +28,28 @@ class ComponentUtils
 		return( self::GetComponentClassName( $component ) . ".xsl" );
 	}
 
-	public static function GetFullyQualifiedComponent( $component )
+	public static function GetFullyQualifiedComponent( $componentString )
 	{
-		if( Loader::Resolve( null, $component, Loader::modelExtension ) !== false )
+		if( Loader::Resolve( null, $componentString, Loader::modelExtension ) !== false )
 		{
 			// Is an FQN with instance-name specified
-			return( $component );
+			return( $componentString );
 		}
-		elseif( Loader::Resolve( "libraries", $component, Loader::libraryExtension ) !== false )
+		elseif( Loader::Resolve( "libraries", $componentString, Loader::libraryExtension ) !== false )
 		{
 			// Is likely the GenericComponent class found in the libraries/Components structure
-			return( $component );
+			return( $componentString );
 		}
-		elseif( ComponentLookup::getInstance()->GetComponentDataByComponentName( $component ) !== false )
+		//elseif( ComponentLookup::getInstance()->GetComponentDataByComponentName( $componentString ) !== false )
+		elseif( realpath( Config::$data[ "componentLookupCrawlFolder" ] . $componentString ) !== false )
 		{
-			return( $component );
+			// Is a component without an instance-name specified (note the realpath method, which is slow compared to looking
+			// at the lookup.  However, if the lookup isn't created yet, we do an endless loop. This should be revisited (TODO)
+			return( Config::$data[ "componentNamespace" ] . "\\" . $componentString );
 		}
 
-		return( Config::$data[ "componentNamespace" ] . "\\" . $component );
+		// Assume that this component is well-formed.  This is definitely not the right thing to do, but a re-write is coming.
+		return( $componentString );
 	}
 
 	public static function DefaultEventNameIfNecessary( $eventName )
@@ -62,7 +66,7 @@ class ComponentUtils
 	{
 		if( strlen( trim( $viewName ) ) == 0 )
 		{
-			$viewName = "xMVC\\Mod\\WireKit\\xhtml1-strict";
+			$viewName = Config::$data[ "defaultView" ];
 		}
 
 		return( $viewName );

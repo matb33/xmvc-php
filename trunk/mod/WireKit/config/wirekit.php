@@ -3,6 +3,8 @@
 $applicationClass = "";		// IMPORTANT: This must be set in app/config!
 $componentNamespace = "";	// IMPORTANT: This must be set in app/config!
 
+$defaultView = "xMVC\\Mod\\WireKit\\xhtml1-strict";
+
 $componentCacheFilePattern = "app/cache/components/#type#/#name#/#hash#.txt";
 $xliffFilePattern = "app/components/#component#/xliff/#instance#.#lang#.xliff";
 
