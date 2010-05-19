@@ -42,6 +42,7 @@ class ComponentLookup extends Singleton
 		foreach( $flatList as $file )
 		{
 			$model = new XMLModelDriver( $file );
+			ComponentUtils::RegisterNamespaces( $model );
 			$metaDataCollection = $this->GetMetaData( $model, $file, $metaDataCollection );
 		}
 
@@ -50,11 +51,11 @@ class ComponentLookup extends Singleton
 
 	public function GetMetaData( $model, $file = null, $metaDataCollection = array() )
 	{
-		foreach( $model->xPath->query( "//component:definition" ) as $componentNode )
+		foreach( $model->xPath->query( "//component:definition | //wd:component" ) as $componentNode )
 		{
 			$hrefList = array();
 
-			foreach( $model->xPath->query( "//meta:href", $componentNode ) as $hrefNode )
+			foreach( $model->xPath->query( "//meta:href | //wd:meta[ @wd:name='href' ]", $componentNode ) as $hrefNode )
 			{
 				$lang = $hrefNode->hasAttribute( "xml:lang" ) ? $hrefNode->getAttribute( "xml:lang" ) : Language::GetLang();
 				$private = $hrefNode->hasAttribute( "private" ) ? $hrefNode->getAttribute( "private" ) : "0";
@@ -64,21 +65,30 @@ class ComponentLookup extends Singleton
 				$hrefList[ $lang ] = array( "path" => $path, "private" => $private, "lang" => $lang );
 			}
 
-			$parentNodeList = $model->xPath->query( "//meta:parent", $componentNode );
+			$parentNodeList = $model->xPath->query( "//meta:parent | //wd:meta[ @wd:name='parent' ]", $componentNode );
 			$parent = $parentNodeList->length > 0 ? $parentNodeList->item( 0 )->nodeValue : "";
 
-			$viewNodeList = $model->xPath->query( "//meta:view", $componentNode );
+			$viewNodeList = $model->xPath->query( "//meta:view | //wd:meta[ @wd:name='view' ]", $componentNode );
 			$view = $viewNodeList->length > 0 ? $viewNodeList->item( 0 )->nodeValue : "";
 
 			if( is_null( $file ) )
 			{
-				$component = $componentNode->hasAttribute( "name" ) ? $componentNode->getAttribute( "name" ) : "";
-				$instanceName = $componentNode->hasAttribute( "instance-name" ) ? $componentNode->getAttribute( "instance-name" ) : "";
-				$fullyQualifiedName = $component . ( strlen( $instanceName ) > 0 ? "\\" . $instanceName : "" );
+				if( $componentNode->hasAttribute( "wd:name" ) )
+				{
+					// Wiredoc 2.0
+					list( $component, $instanceName, $fullyQualifiedName ) = ComponentUtils::ExtractComponentNamePartsFromWiredocName( $componentNode->getAttribute( "wd:name" ) );
+				}
+				else
+				{
+					// Wiredoc 1.0
+					$component = $componentNode->hasAttribute( "name" ) ? $componentNode->getAttribute( "name" ) : "";
+					$instanceName = $componentNode->hasAttribute( "instance-name" ) ? $componentNode->getAttribute( "instance-name" ) : "";
+					$fullyQualifiedName = $component . ( strlen( $instanceName ) > 0 ? "\\" . $instanceName : "" );
+				}
 			}
 			else
 			{
-				list( $component, $instanceName, $fullyQualifiedName ) = $this->ExtractComponentNaming( $file );
+				list( $component, $instanceName, $fullyQualifiedName ) = $this->ExtractComponentNamingFromFile( $file );
 			}
 
 			$metaDataCollection[] = array(
@@ -231,20 +241,21 @@ class ComponentLookup extends Singleton
 		}
 	}
 
-	private function ExtractComponentNaming( $file )
+	private function ExtractComponentNamingFromFile( $file )
 	{
-		$componentString = str_replace( "/", "\\", str_replace( Normalize::Path( realpath( Config::$data[ "componentLookupCrawlFolder" ] ) ), "", $file ) );
+		$componentString = str_replace( "\\", "/", str_replace( Normalize::Path( realpath( Config::$data[ "componentLookupCrawlFolder" ] ) ), "", $file ) );
 
 		if( strpos( $componentString, ".xsl" ) !== false )
 		{
-			$componentString = ComponentUtils::ExtractComponentFromComponentClass( $componentString );
+			$componentWiredocName = ComponentUtils::ExtractComponentNamePartsFromWiredocName( $componentString );
 		}
 		else
 		{
-			$componentString = str_replace( ".xml", "", $componentString );
+			$componentWiredocName = str_replace( ".xml", "", $componentString );
+			$componentWiredocName = substr( $componentWiredocName, 0, strrpos( $componentWiredocName, "/" ) ) . "." . substr( strrchr( $componentWiredocName, "/" ), 1 );
 		}
 
-		return( ComponentUtils::ExtractComponentNameParts( $componentString ) );
+		return( ComponentUtils::ExtractComponentNamePartsFromWiredocName( $componentWiredocName ) );
 	}
 
 	public function Get()
@@ -299,7 +310,6 @@ class ComponentLookup extends Singleton
 	public function GetComponentDataByFullyQualifiedName( $fullyQualifiedName, $index = 0 )
 	{
 		$lookupModel = $this->Get();
-		$fullyQualifiedName = ComponentUtils::GetFullyQualifiedComponent( $fullyQualifiedName );
 		$entryNodeList = $lookupModel->xPath->query( "//lookup:entry[ lookup:fully-qualified-name = '" . $fullyQualifiedName . "' ]" );
 
 		if( $entryNodeList->length > 0 )
@@ -313,7 +323,6 @@ class ComponentLookup extends Singleton
 	public function GetPathByFullyQualifiedNameAndLanguage( $fullyQualifiedName, $lang, $index = 0 )
 	{
 		$lookupModel = $this->Get();
-		$fullyQualifiedName = ComponentUtils::GetFullyQualifiedComponent( $fullyQualifiedName );
 		$URINodeList = $lookupModel->xPath->query( "//lookup:entry[ lookup:fully-qualified-name = '" . $fullyQualifiedName . "' ]/lookup:href[ lang( '" . $lang . "' ) ]/lookup:uri" );
 		$path = $URINodeList->length > 0 ? $URINodeList->item( $index )->nodeValue : "";
 

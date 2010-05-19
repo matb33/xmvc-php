@@ -48,7 +48,7 @@ class HierarchyModelDriver extends ModelDriver implements IModelDriver
 
 		if( $parentNodeList->length > 0 )
 		{
-			$fullyQualifiedParentName = ComponentUtils::GetFullyQualifiedComponent( $parentNodeList->item( 0 )->nodeValue );
+			$fullyQualifiedParentName = $parentNodeList->item( 0 )->nodeValue;
 
 			$parentNodeList = $this->lookupModel->xPath->query( "//lookup:entry[ lookup:fully-qualified-name = '" . $fullyQualifiedParentName . "' ]" );
 

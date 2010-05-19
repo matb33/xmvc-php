@@ -69,8 +69,6 @@ class Processor
 
 	public function RenderComponent( $fullyQualifiedName, $eventName = null, $parameters = array(), $delegate = null, $cacheMinutes = 0 )
 	{
-		$fullyQualifiedName = ComponentUtils::GetFullyQualifiedComponent( $fullyQualifiedName );
-
 		if( ( $componentData = ComponentLookup::getInstance()->GetComponentDataByFullyQualifiedName( $fullyQualifiedName ) ) !== false )
 		{
 			$componentData[ "eventName" ] = $eventName;
@@ -125,7 +123,7 @@ class Processor
 
 	public function RenderPageWithModel( $model, $component, $instanceName )
 	{
-		$viewNameNodeList = $model->xPath->query( "//meta:view" );
+		$viewNameNodeList = $model->xPath->query( "//meta:view | //wd:meta[ @wd:name='view' ]" );
 		$viewName = $viewNameNodeList->length > 0 ? $viewNameNodeList->item( 0 )->nodeValue : "";
 		$viewName = ComponentUtils::FallbackViewNameIfNecessary( $viewName );
 

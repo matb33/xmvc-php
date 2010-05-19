@@ -28,15 +28,19 @@ abstract class Component extends DefaultEventDispatcher
 	private $cacheID = null;
 	private $cache = null;
 	private $cachedResultModel = null;
+	private $componentClass = null;
+	private $componentModelName = null;
 
 	public function __construct( $componentClass, $instanceName = null, $eventName = null, $parameters = array(), $cacheMinutes = 0 )
 	{
 		$cacheMinutes = ( int )$cacheMinutes;
 		$eventName = ComponentUtils::DefaultEventNameIfNecessary( $eventName );
-		$component = ComponentUtils::ExtractComponentFromComponentClass( $componentClass );
+		$wiredocComponentName = ComponentUtils::ExtractWiredocComponentNameFromComponentClass( $componentClass );
 
 		$pathParts = Routing::GetPathParts();
-		list( $this->component, $this->instanceName, $this->fullyQualifiedName ) = ComponentUtils::ExtractComponentNameParts( $component, $instanceName );
+		list( $this->component, $this->instanceName, $this->fullyQualifiedName ) = ComponentUtils::ExtractComponentNamePartsFromWiredocName( $wiredocComponentName . "." . $instanceName );
+		$this->componentClass = $componentClass;
+		$this->componentModelName = substr( $componentClass, 0, strrpos( $componentClass, "\\" ) + 1 ) . $instanceName;
 		$this->eventName = $eventName;
 		$this->parameters = $parameters;
 		$this->cacheMinutes = $cacheMinutes;
@@ -53,6 +57,8 @@ abstract class Component extends DefaultEventDispatcher
 		$arguments = array();
 		$arguments[ "component" ] = $this->component;
 		$arguments[ "instanceName" ] = $this->instanceName;
+		$arguments[ "componentClass" ] = $this->componentClass;
+		$arguments[ "componentModelName" ] = $this->componentModelName;
 		$arguments[ "eventName" ] = $this->eventName;
 		$arguments[ "param" ] = $this->parameters;
 		$arguments[ "methodName" ] = $this->methodName;
@@ -74,7 +80,7 @@ abstract class Component extends DefaultEventDispatcher
 
 	private function GenerateCacheID()
 	{
-		$cacheID = str_replace( "\\", "_", $this->component ) . "_" . $this->instanceName;
+		$cacheID = str_replace( "\\", "_", $this->componentModelName );
 
 		if( ! is_null( $this->eventName ) )
 		{
@@ -112,9 +118,9 @@ abstract class Component extends DefaultEventDispatcher
 
 	private function LoadComponentInstance()
 	{
-		$modelName = $this->component . "/" . $this->instanceName;
+		$modelName = $this->componentModelName;
 
-		$cacheID = self::GenerateCacheID( $this->component, $this->instanceName );
+		$cacheID = self::GenerateCacheID();
 		$cache = new Cache( Config::$data[ "componentCacheFilePattern" ], array( "type" => "instances", "name" => $this->cacheID ), $this->cacheID, true, $this->cacheMinutes );
 
 		if( $cache->IsCached() )
@@ -161,7 +167,7 @@ abstract class Component extends DefaultEventDispatcher
 		$instanceName = $this->instanceName;
 		$builtComponentModel = $this->builtComponentModel;
 
-		$xslFile = Loader::Resolve( "components", ComponentUtils::GetComponentClassName( $component ), "xsl" );
+		$xslFile = Loader::Resolve( "components", ComponentUtils::GetComponentClassNameFromWiredocComponentName( $component ), "xsl" );
 
 		$view = new View();
 		$xslData = $view->ImportXSL( null, $xslFile );

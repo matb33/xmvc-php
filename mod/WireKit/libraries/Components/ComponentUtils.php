@@ -15,41 +15,22 @@ class ComponentUtils
 		}
 	}
 
-	public static function GetComponentClassName( $component )
+	public static function GetComponentClassNameFromWiredocComponentName( $wiredocComponentName )
 	{
-		$fullyQualifiedName = self::GetFullyQualifiedComponent( $component );
-		$componentClass = $fullyQualifiedName . strrchr( $fullyQualifiedName, "\\" );
+		list( $component, $null, $null ) = self::ExtractComponentNamePartsFromWiredocName( $wiredocComponentName . "." );
+
+		$componentClass = str_replace( "/", "\\", $component );
+		
+		if( strpos( $componentClass, "\\" ) !== false )
+		{
+			$componentClass = $componentClass . strrchr( $componentClass, "\\" );
+		}
+		else
+		{
+			$componentClass = $componentClass . "\\" . $componentClass;
+		}
 
 		return( $componentClass );
-	}
-
-	public static function GetComponentDefinitionFilename( $component )
-	{
-		return( self::GetComponentClassName( $component ) . ".xsl" );
-	}
-
-	public static function GetFullyQualifiedComponent( $componentString )
-	{
-		if( Loader::Resolve( null, $componentString, Loader::modelExtension ) !== false )
-		{
-			// Is an FQN with instance-name specified
-			return( $componentString );
-		}
-		elseif( Loader::Resolve( "libraries", $componentString, Loader::libraryExtension ) !== false )
-		{
-			// Is likely the GenericComponent class found in the libraries/Components structure
-			return( $componentString );
-		}
-		//elseif( ComponentLookup::getInstance()->GetComponentDataByComponentName( $componentString ) !== false )
-		elseif( realpath( Config::$data[ "componentLookupCrawlFolder" ] . $componentString ) !== false )
-		{
-			// Is a component without an instance-name specified (note the realpath method, which is slow compared to looking
-			// at the lookup.  However, if the lookup isn't created yet, we do an endless loop. This should be revisited (TODO)
-			return( Config::$data[ "componentNamespace" ] . "\\" . $componentString );
-		}
-
-		// Assume that this component is well-formed.  This is definitely not the right thing to do, but a re-write is coming.
-		return( $componentString );
 	}
 
 	public static function DefaultEventNameIfNecessary( $eventName )
@@ -60,6 +41,16 @@ class ComponentUtils
 		}
 
 		return( $eventName );
+	}
+
+	public static function DefaultNamespaceIfNecessary( $componentClass )
+	{
+		if( strpos( $componentClass, Config::$data[ "componentNamespace" ] ) === false )
+		{
+			return( Config::$data[ "componentNamespace" ] . "\\" . $componentClass );
+		}
+
+		return( $componentClass );
 	}
 
 	public static function FallbackViewNameIfNecessary( $viewName )
@@ -87,17 +78,27 @@ class ComponentUtils
 		$hrefContextComponent = "";
 		$hrefContextInstanceName = "";
 
-		$hrefNodeList = $model->xPath->query( "//meta:href" );
+		$hrefNodeList = $model->xPath->query( "//meta:href | //wd:meta[ @wd:name='href' ]" );
 
 		if( $hrefNodeList->length > 0 )
 		{
-			$componentDefinitionNodeList = $model->xPath->query( "ancestor::component:definition[1]", $hrefNodeList->item( $hrefNodeList->length - 1 ) );
+			$componentDefinitionNodeList = $model->xPath->query( "ancestor::component:definition[1] | ancestor::wd:component[1]", $hrefNodeList->item( $hrefNodeList->length - 1 ) );
 
 			if( $componentDefinitionNodeList->length > 0 )
 			{
 				$componentDefinitionNode = $componentDefinitionNodeList->item( 0 );
-				$hrefContextComponent = $componentDefinitionNode->hasAttribute( "name" ) ? $componentDefinitionNode->getAttribute( "name" ) : "";
-				$hrefContextInstanceName = $componentDefinitionNode->hasAttribute( "instance-name" ) ? $componentDefinitionNode->getAttribute( "instance-name" ) : "";
+
+				if( $componentDefinitionNode->hasAttribute( "wd:name" ) )
+				{
+					// Wiredoc 2.0
+					list( $hrefContextComponent, $hrefContextInstanceName, $hrefContextFullyQualifiedName ) = ComponentUtils::ExtractComponentNamePartsFromWiredocName( $componentDefinitionNode->getAttribute( "wd:name" ) );
+				}
+				else
+				{
+					// Wiredoc 1.0
+					$hrefContextComponent = $componentDefinitionNode->hasAttribute( "name" ) ? $componentDefinitionNode->getAttribute( "name" ) : "";
+					$hrefContextInstanceName = $componentDefinitionNode->hasAttribute( "instance-name" ) ? $componentDefinitionNode->getAttribute( "instance-name" ) : "";
+				}
 			}
 		}
 
@@ -106,7 +107,7 @@ class ComponentUtils
 
 	public static function CreateDefinitionAttributeIfMissing( $model, $name, $value )
 	{
-		$definitionNodeList = $model->xPath->query( "//component:definition" );
+		$definitionNodeList = $model->xPath->query( "//component:definition | //wd:component" );
 
 		if( $definitionNodeList->length > 0 )
 		{
@@ -121,27 +122,21 @@ class ComponentUtils
 		}
 	}
 
-	// TODO: This function should probably check against ComponentLookup instead of assuming stuff
-	public static function ExtractComponentNameParts( $componentString, $instanceName = null )
+	public static function ExtractWiredocComponentNameFromComponentClass( $componentClass )
 	{
-		$fullyQualifiedName = self::GetFullyQualifiedComponent( $componentString );
+		$nonNamespacedComponentClass = str_replace( Config::$data[ "componentNamespace" ] . "\\", "", $componentClass );
+		$componentName = substr( $nonNamespacedComponentClass, 0, strrpos( $nonNamespacedComponentClass, "\\" ) );
 
-		if( is_null( $instanceName ) || strlen( $instanceName ) == 0 )
-		{
-			$component = substr( $fullyQualifiedName, 0, strrpos( $fullyQualifiedName, "\\" ) );
-			$instanceName = substr( strrchr( $fullyQualifiedName, "\\" ), 1 );
-		}
-		else
-		{
-			$component = $fullyQualifiedName;
-			$fullyQualifiedName .= "\\" . $instanceName;
-		}
-
-		return( array( $component, $instanceName, $fullyQualifiedName ) );
+		return( str_replace( "\\", "/", $componentName ) );
 	}
 
-	public static function ExtractComponentFromComponentClass( $componentClass )
+	public static function ExtractComponentNamePartsFromWiredocName( $fullyQualifiedNameWiredocName )
 	{
-		return( substr( $componentClass, 0, strrpos( $componentClass, "\\" ) ) );
+		$component = substr( $fullyQualifiedNameWiredocName, 0, strrpos( $fullyQualifiedNameWiredocName, "." ) );
+		$instanceName = substr( strrchr( $fullyQualifiedNameWiredocName, "." ), 1 );
+
+		$fullyQualifiedName = $fullyQualifiedNameWiredocName;
+
+		return( array( $component, $instanceName, $fullyQualifiedName ) );
 	}
 }

@@ -5,7 +5,7 @@
 			<xsl:variable name="default-glue" select="' | '" />
 			<xsl:variable name="sort-order">
 				<xsl:choose>
-					<xsl:when test="//meta:title/@sort-order"><xsl:value-of select="//meta:title/@sort-order[ 1 ]" /></xsl:when>
+					<xsl:when test="//meta:title[ lang( $lang ) ]/@sort-order"><xsl:value-of select="//meta:title[ lang( $lang ) ]/@sort-order[ 1 ]" /></xsl:when>
 					<xsl:otherwise>ascending</xsl:otherwise>
 				</xsl:choose>
 			</xsl:variable>
