@@ -1,0 +1,227 @@
+<xsl:stylesheet version="1.0"
+	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:wd="http://www.wiredoc.org/ns/wiredoc/2.0">
+
+	<xsl:template match="wd:form//wd:field[ @type = 'text' or @type = 'password' or @type = 'file' ]" priority="0">
+		<xsl:variable name="name" select="@name" />
+		<label for="{ @name }" class="{ @name } { @type }">
+			<xsl:apply-templates select="wd:label[ not( @position ) or @position = 'before' ]" />
+			<input type="{ @type }" id="{ @name }" name="{ @name }" class="{ @name } { @type }">
+				<xsl:choose>
+					<xsl:when test="//xmvc:strings/xmvc:*[ @key = $name ]">
+						<xsl:attribute name="value"><xsl:value-of select="//xmvc:strings/xmvc:*[ @key = $name ]" /></xsl:attribute>
+					</xsl:when>
+					<xsl:when test="wd:value">
+						<xsl:attribute name="value"><xsl:value-of select="wd:value[ lang( $lang ) ]" /></xsl:attribute>
+					</xsl:when>
+				</xsl:choose>
+			</input>
+			<xsl:apply-templates select="wd:info" />
+			<xsl:apply-templates select="wd:label[ @position = 'after' ]" />
+		</label>
+		<xsl:for-each select=".//wd:math-captcha">
+			<input type="hidden" id="{ @name }" name="{ @name }" value="{ @answer-md5 }" />
+		</xsl:for-each>
+		<xsl:apply-templates select="wd:constraint" />
+	</xsl:template>
+
+	<xsl:template match="wd:form//wd:field[ @type = 'textarea' ]" priority="0">
+		<xsl:variable name="name" select="@name" />
+		<label for="{ @name }" class="{ @name } { @type }">
+			<xsl:apply-templates select="wd:label[ not( @position ) or @position = 'before' ]" />
+			<textarea id="{ @name }" name="{ @name }" class="{ @name } { @type }"><xsl:choose>
+				<xsl:when test="//xmvc:strings/xmvc:*[ @key = $name ]"><xsl:value-of select="//xmvc:strings/xmvc:*[ @key = $name ]" /></xsl:when>
+				<xsl:when test="wd:value"><xsl:value-of select="wd:value[ lang( $lang ) ]" /></xsl:when>
+			</xsl:choose></textarea>
+			<xsl:apply-templates select="wd:label[ @position = 'after' ]" />
+			<xsl:apply-templates select="wd:info" />
+		</label>
+		<xsl:apply-templates select="wd:constraint" />
+	</xsl:template>
+
+	<xsl:template match="wd:form//wd:field[ @type = 'submit' or @type = 'reset' or @type = 'button' ]" priority="0">
+		<input type="{ @type }" name="{ @name }" id="{ @name }" class="{ @name } { @type }">
+			<xsl:if test="wd:label[ lang( $lang ) ]">
+				<xsl:attribute name="value"><xsl:value-of select="wd:label[ lang( $lang ) ]" /></xsl:attribute>
+			</xsl:if>
+		</input>
+		<xsl:apply-templates select="wd:constraint" />
+	</xsl:template>
+
+	<xsl:template match="wd:form//wd:field[ @type = 'checkbox' or @type = 'radio' ]" priority="0">
+		<input type="hidden" name="{ @name }" class="{ @name } { @type }" />
+		<xsl:apply-templates select="wd:option" />
+		<xsl:apply-templates select="wd:constraint" />
+	</xsl:template>
+
+	<xsl:template match="wd:form//wd:field//wd:option[ ancestor::wd:field[1]/@type = 'checkbox' or ancestor::wd:field[1]/@type = 'radio' ]" priority="0">
+		<xsl:variable name="name" select="ancestor::wd:field[1]/@name" />
+		<xsl:variable name="type" select="ancestor::wd:field[1]/@type" />
+		<label for="{ $name }-{ position() }" class="{ $name } { $type }">
+			<xsl:apply-templates select="wd:label[ @position = 'before' ]" />
+			<input type="{ $type }" id="{ $name }-{ position() }" name="{ $name }[]" class="{ $name } { $type }">
+				<xsl:if test="wd:value">
+					<xsl:attribute name="value"><xsl:value-of select="wd:value[ lang( $lang ) ]" /></xsl:attribute>
+					<xsl:choose>
+						<xsl:when test="wd:checked">
+							<xsl:attribute name="checked">checked</xsl:attribute>
+						</xsl:when>
+						<xsl:when test="contains( //xmvc:strings/xmvc:*[ @key = $name ], concat( '|', wd:value[ lang( $lang ) ], '|' ) )">
+							<xsl:attribute name="checked">checked</xsl:attribute>
+						</xsl:when>
+						<xsl:otherwise />
+					</xsl:choose>
+				</xsl:if>
+			</input>
+			<xsl:apply-templates select="wd:info" />
+			<xsl:apply-templates select="wd:label[ not( @position ) or @position = 'after' ]" />
+		</label>
+	</xsl:template>
+
+	<xsl:template match="wd:form//wd:field[ @type = 'select' ]" priority="0">
+		<label for="{ @name }" class="{ @name } { @type }">
+			<xsl:apply-templates select="wd:label[ not( @position ) or @position = 'before' ]" />
+			<select name="{ @name }" id="{ @name }" class="{ @name } { @type }">
+				<xsl:apply-templates select="wd:*[ name() != 'wd:label' and name() != 'wd:info' and name() != 'wd:constraint' ]" />
+			</select>
+			<xsl:apply-templates select="wd:label[ @position = 'after' ]" />
+			<xsl:apply-templates select="wd:info" />
+		</label>
+		<xsl:apply-templates select="wd:constraint" />
+	</xsl:template>
+
+	<xsl:template match="wd:form//wd:field[ @type = 'multi-select' ]" priority="0">
+		<label for="{ @name }" class="{ @name } { @type }">
+			<xsl:apply-templates select="wd:label[ not( @position ) or @position = 'before' ]" />
+			<select name="{ @name }[]" id="{ @name }" multiple="true" class="{ @name } { @type }">
+				<xsl:apply-templates select="wd:*[ name() != 'wd:label' and name() != 'wd:info' and name() != 'wd:constraint' ]" />
+			</select>
+			<xsl:apply-templates select="wd:label[ @position = 'after' ]" />
+			<xsl:apply-templates select="wd:info" />
+		</label>
+		<xsl:apply-templates select="wd:constraint" />
+	</xsl:template>
+
+	<xsl:template match="wd:form//wd:field//wd:option[ ancestor::wd:field[1]/@type = 'select' or ancestor::wd:field[1]/@type = 'multi-select' ]" priority="0">
+		<xsl:variable name="name" select="ancestor::wd:field[1]/@name" />
+		<xsl:variable name="type" select="ancestor::wd:field[1]/@type" />
+		<option>
+			<xsl:attribute name="class">
+				<xsl:choose>
+					<xsl:when test="last() = 1">first-child last-child</xsl:when>
+					<xsl:when test="position() = 1">first-child</xsl:when>
+					<xsl:when test="position() = last()">last-child</xsl:when>
+					<xsl:otherwise>middle-child</xsl:otherwise>
+				</xsl:choose>
+				<xsl:text> item-</xsl:text><xsl:value-of select="position()" />
+				<xsl:text> </xsl:text>
+				<xsl:choose>
+					<xsl:when test="position() mod 2 = 1">even</xsl:when>
+					<xsl:otherwise>odd</xsl:otherwise>
+				</xsl:choose>
+			</xsl:attribute>
+			<xsl:apply-templates select="wd:label[ @position = 'before' ]" />
+			<xsl:if test="wd:value">
+				<xsl:attribute name="value"><xsl:value-of select="wd:value[ lang( $lang ) ]" /></xsl:attribute>
+				<xsl:choose>
+					<xsl:when test="$type = 'select'">
+						<xsl:choose>
+							<xsl:when test="wd:selected">
+								<xsl:attribute name="selected">selected</xsl:attribute>
+							</xsl:when>
+							<xsl:when test="//xmvc:strings/xmvc:*[ @key = $name ] = wd:value[ lang( $lang ) ]">
+								<xsl:attribute name="selected">selected</xsl:attribute>
+							</xsl:when>
+							<xsl:otherwise />
+						</xsl:choose>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:if test="contains( //xmvc:strings/xmvc:*[ @key = $name ], concat( '|', wd:value[ lang( $lang ) ], '|' ) )">
+							<xsl:attribute name="selected">selected</xsl:attribute>
+						</xsl:if>
+					</xsl:otherwise>
+				</xsl:choose>
+			</xsl:if>
+			<xsl:apply-templates select="wd:label[ not( @position ) or @position = 'after' ]" />
+		</option>
+	</xsl:template>
+
+	<xsl:template match="wd:form//wd:field//wd:group" priority="0">
+		<optgroup>
+			<xsl:if test="wd:label[ lang( $lang ) ]">
+				<xsl:attribute name="label"><xsl:value-of select="wd:label[ lang( $lang ) ]" /></xsl:attribute>
+			</xsl:if>
+			<xsl:apply-templates select="wd:*[ name() != 'wd:label' ]" />
+		</optgroup>
+	</xsl:template>
+
+	<xsl:template match="wd:form//wd:field[ @type = 'checkbox' ]//wd:option/wd:label" priority="3">
+		<xsl:if test="lang( $lang )">
+			<span><xsl:apply-templates /></span>
+		</xsl:if>
+	</xsl:template>
+
+	<xsl:template match="wd:form//wd:field//wd:option/wd:label" priority="2">
+		<xsl:if test="lang( $lang )">
+			<xsl:apply-templates />
+		</xsl:if>
+	</xsl:template>
+
+	<xsl:template match="wd:form//wd:field//wd:label" priority="1">
+		<xsl:if test="lang( $lang )">
+			<span><xsl:apply-templates /></span>
+		</xsl:if>
+	</xsl:template>
+
+	<xsl:template match="wd:form//wd:field//wd:info" priority="1">
+		<xsl:if test="lang( $lang )">
+			<input type="hidden" class="info" value="{ text() }" />
+		</xsl:if>
+	</xsl:template>
+
+	<xsl:template match="wd:form//wd:fieldset" priority="0">
+		<fieldset id="{ @name }" class="{ @name }">
+			<xsl:apply-templates />
+		</fieldset>
+	</xsl:template>
+
+	<xsl:template match="wd:form//wd:fieldset/wd:legend" priority="1">
+		<xsl:if test="lang( $lang )">
+			<legend><xsl:apply-templates /></legend>
+		</xsl:if>
+	</xsl:template>
+
+	<xsl:template match="wd:form//wd:field/wd:constraint" priority="0">
+		<xsl:if test="substring( @type, 1, 6 ) = 'match-'">
+			<input type="hidden" name="{ ../@name }--dependency[]" value="{ @against }" />
+		</xsl:if>
+	</xsl:template>
+
+	<xsl:template match="wd:form" priority="0">
+		<form>
+			<xsl:if test="@href">
+				<xsl:attribute name="action"><xsl:value-of select="@href" /></xsl:attribute>
+			</xsl:if>
+			<xsl:attribute name="method">
+				<xsl:choose>
+					<xsl:when test="@method"><xsl:value-of select="@method" /></xsl:when>
+					<xsl:otherwise>post</xsl:otherwise>
+				</xsl:choose>
+			</xsl:attribute>
+			<xsl:if test="@enctype">
+				<xsl:attribute name="enctype"><xsl:value-of select="@enctype" /></xsl:attribute>
+			</xsl:if>
+			<xsl:if test="@wd:name">
+				<xsl:attribute name="class"><xsl:value-of select="@wd:name" /></xsl:attribute>
+			</xsl:if>
+			<xsl:if test="@id">
+				<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
+			</xsl:if>
+			<div class="form">
+				<xsl:apply-templates />
+			</div>
+		</form>
+	</xsl:template>
+
+</xsl:stylesheet>

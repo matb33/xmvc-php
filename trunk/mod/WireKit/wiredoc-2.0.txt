@@ -1,0 +1,175 @@
+WIREDOC 2.0 CHEATSHEET
+Mathieu Bouchard
+
+================================
+component
+================================
+
+Definition of a component.  wd:name attribute is optional as but will be automatically determined based on the folder and filename where this component resides (only if omitted).
+
+<wd:component>
+	...
+</wd:component>
+
+================================
+reference
+================================
+
+Reference another component, which the application is responsible for merging.
+
+1) First flavour, self-closing.
+
+<wd:reference wd:name="[NAME/SPACE.INSTANCE]" />
+
+2) Second flavour, where the component being referenced will insert the child nodes in this scope where it finds a wd:parent-children.
+
+<wd:reference wd:name="[NAME/SPACE.INSTANCE]">
+	...
+</wd:reference>
+
+--------------------------------
+
+Reference to the parent's children nodes in the case where a reference:component has child nodes inside.
+
+<wd:parent-children />
+
+================================
+inject
+================================
+
+The following are attributes that the application is responsible for handling. (Consider making this part of the meta namespace)
+
+wd:inject-href		Value specified is a fully qualified name (component name and instance-name), such as "Inside/Article.aboutUs", result is replacing this attribute with "href" and the value being what is found in wd:meta[ @wd:name='href' ] of that component instance.  Blank value means the current component that wd:meta[ @wd:name='href' ] is held.
+wd:inject-href-prefix
+wd:inject-href-suffix
+wd:inject-href-lang	Force wd:inject-href to use the language value specified in wd:inject-href-lang when determining the URL. Otherwise wd:inject-href automatically detects the current language based on internal methods.
+wd:inject-lang		Takes the value of wd:inject-lang and injects an attribute by that name, and its value is the current language
+
+Example of usage of inject:href:
+
+<wd:navigate wd:inject-href="" wd:inject-href-suffix="?lang=en" wd:inject-href-lang="en" xml:lang="fr">English</wd:navigate>
+<wd:navigate wd:inject-href="" wd:inject-href-suffix="?lang=fr" wd:inject-href-lang="fr" xml:lang="en">Français</wd:navigate>
+
+================================
+meta
+================================
+
+Wiredoc doesn't care what these are, they are reserved for the application to handle.
+
+<wd:meta />
+
+Examples in use for WireKit in XHTML 1.0:
+<wd:meta wd:name="title" [glue=" | "] [sort-order="ascending|descending"] />
+<wd:meta wd:name="href" />		Value specified is handled by application, in WireKit refers to the URL associated with this component.
+<wd:meta wd:name="parent" />		Value specified is a fully qualified name, which relates two components together in a parent-child relationship.
+<wd:meta wd:name="script" [*]>...</meta:script>
+<wd:meta wd:name="link" [*] />
+<wd:meta wd:name="meta" [*] />
+<wd:meta wd:name="style" [*] />
+<wd:meta wd:name="view" />		Value specified indicates which XSL view should be used to process the finalized WireDoc XML document. Defaults to "xMVC\Mod\WireKit\xhtml1-strict".
+
+Example usage of meta:href
+<wd:meta wd:name="href" xml:lang="en">/about/</wd:meta>
+<wd:meta wd:name="href" xml:lang="fr">/a-propos/</wd:meta>
+
+================================
+container
+================================
+
+A general placeholder that has semantic meaning.
+
+<wd:container wd:name="[SEMANTIC-MEANING-OF-WHAT-THE-CONTAINER-REPRESENTS-OR-HOLDS]">
+	...
+</wd:container>
+
+================================
+group
+================================
+
+A general placeholder that has semantic meaning to describe its child containers.  Useful when the containers are related to one another.
+
+<wd:group wd:name="[SEMANTIC-MEANING-OF-THE-CONTAINERS-WITHIN]">
+	<wd:container />
+	<wd:container />
+	<wd:container />
+</group:*>
+
+================================
+navigation
+================================
+
+Identical to the group namespace except that it adds a form of hard-coded semantic meaning, i.e. a group that is absolutely navigation
+
+<wd:navigation wd:name="[SEMANTIC-MEANING-OF-THE-CONTAINERS-WITHIN]">
+	<wd:container />
+	<wd:container />
+	<wd:container />
+</wd:navigation>
+
+================================
+doc
+================================
+
+The doc namespace is an almost faithful representation of Simplified DocBook. A good portion of the tags have been implemented with more to come.
+Examples:
+
+<doc:para />
+<doc:strong />
+<doc:emphasis />
+<doc:heading />
+...
+
+There are some convenience tags that aren't part of DocBook but added for now:
+<doc:heading1 /> through to <doc:heading6 />
+<doc:span />
+
+================================
+navigate
+================================
+
+Navigation to a URL
+
+<wd:navigate href="[URL]" [target="[WINDOW]"] />
+
+================================
+action
+================================
+
+Button action
+
+<wd:action [handle="[HANDLE NAME]"] />
+
+================================
+form
+================================
+
+<wd:form wd:name="[SEMANTIC-MEANING-OF-THE-FORM]" href="[ACTION]" [method="[ACTION]"] [enctype="[ENCTYPE]"]>
+	<wd:fieldset>
+		<wd:legend />
+
+		<wd:field type="select|multi-select|radio|checkbox">
+			<wd:group>
+				<wd:option>
+					<wd:label />
+					<wd:value />
+				</wd:option>
+			</wd:group>
+		</wd:field>
+
+		<wd:field type="text|textarea|password|submit|reset|button" name="[NAME]">
+			<wd:label />
+			<wd:value />
+			<wd:info />
+			<wd:constraint type="regexp|match|match-field|match-field-md5|selected-count|range" against="[AGAINST]" min="[MIN]" max="[MAX]">
+				<wd:message type="pass" />
+				<wd:message type="fail" />
+			</wd:constraint>
+		</wd:field>
+	</wd:fieldset>
+</wd:form>
+
+--------------------------------
+
+NOTES:
+
+1) In general, an id attribute can be added to any node.
