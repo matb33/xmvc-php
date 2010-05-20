@@ -30,16 +30,14 @@
 	</xsl:variable>
 
 	<xsl:template match="wd:component[ not( ancestor::wd:component ) ]">
-		<xsl:if test="lang( $lang )">
-			<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="{ $lang }" lang="{ $lang }">
-				<head>
-					<xsl:call-template name="head" />
-				</head>
-				<body>
-					<xsl:apply-templates />
-				</body>
-			</html>
-		</xsl:if>
+		<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="{ $lang }" lang="{ $lang }">
+			<head>
+				<xsl:call-template name="head" />
+			</head>
+			<body>
+				<xsl:apply-templates mode="lang-check" />
+			</body>
+		</html>
 	</xsl:template>
 
 </xsl:stylesheet>

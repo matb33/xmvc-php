@@ -39,11 +39,13 @@ inject
 
 The following are attributes that the application is responsible for handling. (Consider making this part of the meta namespace)
 
-wd:inject-href		Value specified is a fully qualified name (component name and instance-name), such as "Inside/Article.aboutUs", result is replacing this attribute with "href" and the value being what is found in wd:meta[ @wd:name='href' ] of that component instance.  Blank value means the current component that wd:meta[ @wd:name='href' ] is held.
+wd:inject-href			Value specified is a fully qualified name (component name and instance-name), such as "Inside/Article.aboutUs", result is replacing this attribute with "href" and the value being what is found in wd:meta[ @wd:name='href' ] of that component instance.  Blank value means the current component that wd:meta[ @wd:name='href' ] is held.
 wd:inject-href-prefix
 wd:inject-href-suffix
-wd:inject-href-lang	Force wd:inject-href to use the language value specified in wd:inject-href-lang when determining the URL. Otherwise wd:inject-href automatically detects the current language based on internal methods.
-wd:inject-lang		Takes the value of wd:inject-lang and injects an attribute by that name, and its value is the current language
+wd:inject-href-lang		Force wd:inject-href to use the language value specified in wd:inject-href-lang when determining the URL. Otherwise wd:inject-href automatically detects the current language based on internal methods.
+wd:inject-lang			Takes the value of wd:inject-lang and injects an attribute by that name, and its value is the current language
+wd:inject-lang-base
+wd:inject-lang-locale
 
 Example of usage of inject:href:
 
