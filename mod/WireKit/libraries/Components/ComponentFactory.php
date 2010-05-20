@@ -174,23 +174,39 @@ class ComponentFactory extends DefaultEventDispatcher
 
 	private function InjectLang( $lang )
 	{
-		foreach( $this->rootModel->xPath->query( "//*[ @inject:lang != '' or @wd:inject-lang != '' ]" ) as $itemNode )
+		foreach( $this->rootModel->xPath->query( "//*[ @inject:lang or @wd:inject-lang or @wd:inject-lang-base or @wd:inject-lang-locale ]" ) as $itemNode )
 		{
 			if( $itemNode->hasAttribute( "wd:inject-lang" ) )
 			{
 				// Wiredoc 2.0
 				$attributeName = $itemNode->getAttribute( "wd:inject-lang" );
 				$itemNode->removeAttribute( "wd:inject-lang" );
+				$langValueToInsert = $lang;
+			}
+			elseif( $itemNode->hasAttribute( "wd:inject-lang-base" ) )
+			{
+				// Wiredoc 2.0
+				$attributeName = $itemNode->getAttribute( "wd:inject-lang-base" );
+				$itemNode->removeAttribute( "wd:inject-lang-base" );
+				$langValueToInsert = Language::GetLangBase( $lang );
+			}
+			elseif( $itemNode->hasAttribute( "wd:inject-lang-locale" ) )
+			{
+				// Wiredoc 2.0
+				$attributeName = $itemNode->getAttribute( "wd:inject-lang-locale" );
+				$itemNode->removeAttribute( "wd:inject-lang-locale" );
+				$langValueToInsert = Language::GetLangLocale( $lang );
 			}
 			else
 			{
 				// Wiredoc 1.0
 				$attributeName = $itemNode->getAttribute( "inject:lang" );
 				$itemNode->removeAttribute( "inject:lang" );
+				$langValueToInsert = $lang;
 			}
 
 			$langNode = $this->rootModel->createAttribute( $attributeName );
-			$langNode->value = $lang;
+			$langNode->value = $langValueToInsert;
 			$itemNode->appendChild( $langNode );
 		}
 	}

@@ -1,10 +1,11 @@
 <xsl:stylesheet version="1.0"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 	xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:wd="http://www.wiredoc.org/ns/wiredoc/2.0">
+	xmlns:wd="http://www.wiredoc.org/ns/wiredoc/2.0"
+	xmlns:php="http://php.net/xsl">
 
 	<xsl:template name="head">
-		<xsl:variable name="meta-title-set" select="//wd:*[ starts-with( local-name(), 'meta' ) and ( substring( local-name(), 6 ) = 'title' or @wd:name='title' ) and lang( $lang ) ]" />
+		<xsl:variable name="meta-title-set" select="//wd:*[ starts-with( local-name(), 'meta' ) and ( substring( local-name(), 6 ) = 'title' or @wd:name='title' ) and php:function( 'xMVC\Mod\Language\Language::XSLTLang', $lang, (ancestor-or-self::*/@xml:lang)[last()] ) ]" />
 		<xsl:if test="$meta-title-set">
 			<xsl:variable name="default-glue" select="' | '" />
 			<xsl:variable name="sort-order">
@@ -26,7 +27,7 @@
 				</xsl:for-each>
 			</title>
 		</xsl:if>
-		<xsl:for-each select="//wd:*[ starts-with( local-name(), 'meta' ) and lang( $lang ) ]">
+		<xsl:for-each select="//wd:*[ starts-with( local-name(), 'meta' ) and php:function( 'xMVC\Mod\Language\Language::XSLTLang', $lang, (ancestor-or-self::*/@xml:lang)[last()] ) ]">
 			<xsl:variable name="meta-name">
 				<xsl:choose>
 					<xsl:when test="@wd:name">
