@@ -198,7 +198,7 @@
 		</xsl:if>
 	</xsl:template>
 
-	<xsl:template match="wd:form" priority="0">
+	<xsl:template match="wd:*[ starts-with( local-name(), 'form' ) ]" priority="0">
 		<form>
 			<xsl:if test="@href">
 				<xsl:attribute name="action"><xsl:value-of select="@href" /></xsl:attribute>
@@ -212,9 +212,15 @@
 			<xsl:if test="@enctype">
 				<xsl:attribute name="enctype"><xsl:value-of select="@enctype" /></xsl:attribute>
 			</xsl:if>
-			<xsl:if test="@wd:name">
-				<xsl:attribute name="class"><xsl:value-of select="@wd:name" /></xsl:attribute>
-			</xsl:if>
+			<xsl:choose>
+				<xsl:when test="@wd:name">
+					<xsl:attribute name="class"><xsl:value-of select="@wd:name" /></xsl:attribute>
+				</xsl:when>
+				<xsl:when test="starts-with( local-name(), 'form.' )">
+					<xsl:attribute name="class"><xsl:value-of select="substring( local-name(), 6 )" /></xsl:attribute>
+				</xsl:when>
+				<xsl:otherwise />
+			</xsl:choose>
 			<xsl:if test="@id">
 				<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
 			</xsl:if>

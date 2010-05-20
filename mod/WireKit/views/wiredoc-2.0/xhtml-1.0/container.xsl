@@ -3,12 +3,18 @@
 	xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:wd="http://www.wiredoc.org/ns/wiredoc/2.0">
 
-	<xsl:template match="wd:container[ @href and not( ../wd:group ) ]" priority="1">
+	<xsl:template match="wd:*[ starts-with( local-name(), 'container' ) and @href and not( ../wd:group ) ]" priority="1">
 		<xsl:if test="lang( $lang )">
 			<iframe src="{ @href }" frameborder="0">
-				<xsl:if test="@wd:name">
-					<xsl:attribute name="class"><xsl:value-of select="@wd:name" /></xsl:attribute>
-				</xsl:if>
+				<xsl:choose>
+					<xsl:when test="@wd:name">
+						<xsl:attribute name="class"><xsl:value-of select="@wd:name" /></xsl:attribute>
+					</xsl:when>
+					<xsl:when test="starts-with( local-name(), 'container.' )">
+						<xsl:attribute name="class"><xsl:value-of select="substring( local-name(), 11 )" /></xsl:attribute>
+					</xsl:when>
+					<xsl:otherwise />
+				</xsl:choose>
 				<xsl:if test="@id">
 					<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
 				</xsl:if>
@@ -17,12 +23,18 @@
 		</xsl:if>
 	</xsl:template>
 
-	<xsl:template match="wd:container[ not( ../wd:group ) ]">
+	<xsl:template match="wd:*[ starts-with( local-name(), 'container' ) and not( ../wd:group ) ]">
 		<xsl:if test="lang( $lang )">
 			<div>
-				<xsl:if test="@wd:name">
-					<xsl:attribute name="class"><xsl:value-of select="@wd:name" /></xsl:attribute>
-				</xsl:if>
+				<xsl:choose>
+					<xsl:when test="@wd:name">
+						<xsl:attribute name="class"><xsl:value-of select="@wd:name" /></xsl:attribute>
+					</xsl:when>
+					<xsl:when test="starts-with( local-name(), 'container.' )">
+						<xsl:attribute name="class"><xsl:value-of select="substring( local-name(), 11 )" /></xsl:attribute>
+					</xsl:when>
+					<xsl:otherwise />
+				</xsl:choose>
 				<xsl:if test="@id">
 					<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
 				</xsl:if>
