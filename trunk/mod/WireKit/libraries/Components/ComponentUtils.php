@@ -78,7 +78,7 @@ class ComponentUtils
 		$hrefContextComponent = "";
 		$hrefContextInstanceName = "";
 
-		$hrefNodeList = $model->xPath->query( "//meta:href | //wd:meta[ @wd:name='href' ]" );
+		$hrefNodeList = $model->xPath->query( "//meta:href | //wd:*[ starts-with( local-name(), 'meta' ) and ( @wd:name='href' or substring( local-name(), 6 ) = 'href' ) ]" );
 
 		if( $hrefNodeList->length > 0 )
 		{
