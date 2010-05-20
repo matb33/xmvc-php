@@ -151,6 +151,55 @@ class Language
 	{
 		$_SESSION[ "lang" ] = self::$language;
 	}
+
+	public static function GetLangBase( $lang )
+	{
+		$parts = self::GetLangParts( $lang );
+
+		return( $parts[ 0 ] );
+	}
+
+	public static function GetLangLocale( $lang )
+	{
+		$parts = self::GetLangParts( $lang );
+		$locale = isset( $parts[ 1 ] ) ? $parts[ 1 ] : "";
+
+		return( $locale );
+	}
+
+	public static function GetLangParts( $lang )
+	{
+		$parts = explode( "-", $lang, 2 );
+
+		if( !isset( $parts[ 1 ] ) )
+		{
+			$parts[ 1 ] = "";
+		}
+
+		return( $parts );
+	}
+
+	public static function XSLTLang( $currentLang, $scopeLangNodeSet )
+	{
+		//(ancestor-or-self::*/@xml:lang)[last()]
+		$scopeLang = $scopeLangNodeSet[ 0 ]->value;
+		$scopeLangParts = self::GetLangParts( strtolower( $scopeLang ) );
+		$currentLangParts = self::GetLangParts( strtolower( $currentLang ) );
+
+		if( $scopeLangParts[ 0 ] == $currentLangParts[ 0 ] )
+		{
+			if( strlen( $scopeLangParts[ 1 ] ) == 0 || strlen( $currentLangParts[ 1 ] ) == 0 )
+			{
+				return( true );
+			}
+			elseif( $scopeLangParts[ 1 ] == $currentLangParts[ 1 ] )
+			{
+				return( true );
+			}
+		}
+
+		return( false );
+	}
 }
 
 ?>
