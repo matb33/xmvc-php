@@ -33,6 +33,22 @@ abstract class ModelDriver extends \DOMDocument
 	private function RefreshXPath( $source = null )
 	{
 		$this->xPath = new \DOMXpath( $this );
+
+		if( isset( Config::$data[ "enableXSLTPHPFunctions" ] ) )
+		{
+			if( Config::$data[ "enableXSLTPHPFunctions" ] )
+			{
+				$restrict = array();
+
+				if( isset( Config::$data[ "restrictXSLTPHPFunctions" ] ) )
+				{
+					$restrict = Config::$data[ "restrictXSLTPHPFunctions" ];
+				}
+
+				$this->xPath->registerPHPFunctions( $restrict );
+			}
+		}
+
 		$this->RegisterNamespaces( $source );
 	}
 
@@ -58,6 +74,7 @@ abstract class ModelDriver extends \DOMDocument
 		}
 
 		$this->xPath->registerNamespace( "xhtml", "http://www.w3.org/1999/xhtml" );
+		$this->xPath->registerNamespace( "php", "http://php.net/xpath" );
 	}
 
 	protected function LoadModelXML( $xmlModelFile, $data = null )
