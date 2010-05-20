@@ -64,7 +64,7 @@ class HierarchyModelDriver extends ModelDriver implements IModelDriver
 
 	private function AddHierarchyEntry( $node )
 	{
-		$URINodeList = $this->lookupModel->xPath->query( "lookup:href[ lang( '" . Language::GetLang() . "' ) ]/lookup:uri", $node );
+		$URINodeList = $this->lookupModel->xPath->query( "lookup:href[ php:function( 'xMVC\Mod\Language\Language::XSLTLang', '" . Language::GetLang() . "', (ancestor-or-self::*/@xml:lang)[last()] ) ]/lookup:uri", $node );
 
 		if( $URINodeList->length > 0 )
 		{
