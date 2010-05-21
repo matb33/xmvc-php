@@ -1,6 +1,7 @@
 <xsl:stylesheet version="1.0"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:wd="http://www.wiredoc.org/ns/wiredoc/2.0"
 	xmlns:doc="http://www.docbook.org/schemas/simplified">
 
 	<xsl:template match="doc:heading">
@@ -16,6 +17,9 @@
 					<xsl:if test="@id">
 						<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
 					</xsl:if>
+					<xsl:if test="@wd:name">
+						<xsl:attribute name="class"><xsl:value-of select="@wd:name" /></xsl:attribute>
+					</xsl:if>
 					<xsl:apply-templates mode="lang-check" />
 				</h6>
 			</xsl:when>
@@ -23,6 +27,9 @@
 				<xsl:element name="h{ $depth }">
 					<xsl:if test="@id">
 						<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
+					</xsl:if>
+					<xsl:if test="@wd:name">
+						<xsl:attribute name="class"><xsl:value-of select="@wd:name" /></xsl:attribute>
 					</xsl:if>
 					<xsl:apply-templates mode="lang-check" />
 				</xsl:element>
@@ -35,6 +42,9 @@
 			<xsl:if test="@id">
 				<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
 			</xsl:if>
+			<xsl:if test="@wd:name">
+				<xsl:attribute name="class"><xsl:value-of select="@wd:name" /></xsl:attribute>
+			</xsl:if>
 			<xsl:apply-templates mode="lang-check" />
 		</h1>
 	</xsl:template>
@@ -43,6 +53,9 @@
 		<h2>
 			<xsl:if test="@id">
 				<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
+			</xsl:if>
+			<xsl:if test="@wd:name">
+				<xsl:attribute name="class"><xsl:value-of select="@wd:name" /></xsl:attribute>
 			</xsl:if>
 			<xsl:apply-templates mode="lang-check" />
 		</h2>
@@ -53,6 +66,9 @@
 			<xsl:if test="@id">
 				<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
 			</xsl:if>
+			<xsl:if test="@wd:name">
+				<xsl:attribute name="class"><xsl:value-of select="@wd:name" /></xsl:attribute>
+			</xsl:if>
 			<xsl:apply-templates mode="lang-check" />
 		</h3>
 	</xsl:template>
@@ -61,6 +77,9 @@
 		<h4>
 			<xsl:if test="@id">
 				<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
+			</xsl:if>
+			<xsl:if test="@wd:name">
+				<xsl:attribute name="class"><xsl:value-of select="@wd:name" /></xsl:attribute>
 			</xsl:if>
 			<xsl:apply-templates mode="lang-check" />
 		</h4>
@@ -71,6 +90,9 @@
 			<xsl:if test="@id">
 				<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
 			</xsl:if>
+			<xsl:if test="@wd:name">
+				<xsl:attribute name="class"><xsl:value-of select="@wd:name" /></xsl:attribute>
+			</xsl:if>
 			<xsl:apply-templates mode="lang-check" />
 		</h5>
 	</xsl:template>
@@ -80,17 +102,20 @@
 			<xsl:if test="@id">
 				<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
 			</xsl:if>
+			<xsl:if test="@wd:name">
+				<xsl:attribute name="class"><xsl:value-of select="@wd:name" /></xsl:attribute>
+			</xsl:if>
 			<xsl:apply-templates mode="lang-check" />
 		</h6>
 	</xsl:template>
 
 	<xsl:template match="doc:para">
 		<p>
-			<xsl:if test="@class">
-				<xsl:attribute name="class"><xsl:value-of select="@class" /></xsl:attribute>
-			</xsl:if>
 			<xsl:if test="@id">
 				<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
+			</xsl:if>
+			<xsl:if test="@wd:name">
+				<xsl:attribute name="class"><xsl:value-of select="@wd:name" /></xsl:attribute>
 			</xsl:if>
 			<xsl:apply-templates mode="lang-check" />
 		</p>
@@ -101,6 +126,9 @@
 			<xsl:if test="@id">
 				<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
 			</xsl:if>
+			<xsl:if test="@wd:name">
+				<xsl:attribute name="class"><xsl:value-of select="@wd:name" /></xsl:attribute>
+			</xsl:if>
 			<xsl:apply-templates mode="lang-check" />
 		</ul>
 	</xsl:template>
@@ -109,6 +137,9 @@
 		<ol>
 			<xsl:if test="@id">
 				<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
+			</xsl:if>
+			<xsl:if test="@wd:name">
+				<xsl:attribute name="class"><xsl:value-of select="@wd:name" /></xsl:attribute>
 			</xsl:if>
 			<xsl:apply-templates mode="lang-check" />
 		</ol>
@@ -119,17 +150,20 @@
 			<xsl:if test="@id">
 				<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
 			</xsl:if>
+			<xsl:if test="@wd:name">
+				<xsl:attribute name="class"><xsl:value-of select="@wd:name" /></xsl:attribute>
+			</xsl:if>
 			<xsl:apply-templates mode="lang-check" />
 		</li>
 	</xsl:template>
 
 	<xsl:template match="doc:span">
 		<span>
-			<xsl:if test="@class">
-				<xsl:attribute name="class"><xsl:value-of select="@class" /></xsl:attribute>
-			</xsl:if>
 			<xsl:if test="@id">
 				<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
+			</xsl:if>
+			<xsl:if test="@wd:name">
+				<xsl:attribute name="class"><xsl:value-of select="@wd:name" /></xsl:attribute>
 			</xsl:if>
 			<xsl:apply-templates mode="lang-check" />
 		</span>
@@ -156,6 +190,9 @@
 			<xsl:if test="@id">
 				<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
 			</xsl:if>
+			<xsl:if test="@wd:name">
+				<xsl:attribute name="class"><xsl:value-of select="@wd:name" /></xsl:attribute>
+			</xsl:if>
 		</img>
 	</xsl:template>
 
@@ -163,6 +200,9 @@
 		<em>
 			<xsl:if test="@id">
 				<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
+			</xsl:if>
+			<xsl:if test="@wd:name">
+				<xsl:attribute name="class"><xsl:value-of select="@wd:name" /></xsl:attribute>
 			</xsl:if>
 			<xsl:apply-templates mode="lang-check" />
 		</em>
@@ -173,6 +213,9 @@
 			<xsl:if test="@id">
 				<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
 			</xsl:if>
+			<xsl:if test="@wd:name">
+				<xsl:attribute name="class"><xsl:value-of select="@wd:name" /></xsl:attribute>
+			</xsl:if>
 			<xsl:apply-templates mode="lang-check" />
 		</strong>
 	</xsl:template>
@@ -181,6 +224,9 @@
 		<address>
 			<xsl:if test="@id">
 				<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
+			</xsl:if>
+			<xsl:if test="@wd:name">
+				<xsl:attribute name="class"><xsl:value-of select="@wd:name" /></xsl:attribute>
 			</xsl:if>
 			<xsl:apply-templates mode="lang-check" />
 		</address>
@@ -191,6 +237,9 @@
 			<xsl:if test="@id">
 				<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
 			</xsl:if>
+			<xsl:if test="@wd:name">
+				<xsl:attribute name="class"><xsl:value-of select="@wd:name" /></xsl:attribute>
+			</xsl:if>
 			<xsl:apply-templates mode="lang-check" />
 		</span>
 	</xsl:template>
@@ -199,6 +248,9 @@
 		<a class="phone">
 			<xsl:if test="@id">
 				<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
+			</xsl:if>
+			<xsl:if test="@wd:name">
+				<xsl:attribute name="class"><xsl:value-of select="@wd:name" /></xsl:attribute>
 			</xsl:if>
 			<xsl:attribute name="href">tel:<xsl:value-of select="text()" /></xsl:attribute>
 			<xsl:apply-templates mode="lang-check" />
@@ -210,6 +262,9 @@
 			<xsl:if test="@id">
 				<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
 			</xsl:if>
+			<xsl:if test="@wd:name">
+				<xsl:attribute name="class"><xsl:value-of select="@wd:name" /></xsl:attribute>
+			</xsl:if>
 			<xsl:attribute name="href">fax:<xsl:value-of select="text()" /></xsl:attribute>
 			<xsl:apply-templates mode="lang-check" />
 		</a>
@@ -220,6 +275,9 @@
 			<xsl:if test="@id">
 				<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
 			</xsl:if>
+			<xsl:if test="@wd:name">
+				<xsl:attribute name="class"><xsl:value-of select="@wd:name" /></xsl:attribute>
+			</xsl:if>
 			<xsl:apply-templates mode="lang-check" />
 		</span>
 	</xsl:template>
@@ -228,6 +286,9 @@
 		<span class="street">
 			<xsl:if test="@id">
 				<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
+			</xsl:if>
+			<xsl:if test="@wd:name">
+				<xsl:attribute name="class"><xsl:value-of select="@wd:name" /></xsl:attribute>
 			</xsl:if>
 			<xsl:apply-templates mode="lang-check" />
 		</span>
@@ -238,6 +299,9 @@
 			<xsl:if test="@id">
 				<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
 			</xsl:if>
+			<xsl:if test="@wd:name">
+				<xsl:attribute name="class"><xsl:value-of select="@wd:name" /></xsl:attribute>
+			</xsl:if>
 			<xsl:apply-templates mode="lang-check" />
 		</span>
 	</xsl:template>
@@ -246,6 +310,9 @@
 		<span class="country">
 			<xsl:if test="@id">
 				<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
+			</xsl:if>
+			<xsl:if test="@wd:name">
+				<xsl:attribute name="class"><xsl:value-of select="@wd:name" /></xsl:attribute>
 			</xsl:if>
 			<xsl:apply-templates mode="lang-check" />
 		</span>
@@ -256,6 +323,9 @@
 			<xsl:if test="@id">
 				<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
 			</xsl:if>
+			<xsl:if test="@wd:name">
+				<xsl:attribute name="class"><xsl:value-of select="@wd:name" /></xsl:attribute>
+			</xsl:if>
 			<xsl:apply-templates mode="lang-check" />
 		</span>
 	</xsl:template>
@@ -264,6 +334,9 @@
 		<span class="year">
 			<xsl:if test="@id">
 				<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
+			</xsl:if>
+			<xsl:if test="@wd:name">
+				<xsl:attribute name="class"><xsl:value-of select="@wd:name" /></xsl:attribute>
 			</xsl:if>
 			<xsl:apply-templates mode="lang-check" />
 		</span>
@@ -274,6 +347,9 @@
 			<xsl:if test="@id">
 				<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
 			</xsl:if>
+			<xsl:if test="@wd:name">
+				<xsl:attribute name="class"><xsl:value-of select="@wd:name" /></xsl:attribute>
+			</xsl:if>
 			<xsl:apply-templates mode="lang-check" />
 		</span>
 	</xsl:template>
@@ -282,6 +358,9 @@
 		<abbr>
 			<xsl:if test="@id">
 				<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
+			</xsl:if>
+			<xsl:if test="@wd:name">
+				<xsl:attribute name="class"><xsl:value-of select="@wd:name" /></xsl:attribute>
 			</xsl:if>
 			<xsl:apply-templates mode="lang-check" />
 		</abbr>
@@ -292,6 +371,9 @@
 			<xsl:if test="@id">
 				<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
 			</xsl:if>
+			<xsl:if test="@wd:name">
+				<xsl:attribute name="class"><xsl:value-of select="@wd:name" /></xsl:attribute>
+			</xsl:if>
 			<xsl:apply-templates mode="lang-check" />
 		</acronym>
 	</xsl:template>
@@ -301,6 +383,9 @@
 			<xsl:if test="@id">
 				<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
 			</xsl:if>
+			<xsl:if test="@wd:name">
+				<xsl:attribute name="class"><xsl:value-of select="@wd:name" /></xsl:attribute>
+			</xsl:if>
 			<xsl:apply-templates mode="lang-check" />
 		</q>
 	</xsl:template>
@@ -309,6 +394,9 @@
 		<br>
 			<xsl:if test="@id">
 				<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
+			</xsl:if>
+			<xsl:if test="@wd:name">
+				<xsl:attribute name="class"><xsl:value-of select="@wd:name" /></xsl:attribute>
 			</xsl:if>
 		</br>
 	</xsl:template>
@@ -333,6 +421,9 @@
 			<xsl:if test="@id">
 				<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
 			</xsl:if>
+			<xsl:if test="@wd:name">
+				<xsl:attribute name="class"><xsl:value-of select="@wd:name" /></xsl:attribute>
+			</xsl:if>
 			<xsl:apply-templates mode="lang-check" />
 		</a>
 	</xsl:template>
@@ -341,6 +432,9 @@
 		<table>
 			<xsl:if test="@id">
 				<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
+			</xsl:if>
+			<xsl:if test="@wd:name">
+				<xsl:attribute name="class"><xsl:value-of select="@wd:name" /></xsl:attribute>
 			</xsl:if>
 			<xsl:apply-templates select="doc:*" mode="lang-check" />
 		</table>
@@ -351,6 +445,9 @@
 			<xsl:if test="@id">
 				<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
 			</xsl:if>
+			<xsl:if test="@wd:name">
+				<xsl:attribute name="class"><xsl:value-of select="@wd:name" /></xsl:attribute>
+			</xsl:if>
 			<xsl:apply-templates select="doc:row" mode="lang-check" />
 		</thead>
 	</xsl:template>
@@ -359,6 +456,9 @@
 		<tbody>
 			<xsl:if test="@id">
 				<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
+			</xsl:if>
+			<xsl:if test="@wd:name">
+				<xsl:attribute name="class"><xsl:value-of select="@wd:name" /></xsl:attribute>
 			</xsl:if>
 			<xsl:apply-templates select="doc:row" mode="lang-check" />
 		</tbody>
@@ -383,6 +483,9 @@
 			<xsl:if test="@id">
 				<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
 			</xsl:if>
+			<xsl:if test="@wd:name">
+				<xsl:attribute name="class"><xsl:value-of select="@wd:name" /></xsl:attribute>
+			</xsl:if>
 			<xsl:apply-templates select="doc:entry" mode="lang-check" />
 		</tr>
 	</xsl:template>
@@ -396,6 +499,7 @@
 		</xsl:variable>
 		<xsl:element name="{ $cell-name }">
 			<xsl:attribute name="class">
+				<xsl:if test="@wd:name"><xsl:value-of select="@wd:name" /><xsl:text> </xsl:text></xsl:if>
 				<xsl:choose>
 					<xsl:when test="last() = 1">first-child last-child</xsl:when>
 					<xsl:when test="position() = 1">first-child</xsl:when>

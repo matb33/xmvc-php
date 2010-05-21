@@ -78,7 +78,7 @@ class ComponentUtils
 		$hrefContextComponent = "";
 		$hrefContextInstanceName = "";
 
-		$hrefNodeList = $model->xPath->query( "//meta:href | //wd:*[ starts-with( local-name(), 'meta' ) and ( @wd:name='href' or substring( local-name(), 6 ) = 'href' ) ]" );
+		$hrefNodeList = $model->xPath->query( "//meta:href" );
 
 		if( $hrefNodeList->length > 0 )
 		{
@@ -88,16 +88,16 @@ class ComponentUtils
 			{
 				$componentDefinitionNode = $componentDefinitionNodeList->item( 0 );
 
-				if( $componentDefinitionNode->hasAttribute( "wd:name" ) )
-				{
-					// Wiredoc 2.0
-					list( $hrefContextComponent, $hrefContextInstanceName, $hrefContextFullyQualifiedName ) = ComponentUtils::ExtractComponentNamePartsFromWiredocName( $componentDefinitionNode->getAttribute( "wd:name" ) );
-				}
-				else
+				if( $componentDefinitionNode->hasAttribute( "name" ) )
 				{
 					// Wiredoc 1.0
 					$hrefContextComponent = $componentDefinitionNode->hasAttribute( "name" ) ? $componentDefinitionNode->getAttribute( "name" ) : "";
 					$hrefContextInstanceName = $componentDefinitionNode->hasAttribute( "instance-name" ) ? $componentDefinitionNode->getAttribute( "instance-name" ) : "";
+				}
+				else
+				{
+					// Wiredoc 2.0
+					list( $hrefContextComponent, $hrefContextInstanceName, $hrefContextFullyQualifiedName ) = ComponentUtils::ExtractComponentNamePartsFromWiredocName( $componentDefinitionNode->nodeValue );
 				}
 			}
 		}

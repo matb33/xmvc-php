@@ -13,19 +13,22 @@ $componentLookupCrawlFolder = "app/components/";
 $componentLookupCrawlFolderRegExp = "/[^\.svn]/";
 $componentLookupCrawlFileRegExp = "/.*\.xml|.*\.xsl/";
 
+// Deprecated
 $wirekitNamespaces[ "component" ] = "urn:wirekit:component";
-$wirekitNamespaces[ "meta" ] = "urn:wirekit:meta";
 $wirekitNamespaces[ "container" ] = "urn:wirekit:container";
 $wirekitNamespaces[ "group" ] = "urn:wirekit:group";
 $wirekitNamespaces[ "nav" ] = "urn:wirekit:nav";
 $wirekitNamespaces[ "reference" ] = "urn:wirekit:reference";
 $wirekitNamespaces[ "inject" ] = "urn:wirekit:inject";
-$wirekitNamespaces[ "doc" ] = "http://www.docbook.org/schemas/simplified";
-$wirekitNamespaces[ "wd" ] = "http://www.wiredoc.org/ns/wiredoc/2.0";
 $wirekitNamespaces[ "sitemap" ] = "urn:wirekit:sitemap";
 $wirekitNamespaces[ "loc" ] = "urn:wirekit:loc";
-$wirekitNamespaces[ "lookup" ] = "urn:wirekit:lookup";
 $wirekitNamespaces[ "form" ] = "urn:wirekit:form";
 $wirekitNamespaces[ "interact" ] = "urn:wirekit:interact";
+
+// Active
+$wirekitNamespaces[ "lookup" ] = "urn:wirekit:lookup";
+$wirekitNamespaces[ "wd" ] = "http://www.wiredoc.org/ns/wiredoc/2.0";
+$wirekitNamespaces[ "meta" ] = "http://www.wiredoc.org/ns/metadoc/1.0";
+$wirekitNamespaces[ "doc" ] = "http://www.docbook.org/schemas/simplified";
 
 ?>
