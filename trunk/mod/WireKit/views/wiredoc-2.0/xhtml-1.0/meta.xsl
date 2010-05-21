@@ -2,6 +2,7 @@
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 	xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:wd="http://www.wiredoc.org/ns/wiredoc/2.0"
+	xmlns:meta="http://www.wiredoc.org/ns/metadoc/1.0"
 	xmlns:doc="http://www.docbook.org/schemas/simplified"
 	xmlns:php="http://php.net/xsl">
 
@@ -14,8 +15,8 @@
 				<xsl:for-each select="$doc-title-set">
 
 					<!-- TODO These two variables aren't working... -->
-					<xsl:variable name="meta-title-glue" select="ancestor-or-self::wd:*[ ( preceding-sibling::wd:meta.title-glue | following-sibling::wd:meta.title-glue ) and ( starts-with( local-name(), 'meta' ) and ( substring( local-name(), 6 ) = 'title-glue' or @wd:name='title-glue' ) and php:function( 'xMVC\Mod\Language\Language::XSLTLang', $lang, (ancestor-or-self::*/@xml:lang)[last()] ) ) ][ last() ]" />
-					<xsl:variable name="meta-title-sort-order" select="ancestor-or-self::wd:*[ ( preceding-sibling::wd:meta.title-sort-order | following-sibling::wd:meta.title-sort-order ) and ( starts-with( local-name(), 'meta' ) and ( substring( local-name(), 6 ) = 'title-sort-order' or @wd:name='title-sort-order' ) and php:function( 'xMVC\Mod\Language\Language::XSLTLang', $lang, (ancestor-or-self::*/@xml:lang)[last()] ) ) ][ last() ]" />
+					<xsl:variable name="meta-title-glue" select="ancestor-or-self::meta:*[ ( preceding-sibling::meta:title-glue | following-sibling::meta:title-glue ) and ( starts-with( local-name(), 'meta' ) and ( substring( local-name(), 6 ) = 'title-glue' or @wd:name='title-glue' ) and php:function( 'xMVC\Mod\Language\Language::XSLTLang', $lang, (ancestor-or-self::*/@xml:lang)[last()] ) ) ][ last() ]" />
+					<xsl:variable name="meta-title-sort-order" select="ancestor-or-self::meta:*[ ( preceding-sibling::meta:title-sort-order | following-sibling::meta:title-sort-order ) and ( starts-with( local-name(), 'meta' ) and ( substring( local-name(), 6 ) = 'title-sort-order' or @wd:name='title-sort-order' ) and php:function( 'xMVC\Mod\Language\Language::XSLTLang', $lang, (ancestor-or-self::*/@xml:lang)[last()] ) ) ][ last() ]" />
 					
 					<xsl:variable name="glue">
 						<xsl:choose>
@@ -38,32 +39,22 @@
 				</xsl:for-each>
 			</title>
 		</xsl:if>
-		<xsl:for-each select="//wd:*[ starts-with( local-name(), 'meta' ) and php:function( 'xMVC\Mod\Language\Language::XSLTLang', $lang, (ancestor-or-self::*/@xml:lang)[last()] ) ]">
-			<xsl:variable name="meta-name">
-				<xsl:choose>
-					<xsl:when test="@wd:name">
-						<xsl:value-of select="@wd:name" />
-					</xsl:when>
-					<xsl:when test="starts-with( local-name(), 'meta.' )">
-						<xsl:value-of select="substring( local-name(), 6 )" />
-					</xsl:when>
-					<xsl:otherwise />
-				</xsl:choose>
-			</xsl:variable>
+		<xsl:for-each select="//meta:*[ php:function( 'xMVC\Mod\Language\Language::XSLTLang', $lang, (ancestor-or-self::*/@xml:lang)[last()] ) ]">
+			<xsl:variable name="meta-name" select="local-name()" />
 			<xsl:choose>
 				<xsl:when test="$meta-name = 'link'">
 					<xsl:element name="link">
-						<xsl:copy-of select="@*[ namespace-uri() != 'http://www.wiredoc.org/ns/wiredoc/2.0' ]" />
+						<xsl:copy-of select="@*[ namespace-uri() != 'http://www.wiredoc.org/ns/wiredoc/2.0' and namespace-uri() != 'http://www.wiredoc.org/ns/metadoc/1.0' ]" />
 					</xsl:element>
 				</xsl:when>
 				<xsl:when test="$meta-name = 'meta'">
 					<xsl:element name="meta">
-						<xsl:copy-of select="@*[ namespace-uri() != 'http://www.wiredoc.org/ns/wiredoc/2.0' ]" />
+						<xsl:copy-of select="@*[ namespace-uri() != 'http://www.wiredoc.org/ns/wiredoc/2.0' and namespace-uri() != 'http://www.wiredoc.org/ns/metadoc/1.0' ]" />
 					</xsl:element>
 				</xsl:when>
 				<xsl:when test="$meta-name = 'script'">
 					<xsl:element name="script">
-						<xsl:copy-of select="@*[ namespace-uri() != 'http://www.wiredoc.org/ns/wiredoc/2.0' ]" />
+						<xsl:copy-of select="@*[ namespace-uri() != 'http://www.wiredoc.org/ns/wiredoc/2.0' and namespace-uri() != 'http://www.wiredoc.org/ns/metadoc/1.0' ]" />
 						<xsl:comment>
 							<xsl:apply-templates />
 						</xsl:comment>
@@ -71,7 +62,7 @@
 				</xsl:when>
 				<xsl:when test="$meta-name = 'style'">
 					<xsl:element name="style">
-						<xsl:copy-of select="@*[ namespace-uri() != 'http://www.wiredoc.org/ns/wiredoc/2.0' ]" />
+						<xsl:copy-of select="@*[ namespace-uri() != 'http://www.wiredoc.org/ns/wiredoc/2.0' and namespace-uri() != 'http://www.wiredoc.org/ns/metadoc/1.0' ]" />
 						<xsl:comment>
 							<xsl:apply-templates />
 						</xsl:comment>
@@ -82,7 +73,7 @@
 		</xsl:for-each>
 	</xsl:template>
 
-	<xsl:template match="wd:*[ starts-with( local-name(), 'meta' ) ]" />
+	<xsl:template match="meta:*" />
 	<xsl:template match="doc:title" />
 
 </xsl:stylesheet>

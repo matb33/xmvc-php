@@ -55,7 +55,7 @@ class ComponentLookup extends Singleton
 		{
 			$hrefList = array();
 
-			foreach( $model->xPath->query( "//meta:href | //wd:*[ starts-with( local-name(), 'meta' ) and ( @wd:name='href' or substring( local-name(), 6 ) = 'href' ) ]", $componentNode ) as $hrefNode )
+			foreach( $model->xPath->query( "//meta:href", $componentNode ) as $hrefNode )
 			{
 				$lang = $hrefNode->hasAttribute( "xml:lang" ) ? $hrefNode->getAttribute( "xml:lang" ) : Language::GetLang();
 				$private = $hrefNode->hasAttribute( "private" ) ? $hrefNode->getAttribute( "private" ) : "0";
@@ -65,10 +65,10 @@ class ComponentLookup extends Singleton
 				$hrefList[ $lang ] = array( "path" => $path, "private" => $private, "lang" => $lang );
 			}
 
-			$parentNodeList = $model->xPath->query( "//meta:parent | //wd:*[ starts-with( local-name(), 'meta' ) and ( @wd:name='parent' or substring( local-name(), 8 ) = 'parent' ) ]", $componentNode );
+			$parentNodeList = $model->xPath->query( "//meta:parent", $componentNode );
 			$parent = $parentNodeList->length > 0 ? $parentNodeList->item( 0 )->nodeValue : "";
 
-			$viewNodeList = $model->xPath->query( "//meta:view | //wd:*[ starts-with( local-name(), 'meta' ) and ( @wd:name='view' or substring( local-name(), 6 ) = 'view' ) ]", $componentNode );
+			$viewNodeList = $model->xPath->query( "//meta:view", $componentNode );
 			$view = $viewNodeList->length > 0 ? $viewNodeList->item( 0 )->nodeValue : "";
 
 			if( is_null( $file ) )

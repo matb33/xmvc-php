@@ -201,7 +201,7 @@ abstract class Component extends DefaultEventDispatcher
 			}
 		}
 
-		$injectLangAttribute = $result->createAttributeNS( Config::$data[ "wirekitNamespaces" ][ "inject" ], "inject:lang" );
+		$injectLangAttribute = $result->createAttributeNS( Config::$data[ "wirekitNamespaces" ][ "meta" ], "meta:inject-lang" );
 		$injectLangAttribute->value = "xml:lang";
 		$result->documentElement->appendChild( $injectLangAttribute );
 

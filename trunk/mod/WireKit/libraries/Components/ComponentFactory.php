@@ -133,20 +133,20 @@ class ComponentFactory extends DefaultEventDispatcher
 
 	private function InjectHref()
 	{
-		foreach( $this->rootModel->xPath->query( "//*[ @inject:href or @wd:inject-href ]" ) as $itemNode )
+		foreach( $this->rootModel->xPath->query( "//*[ @inject:href or @meta:inject-href ]" ) as $itemNode )
 		{
-			if( $itemNode->hasAttribute( "wd:inject-href" ) )
+			if( $itemNode->hasAttribute( "meta:inject-href" ) )
 			{
 				// Wiredoc 2.0
-				$fullyQualifiedName = $itemNode->getAttribute( "wd:inject-href" );
-				$prefix = $itemNode->hasAttribute( "wd:inject-href-prefix" ) ? $itemNode->getAttribute( "wd:inject-href-prefix" ) : "";
-				$suffix = $itemNode->hasAttribute( "wd:inject-href-suffix" ) ? $itemNode->getAttribute( "wd:inject-href-suffix" ) : "";
-				$targetLang = $itemNode->hasAttribute( "wd:inject-href-lang" ) ? $itemNode->getAttribute( "wd:inject-href-lang" ) : Language::GetLang();
+				$fullyQualifiedName = $itemNode->getAttribute( "meta:inject-href" );
+				$prefix = $itemNode->hasAttribute( "meta:inject-href-prefix" ) ? $itemNode->getAttribute( "meta:inject-href-prefix" ) : "";
+				$suffix = $itemNode->hasAttribute( "meta:inject-href-suffix" ) ? $itemNode->getAttribute( "meta:inject-href-suffix" ) : "";
+				$targetLang = $itemNode->hasAttribute( "meta:inject-href-lang" ) ? $itemNode->getAttribute( "meta:inject-href-lang" ) : Language::GetLang();
 
-				$itemNode->removeAttribute( "wd:inject-href" );
-				$itemNode->removeAttribute( "wd:inject-href-prefix" );
-				$itemNode->removeAttribute( "wd:inject-href-suffix" );
-				$itemNode->removeAttribute( "wd:inject-href-lang" );
+				$itemNode->removeAttribute( "meta:inject-href" );
+				$itemNode->removeAttribute( "meta:inject-href-prefix" );
+				$itemNode->removeAttribute( "meta:inject-href-suffix" );
+				$itemNode->removeAttribute( "meta:inject-href-lang" );
 			}
 			else
 			{
@@ -174,27 +174,27 @@ class ComponentFactory extends DefaultEventDispatcher
 
 	private function InjectLang( $lang )
 	{
-		foreach( $this->rootModel->xPath->query( "//*[ @inject:lang or @wd:inject-lang or @wd:inject-lang-base or @wd:inject-lang-locale ]" ) as $itemNode )
+		foreach( $this->rootModel->xPath->query( "//*[ @inject:lang or @meta:inject-lang or @meta:inject-lang-base or @meta:inject-lang-locale ]" ) as $itemNode )
 		{
-			if( $itemNode->hasAttribute( "wd:inject-lang" ) )
+			if( $itemNode->hasAttribute( "meta:inject-lang" ) )
 			{
 				// Wiredoc 2.0
-				$attributeName = $itemNode->getAttribute( "wd:inject-lang" );
-				$itemNode->removeAttribute( "wd:inject-lang" );
+				$attributeName = $itemNode->getAttribute( "meta:inject-lang" );
+				$itemNode->removeAttribute( "meta:inject-lang" );
 				$langValueToInsert = $lang;
 			}
-			elseif( $itemNode->hasAttribute( "wd:inject-lang-base" ) )
+			elseif( $itemNode->hasAttribute( "meta:inject-lang-base" ) )
 			{
 				// Wiredoc 2.0
-				$attributeName = $itemNode->getAttribute( "wd:inject-lang-base" );
-				$itemNode->removeAttribute( "wd:inject-lang-base" );
+				$attributeName = $itemNode->getAttribute( "meta:inject-lang-base" );
+				$itemNode->removeAttribute( "meta:inject-lang-base" );
 				$langValueToInsert = Language::GetLangBase( $lang );
 			}
-			elseif( $itemNode->hasAttribute( "wd:inject-lang-locale" ) )
+			elseif( $itemNode->hasAttribute( "meta:inject-lang-locale" ) )
 			{
 				// Wiredoc 2.0
-				$attributeName = $itemNode->getAttribute( "wd:inject-lang-locale" );
-				$itemNode->removeAttribute( "wd:inject-lang-locale" );
+				$attributeName = $itemNode->getAttribute( "meta:inject-lang-locale" );
+				$itemNode->removeAttribute( "meta:inject-lang-locale" );
 				$langValueToInsert = Language::GetLangLocale( $lang );
 			}
 			else
