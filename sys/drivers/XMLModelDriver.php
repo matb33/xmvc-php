@@ -17,6 +17,8 @@ class XMLModelDriver extends ModelDriver implements IModelDriver
 		$parameter2 = func_get_arg( 1 );
 		$parameter3 = func_get_arg( 2 );
 
+		//echo "<pre>";var_dump(func_get_args());
+
 		if( is_null( $parameter ) )
 		{
 			$xmlData = "";
