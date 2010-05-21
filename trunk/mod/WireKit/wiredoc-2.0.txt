@@ -64,7 +64,7 @@ Examples in use for WireKit in XHTML 1.0:
 <wd:meta wd:name="title" [glue=" | "] [sort-order="ascending|descending"] />
 <wd:meta wd:name="href" />		Value specified is handled by application, in WireKit refers to the URL associated with this component.
 <wd:meta wd:name="parent" />		Value specified is a fully qualified name, which relates two components together in a parent-child relationship.
-<wd:meta wd:name="script" [*]>...</meta:script>
+<wd:meta wd:name="script" [*]>...</wd:meta>
 <wd:meta wd:name="link" [*] />
 <wd:meta wd:name="meta" [*] />
 <wd:meta wd:name="style" [*] />
