@@ -3,7 +3,7 @@
 	xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:wd="http://www.wiredoc.org/ns/wiredoc/2.0">
 
-	<xsl:template match="wd:*[ starts-with( local-name(), 'container' ) and @href and not( ../wd:group ) ]" priority="1">
+	<xsl:template match="wd:*[ starts-with( local-name(), 'container' ) and @href and not( parent::wd:group ) ]" priority="1">
 		<iframe src="{ @href }" frameborder="0">
 			<xsl:choose>
 				<xsl:when test="@wd:name">
@@ -21,7 +21,7 @@
 		</iframe>
 	</xsl:template>
 
-	<xsl:template match="wd:*[ starts-with( local-name(), 'container' ) and not( ../wd:group ) ]">
+	<xsl:template match="wd:*[ starts-with( local-name(), 'container' ) and not( parent::wd:group ) ]">
 		<div>
 			<xsl:choose>
 				<xsl:when test="@wd:name">
