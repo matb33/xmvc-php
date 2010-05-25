@@ -14,12 +14,20 @@
 
 	<xsl:template match="*" mode="lang-check">
 		<xsl:if test="php:function( 'xMVC\Mod\Language\Language::XSLTLang', $lang, (ancestor-or-self::*/@xml:lang)[last()] )">
-			<xsl:apply-templates select="." mode="override" />
+			<xsl:apply-templates select="." mode="override">
+				<xsl:with-param name="position" select="position()" />
+				<xsl:with-param name="last" select="last()" />
+			</xsl:apply-templates>
 		</xsl:if>
 	</xsl:template>
 
 	<xsl:template match="*" mode="override">
-		<xsl:apply-templates select="." />
+		<xsl:param name="position" select="position()" />
+		<xsl:param name="last" select="last()" />
+		<xsl:apply-templates select=".">
+			<xsl:with-param name="position" select="$position" />
+			<xsl:with-param name="last" select="$last" />
+		</xsl:apply-templates>
 	</xsl:template>
 
 	<xsl:template match="wd:component">
