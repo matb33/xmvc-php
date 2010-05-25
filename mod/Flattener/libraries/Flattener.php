@@ -9,17 +9,9 @@ class Flattener
 	private $outputPath;
 	private $indexFilename;
 
-	public function __construct()
-	{
-	}
-
-	public function SetOutputPath( $outputPath )
+	public function __construct( $outputPath, $indexFilename )
 	{
 		$this->outputPath = $outputPath;
-	}
-
-	public function SetIndexFilename( $indexFilename )
-	{
 		$this->indexFilename = $indexFilename;
 	}
 
@@ -58,7 +50,7 @@ class Flattener
 
 	private function ConvertURLToFolderStructure( $url )
 	{
-		$path = str_replace( "\\", "/", self::$outputPath );
+		$path = str_replace( "\\", "/", $this->outputPath );
 
 		if( substr( $path, -1 ) == "/" )
 		{

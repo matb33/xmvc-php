@@ -14,11 +14,6 @@ class FolderCopier
 		self::ExecuteCopy( $inputPath, $outputPath );
 	}
 
-	private static function CreateFolder( $path )
-	{
-		@mkdir( $path );
-	}
-
 	private static function ExecuteCopy( $inputPath, $outputPath )
 	{
 		$copyCommand = self::GetCopyCommand( $inputPath, $outputPath );
