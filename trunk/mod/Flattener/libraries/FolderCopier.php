@@ -10,6 +10,7 @@ class FolderCopier
 	{
 		// The quickest way to get this working, which assumes we are working from Windows, is to borrow xcopy.
 
+		FileSystem::EmptyFolder( $outputPath );
 		FileSystem::CreateFolderStructure( $outputPath );
 		self::ExecuteCopy( $inputPath, $outputPath );
 	}
@@ -27,7 +28,7 @@ class FolderCopier
 
 	private static function GetCopyCommand( $inputPath, $outputPath )
 	{
-		return( "xcopy \"" . $inputPath . "*.*\" \"" . $outputPath . "\" /d /e /c /i /g /r /y" );
+		return( "xcopy \"" . str_replace( "/", "\\", $inputPath ) . "*.*\" \"" . str_replace( "/", "\\", $outputPath ) . "\" /d /e /c /i /g /r /y" );
 	}
 }
 
