@@ -25,7 +25,9 @@
 		</ul>
 	</xsl:template>
 
-	<xsl:template match="wd:*[ starts-with( local-name(), 'navigation' ) ]/wd:*[ starts-with( local-name(), 'container' ) ]">
+	<xsl:template match="wd:*[ starts-with( local-name(), 'container' ) and parent::wd:*[ starts-with( local-name(), 'navigation' ) ] ]">
+		<xsl:param name="position" select="position()" />
+		<xsl:param name="last" select="last()" />
 		<xsl:variable name="this-uri" select=".//@href" />
 		<li>
 			<xsl:attribute name="class">
@@ -39,15 +41,15 @@
 					<xsl:otherwise />
 				</xsl:choose>
 				<xsl:choose>
-					<xsl:when test="last() = 1">first-child last-child</xsl:when>
-					<xsl:when test="position() = 1">first-child</xsl:when>
-					<xsl:when test="position() = last()">last-child</xsl:when>
+					<xsl:when test="$last = 1">first-child last-child</xsl:when>
+					<xsl:when test="$position = 1">first-child</xsl:when>
+					<xsl:when test="$position = $last">last-child</xsl:when>
 					<xsl:otherwise>middle-child</xsl:otherwise>
 				</xsl:choose>
-				<xsl:text> item-</xsl:text><xsl:value-of select="position()" />
+				<xsl:text> item-</xsl:text><xsl:value-of select="$position" />
 				<xsl:text> </xsl:text>
 				<xsl:choose>
-					<xsl:when test="position() mod 2 = 1">even</xsl:when>
+					<xsl:when test="$position mod 2 = 1">even</xsl:when>
 					<xsl:otherwise>odd</xsl:otherwise>
 				</xsl:choose>
 				<xsl:text> layout navigation</xsl:text>
