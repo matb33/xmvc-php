@@ -48,7 +48,7 @@ class FileSystem
 		}
 	}
 
-	public static function EmptyFolder( $folder )
+	public static function EmptyFolder( $folder, $ignore = array() )
 	{
 		if( self::PathExists( $folder ) )
 		{
@@ -58,14 +58,17 @@ class FileSystem
 				{
 					$filename = str_replace( "\\", "/", $fileInfo->getPathname() );
 
-					if( $fileInfo->isDir() )
+					if( !in_array( $filename, $ignore ) )
 					{
-						self::EmptyFolder( $filename );
-						rmdir( $filename );
-					}
-					else
-					{
-						unlink( $filename );
+						if( $fileInfo->isDir() )
+						{
+							self::EmptyFolder( $filename );
+							rmdir( $filename );
+						}
+						else
+						{
+							unlink( $filename );
+						}
 					}
 				}
 			}
