@@ -10,7 +10,6 @@ class FolderCopier
 	{
 		// The quickest way to get this working, which assumes we are working from Windows, is to borrow xcopy.
 
-		FileSystem::EmptyFolder( $outputPath );
 		FileSystem::CreateFolderStructure( $outputPath );
 		self::ExecuteCopy( $inputPath, $outputPath );
 	}
