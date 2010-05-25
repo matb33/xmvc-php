@@ -7,6 +7,8 @@ use xMVC\Sys\Events\Event;
 use xMVC\Sys\Loader;
 use xMVC\Sys\Config;
 use xMVC\Sys\Events\DefaultEventDispatcher;
+use xMVC\Sys\Routing;
+use xMVC\Sys\Normalize;
 use xMVC\Mod\Utils\DOMUtils;
 use xMVC\Mod\Language\Language;
 
@@ -161,10 +163,12 @@ class ComponentFactory extends DefaultEventDispatcher
 
 			if( strlen( $fullyQualifiedName ) == 0 )
 			{
-				$fullyQualifiedName = implode( ".", ComponentUtils::GetHrefContextComponentAndInstanceName( $this->rootModel ) );
+				$path = Normalize::StripQueryInURI( Routing::URI() );
 			}
-
-			$path = ComponentLookup::getInstance()->GetPathByFullyQualifiedNameAndLanguage( $fullyQualifiedName, $targetLang );
+			else
+			{
+				$path = ComponentLookup::getInstance()->GetPathByFullyQualifiedNameAndLanguage( $fullyQualifiedName, $targetLang );
+			}
 
 			$linkNode = $this->rootModel->createAttribute( "href" );
 			$linkNode->value = $prefix . $path . $suffix;

@@ -4,6 +4,8 @@ namespace xMVC\Mod\WireKit\Components;
 
 use xMVC\Sys\Loader;
 use xMVC\Sys\Config;
+use xMVC\Sys\Routing;
+use xMVC\Sys\Normalize;
 
 class ComponentUtils
 {
@@ -73,12 +75,13 @@ class ComponentUtils
 
 	public static function GetHrefContextComponentAndInstanceName( $model )
 	{
-		// Href Context refers to the component that holds the meta:href (specifically the last occurence (should it be the deepest??))
+		// Href Context refers to the component that holds the meta:href matchig the current URI
 
 		$hrefContextComponent = "";
 		$hrefContextInstanceName = "";
 
-		$hrefNodeList = $model->xPath->query( "//meta:href" );
+		$currentHref = Normalize::StripQueryInURI( Routing::URI() );
+		$hrefNodeList = $model->xPath->query( "//meta:href[ .= '" . $currentHref . "' ]" );
 
 		if( $hrefNodeList->length > 0 )
 		{
