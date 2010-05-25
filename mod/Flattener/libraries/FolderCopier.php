@@ -1,12 +1,16 @@
 <?php
 
+namespace xMVC\Mod\Flattener;
+
+use xMVC\Sys\FileSystem;
+
 class FolderCopier
 {
 	public static function CopyFolder( $inputPath, $outputPath )
 	{
 		// The quickest way to get this working, which assumes we are working from Windows, is to borrow xcopy.
 
-		self::CreateFolder( $outputPath );
+		FileSystem::CreateFolderStructure( $outputPath );
 		self::ExecuteCopy( $inputPath, $outputPath );
 	}
 
