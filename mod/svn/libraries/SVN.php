@@ -17,7 +17,7 @@ class SVN
 	//const CP		= "copy";
 	const DEL		= "delete";
 	//const DIFF	= "diff";
-	//const EXPORT	= "export";
+	const EXPORT	= "export";
 	//const HELP	= "help";
 	const IMPORT	= "import";
 	//const INFO	= "info";
@@ -155,6 +155,43 @@ class SVN
 			$parameters[] = $this->repositoryURL . $this->repositoryPath;
 
 			return( $this->Execute( self::IMPORT, $parameters ) );
+		}
+		else
+		{
+			return( false );
+		}
+	}
+
+	public function Export( $revision = "HEAD", $path = null, $outputPath = null, $ignoreExternals = false )
+	{
+		if( is_null( $path ) )
+		{
+			$path = realpath( $this->repositoryWorkingFolder );
+		}
+
+		if( FileSystem::PathExists( $path ) )
+		{
+			$parameters = array();
+			$parameters[] = "--username " . $this->repositoryUsername;
+			$parameters[] = "--password " . $this->repositoryPassword;
+			$parameters[] = "--non-interactive";
+			$parameters[] = "--revision " . $revision;
+
+			if( $ignoreExternals )
+			{
+				$parameters[] = "--ignore-externals";
+			}
+
+			$parameters[] = "\"" . $path . "\"";
+
+			if( !is_null( $outputPath ) )
+			{
+				$parameters[] = "\"" . $outputPath . "\"";
+			}
+
+			$parameters[] = $this->repositoryURL . $this->repositoryPath;
+
+			return( $this->Execute( self::EXPORT, $parameters ) );
 		}
 		else
 		{
