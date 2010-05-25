@@ -11,8 +11,13 @@ class Svntest
 
 	public function __construct()
 	{
-		$this->svn = new SVN( Config::$data[ "repositoryURL"], Config::$data[ "repositoryPath"], Config::$data[ "repositoryUsername"], Config::$data[ "repositoryPassword"] );
-		$this->svn = new SVN( Config::$data[ "repositoryURL"], Config::$data[ "repositoryPath"], Config::$data[ "repositoryUsername"], Config::$data[ "repositoryPassword"] );
+		$repositoryURL = "https://mcmillan.springloops.com/source/akimbo";
+		$repositoryPath = "/trunk/web/app/models/";
+		$repositoryUsername = "akimbo";
+		$repositoryPassword = "n%9873h$25";
+		$svnWorkingFolder = "mod/SVN/work/";
+
+		$this->svn = new SVN( $repositoryURL, $repositoryPath, $repositoryUsername, $repositoryPassword, $svnWorkingFolder );
 	}
 
 	public function Index()

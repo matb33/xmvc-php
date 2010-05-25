@@ -1,14 +1,9 @@
 <?php
 
-$svnExeWin32 = "mod/svn/bin/win32/svn.exe";
-$svnExeLinux = "mod/svn/bin/linux/svn";
-$svnWorkingFolder = "mod/svn/work/";
-$svnConfigFolder = "mod/svn/bin/config/";
-
-$repositoryURL = "https://mcmillan.springloops.com/source/akimbo";
-$repositoryPath = "/trunk/web/app/models/";
-$repositoryUsername = "akimbo";
-$repositoryPassword = "n%9873h$25";
+$svnExeWin32 = "mod/SVN/bin/win32/svn.exe";
+$svnExeLinux = "mod/SVN/bin/linux/svn";
+$svnConfigFolder = "mod/SVN/bin/config/";
+$svnWorkingFolder = "mod/SVN/work/";	// Not used by this module's code, here only as an option for you to use as a working folder that already has svn:ignore setup on it
 
 $isWindows = ( isset( $_SERVER[ "SystemRoot" ] ) && $_ENV[ "OS" ] == "Windows_NT" );
 
