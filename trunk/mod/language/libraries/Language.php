@@ -182,6 +182,12 @@ class Language
 	public static function XSLTLang( $currentLang, $scopeLangNodeSet )
 	{
 		//(ancestor-or-self::*/@xml:lang)[last()]
+
+		if( strlen( $currentLang ) == 0 )
+		{
+			$currentLang = self::GetLang();
+		}
+
 		$scopeLang = $scopeLangNodeSet[ 0 ]->value;
 		$scopeLangParts = self::GetLangParts( strtolower( $scopeLang ) );
 		$currentLangParts = self::GetLangParts( strtolower( $currentLang ) );
