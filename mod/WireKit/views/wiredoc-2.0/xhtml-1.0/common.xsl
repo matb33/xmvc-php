@@ -27,10 +27,6 @@
 	<xsl:include href="navigate.xsl" />
 	<xsl:include href="action.xsl" />
 
-	<xsl:variable name="lang">
-		<xsl:value-of select="//wd:component[ not( ancestor::wd:component ) ]/@xml:lang" />
-	</xsl:variable>
-
 	<xsl:template match="wd:component[ not( ancestor::wd:component ) ]">
 		<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="{ $lang }" lang="{ $lang }">
 			<head>
