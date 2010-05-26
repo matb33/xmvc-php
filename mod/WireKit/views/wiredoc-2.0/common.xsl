@@ -2,6 +2,7 @@
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 	xmlns:xmvc="http://www.xmvc.org/ns/xmvc/1.0"
 	xmlns:wd="http://www.wiredoc.org/ns/wiredoc/2.0"
+	xmlns:meta="http://www.wiredoc.org/ns/metadoc/1.0"
 	xmlns:php="http://php.net/xsl">
 
 	<xsl:include href="../common.xsl" />
