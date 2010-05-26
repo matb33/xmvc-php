@@ -86,6 +86,7 @@
 		</xsl:element>
 	</xsl:template>
 
+	<xsl:template match="meta:*" mode="meta" />
 	<xsl:template match="meta:*" />
 	<xsl:template match="doc:title" />
 
