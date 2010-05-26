@@ -30,6 +30,15 @@
 		</xsl:apply-templates>
 	</xsl:template>
 
+	<xsl:template match="meta:*" mode="override-meta">
+		<xsl:param name="position" select="position()" />
+		<xsl:param name="last" select="last()" />
+		<xsl:apply-templates select="." mode="meta">
+			<xsl:with-param name="position" select="$position" />
+			<xsl:with-param name="last" select="$last" />
+		</xsl:apply-templates>
+	</xsl:template>
+
 	<xsl:template match="wd:component">
 		<xsl:apply-templates mode="lang-check" />
 	</xsl:template>

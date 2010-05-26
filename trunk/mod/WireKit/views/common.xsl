@@ -13,12 +13,6 @@
 
 	<xsl:template match="xmvc:*" />
 
-	<!-- Creates a variable containing a relative path modifier to get to the root of the web folder, using xmvc:strings/xmvc:uri -->
-
-	<xsl:variable name="relative-path-modifier">
-		
-	</xsl:variable>
-
 	<!-- Strip namespaces from XHTML using an identity template -->
 
 	<xsl:template match="*[ ./xhtml:* ]">

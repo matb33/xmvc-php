@@ -173,6 +173,7 @@ class Processor
 		$stringData->Add( "uri", $uri );
 		$stringData->Add( "link", $link );
 		$stringData->Add( "link-urlencoded", urlencode( $link ) );
+		$stringData->Add( "relative-path-modifier", implode( "/", array_fill( 0, substr_count( $uri, "/" ) - 1, ".." ) ) );
 
 		if( isset( Config::$data[ "isProduction" ] ) && Config::$data[ "isProduction" ] )
 		{
