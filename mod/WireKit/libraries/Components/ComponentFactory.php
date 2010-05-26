@@ -26,7 +26,6 @@ class ComponentFactory extends DefaultEventDispatcher
 	{
 		$componentClass = ComponentUtils::GetComponentClassNameFromWiredocComponentName( $component );
 		$eventName = ComponentUtils::DefaultEventNameIfNecessary( $eventName );
-
 		$namespacedComponentClass = ComponentUtils::DefaultNamespaceIfNecessary( $componentClass );
 
 		if( class_exists( $namespacedComponentClass, true ) )
@@ -89,23 +88,34 @@ class ComponentFactory extends DefaultEventDispatcher
 			{
 				// Wiredoc 2.0
 				list( $component, $instanceName, $null ) = ComponentUtils::ExtractComponentNamePartsFromWiredocName( $this->referenceNode->getAttribute( "wd:name" ) );
+			
+				$eventName = $this->referenceNode->getAttribute( "wd:event" );
+				$cacheMinutes = ( int )$this->referenceNode->getAttribute( "wd:cache" );
+
+				$i = 0;
+				$parameters = array();
+
+				while( $this->referenceNode->hasAttribute( "wd:param" . ( ++$i ) ) )
+				{
+					$parameters[ $i - 1 ] = $this->referenceNode->getAttribute( "wd:param" . $i );
+				}
 			}
 			else
 			{
 				// Wiredoc 1.0
 				$component = $this->referenceNode->getAttribute( "name" );
 				$instanceName = $this->referenceNode->getAttribute( "instance-name" );
-			}
 
-			$eventName = $this->referenceNode->getAttribute( "event" );
-			$cacheMinutes = ( int )$this->referenceNode->getAttribute( "cache" );
+				$eventName = $this->referenceNode->getAttribute( "event" );
+				$cacheMinutes = ( int )$this->referenceNode->getAttribute( "cache" );
 
-			$i = 0;
-			$parameters = array();
+				$i = 0;
+				$parameters = array();
 
-			while( $this->referenceNode->hasAttribute( "param" . ( ++$i ) ) )
-			{
-				$parameters[ $i - 1 ] = $this->referenceNode->getAttribute( "param" . $i );
+				while( $this->referenceNode->hasAttribute( "param" . ( ++$i ) ) )
+				{
+					$parameters[ $i - 1 ] = $this->referenceNode->getAttribute( "param" . $i );
+				}
 			}
 
 			return( $this->GetComponent( $component, $instanceName, $eventName, $parameters, $cacheMinutes ) );
