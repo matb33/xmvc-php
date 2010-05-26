@@ -148,9 +148,4 @@ abstract class ModelDriver extends \DOMDocument
 	}
 }
 
-interface IModelDriver
-{
-	public function TransformForeignToXML();
-}
-
 ?>
