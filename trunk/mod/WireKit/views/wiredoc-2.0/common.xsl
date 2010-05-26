@@ -7,6 +7,10 @@
 
 	<xsl:include href="../common.xsl" />
 
+	<xsl:variable name="lang">
+		<xsl:value-of select="//wd:component[ not( ancestor::wd:component ) ]/@xml:lang" />
+	</xsl:variable>
+
 	<!-- Global wiredoc templates for xMVC -->
 
 	<xsl:template match="/xmvc:root">
