@@ -247,7 +247,8 @@ class ComponentLookup extends Singleton
 
 		if( strpos( $componentString, ".xsl" ) !== false )
 		{
-			$componentWiredocName = ComponentUtils::ExtractComponentNamePartsFromWiredocName( $componentString );
+			$componentWiredocName = str_replace( ".xsl", "", $componentString );
+			$componentWiredocName = substr( $componentWiredocName, 0, strrpos( $componentWiredocName, "/" ) ) . ".null";
 		}
 		else
 		{

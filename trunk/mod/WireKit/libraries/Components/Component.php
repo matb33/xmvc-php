@@ -167,7 +167,10 @@ abstract class Component extends DefaultEventDispatcher
 		$instanceName = $this->instanceName;
 		$builtComponentModel = $this->builtComponentModel;
 
-		$xslFile = Loader::Resolve( "components", ComponentUtils::GetComponentClassNameFromWiredocComponentName( $component ), "xsl" );
+		$componentClass = ComponentUtils::GetComponentClassNameFromWiredocComponentName( $component );
+		$namespacedComponentClass = ComponentUtils::DefaultNamespaceIfNecessary( $componentClass );
+
+		$xslFile = Loader::Resolve( "components", $namespacedComponentClass, "xsl" );
 
 		$view = new View();
 		$xslData = $view->ImportXSL( null, $xslFile );
