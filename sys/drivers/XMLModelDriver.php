@@ -29,6 +29,10 @@ class XMLModelDriver extends ModelDriver implements IModelDriver
 			{
 				$xmlData = $parameter->GetXMLForStacking();
 			}
+			elseif( $this->IsDOMNode( $parameter ) )
+			{
+				$xmlData = $this->ExportXMLFromDOMNode( $parameter );
+			}
 			else
 			{
 				if( $this->IsURL( $parameter ) )
@@ -66,6 +70,11 @@ class XMLModelDriver extends ModelDriver implements IModelDriver
 	private function IsInstanceOfModelDriver( $parameter )
 	{
 		return( is_a( $parameter, "ModelDriver" ) );
+	}
+
+	private function IsDOMNode( $parameter )
+	{
+		return( is_a( $parameter, "DOMNode" ) );
 	}
 
 	private function IsRawXML( $parameter )
@@ -141,6 +150,11 @@ class XMLModelDriver extends ModelDriver implements IModelDriver
 		curl_close( $ch );
 
 		return( $result );
+	}
+
+	private function ExportXMLFromDOMNode( $node )
+	{
+		return( $node->ownerDocument->saveXML( $node ) );
 	}
 
 	public static function Exists( $modelName, $extension = Loader::modelExtension )
