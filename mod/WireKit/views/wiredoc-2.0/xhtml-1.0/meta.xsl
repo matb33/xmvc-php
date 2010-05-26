@@ -3,10 +3,16 @@
 	xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:wd="http://www.wiredoc.org/ns/wiredoc/2.0"
 	xmlns:meta="http://www.wiredoc.org/ns/metadoc/1.0"
+	xmlns:xmvc="http://www.xmvc.org/ns/xmvc/1.0"
 	xmlns:doc="http://www.docbook.org/schemas/simplified"
 	xmlns:php="http://php.net/xsl">
 
 	<xsl:template name="head">
+		<xsl:call-template name="title" />
+		<xsl:call-template name="meta" />
+	</xsl:template>
+
+	<xsl:template name="title">
 		<xsl:variable name="default-glue" select="' | '" />
 		<xsl:variable name="default-sort-order" select="'ascending'" />
 		<xsl:variable name="doc-title-set" select="//doc:title[ php:function( 'xMVC\Mod\Language\Language::XSLTLang', $lang, (ancestor-or-self::*/@xml:lang)[last()] ) ]" />
@@ -17,7 +23,7 @@
 					<!-- TODO These two variables aren't working... -->
 					<xsl:variable name="meta-title-glue" select="ancestor-or-self::meta:*[ ( preceding-sibling::meta:title-glue | following-sibling::meta:title-glue ) and ( starts-with( local-name(), 'meta' ) and ( substring( local-name(), 6 ) = 'title-glue' or @wd:name='title-glue' ) and php:function( 'xMVC\Mod\Language\Language::XSLTLang', $lang, (ancestor-or-self::*/@xml:lang)[last()] ) ) ][ last() ]" />
 					<xsl:variable name="meta-title-sort-order" select="ancestor-or-self::meta:*[ ( preceding-sibling::meta:title-sort-order | following-sibling::meta:title-sort-order ) and ( starts-with( local-name(), 'meta' ) and ( substring( local-name(), 6 ) = 'title-sort-order' or @wd:name='title-sort-order' ) and php:function( 'xMVC\Mod\Language\Language::XSLTLang', $lang, (ancestor-or-self::*/@xml:lang)[last()] ) ) ][ last() ]" />
-					
+
 					<xsl:variable name="glue">
 						<xsl:choose>
 							<xsl:when test="$meta-title-glue"><xsl:value-of select="$meta-title-glue" /></xsl:when>
@@ -39,38 +45,45 @@
 				</xsl:for-each>
 			</title>
 		</xsl:if>
+	</xsl:template>
+
+	<xsl:template name="meta">
 		<xsl:for-each select="//meta:*[ php:function( 'xMVC\Mod\Language\Language::XSLTLang', $lang, (ancestor-or-self::*/@xml:lang)[last()] ) ]">
-			<xsl:variable name="meta-name" select="local-name()" />
-			<xsl:choose>
-				<xsl:when test="$meta-name = 'link'">
-					<xsl:element name="link">
-						<xsl:copy-of select="@*[ namespace-uri() != 'http://www.wiredoc.org/ns/wiredoc/2.0' and namespace-uri() != 'http://www.wiredoc.org/ns/metadoc/1.0' ]" />
-					</xsl:element>
-				</xsl:when>
-				<xsl:when test="$meta-name = 'meta'">
-					<xsl:element name="meta">
-						<xsl:copy-of select="@*[ namespace-uri() != 'http://www.wiredoc.org/ns/wiredoc/2.0' and namespace-uri() != 'http://www.wiredoc.org/ns/metadoc/1.0' ]" />
-					</xsl:element>
-				</xsl:when>
-				<xsl:when test="$meta-name = 'script'">
-					<xsl:element name="script">
-						<xsl:copy-of select="@*[ namespace-uri() != 'http://www.wiredoc.org/ns/wiredoc/2.0' and namespace-uri() != 'http://www.wiredoc.org/ns/metadoc/1.0' ]" />
-						<xsl:comment>
-							<xsl:apply-templates />
-						</xsl:comment>
-					</xsl:element>
-				</xsl:when>
-				<xsl:when test="$meta-name = 'style'">
-					<xsl:element name="style">
-						<xsl:copy-of select="@*[ namespace-uri() != 'http://www.wiredoc.org/ns/wiredoc/2.0' and namespace-uri() != 'http://www.wiredoc.org/ns/metadoc/1.0' ]" />
-						<xsl:comment>
-							<xsl:apply-templates />
-						</xsl:comment>
-					</xsl:element>
-				</xsl:when>
-				<xsl:otherwise />
-			</xsl:choose>
+			<xsl:apply-templates select="." mode="override-meta" />
 		</xsl:for-each>
+	</xsl:template>
+
+	<xsl:template match="meta:link" mode="meta">
+		<xsl:element name="link">
+			<xsl:copy-of select="@*[ namespace-uri() != 'http://www.wiredoc.org/ns/wiredoc/2.0' and namespace-uri() != 'http://www.wiredoc.org/ns/metadoc/1.0' ]" />
+		</xsl:element>
+	</xsl:template>
+
+	<xsl:template match="meta:script" mode="meta">
+		<xsl:element name="script">
+			<xsl:attribute name="src">
+				<xsl:value-of select="@href" />
+			</xsl:attribute>
+			<xsl:copy-of select="@*[ namespace-uri() != 'http://www.wiredoc.org/ns/wiredoc/2.0' and namespace-uri() != 'http://www.wiredoc.org/ns/metadoc/1.0' and name() != 'href' ]" />
+			<xsl:comment>
+				<xsl:apply-templates />
+			</xsl:comment>
+		</xsl:element>
+	</xsl:template>
+
+	<xsl:template match="meta:meta" mode="meta">
+		<xsl:element name="meta">
+			<xsl:copy-of select="@*[ namespace-uri() != 'http://www.wiredoc.org/ns/wiredoc/2.0' and namespace-uri() != 'http://www.wiredoc.org/ns/metadoc/1.0' ]" />
+		</xsl:element>
+	</xsl:template>
+
+	<xsl:template match="meta:style" mode="meta">
+		<xsl:element name="style">
+			<xsl:copy-of select="@*[ namespace-uri() != 'http://www.wiredoc.org/ns/wiredoc/2.0' and namespace-uri() != 'http://www.wiredoc.org/ns/metadoc/1.0' ]" />
+			<xsl:comment>
+				<xsl:apply-templates />
+			</xsl:comment>
+		</xsl:element>
 	</xsl:template>
 
 	<xsl:template match="meta:*" />
