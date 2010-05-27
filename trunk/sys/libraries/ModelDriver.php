@@ -38,14 +38,14 @@ abstract class ModelDriver extends \DOMDocument
 		{
 			if( Config::$data[ "enableXSLTPHPFunctions" ] )
 			{
-				$restrict = array();
-
-				if( isset( Config::$data[ "restrictXSLTPHPFunctions" ] ) )
+				if( isset( Config::$data[ "restrictXSLTPHPFunctions" ] ) && is_array( Config::$data[ "restrictXSLTPHPFunctions" ] ) && count( Config::$data[ "restrictXSLTPHPFunctions" ] ) )
 				{
-					$restrict = Config::$data[ "restrictXSLTPHPFunctions" ];
+					$this->xPath->registerPHPFunctions( Config::$data[ "restrictXSLTPHPFunctions" ] );
 				}
-
-				$this->xPath->registerPHPFunctions( $restrict );
+				else
+				{
+					$this->xPath->registerPHPFunctions();
+				}
 			}
 		}
 
@@ -147,5 +147,3 @@ abstract class ModelDriver extends \DOMDocument
 		}
 	}
 }
-
-?>

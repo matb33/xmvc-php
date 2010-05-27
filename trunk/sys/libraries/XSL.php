@@ -45,14 +45,14 @@ class XSL
 		{
 			if( Config::$data[ "enableXSLTPHPFunctions" ] )
 			{
-				$restrict = array();
-
-				if( isset( Config::$data[ "restrictXSLTPHPFunctions" ] ) )
+				if( isset( Config::$data[ "restrictXSLTPHPFunctions" ] ) && is_array( Config::$data[ "restrictXSLTPHPFunctions" ] ) && count( Config::$data[ "restrictXSLTPHPFunctions" ] ) )
 				{
-					$restrict = Config::$data[ "restrictXSLTPHPFunctions" ];
+					self::$processor->registerPHPFunctions( Config::$data[ "restrictXSLTPHPFunctions" ] );
 				}
-
-				self::$processor->registerPHPFunctions( $restrict );
+				else
+				{
+					self::$processor->registerPHPFunctions();
+				}
 			}
 		}
 	}
@@ -139,5 +139,3 @@ class XSL
 		return( $err );
 	}
 }
-
-?>
