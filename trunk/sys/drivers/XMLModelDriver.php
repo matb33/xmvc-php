@@ -43,12 +43,12 @@ class XMLModelDriver extends ModelDriver implements IModelDriver
 					}
 					else
 					{
-						$parameter = $this->FileGetContentsUTF8( $parameter );
+						$parameter = FileSystem::FileGetContentsUTF8( $parameter );
 					}
 				}
 				elseif( $this->IsFileOnFileSystem( $parameter ) )
 				{
-					$parameter = $this->FileGetContentsUTF8( $parameter );
+					$parameter = FileSystem::FileGetContentsUTF8( $parameter );
 				}
 
 				if( $this->IsRawXML( $parameter ) )
@@ -116,13 +116,6 @@ class XMLModelDriver extends ModelDriver implements IModelDriver
 		}
 
 		return( $xmlData );
-	}
-
-	private function FileGetContentsUTF8( $filename )
-	{
-		$contents = file_get_contents( Normalize::Filename( $filename ) );
-
-		return( mb_convert_encoding( $contents, "UTF-8", mb_detect_encoding( $contents, "UTF-8, ISO-8859-1", true ) ) );
 	}
 
 	private function POSTRequest( $url, $data )

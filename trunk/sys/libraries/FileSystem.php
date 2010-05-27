@@ -94,6 +94,13 @@ class FileSystem
 		return( false );
 	}
 
+	public static function FileGetContentsUTF8( $filename )
+	{
+		$contents = file_get_contents( Normalize::Filename( $filename ) );
+
+		return( mb_convert_encoding( $contents, "UTF-8", mb_detect_encoding( $contents, "UTF-8, ISO-8859-1", true ) ) );
+	}
+
 	public static function GetFolderList( $rootFolder, $match = "/./", $getMeta = true )
 	{
 		$list[ $rootFolder ] = self::GetMeta( $rootFolder, $getMeta );
