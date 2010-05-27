@@ -51,6 +51,17 @@
 		<xsl:for-each select="//meta:*[ php:function( 'xMVC\Mod\Language\Language::XSLTLang', $lang, (ancestor-or-self::*/@xml:lang)[last()] ) ]">
 			<xsl:apply-templates select="." mode="override-meta" />
 		</xsl:for-each>
+		<!--xsl:call-template name="single-link-method" mode="override-meta" /-->
+		<!--xsl:call-template name="single-script-method" mode="override-meta" /-->
+	</xsl:template>
+
+	<xsl:template name="single-link-method" mode="override-meta">
+	</xsl:template>
+
+	<xsl:template name="single-script-method" mode="override-meta">
+		<xsl:variable name="meta-script-nodes" select="//meta:script[ php:function( 'xMVC\Mod\Language\Language::XSLTLang', $lang, (ancestor-or-self::*/@xml:lang)[last()] ) ]" />
+		<xsl:variable name="script-src" select="php:function( 'xMVC\Mod\WireKit\Combiner::CombineScripts', 'inc/cache/', $meta-script-nodes )" />
+		<script type="text/javascript" src="{ $script-src }" />
 	</xsl:template>
 
 	<xsl:template match="meta:link" mode="meta">
