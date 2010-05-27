@@ -493,6 +493,8 @@
 	</xsl:template>
 
 	<xsl:template match="doc:row/doc:entry">
+		<xsl:param name="position" select="position()" />
+		<xsl:param name="last" select="last()" />
 		<xsl:variable name="cell-name">
 			<xsl:choose>
 				<xsl:when test="../../../doc:thead">th</xsl:when>
@@ -503,15 +505,15 @@
 			<xsl:attribute name="class">
 				<xsl:if test="@wd:name"><xsl:value-of select="@wd:name" /><xsl:text> </xsl:text></xsl:if>
 				<xsl:choose>
-					<xsl:when test="last() = 1">first-child last-child</xsl:when>
-					<xsl:when test="position() = 1">first-child</xsl:when>
-					<xsl:when test="position() = last()">last-child</xsl:when>
+					<xsl:when test="$last = 1">first-child last-child</xsl:when>
+					<xsl:when test="$position = 1">first-child</xsl:when>
+					<xsl:when test="$position = $last">last-child</xsl:when>
 					<xsl:otherwise>middle-child</xsl:otherwise>
 				</xsl:choose>
-				<xsl:text> item-</xsl:text><xsl:value-of select="position()" />
+				<xsl:text> item-</xsl:text><xsl:value-of select="$position" />
 				<xsl:text> </xsl:text>
 				<xsl:choose>
-					<xsl:when test="position() mod 2 = 1">even</xsl:when>
+					<xsl:when test="$position mod 2 = 1">even</xsl:when>
 					<xsl:otherwise>odd</xsl:otherwise>
 				</xsl:choose>
 			</xsl:attribute>
