@@ -179,16 +179,36 @@ class Language
 		return( $parts );
 	}
 
-	public static function XSLTLang( $currentLang, $scopeLangNodeSet )
+	public static function XSLTLang( $currentLang, $scopeLangData )
 	{
 		//(ancestor-or-self::*/@xml:lang)[last()]
+
+		if( !is_array( $scopeLangData ) )
+		{
+			$scopeLang = $scopeLangData;
+
+			if( strlen( $scopeLang ) == 0 )
+			{
+				$scopeLang = self::GetLang();
+			}
+		}
+		else
+		{
+			if( isset( $scopeLangData[ 0 ]->value ) )
+			{
+				$scopeLang = $scopeLangData[ 0 ]->value;
+			}
+			else
+			{
+				$scopeLang = self::GetLang();
+			}
+		}
 
 		if( strlen( $currentLang ) == 0 )
 		{
 			$currentLang = self::GetLang();
 		}
 
-		$scopeLang = $scopeLangNodeSet[ 0 ]->value;
 		$scopeLangParts = self::GetLangParts( strtolower( $scopeLang ) );
 		$currentLangParts = self::GetLangParts( strtolower( $currentLang ) );
 
