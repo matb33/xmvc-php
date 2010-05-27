@@ -123,7 +123,7 @@ class Processor
 
 	public function RenderPageWithModel( $model, $component, $instanceName )
 	{
-		$viewNameNodeList = $model->xPath->query( "//meta:view | //wd:*[ starts-with( local-name(), 'meta' ) and ( @wd:name='view' or substring( local-name(), 6 ) = 'view' ) ]" );
+		$viewNameNodeList = $model->xPath->query( "//meta:view" );
 		$viewName = $viewNameNodeList->length > 0 ? $viewNameNodeList->item( 0 )->nodeValue : "";
 		$viewName = ComponentUtils::FallbackViewNameIfNecessary( $viewName );
 
@@ -173,7 +173,19 @@ class Processor
 		$stringData->Add( "uri", $uri );
 		$stringData->Add( "link", $link );
 		$stringData->Add( "link-urlencoded", urlencode( $link ) );
-		$stringData->Add( "relative-path-modifier", implode( "/", array_fill( 0, substr_count( $uri, "/" ) - 1, ".." ) ) );
+
+		$slashCount = substr_count( $uri, "/" ) - 1;
+
+		if( $slashCount <= 0 )
+		{
+			$relativePathModifier = ".";
+		}
+		else
+		{
+			$relativePathModifier = implode( "/", array_fill( 0, $slashCount, ".." ) );
+		}
+
+		$stringData->Add( "relative-path-modifier", $relativePathModifier );
 
 		if( isset( Config::$data[ "isProduction" ] ) && Config::$data[ "isProduction" ] )
 		{
