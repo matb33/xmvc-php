@@ -11,6 +11,6 @@ class Routing extends OverrideableSingleton
 
 	public function helloWorld()
 	{
-		echo( "hello world from the Routing<br />" );
+		echo "hello world from the Routing<br />";
 	}
 }
