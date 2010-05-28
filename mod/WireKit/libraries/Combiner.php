@@ -2,29 +2,53 @@
 
 namespace xMVC\Mod\WireKit;
 
+use xMVC\Sys\FileSystem;
+use xMVC\Sys\Config;
+
 class Combiner
 {
-	public static function CombineJavaScripts( $basePath, $scriptNodes )
+	public static function CombineJavaScripts( $scriptNodes )
 	{
-		$files = array();
+		$fileIDs = array();
+		$filenames = array();
 
 		foreach( $scriptNodes as $node )
 		{
 			if( $node->hasAttribute( "href" ) )
 			{
-				$files[] = $node->getAttribute( "href" );
+				// grab the filenames and modified date attributes
+				$meta = FileSystem::GetMeta( $node->getAttribute( "href" ) );
+				
+				$filenames[] = $meta[ "fullfilename" ];
+				$fileIDs[] = $meta[ "basename" ] . $meta[ "filemtime" ];
 			}
 		}
 
-		$hash = md5( implode( " ", $files ) );
+		sort( $fileIDs );
 
-		return $basePath . "script-" . $hash . ".js";
+		$hash = md5( implode( " ", $fileIDs ) );
+		$outputFilename = Config::$data[ "combinerCachePhysicalFolder" ] . "/" . "script-" . $hash . ".js";
+		$publicFilename = Config::$data[ "combinerCacheWebFolder" ] . "/" . "script-" . $hash . ".js";
+
+		if( !FileSystem::FileExists( $outputFilename ) )
+		{
+			// combine the files
+			$fileContents = "";
+			foreach( $filenames as $file )
+			{
+				$fileContents .= FileSystem::FileGetContentsUTF8( $file );
+			}
+
+			FileSystem::FilePutContents( $outputFilename, $fileContents );
+		}
+
+		var_dump($outputFilename);
+
+		return $publicFilename;
 	}
 
-	public static function CombineStylesheetLinks( $basePath, $media, $linkNodes )
+	public static function CombineStylesheetLinks( $media, $linkNodes )
 	{
-		$files = array();
-
 		foreach( $linkNodes as $node )
 		{
 			if( $node->hasAttribute( "href" ) )
@@ -35,6 +59,6 @@ class Combiner
 
 		$hash = md5( implode( " ", $files ) );
 
-		return $basePath . "link-" . $media . "-" . $hash . ".css";
+		return Config::$data[ "combinerCacheWebFolder" ] . "/" . "link-" . $media . "-" . $hash . ".css";
 	}
 }

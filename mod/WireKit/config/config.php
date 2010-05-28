@@ -23,5 +23,3 @@ else
 }
 
 $sourceViewEnabled = !$isProduction;
-
-?>
