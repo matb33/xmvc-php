@@ -1,43 +1,3 @@
-////////////////////////////////////////////////////
-// Crockford JS framework v1.0
-////////////////////////////////////////////////////
-
-/// Define "create" method on Object type as a static method which allows easy inheritence between objects.
-if( typeof Object.create !== "function" )
-{
-	Object.create = function( instance )
-	{
-		var F = function() {};
-		F.prototype = instance;
-		return new F();
-	}
-}
-
-/// Define "method" method on Function as an instance method which provides syntactic sugar for declaring instance methods on a function
-/// (useful for constructor functions to augment types) and also ensures that instance method cannot be overriden.
-Function.prototype.method = function( name, func )
-{
-	if( !this.prototype[ name ] )
-	{
-		this.prototype[ name ] = func;
-		return this;
-	}
-};
-
-/// Define the "curry" method on Function as an instance method which provides a technique for wrapping a method and specifying default values for parameters.
-/// Example: var add1 = add.curry(1);	// will always add 1 + number
-/// add1(2);	// this will result in 3
-Function.method( "curry", function()
-{
-	var slice = Array.prototype.slice;
-	args = slice.apply( arguments );
-	that = this;
-	return function()
-	{
-		return that.apply( null, args.concat( slice.apply( arguments ) ) );
-	};
-});
-
 /*!
  * jQuery JavaScript Library v1.4.2
  * http://jquery.com/
@@ -275,10 +235,50 @@ b.splice(b.length-1,1);return b},parameterNames:function(){var a=this.queryStrin
 c(this).attr("rel").split("address:")[1].split(" ")[0]:c(this).attr("href").replace(/^#\!?/,"");c.address.value(p);return false}};c(this).click(w).live("click",w);c(this).live("submit",function(){if(c(this).is("form")){var p=v?v.call(this):c(this).attr("action")+"?"+c(this).serialize();c.address.value(p);return false}});return this}})(jQuery);
 
 ////////////////////////////////////////////////////
+// Crockford JS framework v1.0
+////////////////////////////////////////////////////
+
+/// Define "create" method on Object type as a static method which allows easy inheritence between objects.
+if( typeof Object.create !== "function" )
+{
+	Object.create = function( instance )
+	{
+		var F = function() {};
+		F.prototype = instance;
+		return new F();
+	}
+}
+
+/// Define "method" method on Function as an instance method which provides syntactic sugar for declaring instance methods on a function
+/// (useful for constructor functions to augment types) and also ensures that instance method cannot be overriden.
+Function.prototype.method = function( name, func )
+{
+	if( !this.prototype[ name ] )
+	{
+		this.prototype[ name ] = func;
+		return this;
+	}
+};
+
+/// Define the "curry" method on Function as an instance method which provides a technique for wrapping a method and specifying default values for parameters.
+/// Example: var add1 = add.curry(1);	// will always add 1 + number
+/// add1(2);	// this will result in 3
+Function.method( "curry", function()
+{
+	var slice = Array.prototype.slice;
+	args = slice.apply( arguments );
+	that = this;
+	return function()
+	{
+		return that.apply( null, args.concat( slice.apply( arguments ) ) );
+	};
+});
+
+////////////////////////////////////////////////////
 // php.js methods
 ////////////////////////////////////////////////////
 
-String.method( "urlencode", function( str )
+String.method( "urlencode", function()
 {
     // http://kevin.vanzonneveld.net
     // +   original by: Philip Peterson
@@ -286,7 +286,7 @@ String.method( "urlencode", function( str )
     // *     example 1: urlencode('Kevin van Zonneveld!');
     // *     returns 1: 'Kevin+van+Zonneveld%21'
                                      
-    var ret = str;
+    var ret = this;
     
     ret = ret.toString();
     ret = encodeURIComponent(ret);
@@ -295,7 +295,7 @@ String.method( "urlencode", function( str )
     return ret;
 });
 
-String.method( "urldecode", function( str )
+String.method( "urldecode", function()
 {
     // http://kevin.vanzonneveld.net
     // +   original by: Philip Peterson
@@ -303,7 +303,7 @@ String.method( "urldecode", function( str )
     // *     example 1: urldecode('Kevin+van+Zonneveld%21');
     // *     returns 1: 'Kevin van Zonneveld!'
     
-    var ret = str;
+    var ret = this;
        
     ret = ret.replace(/\+/g, '%20');
     ret = decodeURIComponent(ret);
@@ -312,7 +312,7 @@ String.method( "urldecode", function( str )
     return ret;
 });
 
-String.method( "base64_encode", function( data )
+String.method( "base64_encode", function()
 {
     // http://kevin.vanzonneveld.net
     // +   original by: Tyler Akins (http://rumkin.com)
@@ -331,7 +331,7 @@ String.method( "base64_encode", function( data )
         
     var b64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
     var o1, o2, o3, h1, h2, h3, h4, bits, i = ac = 0, enc="", tmp_arr = [];
-    data = utf8_encode(data);
+    var data = this.utf8_encode();
     
     do { // pack three octets into four hexets
         o1 = data.charCodeAt(i++);
@@ -363,7 +363,7 @@ String.method( "base64_encode", function( data )
     return enc;
 });
 
-String.method( "utf8_encode", function( str_data )
+String.method( "utf8_encode", function()
 {
     // http://kevin.vanzonneveld.net
     // +   original by: Webtoolkit.info (http://www.webtoolkit.info/)
@@ -371,7 +371,7 @@ String.method( "utf8_encode", function( str_data )
     // *     example 1: utf8_encode('Kevin van Zonneveld');
     // *     returns 1: 'Kevin van Zonneveld'
  
-    str_data = str_data.replace(/\r\n/g,"\n");
+    var str_data = this.replace(/\r\n/g,"\n");
     var tmp_arr = [], ac = 0;
  
     for (var n = 0; n < str_data.length; n++) {
@@ -390,33 +390,40 @@ String.method( "utf8_encode", function( str_data )
     
     return tmp_arr.join('');
 });
-
+//
 ////////////////////////////////////////////////////
 // Inner message jQuery plugin
 // Written by Mathieu Bouchard (c) 2010
 ////////////////////////////////////////////////////
 
-var jQueryVal = jQuery.fn.val;
+jQuery( document ).ready( function()
+{
+	jQuery.data( document.body, "originalVal", jQuery.fn.val );
+});
 
 jQuery.fn.realval = function()
 {
-	return( jQueryVal.apply( this, arguments ) );
+	var jQueryVal = jQuery.data( document.body, "originalVal" );
+	
+	return jQueryVal.apply( this, arguments );
 };
 
 jQuery.fn.val = function()
 {
+	var jQueryVal = jQuery.data( document.body, "originalVal" );
+
 	if( jQuery( this ).length > 0 )
 	{
 		if( arguments.length == 0 )
 		{
 			if( jQuery( this ).get( 0 ).message == jQuery( this ).realval() )
 			{
-				return( "" );
+				return "";
 			}
 		}
 	}
 
-	return( jQueryVal.apply( this, arguments ) );
+	return jQueryVal.apply( this, arguments );
 };
 
 jQuery.fn.innerMessage = function()
