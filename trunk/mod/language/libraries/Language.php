@@ -33,7 +33,7 @@ class Language
 
 		self::SetLanguageSession();
 
-		return( self::$language );
+		return self::$language;
 	}
 
 	public static function SetLang( $lang )
@@ -52,7 +52,7 @@ class Language
 
 		$definedLanguages = array_keys( self::$data );
 
-		return( $definedLanguages );
+		return $definedLanguages;
 	}
 
 	private static function LoadLanguageModel()
@@ -91,7 +91,7 @@ class Language
 
 	private static function GetDefaultLanguage()
 	{
-		return( self::$languages->xPath->query( "//lang:languages/lang:config/lang:default" )->item( 0 )->nodeValue );
+		return self::$languages->xPath->query( "//lang:languages/lang:config/lang:default" )->item( 0 )->nodeValue;
 	}
 
 	private static function FindLanguageBasedOnHost()
@@ -104,12 +104,12 @@ class Language
 				{
 					self::$language = $key;
 
-					return( true );
+					return true;
 				}
 			}
 		}
 
-		return( false );
+		return false;
 	}
 
 	private static function FindLanguageBasedOnGET()
@@ -120,11 +120,11 @@ class Language
 			{
 				self::$language = $_GET[ "lang" ];
 
-				return( true );
+				return true;
 			}
 		}
 
-		return( false );
+		return false;
 	}
 
 	private static function FindLanguageBasedOnSession()
@@ -135,11 +135,11 @@ class Language
 			{
 				self::$language = $_SESSION[ "lang" ];
 
-				return( true );
+				return true;
 			}
 		}
 
-		return( false );
+		return false;
 	}
 
 	private static function SetLanguageToDefault()
@@ -156,7 +156,7 @@ class Language
 	{
 		$parts = self::GetLangParts( $lang );
 
-		return( $parts[ 0 ] );
+		return $parts[ 0 ];
 	}
 
 	public static function GetLangLocale( $lang )
@@ -164,7 +164,7 @@ class Language
 		$parts = self::GetLangParts( $lang );
 		$locale = isset( $parts[ 1 ] ) ? $parts[ 1 ] : "";
 
-		return( $locale );
+		return $locale;
 	}
 
 	public static function GetLangParts( $lang )
@@ -176,7 +176,7 @@ class Language
 			$parts[ 1 ] = "";
 		}
 
-		return( $parts );
+		return $parts;
 	}
 
 	public static function XSLTLang( $currentLang, $scopeLangData )
@@ -216,15 +216,15 @@ class Language
 		{
 			if( strlen( $scopeLangParts[ 1 ] ) == 0 || strlen( $currentLangParts[ 1 ] ) == 0 )
 			{
-				return( true );
+				return true;
 			}
 			elseif( $scopeLangParts[ 1 ] == $currentLangParts[ 1 ] )
 			{
-				return( true );
+				return true;
 			}
 		}
 
-		return( false );
+		return false;
 	}
 }
 
