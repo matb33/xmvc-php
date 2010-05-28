@@ -101,6 +101,11 @@ class FileSystem
 		return mb_convert_encoding( $contents, "UTF-8", mb_detect_encoding( $contents, "UTF-8, ISO-8859-1", true ) );
 	}
 
+	public static function FilePutContents( $filename, $data, $flags = 0, $context = null )
+	{
+		file_put_contents( Normalize::Filename( $filename ), $data, $flags, $context );
+	}
+
 	public static function GetFolderList( $rootFolder, $match = "/./", $getMeta = true )
 	{
 		$list[ $rootFolder ] = self::GetMeta( $rootFolder, $getMeta );
@@ -270,7 +275,7 @@ class FileSystem
 		return $list;
 	}
 
-	private static function GetMeta( $file, $getMeta = true )
+	public static function GetMeta( $file, $getMeta = true )
 	{
 		$meta = array();
 
@@ -298,6 +303,7 @@ class FileSystem
 			$meta[ "basename" ]			= $pathParts[ "basename" ];
 			$meta[ "extension" ]		= isset( $pathParts[ "extension" ] ) ? $pathParts[ "extension" ] : "";
 			$meta[ "filename" ]			= $pathParts[ "filename" ];
+			$meta[ "fullfilename" ]		= $file;
 
 			$meta[ "fileatime-nice" ]	= date( "Y-m-d H:i:s", $meta[ "fileatime" ] );
 			$meta[ "filectime-nice" ]	= date( "Y-m-d H:i:s", $meta[ "filectime" ] );
@@ -307,6 +313,9 @@ class FileSystem
 
 		return $meta;
 	}
-}
 
-?>
+	public function FileExists( $filename )
+	{
+		return file_exists( $filename );
+	}
+}
