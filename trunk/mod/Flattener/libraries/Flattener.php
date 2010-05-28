@@ -37,7 +37,7 @@ class Flattener
 
 	private function GetContentsAtURL( $url )
 	{
-		return( file_get_contents( $url ) );
+		return file_get_contents( $url );
 	}
 
 	private function WriteContents( $url, $contents )
@@ -59,7 +59,7 @@ class Flattener
 
 		$path .= $url;
 
-		return( $path );
+		return $path;
 	}
 
 	private function WriteContentsToDestinationFolder( $contents, $folder )
