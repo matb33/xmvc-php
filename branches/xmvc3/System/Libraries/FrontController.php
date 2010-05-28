@@ -11,6 +11,6 @@ class FrontController extends OverrideableSingleton
 
 	public function helloWorld()
 	{
-		echo( "hello world from the FrontController<br />" );
+		echo "hello world from the FrontController<br />";
 	}
 }

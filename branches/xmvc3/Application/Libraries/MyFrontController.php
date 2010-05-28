@@ -13,6 +13,6 @@ class MyFrontController extends FrontController
 
 	public function helloWorld()
 	{
-		echo( "hello world from MyFrontController<br />" );
+		echo "hello world from MyFrontController<br />";
 	}
 }

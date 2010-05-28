@@ -13,6 +13,6 @@ class MyRouting extends Routing
 
 	public function helloWorld()
 	{
-		echo( "hello world from MyRouting<br />" );
+		echo "hello world from MyRouting<br />";
 	}
 }
