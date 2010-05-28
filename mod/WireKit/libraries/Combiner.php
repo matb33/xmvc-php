@@ -4,13 +4,6 @@ namespace xMVC\Mod\WireKit;
 
 class Combiner
 {
-	public static function DummyMethod()
-	{
-		// This method is here as a hack to have PHP load this class, because calling php:function in XSLT without
-		// first having this class loaded won't work, despite autoloading mechanisms being in place.  This method
-		// is intended to be called in some WireKit core area and essentially do nothing.
-	}
-
 	public static function CombineJavaScripts( $basePath, $scriptNodes )
 	{
 		$files = array();
