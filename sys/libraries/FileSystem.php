@@ -85,13 +85,15 @@ class FileSystem
 	{
 		if( $path !== false )
 		{
-			if( realpath( $path ) !== false )
-			{
-				return true;
-			}
+			return self::FileExists( $path );
 		}
 
 		return false;
+	}
+
+	public function FileExists( $filename )
+	{
+		return file_exists( $filename );
 	}
 
 	public static function FileGetContentsUTF8( $filename )
@@ -312,10 +314,5 @@ class FileSystem
 		}
 
 		return $meta;
-	}
-
-	public function FileExists( $filename )
-	{
-		return file_exists( $filename );
 	}
 }
