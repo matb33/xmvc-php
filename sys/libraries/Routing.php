@@ -56,7 +56,7 @@ class Routing
 			self::$URI = Normalize::StripQueryInURI( self::$URI );
 		}
 
-		return( self::$URI );
+		return self::$URI;
 	}
 
 	public static function URIProtocol()
@@ -76,7 +76,7 @@ class Routing
 			}
 		}
 
-		return( self::$URIProtocol );
+		return self::$URIProtocol;
 	}
 
 	private static function GatherRoutesFromConfigs()
@@ -102,31 +102,31 @@ class Routing
 
 	public static function GetPathData()
 	{
-		return( self::$pathData );
+		return self::$pathData;
 	}
 
 	public static function GetPathPartsOriginal()
 	{
 		$pathData = self::GetPathData();
-		return( $pathData[ "pathPartsOriginal" ] );
+		return $pathData[ "pathPartsOriginal" ];
 	}
 
 	public static function GetPathOnlyOriginal()
 	{
 		$pathData = self::GetPathData();
-		return( $pathData[ "pathOnlyOriginal" ] );
+		return $pathData[ "pathOnlyOriginal" ];
 	}
 
 	public static function GetPathParts()
 	{
 		$pathData = self::GetPathData();
-		return( $pathData[ "pathParts" ] );
+		return $pathData[ "pathParts" ];
 	}
 
 	public static function GetPathOnly()
 	{
 		$pathData = self::GetPathData();
-		return( $pathData[ "pathOnly" ] );
+		return $pathData[ "pathOnly" ];
 	}
 
 	public static function Route( $overrideURI = null, $resetRoutesCursor = false )
@@ -176,14 +176,14 @@ class Routing
 			}
 		}
 
-		return( $routedURI );
+		return $routedURI;
 	}
 
 	private static function RouteReplaceCallback( $matches )
 	{
 		$index = $matches[ 1 ];
 
-		return( self::$routeMatches[ $index ] );
+		return self::$routeMatches[ $index ];
 	}
 
 	private static function GetPathDataFromURIs( $URI, $routedURI )
@@ -200,7 +200,7 @@ class Routing
 		$pathData[ "pathOnly" ] = $pathOnly;
 		$pathData[ "pathParts" ] = $pathParts;
 
-		return( $pathData );
+		return $pathData;
 	}
 
 	private static function CleanURIForPathData( $uri )
@@ -218,6 +218,6 @@ class Routing
 			$uri = "";
 		}
 
-		return( $uri );
+		return $uri;
 	}
 }

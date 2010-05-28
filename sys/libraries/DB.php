@@ -198,7 +198,7 @@ class DB
 			break;
 		}
 
-		return( $returnValue );
+		return $returnValue;
 	}
 
 	public static function ExecuteMultiQuery( $sql )
@@ -254,7 +254,7 @@ class DB
 			break;
 		}
 
-		return( $rowLists );
+		return $rowLists;
 	}
 
 	public static function Query( $sql )
@@ -274,7 +274,7 @@ class DB
 			break;
 		}
 
-		return( $result );
+		return $result;
 	}
 
 	public static function FetchArray( $result, $resultType = null )
@@ -298,7 +298,7 @@ class DB
 			break;
 		}
 
-		return( $row );
+		return $row;
 	}
 
 	public static function Close()

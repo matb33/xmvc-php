@@ -40,11 +40,11 @@ class FileSystem
 						( $perms & $group ) == $group |
 						( $perms & $owner ) == $owner;
 
-			return( $hasPerms );
+			return $hasPerms;
 		}
 		else
 		{
-			return( false );
+			return false;
 		}
 	}
 
@@ -73,11 +73,11 @@ class FileSystem
 				}
 			}
 
-			return( true );
+			return true;
 		}
 		else
 		{
-			return( false );
+			return false;
 		}
 	}
 
@@ -87,18 +87,18 @@ class FileSystem
 		{
 			if( realpath( $path ) !== false )
 			{
-				return( true );
+				return true;
 			}
 		}
 
-		return( false );
+		return false;
 	}
 
 	public static function FileGetContentsUTF8( $filename )
 	{
 		$contents = file_get_contents( Normalize::Filename( $filename ) );
 
-		return( mb_convert_encoding( $contents, "UTF-8", mb_detect_encoding( $contents, "UTF-8, ISO-8859-1", true ) ) );
+		return mb_convert_encoding( $contents, "UTF-8", mb_detect_encoding( $contents, "UTF-8, ISO-8859-1", true ) );
 	}
 
 	public static function GetFolderList( $rootFolder, $match = "/./", $getMeta = true )
@@ -109,7 +109,7 @@ class FileSystem
 
 		$list[ $rootFolder ][ ":FOLDERS:" ] = $folders;
 
-		return( $list );
+		return $list;
 	}
 
 	public static function GetFolderListRecursive( $rootFolder, $match = "/./", $getMeta = true, $maxDepth = null, $currentDepth = 0 )
@@ -122,7 +122,7 @@ class FileSystem
 
 		$list[ $rootFolder ][ ":FOLDERS:" ] = $folderList[ ":FOLDERS:" ];
 
-		return( $list );
+		return $list;
 	}
 
 	private static function GetFolderListRecursively( $rootFolder, $match = "/./", $getMeta = true, $maxDepth = null, $currentDepth = 0 )
@@ -146,7 +146,7 @@ class FileSystem
 			}
 		}
 
-		return( $list );
+		return $list;
 	}
 
 	public static function GetFileList( $rootFolder, $match = "/./", $getMeta = true )
@@ -157,7 +157,7 @@ class FileSystem
 
 		$list[ $rootFolder ][ ":FILES:" ] = $files;
 
-		return( $list );
+		return $list;
 	}
 
 	public static function GetDirList( $rootFolder, $fileMatch = "/./", $folderMatch = "/./", $getMeta = true )
@@ -172,7 +172,7 @@ class FileSystem
 		$list[ $rootFolder ][ ":FILES:" ]	= $files[ $rootFolder ][ ":FILES:" ];
 		$list[ $rootFolder ][ ":FOLDERS:" ]	= $folders[ $rootFolder ][ ":FOLDERS:" ];
 
-		return( $list );
+		return $list;
 	}
 
 	public static function GetDirListRecursive( $rootFolder, $fileMatch = "/./", $folderMatch = "/./", $getMeta = true, $maxDepth = null, $currentDepth = 0 )
@@ -186,7 +186,7 @@ class FileSystem
 		$list[ $rootFolder ][ ":FILES:" ]	= $fileList[ ":FILES:" ];
 		$list[ $rootFolder ][ ":FOLDERS:" ]	= $fileList[ ":FOLDERS:" ];
 
-		return( $list );
+		return $list;
 	}
 
 	private static function GetDirListRecursively( $rootFolder, $fileMatch = "/./", $folderMatch = "/./", $getMeta = true, $maxDepth = null, $currentDepth = 0 )
@@ -213,7 +213,7 @@ class FileSystem
 			}
 		}
 
-		return( $list );
+		return $list;
 	}
 
 	public static function FlattenDirListIntoFileList( $list )
@@ -236,7 +236,7 @@ class FileSystem
 			}
 		}
 
-		return( $flatList );
+		return $flatList;
 	}
 
 	private static function GetList( $rootFolder, $match = "/./", $getMeta = true, $type = self::FS_FILE )
@@ -267,7 +267,7 @@ class FileSystem
 
 		$dir->close();
 
-		return( $list );
+		return $list;
 	}
 
 	private static function GetMeta( $file, $getMeta = true )
@@ -305,7 +305,7 @@ class FileSystem
 			$meta[ "filesize-nice" ]	= number_format( $meta[ "filesize" ] );
 		}
 
-		return( $meta );
+		return $meta;
 	}
 }
 

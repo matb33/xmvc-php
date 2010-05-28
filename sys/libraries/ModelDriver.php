@@ -88,7 +88,7 @@ abstract class ModelDriver extends \DOMDocument
 			$xml = Loader::ReadExternal( $xmlModelFile );
 		}
 
-		return( Normalize::StripXMLRootTags( $xml ) );
+		return Normalize::StripXMLRootTags( $xml );
 	}
 
 	public function SetXML( $xml )
@@ -99,17 +99,17 @@ abstract class ModelDriver extends \DOMDocument
 
 		$this->loadXML( $completeXML );
 
-		return( $completeXML );
+		return $completeXML;
 	}
 
 	public function GetXMLForStacking()
 	{
-		return( $this->GetXML( true ) );
+		return $this->GetXML( true );
 	}
 
 	public function GetCompleteXML()
 	{
-		return( $this->GetXML( false ) );
+		return $this->GetXML( false );
 	}
 
 	protected function GetXML( $stripRootTags = false )
@@ -118,11 +118,11 @@ abstract class ModelDriver extends \DOMDocument
 
 		if( $stripRootTags )
 		{
-			return( Normalize::StripXMLRootTags( $completeXML ) );
+			return Normalize::StripXMLRootTags( $completeXML );
 		}
 		else
 		{
-			return( $completeXML );
+			return $completeXML;
 		}
 	}
 

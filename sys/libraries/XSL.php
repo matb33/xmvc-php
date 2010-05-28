@@ -36,7 +36,7 @@ class XSL
 
 		self::$processor = null;
 
-		return( $result );
+		return $result;
 	}
 
 	private static function SetupPHPFunctions()
@@ -136,6 +136,6 @@ class XSL
 		print_r( $err );
 		echo "</pre>";
 
-		return( $err );
+		return $err;
 	}
 }

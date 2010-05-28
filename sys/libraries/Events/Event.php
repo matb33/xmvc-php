@@ -26,7 +26,7 @@ class Event
 
     public function __toString()
     {
-        return( "type: " . $this->type . "  arguments: " . print_r( $this->arguments, true ) );
+        return "type: " . $this->type . "  arguments: " . print_r( $this->arguments, true );
     }
 }
 

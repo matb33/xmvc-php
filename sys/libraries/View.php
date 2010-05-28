@@ -37,19 +37,19 @@ class View
 	{
 		$model = array_pop( $this->models );
 
-		return( $model );
+		return $model;
 	}
 
 	public function ShiftModels()
 	{
 		$model = array_shift( $this->models );
 
-		return( $model );
+		return $model;
 	}
 
 	public function GetModels()
 	{
-		return( $this->models );
+		return $this->models;
 	}
 
 	public function PutModels( $models )
@@ -59,32 +59,32 @@ class View
 
 	public function RenderAsHTML( $data = null, $omitRoot = null )
 	{
-		return( $this->Render( $data, "HTML", $omitRoot ) );
+		return $this->Render( $data, "HTML", $omitRoot );
 	}
 
 	public function RenderAsXML( $data = null, $omitRoot = null )
 	{
-		return( $this->Render( $data, "XML", $omitRoot ) );
+		return $this->Render( $data, "XML", $omitRoot );
 	}
 
 	public function Render( $data = null, $outputType = null, $omitRoot = null )
 	{
-		return( $this->Load( $data, false, $outputType, $omitRoot ) );
+		return $this->Load( $data, false, $outputType, $omitRoot );
 	}
 
 	public function ProcessAsHTML( $data = null, $omitRoot = null )
 	{
-		return( $this->Process( $data, "HTML", $omitRoot ) );
+		return $this->Process( $data, "HTML", $omitRoot );
 	}
 
 	public function ProcessAsXML( $data = null, $omitRoot = null )
 	{
-		return( $this->Process( $data, "XML", $omitRoot ) );
+		return $this->Process( $data, "XML", $omitRoot );
 	}
 
 	public function Process( $data = null, $outputType = null, $omitRoot = null )
 	{
-		return( $this->Load( $data, true, $outputType, $omitRoot ) );
+		return $this->Load( $data, true, $outputType, $omitRoot );
 	}
 
 	public function Load( $data = null, $return = null, $outputType = null, $omitRoot = null )
@@ -114,7 +114,7 @@ class View
 			trigger_error( "Could not find any XML data (model) and/or XSL data (view) while loading view [" . $this->xslViewName . "]", E_USER_ERROR );
 		}
 
-		return( $result );
+		return $result;
 	}
 
 	public function SetXSLData( $xslData )
@@ -129,42 +129,42 @@ class View
 
 	public function GetXSLData()
 	{
-		return( $this->xslData );
+		return $this->xslData;
 	}
 
 	public function GetXMLData()
 	{
-		return( $this->xmlData );
+		return $this->xmlData;
 	}
 
 	private function GetReturn( $return )
 	{
 		if( is_null( $return ) )
 		{
-			return( false );
+			return false;
 		}
 
-		return( $return );
+		return $return;
 	}
 
 	private function GetOutputType( $outputType )
 	{
 		if( is_null( $outputType ) )
 		{
-			return( "HTML" );
+			return "HTML";
 		}
 
-		return( $outputType );
+		return $outputType;
 	}
 
 	private function GetOmitRoot( $omitRoot )
 	{
 		if( is_null( $omitRoot ) )
 		{
-			return( false );
+			return false;
 		}
 
-		return( $omitRoot );
+		return $omitRoot;
 	}
 
 	public function ImportXSL( $data = null, $xslViewFile = null )
@@ -203,7 +203,7 @@ class View
 			}
 		}
 
-		return( $result );
+		return $result;
 	}
 
 	private function StackModelsForView( $data, $omitRoot )
@@ -217,7 +217,7 @@ class View
 			$xmlBody .= ErrorHandler::GetErrorsAsXML();
 		}
 
-		return( $xmlHead . $xmlBody . $xmlFoot );
+		return $xmlHead . $xmlBody . $xmlFoot;
 	}
 
 	public function GetStackedModels()
@@ -239,7 +239,7 @@ class View
 			}
 		}
 
-		return( $stack );
+		return $stack;
 	}
 
 	public function ProcessView( $return, $outputType )
@@ -264,14 +264,14 @@ class View
 			}
 		}
 
-		return( $result );
+		return $result;
 	}
 
 	private function Transform()
 	{
 		$result = XSL::Transform( $this->GetXMLData(), $this->GetXSLData(), dirname( $this->xslViewFile ) );
 
-		return( $result );
+		return $result;
 	}
 
 	private function ShouldRenderClientSide( $return )
@@ -280,16 +280,16 @@ class View
 		{
 			if( Core::IsClientSideXSLTSupported() )
 			{
-				return( true );
+				return true;
 			}
 
 			if( self::IsSourceViewOn() )
 			{
-				return( true );
+				return true;
 			}
 		}
 
-		return( false );
+		return false;
 	}
 
 	public function PassThru( $data = null, $return = false, $omitRoot = true )
@@ -312,7 +312,7 @@ class View
 			echo( $xmlResult );
 		}
 
-		return( $xmlResult );
+		return $xmlResult;
 	}
 
 	public function GetXMLHead( $data, $omitRoot )
@@ -349,7 +349,7 @@ class View
 			$xmlHead .= "<xmvc:root xmlns:xmvc=\"" . Core::namespaceXML . "\"" . $sourceViewAttribute . ">\n";
 		}
 
-		return( $xmlHead );
+		return $xmlHead;
 	}
 
 	public function GetXMLFoot( $omitRoot )
@@ -361,12 +361,12 @@ class View
 			$xmlFoot = "</xmvc:root>";
 		}
 
-		return( $xmlFoot );
+		return $xmlFoot;
 	}
 
 	private function IsSourceViewOn()
 	{
-		return( isset( $_GET[ Config::$data[ "sourceViewKey" ] ] ) && Config::$data[ "sourceViewEnabled" ] );
+		return isset( $_GET[ Config::$data[ "sourceViewKey" ] ] ) && Config::$data[ "sourceViewEnabled" ];
 	}
 }
 

@@ -47,11 +47,11 @@ namespace xMVC\Sys
 					$dirName = Normalize::Path( dirname( $file ) );
 					$name = basename( $file );
 
-					return( $dirName . $name );
+					return $dirName . $name;
 				}
 			}
 
-			return( false );
+			return false;
 		}
 
 		public static function AssignDefaultNamespace( $name, $forcedNamespace = null )
@@ -66,7 +66,7 @@ namespace xMVC\Sys
 				$name = $forcedNamespace . substr( $name, strrpos( $name, "\\" ) );
 			}
 
-			return( $name );
+			return $name;
 		}
 
 		public static function ExtractNamespace( $name )
@@ -75,17 +75,17 @@ namespace xMVC\Sys
 
 			if( strlen( $namespace ) > 0 )
 			{
-				return( $namespace );
+				return $namespace;
 			}
 			else
 			{
-				return( null );
+				return null;
 			}
 		}
 
 		public static function StripNamespace( $name )
 		{
-			return( str_replace( "\\", "", substr( $name, strrpos( $name, "\\" ) ) ) );
+			return str_replace( "\\", "", substr( $name, strrpos( $name, "\\" ) ) );
 		}
 
 		public static function SetDefaultNamespace( $namespace )
@@ -95,12 +95,12 @@ namespace xMVC\Sys
 
 		public static function GetDefaultNamespace( $namespace )
 		{
-			return( self::$defaultNamespace );
+			return self::$defaultNamespace;
 		}
 
 		public static function ReadExternal( $filename )
 		{
-			return( file_get_contents( $filename ) );
+			return file_get_contents( $filename );
 		}
 
 		public static function ParseExternal( $filename, $data )
@@ -120,7 +120,7 @@ namespace xMVC\Sys
 			$result = ob_get_contents();
 			ob_end_clean();
 
-			return( $result );
+			return $result;
 		}
 
 		public static function AddToIncludePath( $path )
@@ -174,18 +174,18 @@ namespace xMVC\Sys
 					$mappedFile = preg_replace_callback( "/%([0-9]+)/", "self::ResolveReplaceCallback", $mapping );
 					$mappedFile = str_replace( "%f", self::$folder, $mappedFile );
 
-					return( array( $mappedFile ) );
+					return array( $mappedFile );
 				}
 
-				return( self::Iterate() );
+				return self::Iterate();
 			}
 
-			return( array() );
+			return array();
 		}
 
 		private static function ResolveReplaceCallback( $matches )
 		{
-			return( self::$matches[ $matches[ 1 ] ] );
+			return self::$matches[ $matches[ 1 ] ];
 		}
 
 		public static function NamespaceToFolder( $namespace )
@@ -201,11 +201,11 @@ namespace xMVC\Sys
 
 				if( $path !== false )
 				{
-					return( $path );
+					return $path;
 				}
 			}
 
-			return( false );
+			return false;
 		}
 	}
 
@@ -213,17 +213,17 @@ namespace xMVC\Sys
 	{
 		public static function Controller( $className )
 		{
-			return( self::TryLoading( Loader::controllerFolder, $className, Loader::controllerExtension ) );
+			return self::TryLoading( Loader::controllerFolder, $className, Loader::controllerExtension );
 		}
 
 		public static function ModelDriver( $className )
 		{
-			return( self::TryLoading( Loader::driverFolder, $className, Loader::driverExtension ) );
+			return self::TryLoading( Loader::driverFolder, $className, Loader::driverExtension );
 		}
 
 		public static function Library( $className )
 		{
-			return( self::TryLoading( Loader::libraryFolder, $className, Loader::libraryExtension ) );
+			return self::TryLoading( Loader::libraryFolder, $className, Loader::libraryExtension );
 		}
 
 		private static function TryLoading( $folder, $file, $extension )
@@ -232,10 +232,10 @@ namespace xMVC\Sys
 			{
 				require_once( $classFile );
 
-				return( true );
+				return true;
 			}
 
-			return( false );
+			return false;
 		}
 	}
 
@@ -250,14 +250,14 @@ namespace xMVC\Sys
 			$name = preg_replace( "/ |\.|%20/", "", $name );
 			$name = str_replace( "XMVC", "xMVC", $name );
 
-			return( $name );
+			return $name;
 		}
 
 		public static function Filename( $name )
 		{
 			$name = str_replace( "\\", "/", $name );
 
-			return( $name );
+			return $name;
 		}
 
 		public static function Path( $path )
@@ -265,12 +265,12 @@ namespace xMVC\Sys
 			$path = str_replace( "\\", "/", realpath( str_replace( "\\", "/", $path ) ) );
 			$path = substr( $path, -1 ) != "/" ? $path . "/" : $path;
 
-			return( $path );
+			return $path;
 		}
 
 		public static function EncodeData( $data )
 		{
-			return( "/_enc_" . str_replace( "=", "_", base64_encode( serialize( $data ) ) ) );
+			return "/_enc_" . str_replace( "=", "_", base64_encode( serialize( $data ) ) );
 		}
 
 		public static function StripXMLRootTags( $xml )
@@ -278,12 +278,12 @@ namespace xMVC\Sys
 			$xml = self::StripXMLDeclaration( $xml );
 			$xml = self::StripRootTag( $xml );
 
-			return( $xml );
+			return $xml;
 		}
 
 		public static function StripXMLDeclaration( $xml )
 		{
-			return( preg_replace( "|<\?xml(.+?)\?>[\n\r]?|i", "", $xml ) );
+			return preg_replace( "|<\?xml(.+?)\?>[\n\r]?|i", "", $xml );
 		}
 
 		public static function StripRootTag( $xml )
@@ -291,12 +291,12 @@ namespace xMVC\Sys
 			$xml = preg_replace( "|<xmvc:root(.+?)>[\n\r]?|", "", $xml );
 			$xml = preg_replace( "|<\/xmvc:root>[\n\r]?|", "", $xml );
 
-			return( $xml );
+			return $xml;
 		}
 
 		public static function StripQueryInURI( $uri )
 		{
-			return( preg_replace( "/\?.*$/", "", $uri ) );
+			return preg_replace( "/\?.*$/", "", $uri );
 		}
 
 		public static function URI( $uri )
@@ -304,7 +304,7 @@ namespace xMVC\Sys
 			$uri = str_replace( "/index.php", "/", $uri );
 			$uri = preg_replace( "/[\/]{2,}/", "/", $uri );
 
-			return( $uri );
+			return $uri;
 		}
 	}
 }
