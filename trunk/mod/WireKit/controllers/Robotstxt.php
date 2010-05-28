@@ -41,10 +41,10 @@ class Robotstxt
 	{
 		if( preg_match( Config::$data[ "noSpiderHostMatch" ], $_SERVER[ "HTTP_HOST" ] ) )
 		{
-			return( true );
+			return true;
 		}
 
-		return( false );
+		return false;
 	}
 
 	private function WriteSitemapDisallows()

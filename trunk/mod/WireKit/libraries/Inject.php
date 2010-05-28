@@ -57,7 +57,7 @@ class Inject
 			}
 		}
 
-		return( $model );
+		return $model;
 	}
 
 	public static function Strings( $model, $stringModel )
@@ -76,7 +76,7 @@ class Inject
 			}
 		}
 
-		return( $model );
+		return $model;
 	}
 
 	public static function Lang( &$view, $lang )
@@ -141,7 +141,7 @@ class Inject
 			$mathCaptchaNode->appendChild( $formulaTextNode );
 		}
 
-		return( $model );
+		return $model;
 	}
 }
 

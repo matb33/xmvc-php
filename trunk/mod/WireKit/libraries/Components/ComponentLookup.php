@@ -46,7 +46,7 @@ class ComponentLookup extends Singleton
 			$metaDataCollection = $this->GetMetaData( $model, $file, $metaDataCollection );
 		}
 
-		return( $metaDataCollection );
+		return $metaDataCollection;
 	}
 
 	public function GetMetaData( $model, $file = null, $metaDataCollection = array() )
@@ -102,7 +102,7 @@ class ComponentLookup extends Singleton
 			);
 		}
 
-		return( $metaDataCollection );
+		return $metaDataCollection;
 	}
 
 	private function GenerateComponentModel( $metaDataCollection )
@@ -120,7 +120,7 @@ class ComponentLookup extends Singleton
 			$this->AppendEntry( $metaData, $lookupModel );
 		}
 
-		return( $lookupModel );
+		return $lookupModel;
 	}
 
 	private function AppendEntry( $metaData, $lookupModel )
@@ -202,7 +202,7 @@ class ComponentLookup extends Singleton
 
 	private function CacheLookupModel()
 	{
-		return( $this->cache->Write( $this->model ) );
+		return $this->cache->Write( $this->model );
 	}
 
 	private function Load()
@@ -256,7 +256,7 @@ class ComponentLookup extends Singleton
 			$componentWiredocName = substr( $componentWiredocName, 0, strrpos( $componentWiredocName, "/" ) ) . "." . substr( strrchr( $componentWiredocName, "/" ), 1 );
 		}
 
-		return( ComponentUtils::ExtractComponentNamePartsFromWiredocName( $componentWiredocName ) );
+		return ComponentUtils::ExtractComponentNamePartsFromWiredocName( $componentWiredocName );
 	}
 
 	public function Get()
@@ -266,7 +266,7 @@ class ComponentLookup extends Singleton
 			$this->Load();
 		}
 
-		return( $this->model );
+		return $this->model;
 	}
 
 	public function Refresh()
@@ -289,10 +289,10 @@ class ComponentLookup extends Singleton
 		if( $URINodeList->length > 0 )
 		{
 			$exampleURI = $URINodeList->item( 0 )->nodeValue;
-			return( strpos( $exampleURI, $host ) === false );
+			return strpos( $exampleURI, $host ) === false;
 		}
 
-		return( false );
+		return false;
 	}
 
 	public function GetComponentDataByPath( $path, $index = 0 )
@@ -302,10 +302,10 @@ class ComponentLookup extends Singleton
 
 		if( $entryNodeList->length > 0 )
 		{
-			return( $this->GetComponentData( $entryNodeList->item( $index ), $path ) );
+			return $this->GetComponentData( $entryNodeList->item( $index ), $path );
 		}
 
-		return( false );
+		return false;
 	}
 
 	public function GetComponentDataByFullyQualifiedName( $fullyQualifiedName, $index = 0 )
@@ -315,10 +315,10 @@ class ComponentLookup extends Singleton
 
 		if( $entryNodeList->length > 0 )
 		{
-			return( $this->GetComponentData( $entryNodeList->item( $index ) ) );
+			return $this->GetComponentData( $entryNodeList->item( $index ) );
 		}
 
-		return( false );
+		return false;
 	}
 
 	public function GetPathByFullyQualifiedNameAndLanguage( $fullyQualifiedName, $lang, $index = 0 )
@@ -327,7 +327,7 @@ class ComponentLookup extends Singleton
 		$URINodeList = $lookupModel->xPath->query( "//lookup:entry[ lookup:fully-qualified-name = '" . $fullyQualifiedName . "' ]/lookup:href[ php:function( 'xMVC\Mod\Language\Language::XSLTLang', '" . $lang . "', (ancestor-or-self::*/@xml:lang)[last()] ) ]/lookup:uri" );
 		$path = $URINodeList->length > 0 ? $URINodeList->item( $index )->nodeValue : "";
 
-		return( $path );
+		return $path;
 	}
 
 	public function GetComponentDataByComponentName( $component, $index = 0 )
@@ -337,10 +337,10 @@ class ComponentLookup extends Singleton
 
 		if( $entryNodeList->length > 0 )
 		{
-			return( $this->GetComponentData( $entryNodeList->item( $index ) ) );
+			return $this->GetComponentData( $entryNodeList->item( $index ) );
 		}
 
-		return( false );
+		return false;
 	}
 
 	private function GetComponentData( $entryNode, $path = "" )
@@ -358,7 +358,7 @@ class ComponentLookup extends Singleton
 		$data[ "fullyQualifiedName" ] = $FQNNodeList->length > 0 ? $FQNNodeList->item( 0 )->nodeValue : "";
 		$data[ "matchingLang" ] = $matchingLang->length == 1 ? $matchingLang->item( 0 )->nodeValue : "";
 
-		return( $data );
+		return $data;
 	}
 
 	public function EnsureInstanceInLookup( $model )
@@ -380,10 +380,10 @@ class ComponentLookup extends Singleton
 		{
 			$metaData = current( $metaDataCollection );
 
-			return( $this->model->xPath->query( "//lookup:entry[ lookup:fully-qualified-name = '" . $metaData[ "fullyQualifiedName" ] . "' ]" )->length > 0 );
+			return $this->model->xPath->query( "//lookup:entry[ lookup:fully-qualified-name = '" . $metaData[ "fullyQualifiedName" ] . "' ]" )->length > 0;
 		}
 
-		return( false );
+		return false;
 	}
 
 	public function AddMetaDataCollectionToComponentLookup( $metaDataCollection )

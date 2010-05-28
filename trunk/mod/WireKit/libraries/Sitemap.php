@@ -19,7 +19,7 @@ class Sitemap extends Singleton
 		$pathOnlyOriginal = Routing::GetPathOnlyOriginal();
 		$currentPath = "/" . ( strlen( $pathOnlyOriginal ) > 0 ? $pathOnlyOriginal . "/" : "" );
 
-		return( $this->GetFullyQualifiedNameByPath( $currentPath ) );
+		return $this->GetFullyQualifiedNameByPath( $currentPath );
 	}
 
 	public function GetFullyQualifiedNameByPath( $path )
@@ -31,10 +31,10 @@ class Sitemap extends Singleton
 			$fullyQualifiedNameNodeList = $lookupModel->xPath->query( "../lookup:fully-qualified-name", $entryNode );
 			$fullyQualifiedName = $fullyQualifiedNameNodeList->length > 0 ? $fullyQualifiedNameNodeList->item( 0 )->nodeValue : "";
 
-			return( $fullyQualifiedName );
+			return $fullyQualifiedName;
 		}
 
-		return( false );
+		return false;
 	}
 
 	public function Output( $lang = null )
@@ -82,7 +82,7 @@ class Sitemap extends Singleton
 			$filenames[] = StringUtils::ReplaceTokensInPattern( Config::$data[ "sitemapXMLFilePattern" ], array( "protocol" => Routing::URIProtocol(), "host" => $_SERVER[ "HTTP_HOST" ], "lang" => $lang ) );
 		}
 
-		return( $filenames );
+		return $filenames;
 	}
 
 	public static function ReplacePageNameTokensWithPath()

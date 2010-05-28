@@ -38,7 +38,7 @@ class Cache
 		}
 		else
 		{
-			return( $this->Unserialize( file_get_contents( $this->filename ) ) );
+			return $this->Unserialize( file_get_contents( $this->filename ) );
 		}
 	}
 
@@ -46,15 +46,15 @@ class Cache
 	{
 		if( $this->PrepCacheFolder( $this->filename, $this->purgeCache ) )
 		{
-			return( file_put_contents( $this->filename, $this->Serialize( $data ), FILE_TEXT ) );
+			return file_put_contents( $this->filename, $this->Serialize( $data ), FILE_TEXT );
 		}
 
-		return( false );
+		return false;
 	}
 
 	public function IsCached()
 	{
-		return( file_exists( $this->filename ) );
+		return file_exists( $this->filename );
 	}
 
 	public function PrepCacheFolder( $filename, $purgeCache = true )
@@ -73,19 +73,19 @@ class Cache
 				}
 			}
 
-			return( true );
+			return true;
 		}
 		else
 		{
 			trigger_error( "Write permissions are needed on " . $cacheFolder . " in order to use caching features.", E_USER_NOTICE );
 		}
 
-		return( false );
+		return false;
 	}
 
 	private function GetFilename( $filenamePattern )
 	{
-		return( StringUtils::ReplaceTokensInPattern( $filenamePattern, $this->tokens ) );
+		return StringUtils::ReplaceTokensInPattern( $filenamePattern, $this->tokens );
 	}
 
 	private function GetHash()
@@ -97,18 +97,18 @@ class Cache
 			$hash .= "--" . md5( $this->cacheID . floor( time() / ( $this->cacheMinutes * 60 ) ) );
 		}
 
-		return( $hash );
+		return $hash;
 	}
 
 	private function Serialize( $data )
 	{
 		if( $data instanceof XMLModelDriver )
 		{
-			return( Normalize::StripRootTag( $data->saveXML() ) );
+			return Normalize::StripRootTag( $data->saveXML() );
 		}
 		else
 		{
-			return( serialize( $data ) );
+			return serialize( $data );
 		}
 	}
 
@@ -116,11 +116,11 @@ class Cache
 	{
 		if( strpos( $data, "<?xml" ) !== false )
 		{
-			return( new XMLModelDriver( $data ) );
+			return new XMLModelDriver( $data );
 		}
 		else
 		{
-			return( unserialize( $data ) );
+			return unserialize( $data );
 		}
 	}
 }

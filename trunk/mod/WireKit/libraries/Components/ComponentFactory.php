@@ -40,7 +40,7 @@ class ComponentFactory extends DefaultEventDispatcher
 		$instance->addEventListener( "onreadyforprocessing.components", new Delegate( "OnComponentReadyForExpansion", $this ) );
 		$instance->Build();
 
-		return( true );
+		return true;
 	}
 
 	public function OnComponentReadyForExpansion( Event $event )
@@ -118,10 +118,10 @@ class ComponentFactory extends DefaultEventDispatcher
 				}
 			}
 
-			return( $this->GetComponent( $component, $instanceName, $eventName, $parameters, $cacheMinutes ) );
+			return $this->GetComponent( $component, $instanceName, $eventName, $parameters, $cacheMinutes );
 		}
 
-		return( false );
+		return false;
 	}
 
 	private function InjectComponentModel( $componentModel )

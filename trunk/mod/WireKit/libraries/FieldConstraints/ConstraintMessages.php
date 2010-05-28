@@ -20,20 +20,20 @@ class ConstraintMessages
 	{
 		if( isset( $this->messages[ "fail" ] ) )
 		{
-			return( $this->messages[ "fail" ] );
+			return $this->messages[ "fail" ];
 		}
 
-		return( "" );
+		return "";
 	}
 
 	public function GetPassMessage()
 	{
 		if( isset( $this->messages[ "pass" ] ) )
 		{
-			return( $this->messages[ "pass" ] );
+			return $this->messages[ "pass" ];
 		}
 
-		return( "" );
+		return "";
 	}
 }
 

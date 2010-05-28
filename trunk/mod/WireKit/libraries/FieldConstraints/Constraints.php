@@ -32,7 +32,7 @@ class Constraints
 
 		$resultsModel = new ConstraintResultsModelDriver( $constraintResultsList );
 
-		return( $resultsModel );
+		return $resultsModel;
 	}
 
 	public function GetConstraintResults()
@@ -63,7 +63,7 @@ class Constraints
 			}
 		}
 
-		return( $constraintResults );
+		return $constraintResults;
 	}
 
 	private function LookForDependencyFields( &$constraint, $type, $against )
