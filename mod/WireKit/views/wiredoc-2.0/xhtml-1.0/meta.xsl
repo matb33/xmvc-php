@@ -68,7 +68,7 @@
 	</xsl:template>
 
 	<xsl:template name="single-script-method" mode="override-meta">
-		<xsl:variable name="meta-script-nodes" select="//meta:script[ @type='text/javascript' and @src and php:function( 'xMVC\Mod\Language\Language::XSLTLang', $lang, (ancestor-or-self::*/@xml:lang)[last()] ) ]" />
+		<xsl:variable name="meta-script-nodes" select="//meta:script[ @type='text/javascript' and @href and php:function( 'xMVC\Mod\Language\Language::XSLTLang', $lang, (ancestor-or-self::*/@xml:lang)[last()] ) ]" />
 		<xsl:variable name="script-src" select="php:function( 'xMVC\Mod\WireKit\Combiner::CombineJavaScripts', 'inc/cache/', $meta-script-nodes )" />
 		<script type="text/javascript" src="{ $script-src }" />
 	</xsl:template>
