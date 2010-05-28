@@ -23,7 +23,7 @@ class Object implements IteratorAggregate
      */
     function hasProperty( $propertyName )
     {
-        return( isset( $this->properties[ $propertyName ] ) );
+        return isset( $this->properties[ $propertyName ] );
     }
 
     /**
@@ -45,14 +45,14 @@ class Object implements IteratorAggregate
     function __get( $propertyName )
     {
         $value = $this->properties[ $propertyName ];
-        return( $value );
+        return $value;
     }
 
     /// IteratorAggregate interface
 
     public function getIterator()
     {
-        return( new ArrayIterator( $this->properties ) );
+        return new ArrayIterator( $this->properties );
     }
 }
 

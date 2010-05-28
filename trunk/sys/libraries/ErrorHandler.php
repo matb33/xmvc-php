@@ -86,7 +86,7 @@ class ErrorHandler
 			$pattern = str_replace( "#" . $key . "#", $value, $pattern );
 		}
 
-		return( $pattern );
+		return $pattern;
 	}
 
 	public static function ErrorHandlerXML( $errorNumber, $errorMessage, $filename, $lineNum, $vars )
@@ -110,7 +110,7 @@ class ErrorHandler
 
 		self::$errors .= $errorXML;
 
-		return( true );
+		return true;
 	}
 
 	public static function GetErrorsAsXML()
@@ -122,7 +122,7 @@ class ErrorHandler
 			$errors = "<xmvc:errors>" . $errors . "</xmvc:errors>";
 		}
 
-		return( $errors );
+		return $errors;
 	}
 
 	public static function ErrorHandlerPHP( $errorNumber, $errorMessage, $filename, $lineNum, $vars )
@@ -134,7 +134,7 @@ class ErrorHandler
 			echo( "[" . date( "Y-m-d H:i:s" ) . "] " . self::$errorTypes[ $errorNumber ] . ": " . $errorMessage . ". Line " . $lineNum . " in " . $filename ."<br />\n" . str_replace( "\n", "<br />\n", $errorException->getTraceAsString() ) ) . "<br />\n";
 		}
 
-		return( true );
+		return true;
 	}
 }
 

@@ -50,21 +50,21 @@ class SQLModelDriver extends ModelDriver implements IModelDriver
 	{
 		$success = $this->xPath->query( "//xmvc:query[@name='" . $this->currentQueryName . "']/xmvc:result/xmvc:success" )->item( 0 )->nodeValue == "true";
 
-		return( $success );
+		return $success;
 	}
 
 	public function GetSingleRowValue( $field )
 	{
 		$value = $this->xPath->query( "//xmvc:query[@name='" . $this->currentQueryName . "']/xmvc:result/xmvc:row/xmvc:column[@name='" . $field . "']" )->item( 0 )->nodeValue;
 
-		return( $value );
+		return $value;
 	}
 
 	private function GetSQL()
 	{
 		$sql = trim( $this->queriesModel->xPath->query( "//xmvc:query[@name='" . $this->currentQueryName . "']/xmvc:sql" )->item( 0 )->nodeValue );
 
-		return( $sql );
+		return $sql;
 	}
 
 	public function Execute( $parameters = null )

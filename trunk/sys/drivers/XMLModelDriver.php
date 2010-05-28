@@ -64,42 +64,42 @@ class XMLModelDriver extends ModelDriver implements IModelDriver
 
 		$this->SetXML( $xmlData );
 
-		return( $xmlData );
+		return $xmlData;
 	}
 
 	private function IsInstanceOfModelDriver( $parameter )
 	{
-		return( is_a( $parameter, "ModelDriver" ) );
+		return is_a( $parameter, "ModelDriver" );
 	}
 
 	private function IsDOMNode( $parameter )
 	{
-		return( is_a( $parameter, "DOMNode" ) );
+		return is_a( $parameter, "DOMNode" );
 	}
 
 	private function IsRawXML( $parameter )
 	{
-		return( strpos( $parameter, "</" ) !== false );
+		return strpos( $parameter, "</" ) !== false;
 	}
 
 	private function IsURL( $parameter )
 	{
-		 return( preg_match( '/^(http|https|ftp):\/\/[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,6}((:[0-9]{1,5})?\/.*)?$/i', $parameter ) );
+		 return preg_match( '/^(http|https|ftp):\/\/[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,6}((:[0-9]{1,5})?\/.*)?$/i', $parameter );
 	}
 
 	private function IsPOSTRequest( $parameter2 )
 	{
-		return( ! is_null( $parameter2 ) );
+		return !is_null( $parameter2 );
 	}
 
 	private function IsFileOnFileSystem( $parameter )
 	{
 		if( ! $this->IsRawXML( $parameter ) )
 		{
-			return( file_exists( Normalize::Filename( $parameter ) ) );
+			return file_exists( Normalize::Filename( $parameter ) );
 		}
 
-		return( false );
+		return false;
 	}
 
 	private function LoadXMLFromModel( $modelName, $namespace, $data )
@@ -115,7 +115,7 @@ class XMLModelDriver extends ModelDriver implements IModelDriver
 			trigger_error( "XML model [" . $modelName . "] not found", E_USER_ERROR );
 		}
 
-		return( $xmlData );
+		return $xmlData;
 	}
 
 	private function POSTRequest( $url, $data )
@@ -142,17 +142,17 @@ class XMLModelDriver extends ModelDriver implements IModelDriver
 		$result = curl_exec( $ch );
 		curl_close( $ch );
 
-		return( $result );
+		return $result;
 	}
 
 	private function ExportXMLFromDOMNode( $node )
 	{
-		return( $node->ownerDocument->saveXML( $node ) );
+		return $node->ownerDocument->saveXML( $node );
 	}
 
 	public static function Exists( $modelName, $extension = Loader::modelExtension )
 	{
-		return( Loader::Resolve( Loader::modelFolder, $modelName, $extension ) !== false );
+		return Loader::Resolve( Loader::modelFolder, $modelName, $extension ) !== false;
 	}
 }
 

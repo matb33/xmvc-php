@@ -82,7 +82,7 @@ class Core
 	{
 		$pathParts = Routing::GetPathParts();
 
-		return( count( $pathParts ) <= 1 );
+		return count( $pathParts ) <= 1;
 	}
 
 	private static function InvokeIndex()
@@ -104,7 +104,7 @@ class Core
 	{
 		$controller = self::$controllerInstance;
 
-		return( array( $controller, $methodName ) );
+		return array( $controller, $methodName );
 	}
 
 	private static function CallMethod( $method, $parameters = array() )
@@ -128,12 +128,12 @@ class Core
 
 	private static function GetRoutedController()
 	{
-		return( self::DetermineController( true ) );
+		return self::DetermineController( true );
 	}
 
 	private static function GetOriginalController()
 	{
-		return( self::DetermineController( false ) );
+		return self::DetermineController( false );
 	}
 
 	private static function DetermineController( $useRoutes = true )
@@ -153,18 +153,18 @@ class Core
 
 		$fullyQualifiedController = Loader::AssignDefaultNamespace( $controller );
 
-		return( $fullyQualifiedController );
+		return $fullyQualifiedController;
 	}
 
 	public static function IsClientSideXSLTSupported()
 	{
 		if( Config::$data[ "forceServerSideRendering" ] )
 		{
-			return( false );
+			return false;
 		}
 		else if( Config::$data[ "forceClientSideRendering" ] )
 		{
-			return( true );
+			return true;
 		}
 		else
 		{
@@ -172,12 +172,12 @@ class Core
 			{
 				if( preg_match( $preg, $_SERVER[ "HTTP_USER_AGENT" ] ) )
 				{
-					return( true );
+					return true;
 				}
 			}
 		}
 
-		return( false );
+		return false;
 	}
 }
 

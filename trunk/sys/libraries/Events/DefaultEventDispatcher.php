@@ -47,17 +47,17 @@ class DefaultEventDispatcher implements IEventDispatcher
             {
                 if( $value->equals( $delegate ) )
                 {
-                    return( false );
+                    return false;
                 }
             }
         }
 
-        return( true );
+        return true;
     }
 
     private function bucketExists( $eventType )
     {
-        return( isset( $this->listeners[ $eventType ] ) );
+        return isset( $this->listeners[ $eventType ] );
     }
 
     private function tryToCreateListenerBucket( $eventType )
@@ -70,7 +70,7 @@ class DefaultEventDispatcher implements IEventDispatcher
 
     private function bucketDoesNotExist( $eventType )
     {
-        return( !$this->bucketExists( $eventType ) );
+        return !$this->bucketExists( $eventType );
     }
 
     public function removeEventListener( $eventType, Delegate $delegate )

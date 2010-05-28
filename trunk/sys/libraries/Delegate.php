@@ -35,7 +35,7 @@ class Delegate
     {
         $callback = $this->asCallback();
 
-        return( $this->callCallback( $callback, func_get_args() ) );
+        return $this->callCallback( $callback, func_get_args() );
     }
 
     /**
@@ -52,12 +52,12 @@ class Delegate
             $callback = $this->functionName;
         }
 
-        return( $callback );
+        return $callback;
     }
 
     private function thisObjectIsValid()
     {
-        return( isset( $this->thisObject ) && $this->thisObject != NULL );
+        return isset( $this->thisObject ) && $this->thisObject != NULL;
     }
 
     private function callCallback( $callback, $arguments )
@@ -76,22 +76,22 @@ class Delegate
             }
         }
 
-        return( $value );
+        return $value;
     }
 
     private function callbackCallable( $callback )
     {
-        return( is_callable( $callback ) );
+        return is_callable( $callback );
     }
 
     private function callWithNoArguments( $callback )
     {
-        return( call_user_func( $callback ) );
+        return call_user_func( $callback );
     }
 
     private function callWithArguments( $callback, $arguments )
     {
-        return( call_user_func_array( $callback, $arguments ) );
+        return call_user_func_array( $callback, $arguments );
     }
 
     /**
@@ -99,7 +99,7 @@ class Delegate
      */
     public function equals( Delegate $delegate )
     {
-        return( $this->functionName == $delegate->functionName && $this->thisObject === $delegate->thisObject );
+        return $this->functionName == $delegate->functionName && $this->thisObject === $delegate->thisObject;
     }
 }
 
