@@ -27,7 +27,7 @@ abstract class OverrideableSingleton
 
 		if( $instance )
 		{
-			return( $instance );
+			return $instance;
 		}
 		else
 		{
@@ -35,11 +35,11 @@ abstract class OverrideableSingleton
 
 			if( isset( self::$overrides[ $calledClass ] ) )
 			{
-				return( $instance = new self::$overrides[ $calledClass ] );
+				return $instance = new self::$overrides[ $calledClass ];
 			}
 			else
 			{
-				return( $instance = new static );
+				return $instance = new static;
 			}
 		}
 	}
