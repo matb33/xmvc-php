@@ -27,7 +27,7 @@ class FolderCopier
 
 	private static function GetCopyCommand( $inputPath, $outputPath )
 	{
-		return( "xcopy \"" . str_replace( "/", "\\", $inputPath ) . "*.*\" \"" . str_replace( "/", "\\", $outputPath ) . "\" /d /e /c /i /g /r /y" );
+		return "xcopy \"" . str_replace( "/", "\\", $inputPath ) . "*.*\" \"" . str_replace( "/", "\\", $outputPath ) . "\" /d /e /c /i /g /r /y";
 	}
 }
 
