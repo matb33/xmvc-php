@@ -305,7 +305,7 @@ class FileSystem
 			$meta[ "basename" ]			= $pathParts[ "basename" ];
 			$meta[ "extension" ]		= isset( $pathParts[ "extension" ] ) ? $pathParts[ "extension" ] : "";
 			$meta[ "filename" ]			= $pathParts[ "filename" ];
-			$meta[ "fullfilename" ]		= $file;
+			$meta[ "fullfilename" ]		= $pathParts[ "dirname" ] . "/" . $pathParts[ "basename" ];
 
 			$meta[ "fileatime-nice" ]	= date( "Y-m-d H:i:s", $meta[ "fileatime" ] );
 			$meta[ "filectime-nice" ]	= date( "Y-m-d H:i:s", $meta[ "filectime" ] );
