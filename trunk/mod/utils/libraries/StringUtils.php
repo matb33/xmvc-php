@@ -27,6 +27,6 @@ class StringUtils
 			$pattern = str_replace( $tokenDelimiter . $token . $tokenDelimiter, $value, $pattern );
 		}
 
-		return( $pattern );
+		return $pattern;
 	}
 }
