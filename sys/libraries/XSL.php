@@ -4,28 +4,23 @@ namespace xMVC\Sys;
 
 class XSL
 {
-	private static $processor;
-	private static $originalWorkingFolder;
+	private static $processor = null;
+	private static $XMLDocument = null;
+	private static $XSLDocument = null;
+	private static $originalWorkingFolder = null;
 
 	public static function Transform( $xmlData, $xslData, $workingFolder = null )
 	{
-		self::$processor = new \XSLTProcessor();
+		self::$processor = self::GetProcessor();
 
-		libxml_use_internal_errors( true );
-
-		self::SetupPHPFunctions();
-		self::SetupProfiling();
 		self::SetupWorkingFolder( $workingFolder );
 
-		$xml = new \DOMDocument( "1.0", "UTF-8" );
-		$xsl = new \DOMDocument( "1.0", "UTF-8" );
+		self::$XMLDocument->loadXML( $xmlData );
+		self::$XSLDocument->loadXML( $xslData );
 
-		$xml->loadXML( $xmlData );
-		$xsl->loadXML( $xslData );
+		self::$processor->importStyleSheet( self::$XSLDocument );
 
-		self::$processor->importStyleSheet( $xsl );
-
-		$result = self::$processor->transformToXML( $xml );
+		$result = self::$processor->transformToXML( self::$XMLDocument );
 
 		self::RestoreWorkingFolder();
 
@@ -34,9 +29,30 @@ class XSL
 			trigger_error( self::DumpErrors(), E_USER_ERROR );
 		}
 
-		self::$processor = null;
-
 		return $result;
+	}
+
+	private static function GetProcessor()
+	{
+		if( is_null( self::$processor ) )
+		{
+			self::$processor = new \XSLTProcessor();
+
+			libxml_use_internal_errors( true );
+
+			self::SetupPHPFunctions();
+			self::SetupProfiling();
+
+			self::$XMLDocument = new \DOMDocument( "1.0", "UTF-8" );
+			self::$XSLDocument = new \DOMDocument( "1.0", "UTF-8" );
+		}
+
+		return( self::$processor );
+	}
+
+	public static function ResetProcessor()
+	{
+		self::$processor = null;
 	}
 
 	private static function SetupPHPFunctions()
@@ -47,6 +63,7 @@ class XSL
 			{
 				if( isset( Config::$data[ "restrictXSLTPHPFunctions" ] ) && is_array( Config::$data[ "restrictXSLTPHPFunctions" ] ) && count( Config::$data[ "restrictXSLTPHPFunctions" ] ) )
 				{
+					self::XSLTPHPFunctionInvocationHack();
 					self::$processor->registerPHPFunctions( Config::$data[ "restrictXSLTPHPFunctions" ] );
 				}
 				else
@@ -137,5 +154,17 @@ class XSL
 		echo "</pre>";
 
 		return $err;
+	}
+
+	public static function XSLTPHPFunctionInvocationHack()
+	{
+		// This method is here as a hack to have PHP load this class, because calling php:function in XSLT without
+		// first having this class loaded won't work, despite autoloading mechanisms being in place.
+		foreach( Config::$data[ "restrictXSLTPHPFunctions" ] as $functionName )
+		{
+			$functionName = strstr( $functionName, '::', true );
+			$tempInstance = new $functionName;
+			unset( $tempInstance, $functionName );
+		}
 	}
 }
