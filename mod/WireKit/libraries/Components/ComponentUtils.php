@@ -32,27 +32,27 @@ class ComponentUtils
 			$componentClass = $componentClass . "\\" . $componentClass;
 		}
 
-		return( $componentClass );
+		return $componentClass;
 	}
 
 	public static function DefaultEventNameIfNecessary( $eventName )
 	{
 		if( is_null( $eventName ) || strlen( $eventName ) == 0 )
 		{
-			return( "default.components" );
+			return "default.components";
 		}
 
-		return( $eventName );
+		return $eventName;
 	}
 
 	public static function DefaultNamespaceIfNecessary( $componentClass )
 	{
 		if( strpos( $componentClass, Config::$data[ "componentNamespace" ] ) === false )
 		{
-			return( Config::$data[ "componentNamespace" ] . "\\" . $componentClass );
+			return Config::$data[ "componentNamespace" ] . "\\" . $componentClass;
 		}
 
-		return( $componentClass );
+		return $componentClass;
 	}
 
 	public static function FallbackViewNameIfNecessary( $viewName )
@@ -62,7 +62,7 @@ class ComponentUtils
 			$viewName = Config::$data[ "defaultView" ];
 		}
 
-		return( $viewName );
+		return $viewName;
 	}
 
 	public static function ReplaceTokenParametersInAttributes( &$model, $parameters )
@@ -105,7 +105,7 @@ class ComponentUtils
 			}
 		}
 
-		return( array( $hrefContextComponent, $hrefContextInstanceName ) );
+		return array( $hrefContextComponent, $hrefContextInstanceName );
 	}
 
 	public static function CreateDefinitionAttributeIfMissing( $model, $name, $value )
@@ -130,7 +130,7 @@ class ComponentUtils
 		$nonNamespacedComponentClass = str_replace( Config::$data[ "componentNamespace" ] . "\\", "", $componentClass );
 		$componentName = substr( $nonNamespacedComponentClass, 0, strrpos( $nonNamespacedComponentClass, "\\" ) );
 
-		return( str_replace( "\\", "/", $componentName ) );
+		return str_replace( "\\", "/", $componentName );
 	}
 
 	public static function ExtractComponentNamePartsFromWiredocName( $fullyQualifiedNameWiredocName )
@@ -140,6 +140,6 @@ class ComponentUtils
 
 		$fullyQualifiedName = $fullyQualifiedNameWiredocName;
 
-		return( array( $component, $instanceName, $fullyQualifiedName ) );
+		return array( $component, $instanceName, $fullyQualifiedName );
 	}
 }

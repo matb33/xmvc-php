@@ -55,7 +55,7 @@ class Constraint
 
 	public function GetTargetName()
 	{
-		return( $this->targetField->name );
+		return $this->targetField->name;
 	}
 
 	public function Apply()
@@ -81,27 +81,27 @@ class Constraint
 				$success = $this->Range();
 			break;
 			default:
-				return( new ConstraintResult( $this, false, "Invalid constraint type." ) );
+				return new ConstraintResult( $this, false, "Invalid constraint type." );
 		}
 
 		if( $success )
 		{
-			return( new ConstraintResult( $this, true, $this->constraintMessages->GetPassMessage() ) );
+			return new ConstraintResult( $this, true, $this->constraintMessages->GetPassMessage() );
 		}
 		else
 		{
-			return( new ConstraintResult( $this, false, $this->constraintMessages->GetFailMessage() ) );
+			return new ConstraintResult( $this, false, $this->constraintMessages->GetFailMessage() );
 		}
 	}
 
 	private function RegExp()
 	{
-		return( preg_match( "/" . $this->against . "/", $this->targetField->value, $matches ) > 0 );
+		return preg_match( "/" . $this->against . "/", $this->targetField->value, $matches ) > 0;
 	}
 
 	private function Match()
 	{
-		return( $this->targetField->value == $this->against );
+		return $this->targetField->value == $this->against;
 	}
 
 	private function MatchField()
@@ -112,12 +112,12 @@ class Constraint
 			{
 				if( $field->value == $this->targetField->value )
 				{
-					return( true );
+					return true;
 				}
 			}
 		}
 
-		return( false );
+		return false;
 	}
 
 	private function MatchFieldMD5()
@@ -128,41 +128,41 @@ class Constraint
 			{
 				if( $field->value == md5( $this->targetField->value ) )
 				{
-					return( true );
+					return true;
 				}
 			}
 		}
 
-		return( false );
+		return false;
 	}
 
 	private function SelectedCount()
 	{
 		$selectedCount = count( $this->targetField->value );
 
-		return( $this->WithinRange( $selectedCount, $this->min, $this->max ) );
+		return $this->WithinRange( $selectedCount, $this->min, $this->max );
 	}
 
 	private function Range()
 	{
 		$floatValue = ( float )$this->targetField->value;
 
-		return( $this->WithinRange( $floatValue, $this->min, $this->max ) );
+		return $this->WithinRange( $floatValue, $this->min, $this->max );
 	}
 
 	private function WithinRange( $value, $min, $max )
 	{
 		if( is_null( $min ) && ! is_null( $max ) )
 		{
-			return( $value <= $max );
+			return $value <= $max;
 		}
 		else if( ! is_null( $min ) && is_null( $max ) )
 		{
-			return( $value >= $min );
+			return $value >= $min;
 		}
 		else
 		{
-			return( $value >= $min && $value <= $max );
+			return $value >= $min && $value <= $max;
 		}
 	}
 }

@@ -25,7 +25,7 @@ class Combiner
 
 		$hash = md5( implode( " ", $files ) );
 
-		return( $basePath . "script-" . $hash . ".js" );
+		return $basePath . "script-" . $hash . ".js";
 	}
 
 	public static function CombineStylesheetLinks( $basePath, $media, $linkNodes )
@@ -42,6 +42,6 @@ class Combiner
 
 		$hash = md5( implode( " ", $files ) );
 
-		return( $basePath . "link-" . $media . "-" . $hash . ".css" );
+		return $basePath . "link-" . $media . "-" . $hash . ".css";
 	}
 }

@@ -39,12 +39,12 @@ class Authenticator
 			$authenticated = true;
 		}
 
-		return( $authenticated );
+		return $authenticated;
 	}
 
 	public static function GetUserData( $key )
 	{
-		return( $_SESSION[ "authUserData" ][ $key ] );
+		return $_SESSION[ "authUserData" ][ $key ];
 	}
 
 	public static function Logout()
@@ -83,7 +83,7 @@ class Authenticator
 			self::$authenticated = ( isset( $_SESSION[ "authUserData" ] ) && ! is_null( $_SESSION[ "authUserData" ] ) );
 		}
 
-		return( self::$authenticated );
+		return self::$authenticated;
 	}
 
 	public function GetStateFromModel( $model )
@@ -91,7 +91,7 @@ class Authenticator
 		$stateNodeList = $model->xPath->query( "//component:definition/@state" );
 		$state = $stateNodeList->length > 0 ? $stateNodeList->item( 0 )->nodeValue : "neutral";
 
-		return( $state );
+		return $state;
 	}
 }
 

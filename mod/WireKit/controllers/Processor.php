@@ -50,7 +50,7 @@ class Processor
 		$pathParts = Routing::GetPathParts();
 		$pathParts[ 0 ] = Loader::StripNamespace( $pathParts[ 0 ] );
 
-		return( $pathParts );
+		return $pathParts;
 	}
 
 	public function Page()

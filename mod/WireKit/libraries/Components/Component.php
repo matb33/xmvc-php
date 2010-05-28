@@ -92,7 +92,7 @@ abstract class Component extends DefaultEventDispatcher
 			$cacheID .= "_" . implode( "", $this->parameters );
 		}
 
-		return( $cacheID );
+		return $cacheID;
 	}
 
 	protected function Listen( $eventName, Delegate $delegate )
@@ -137,7 +137,7 @@ abstract class Component extends DefaultEventDispatcher
 			}
 		}
 
-		return( $instanceModel );
+		return $instanceModel;
 	}
 
 	private function ObtainResultModel()
@@ -158,7 +158,7 @@ abstract class Component extends DefaultEventDispatcher
 
 		ComponentLookup::getInstance()->EnsureInstanceInLookup( $resultModel );
 
-		return( $resultModel );
+		return $resultModel;
 	}
 
 	private function TransformBuiltComponentToInstance()
@@ -211,7 +211,7 @@ abstract class Component extends DefaultEventDispatcher
 		$resultXML = $result->saveXML();
 		$resultModel = new XMLModelDriver( $resultXML );
 
-		return( $resultModel );
+		return $resultModel;
 	}
 
 	private function SendResultModelForProcessing( $resultModel )
