@@ -66,11 +66,11 @@ class SVN
 			$parameters = array();
 			$parameters[] = $filename;
 
-			return( $this->Execute( self::ADD, $parameters ) );
+			return $this->Execute( self::ADD, $parameters );
 		}
 		else
 		{
-			return( false );
+			return false;
 		}
 	}
 
@@ -86,7 +86,7 @@ class SVN
 		$parameters[] = "--password " . $this->repositoryPassword;
 		$parameters[] = "--non-interactive";
 
-		return( $this->Execute( self::CHECKOUT, $parameters ) );
+		return $this->Execute( self::CHECKOUT, $parameters );
 	}
 
 	public function CleanUp( $path = null )
@@ -101,11 +101,11 @@ class SVN
 			$parameters = array();
 			$parameters[] = $path;
 
-			return( $this->Execute( self::CLEANUP, $parameters ) );
+			return $this->Execute( self::CLEANUP, $parameters );
 		}
 		else
 		{
-			return( false );
+			return false;
 		}
 	}
 
@@ -124,11 +124,11 @@ class SVN
 			$parameters[] = "--non-interactive";
 			$parameters[] = $path;
 
-			return( $this->Execute( self::COMMIT, $parameters ) );
+			return $this->Execute( self::COMMIT, $parameters );
 		}
 		else
 		{
-			return( false );
+			return false;
 		}
 	}
 
@@ -140,7 +140,7 @@ class SVN
 		$parameters[] = "--non-interactive";
 		$parameters[] = $pathOrUrl;	// maybe we should check if it's a URL or file, and add surrounding quotes accordingly
 
-		return( $this->Execute( self::DEL, $parameters ) );
+		return $this->Execute( self::DEL, $parameters );
 	}
 
 	public function Import( $path )
@@ -154,11 +154,11 @@ class SVN
 			$parameters[] = "\"" . $path . "\"";
 			$parameters[] = $this->repositoryURL . $this->repositoryPath;
 
-			return( $this->Execute( self::IMPORT, $parameters ) );
+			return $this->Execute( self::IMPORT, $parameters );
 		}
 		else
 		{
-			return( false );
+			return false;
 		}
 	}
 
@@ -191,11 +191,11 @@ class SVN
 
 			$parameters[] = $this->repositoryURL . $this->repositoryPath;
 
-			return( $this->Execute( self::EXPORT, $parameters ) );
+			return $this->Execute( self::EXPORT, $parameters );
 		}
 		else
 		{
-			return( false );
+			return false;
 		}
 	}
 
@@ -215,11 +215,11 @@ class SVN
 			$parameters[] = "--revision " . $revision;
 			$parameters[] = "\"" . $path . "\"";
 
-			return( $this->Execute( self::UPDATE, $parameters ) );
+			return $this->Execute( self::UPDATE, $parameters );
 		}
 		else
 		{
-			return( false );
+			return false;
 		}
 	}
 
@@ -230,11 +230,11 @@ class SVN
 			$parameters = array();
 			$parameters[] = "\"" . $path . "\"";
 
-			return( $this->Execute( self::REVERT, $parameters ) );
+			return $this->Execute( self::REVERT, $parameters );
 		}
 		else
 		{
-			return( false );
+			return false;
 		}
 	}
 
@@ -246,22 +246,22 @@ class SVN
 		$parameters[] = "--non-interactive";
 		$parameters[] = "--revision " . $revision;
 
-		return( $this->Execute( self::LS, $parameters ) );
+		return $this->Execute( self::LS, $parameters );
 	}
 
 	public function Lg()
 	{
-		return( $this->Execute( self::LG ) );
+		return $this->Execute( self::LG );
 	}
 
 	public function IsCheckedOut()
 	{
 		if( FileSystem::PathExists( $this->repositoryWorkingFolder . "/.svn" ) )
 		{
-			return( true );
+			return true;
 		}
 
-		return( false );
+		return false;
 	}
 
 	private function CleanWorkingFolder()
@@ -271,7 +271,7 @@ class SVN
 			exec( "attrib -h -r  \"" . $this->repositoryWorkingFolder . "/*.*\" /s /d" );
 		}
 
-		return( FileSystem::EmptyFolder( $this->repositoryWorkingFolder ) );
+		return FileSystem::EmptyFolder( $this->repositoryWorkingFolder );
 	}
 
 	private function Execute( $subCommand, $parameters = array() )
@@ -293,7 +293,7 @@ class SVN
 
 		SVNErrors::Analyze( $outputGlued, $subCommand );
 
-		return( $outputGlued );
+		return $outputGlued;
 	}
 
 	private function GetCommonParameters()
@@ -301,7 +301,7 @@ class SVN
 		$parameters = array();
 		$parameters[] = "--config-dir \"" . realpath( Config::$data[ "svnConfigFolder" ] ) . "\"";
 
-		return( $parameters );
+		return $parameters;
 	}
 
 	private function VerifyWorkingFolderExists()

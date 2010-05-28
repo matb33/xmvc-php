@@ -69,12 +69,12 @@ class Authenticator
 			$authenticated = true;
 		}
 
-		return( $authenticated );
+		return $authenticated;
 	}
 
 	public static function GetUserData( $key )
 	{
-		return( $_SESSION[ "authUserData" ][ $key ] );
+		return $_SESSION[ "authUserData" ][ $key ];
 	}
 
 	public static function Logout()
@@ -110,7 +110,7 @@ class Authenticator
 			self::$authenticated = ( isset( $_SESSION[ "authUserData" ] ) && ! is_null( $_SESSION[ "authUserData" ] ) );
 		}
 
-		return( self::$authenticated );
+		return self::$authenticated;
 	}
 }
 
