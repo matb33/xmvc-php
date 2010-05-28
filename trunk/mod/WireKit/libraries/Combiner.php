@@ -17,12 +17,23 @@ class Combiner
 			if( $node->hasAttribute( "href" ) )
 			{
 				// grab the filenames and modified date attributes
-				$meta = FileSystem::GetMeta( $node->getAttribute( "href" ) );
+				echo "href = " . $node->getAttribute( "href" );
+				echo "\n";
+				echo "GetPhysicalPath = " . self::GetPhysicalPath( $node->getAttribute( "href" ) );
+				echo "\n";
+				echo "Realpath = " . realpath( self::GetPhysicalPath( $node->getAttribute( "href" ) ) );
+				echo "\n";
+				echo "GetMeta = " . var_dump( FileSystem::GetMeta( realpath( self::GetPhysicalPath( $node->getAttribute( "href" ) ) ) ) );
+				echo "\n";
+
+				$meta = FileSystem::GetMeta( realpath( self::GetPhysicalPath( $node->getAttribute( "href" ) ) ) );
+				var_dump($meta);
 				
 				$filenames[] = $meta[ "fullfilename" ];
 				$fileIDs[] = $meta[ "basename" ] . $meta[ "filemtime" ];
 			}
 		}
+		exit();
 
 		sort( $fileIDs );
 
@@ -45,6 +56,18 @@ class Combiner
 		var_dump($outputFilename);
 
 		return $publicFilename;
+	}
+
+	private static function GetPhysicalPath( $filename )
+	{
+		$combinerRewriteAdaptors = array( "|^[/]?(.+)/inc/(.*)|" => "./mod/$1/inc/$2", "|^[/]?inc/(.*)$|"  => "./app/inc/$1");
+
+		foreach( $combinerRewriteAdaptors as $pattern => $replacement )
+		{
+			$filename = preg_replace($pattern, $replacement, $filename);
+		}
+
+		return $filename;
 	}
 
 	public static function CombineStylesheetLinks( $media, $linkNodes )
