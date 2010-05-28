@@ -72,6 +72,6 @@ class XSSUtils
 			}
 		}
 
-		return( $val );
+		return $val;
 	}
 }
