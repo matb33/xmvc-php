@@ -42,7 +42,7 @@ class Image
 		$heightTest = ( ( int )$height > 0 || $height == "auto" );
 		$imageFileTest = file_exists( $imageFile );
 
-		return( $widthTest && $heightTest && $imageFileTest );
+		return $widthTest && $heightTest && $imageFileTest;
 	}
 
 	private function ResizeImage( $width, $height, $imageFile, $force )

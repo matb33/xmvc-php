@@ -17,7 +17,7 @@ class ImageProcessor
 		imagefilledrectangle( $resizedImage, 0, 0, $newWidth, $newHeight, $whiteColor );
 		imagecopyresampled( $resizedImage, $fullSizeImage, 0, 0, 0, 0, $newWidth, $newHeight, $fullSizeWidth, $fullSizeHeight );
 
-		return( $resizedImage );
+		return $resizedImage;
 	}
 
 	public static function GetImageData( $imageFile )
@@ -25,16 +25,14 @@ class ImageProcessor
 		$imageSizeData = getimagesize( $imageFile );
 		$imageFileInfo = pathinfo( $imageFile );
 
-		return(
-			array(
-				( int )$imageSizeData[ 0 ],
-				( int )$imageSizeData[ 1 ],
-				$imageSizeData[ "mime" ],
-				filemtime( $imageFile ),
-				$imageFileInfo[ "basename" ],
-				$imageFileInfo[ "filename" ],
-				$imageFileInfo[ "extension" ]
-			)
+		return array(
+			( int )$imageSizeData[ 0 ],
+			( int )$imageSizeData[ 1 ],
+			$imageSizeData[ "mime" ],
+			filemtime( $imageFile ),
+			$imageFileInfo[ "basename" ],
+			$imageFileInfo[ "filename" ],
+			$imageFileInfo[ "extension" ]
 		);
 	}
 
@@ -64,7 +62,7 @@ class ImageProcessor
 			}
 		}
 
-		return( array( ( int )$newWidth, ( int )$newHeight ) );
+		return array( ( int )$newWidth, ( int )$newHeight );
 	}
 
 	public static function OutputImage( $image, $mimeType )
@@ -76,16 +74,16 @@ class ImageProcessor
 			switch( $mimeType )
 			{
 				case "image/jpeg":
-					return( imagejpeg( $image, null, 100 ) );
+					return imagejpeg( $image, null, 100 );
 				break;
 				case "image/gif":
-					return( imagegif( $image ) );
+					return imagegif( $image );
 				break;
 				case "image/png":
-					return( imagepng( $image ) );
+					return imagepng( $image );
 				break;
 				default:
-					return( false );
+					return false;
 			}
 		}
 		else
@@ -101,16 +99,16 @@ class ImageProcessor
 			switch( $mimeType )
 			{
 				case "image/jpeg":
-					return( imagejpeg( $image, $filename, 100 ) );
+					return imagejpeg( $image, $filename, 100 );
 				break;
 				case "image/gif":
-					return( imagegif( $image, $filename ) );
+					return imagegif( $image, $filename );
 				break;
 				case "image/png":
-					return( imagepng( $image, $filename ) );
+					return imagepng( $image, $filename );
 				break;
 				default:
-					return( false );
+					return false;
 			}
 		}
 		else
@@ -126,16 +124,16 @@ class ImageProcessor
 		switch( $mimeType )
 		{
 			case "image/jpeg":
-				return( imagecreatefromjpeg( $imageFile ) );
+				return imagecreatefromjpeg( $imageFile );
 			break;
 			case "image/gif":
-				return( imagecreatefromgif( $imageFile ) );
+				return imagecreatefromgif( $imageFile );
 			break;
 			case "image/png":
-				return( imagecreatefrompng( $imageFile ) );
+				return imagecreatefrompng( $imageFile );
 			break;
 			default:
-				return( false );
+				return false;
 		}
 	}
 }
