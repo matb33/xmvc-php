@@ -398,18 +398,18 @@ String.method( "utf8_encode", function( str_data )
 
 var jQueryVal = jQuery.fn.val;
 
-$.fn.realval = function()
+jQuery.fn.realval = function()
 {
 	return( jQueryVal.apply( this, arguments ) );
 };
 
-$.fn.val = function()
+jQuery.fn.val = function()
 {
-	if( $( this ).length > 0 )
+	if( jQuery( this ).length > 0 )
 	{
 		if( arguments.length == 0 )
 		{
-			if( $( this ).get( 0 ).message == $( this ).realval() )
+			if( jQuery( this ).get( 0 ).message == jQuery( this ).realval() )
 			{
 				return( "" );
 			}
@@ -419,31 +419,31 @@ $.fn.val = function()
 	return( jQueryVal.apply( this, arguments ) );
 };
 
-$.fn.innerMessage = function()
+jQuery.fn.innerMessage = function()
 {
-	if( $( this ).length > 0 )
+	if( jQuery( this ).length > 0 )
 	{
-		$( this ).get( 0 ).message = $( this ).realval();
+		jQuery( this ).get( 0 ).message = jQuery( this ).realval();
 
-		$( this ).addClass( "inner-messaging" );
+		jQuery( this ).addClass( "inner-messaging" );
 
 		var thisObj = this;
 
-		$( this ).focus( function()
+		jQuery( this ).focus( function()
 		{
-			if( $( this ).realval() == $( thisObj ).get( 0 ).message )
+			if( jQuery( this ).realval() == jQuery( thisObj ).get( 0 ).message )
 			{
-				$( this ).realval( "" );
-				$( this ).removeClass( "inner-messaging" );
+				jQuery( this ).realval( "" );
+				jQuery( this ).removeClass( "inner-messaging" );
 			}
 		});
 
-		$( this ).blur( function( event )
+		jQuery( this ).blur( function( event )
 		{
-			if( $( this ).realval().length == 0 )
+			if( jQuery( this ).realval().length == 0 )
 			{
-				$( this ).realval( $( thisObj ).get( 0 ).message );
-				$( this ).addClass( "inner-messaging" );
+				jQuery( this ).realval( jQuery( thisObj ).get( 0 ).message );
+				jQuery( this ).addClass( "inner-messaging" );
 			}
 		});
 	}
@@ -454,32 +454,32 @@ $.fn.innerMessage = function()
 // Written by Mathieu Bouchard (c) 2010
 ////////////////////////////////////////////////////
 
-$( document ).ready( function()
+jQuery( document ).ready( function()
 {
 	// Add hover class to navigation li's in IE
-	if( $.browser.msie )
+	if( jQuery.browser.msie )
 	{
-		$( "ul.navigation li" ).hover(
-			function() { $( this ).addClass( "hover" ); },
-			function() { $( this ).removeClass( "hover" ); }
+		jQuery( "ul.navigation li" ).hover(
+			function() { jQuery( this ).addClass( "hover" ); },
+			function() { jQuery( this ).removeClass( "hover" ); }
 		);
 	}
 
 	if( window.parent.document != document )
 	{
 		// Make iframe links that target new windows open in a new window outside the iframe
-		$( "a[rel]" ).live( "click", function( e )
+		jQuery( "a[rel]" ).live( "click", function( e )
 		{
-			top.frames[ $( this ).attr( "rel" ) ].location.href = $( this ).attr( "href" );
+			top.frames[ jQuery( this ).attr( "rel" ) ].location.href = jQuery( this ).attr( "href" );
 			e.preventDefault();
 		});
 	}
 	else
 	{
 		// Make rel anchors open in a new window
-		$( "a[rel]" ).live( "click", function()
+		jQuery( "a[rel]" ).live( "click", function()
 		{
-			$( this ).attr( "target", $( this ).attr( "rel" ) );
+			jQuery( this ).attr( "target", jQuery( this ).attr( "rel" ) );
 		});
 	}
 });
