@@ -9,36 +9,13 @@ class Combiner
 {
 	public static function CombineJavaScripts( $scriptNodes )
 	{
-		//return "";
 		$fileIDs = array();
 		$filenames = array();
 
 		foreach( $scriptNodes as $node )
 		{
-			if( $node->hasAttribute( "href" ) )
-			{
-				echo "<pre>";
-				echo "href = " . $node->getAttribute( "href" );
-				echo "\n";
-				echo "getcwd() = " . getcwd();
-				echo "\n";
-				echo "rootPath = " . Config::$data[ "rootPath" ];
-				echo "\n";
-				echo "GetPhysicalPath = " . self::GetPhysicalPath( $node->getAttribute( "href" ) );
-				echo "\n";
-				echo "Realpath = " . realpath( self::GetPhysicalPath( $node->getAttribute( "href" ) ) );
-				echo "\n";
-				echo "GetMeta = " . var_dump( FileSystem::GetMeta( realpath( self::GetPhysicalPath( $node->getAttribute( "href" ) ) ) ) );
-				echo "\n";
-
-				$meta = FileSystem::GetMeta( realpath( self::GetPhysicalPath( $node->getAttribute( "href" ) ) ) );
-				var_dump($meta);
-				
-				$filenames[] = $meta[ "fullfilename" ];
-				$fileIDs[] = $meta[ "basename" ] . $meta[ "filemtime" ];
-			}
+			list( $fileIDs[], $filenames[] ) = self::PrepareFileNames( $node );
 		}
-		exit();
 
 		sort( $fileIDs );
 
@@ -46,22 +23,58 @@ class Combiner
 		$outputFilename = Config::$data[ "combinerCachePhysicalFolder" ] . "script-" . $hash . ".js";
 		$publicFilename = Config::$data[ "combinerCacheWebFolder" ] . "script-" . $hash . ".js";
 
+		self::CombineFiles( $outputFilename, $filenames );
+
+		return $publicFilename;
+	}
+	
+	public static function CombineStylesheetLinks( $media, $linkNodes )
+	{
+		$fileIDs = array();
+		$filenames = array();
+
+		foreach( $linkNodes as $node )
+		{
+			list( $fileIDs[], $filenames[] ) = self::PrepareFileNames( $node );
+		}
+
+		$hash = md5( implode( " ", $fileIDs ) );
+		$outputFilename = Config::$data[ "combinerCachePhysicalFolder" ] . "link-" . $media . "-" . $hash . ".css";
+		$publicFilename = Config::$data[ "combinerCacheWebFolder" ] . "link-" . $media . "-" . $hash . ".css";
+		
+		self::CombineFiles( $outputFilename, $filenames );
+
+		return $publicFilename;
+	}
+	
+	private static function CombineFiles( $outputFilename, $filenamesArray )
+	{
 		if( !FileSystem::FileExists( $outputFilename ) )
 		{
 			// combine the files
 			$fileContents = "";
-			foreach( $filenames as $file )
+			foreach( $filenamesArray as $file )
 			{
-				var_dump($file);
 				$fileContents .= FileSystem::FileGetContentsUTF8( $file );
 			}
 
-			FileSystem::FilePutContents( $outputFilename, $fileContents );
+			$realOutputFile = Config::$data[ "rootPath" ] . "/" . $outputFilename;
+			FileSystem::FilePutContents( $realOutputFile, $fileContents );
+		}
+	}
+
+	private static function PrepareFileNames( $node )
+	{
+		if( $node->hasAttribute( "href" ) )
+		{
+			$realPath = realpath( Config::$data[ "rootPath" ]  . "/" . self::GetPhysicalPath( $node->getAttribute( "href" ) ) );
+			$meta = FileSystem::GetMeta( $realPath );
+
+			$filenames = $meta[ "fullfilename" ];
+			$fileIDs = $meta[ "basename" ] . $meta[ "filemtime" ];
 		}
 
-		var_dump($outputFilename);
-
-		return $publicFilename;
+		return array( $fileIDs, $filenames );
 	}
 
 	private static function GetPhysicalPath( $filename )
@@ -74,20 +87,5 @@ class Combiner
 		}
 
 		return $filename;
-	}
-
-	public static function CombineStylesheetLinks( $media, $linkNodes )
-	{
-		foreach( $linkNodes as $node )
-		{
-			if( $node->hasAttribute( "href" ) )
-			{
-				$files[] = $node->getAttribute( "href" );
-			}
-		}
-
-		$hash = md5( implode( " ", $files ) );
-
-		return Config::$data[ "combinerCacheWebFolder" ] . "/" . "link-" . $media . "-" . $hash . ".css";
 	}
 }
