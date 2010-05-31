@@ -159,4 +159,4 @@ var Tooltip = new function()
 	{
 		Tooltip.ShowTooltip();
 	};
-}
+};
