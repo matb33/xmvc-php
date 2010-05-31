@@ -9,7 +9,7 @@ class Combiner
 {
 	public static function CombineJavaScripts( $scriptNodes )
 	{
-		return "";
+		//return "";
 		$fileIDs = array();
 		$filenames = array();
 
@@ -17,8 +17,12 @@ class Combiner
 		{
 			if( $node->hasAttribute( "href" ) )
 			{
-				// grab the filenames and modified date attributes
+				echo "<pre>";
 				echo "href = " . $node->getAttribute( "href" );
+				echo "\n";
+				echo "getcwd() = " . getcwd();
+				echo "\n";
+				echo "rootPath = " . Config::$data[ "rootPath" ];
 				echo "\n";
 				echo "GetPhysicalPath = " . self::GetPhysicalPath( $node->getAttribute( "href" ) );
 				echo "\n";
@@ -39,8 +43,8 @@ class Combiner
 		sort( $fileIDs );
 
 		$hash = md5( implode( " ", $fileIDs ) );
-		$outputFilename = Config::$data[ "combinerCachePhysicalFolder" ] . "/" . "script-" . $hash . ".js";
-		$publicFilename = Config::$data[ "combinerCacheWebFolder" ] . "/" . "script-" . $hash . ".js";
+		$outputFilename = Config::$data[ "combinerCachePhysicalFolder" ] . "script-" . $hash . ".js";
+		$publicFilename = Config::$data[ "combinerCacheWebFolder" ] . "script-" . $hash . ".js";
 
 		if( !FileSystem::FileExists( $outputFilename ) )
 		{
@@ -48,6 +52,7 @@ class Combiner
 			$fileContents = "";
 			foreach( $filenames as $file )
 			{
+				var_dump($file);
 				$fileContents .= FileSystem::FileGetContentsUTF8( $file );
 			}
 
