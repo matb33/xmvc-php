@@ -574,7 +574,7 @@ String.method( "utf8_encode", function()
     
     return tmp_arr.join('');
 });
-//
+
 ////////////////////////////////////////////////////
 // Inner message jQuery plugin
 // Written by Mathieu Bouchard (c) 2010
@@ -638,6 +638,8 @@ jQuery.fn.innerMessage = function()
 			}
 		});
 	}
+	
+	return this;
 };
 
 ////////////////////////////////////////////////////
@@ -674,3 +676,248 @@ jQuery( document ).ready( function()
 		});
 	}
 });
+
+////////////////////////////////////////////////////
+// ARIMODAL: auto-resizing iframe modal window
+// Written by Mathieu Bouchard (c) 2010
+////////////////////////////////////////////////////
+
+var ARIMODAL = function()
+{
+	var modalCollection = function()
+	{
+		// private fields
+		var table = [];
+
+		// private methods
+		var addToTable = function( instance, href )
+		{
+			table[ href ] = instance;
+		};
+
+		var getFromTableByHref = function( href )
+		{
+			return table[ href ];
+		};
+
+		// public domain
+		return {
+			add: function( instance, href )
+			{
+				addToTable( instance, href );
+				return this;
+			},
+			get: function( href )
+			{
+				return getFromTableByHref( href );
+			}
+		};
+	}();
+
+	var innerModal = function()
+	{
+		// private fields
+		var initialized = false;
+		var myInstance = null;
+
+		// private methods
+		var initialize = function()
+		{
+			if( !initialized )
+			{
+				initialized = true;
+
+				if( isInnerModal() )
+				{
+					myInstance = getMyInstance();
+					myInstance.show();
+					myInstance.resize( jQuery( document ).width(), jQuery( document ).height() );
+				}
+			}
+		};
+
+		var getMyInstance = function()
+		{
+			return top.ARIMODAL.getModalCollection().get( window.location.pathname );
+		};
+
+		var isInnerModal = function()
+		{
+			return window.parent.document != document;
+		};
+
+		var closeMe = function()
+		{
+			getMyInstance().close();
+		};
+
+		// public domain
+		return {
+			initialize: function()
+			{
+				initialize();
+				return this;
+			},
+			closeMe: function()
+			{
+				initialize();
+				closeMe();
+				return this;
+			}
+		};
+	}();
+
+	var modal = function()
+	{
+		// private fields
+		var initialized = false;
+		var modalAPI = null;
+		var modalContainer = null;
+		var modalHref = null;
+		var modalIframe = null;
+
+		// private methods
+		var initialize = function( containerID, href, that )
+		{
+			if( !initialized )
+			{
+				initialized = true;
+				modalHref = href;
+				modalCollection.add( that, href );
+				initializeModalContainer( containerID );
+			}
+		};
+
+		var launchModalWindow = function()
+		{
+			modalAPI = modalContainer.overlay(
+			{
+				api: true,
+				onBeforeLoad: function( e )
+				{
+					e.stopPropagation();
+
+					modalIframe = jQuery( "<iframe frameborder='0' scrolling='auto' style='width: 100%;' />" );
+					modalContainer.append( modalIframe );
+					modalIframe.attr( "src", modalHref );
+
+					$( ".close", modalContainer ).css( {
+						position: "absolute",
+						cursor: "pointer",
+						zIndex: 10001
+					});
+				},
+				onClose: function( e )
+				{
+					modalIframe.remove();
+					modalContainer.remove();
+				},
+				closeOnClick: true,
+				expose:
+				{
+					color: "#000",
+					loadSpeed: 200,
+					opacity: 0.75
+				}
+			}).load();
+		};
+
+		var initializeModalContainer = function( containerID )
+		{
+			if( jQuery( "#" + containerID ).length == 0 )
+			{
+				jQuery( "body" ).append( "<div id='" + containerID + "' class='modal-box' style='display: none; z-index: 10000; padding: 0px; border: 0px;' />" );
+			}
+
+			modalContainer = jQuery( "#" + containerID );
+		};
+
+		var showIframe = function()
+		{
+			modalIframe.show();
+			return this;
+		};
+
+		var resizeIframe = function( width, height )
+		{
+			var maxHeight = parseInt( modalIframe.css( "max-height" ) );
+			var maxWidth = parseInt( modalIframe.css( "max-width" ) );
+			var windowHeight = jQuery( window ).height();
+			var windowWidth = jQuery( window ).width();
+
+			maxHeight = maxHeight > windowHeight ? windowHeight : maxHeight;
+			maxWidth = maxWidth > windowWidth ? windowWidth : maxWidth;
+
+			height = height > maxHeight ? maxHeight : height;
+			width = width > maxWidth ? maxWidth : width;
+
+			width += 17;	// scrollbar fix (except IE6)!
+
+			var left = ( jQuery( window ).width() - width ) / 2;
+			var top = ( jQuery( window ).height() - height ) / 2;
+
+			modalIframe.andSelf().animate( { height: height, width: width }, { duration: 250, queue: false } );
+			modalContainer.animate( { left: left, top: top }, { duration: 250, queue: false } );
+		};
+
+		var closeModal = function()
+		{
+			modalAPI.close();
+			return this;
+		};
+
+		var showCloseIcon = function()
+		{
+			jQuery( ".close", modalContainer ).show();
+		};
+
+		// public domain
+		return {
+			initialize: function( containerID, href )
+			{
+				initialize( containerID, href, this );
+				return this;
+			},
+			launch: function()
+			{
+				launchModalWindow();
+				return this;
+			},
+			close: function()
+			{
+				closeModal();
+				return this;
+			},
+			show: function()
+			{
+				showIframe();
+				showCloseIcon();
+				return this;
+			},
+			resize: function( width, height )
+			{
+				resizeIframe( width, height );
+				return this;
+			}
+		};
+	};
+
+	return {
+		initialize: function()
+		{
+			innerModal.initialize();
+		},
+		launch: function( containerID, href )
+		{
+			modal().initialize( containerID, href ).launch();
+		},
+		closeMe: function()
+		{
+			innerModal.closeMe();
+		},
+		getModalCollection: function()
+		{
+			return modalCollection;
+		}
+	};
+}();
