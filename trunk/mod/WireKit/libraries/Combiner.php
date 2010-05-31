@@ -9,6 +9,7 @@ class Combiner
 {
 	public static function CombineJavaScripts( $scriptNodes )
 	{
+		return "";
 		$fileIDs = array();
 		$filenames = array();
 
