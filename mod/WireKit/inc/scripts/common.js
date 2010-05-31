@@ -370,6 +370,23 @@ function isArray( value )
 	return isValueAnArray;
 }
 
+/// Helper method to dispose an array and to optionally call a callback on each item after being removed from the array.
+function disposeArray( array, callback )
+{
+	if( isArray( array ) )
+	{
+		var item;
+		while( array.length !== 0 )
+		{
+			item = array.pop();
+			if( callback && typeof callback === "function" )
+			{
+				callback( item );
+			}
+		}
+	}
+}
+
 /// Ensure that the Array type has an "indexOf" method like other languages.
 if( typeof Array.prototype.indexOf !== "function" )
 {
@@ -388,73 +405,200 @@ if( typeof Array.prototype.indexOf !== "function" )
 	};
 }
 
-/// Represents a hash table that has a one to many mapping between sources and targets.
-var mapTable = function()
-{	
-	// private fields
-	var map = [];
-		
-	// private methods
-	var disposeArray = function( array )
+/// Ensure that the Array type has an "lastIndexOf" method like other languages.
+if( typeof Array.prototype.lastIndexOf !== "function" )
+{
+	Array.prototype.lastIndexOf = function( item, index )
 	{
-		while( array.length !== 0 )
+		var count = this.length;
+		index = ( isNaN( index ) || index < 0 || index >= count ) ? count - 1 : index;		
+		for( var i = 0; i < count; i-- )
 		{
-			array.pop();
+			if( this[ i ] === value )
+			{
+				return i;
+			}
+		}
+		return -1;
+	};
+}
+
+/// Represents a general purpose dictionary that can be used to associate a key of any kind to a value of any kind.
+/// A key can only be associated to a single value.
+function Dictionary()
+{
+	// private fields
+	var keys = [];
+	var values = [];		
+	
+	this.get = function( key )
+	{
+		var index = keys.indexOf( key );
+		if( index >= 0 )
+		{
+			return values[ index ];
+		}
+		else
+		{
+			return null;
 		}
 	};
 	
-	// public domain
-	return {
-		/// Maps each item in the given array of source values to a target value. Returns this.
-		addMapping: function( sources, target )
+	this.set = function( key, value )
+	{
+		var index = keys.indexOf( key );
+		if( index >= 0 )
 		{
-			if( isArray( sources ) && sources.length !== 0 )
-			{
-				map.push(sources, target);
-			}
-			return this;
-		},
-		/// Attempts to retrieve the targets for the given source.
-		/// Returns an array of mapped targets or empty array if no mapping exists.
-		getTargets: function( source )
-		{
-			var count = map.length;
-			var mapping;
-			var targets = [];
-			var target;
-			for( var m = 0; m < count; m += 2 )
-			{
-				mapping = map[ m ];
-				if( mapping.indexOf( source ) >= 0 )
-				{
-					target = map[ m + 1 ];
-					targets.push( target );					
-				}
-			}
-			return targets;
-		},		
-		/// Retrieves all sources for the given target as an array or an empty array if no mapping exists.
-		getSources: function( target )
-		{								
-			var sources = [];
-			var index = map.indexOf( target );
-			while( index >= 0 )
-			{
-				sources = sources.concat( map[ index - 1 ] );
-				index = map.indexOf( target, index + 1 );
-			}	
-			return sources;	
-		},
-		/// Removes all mappings from the table. Returns this.
-		clear: function()
-		{
-			while( map.length != 0 )
-			{
-				map.pop();
-				disposeArray( map.pop() );
-			}			
-			return this;
+			values[ index ] = value;
 		}
+		else
+		{
+			keys.push( key );
+			values.push( value );
+		}
+	};
+	
+	this.containsKey = function( key )
+	{
+		var hasKey = keys.indexOf( key );
+		return hasKey;
+	};
+	
+	this.containsValue = function( value )
+	{
+		var hasValue = values.indexOf( value );
+		return hasValue;
+	};
+	
+	this.getKeys = function()
+	{
+		return keys.slice();
+	};
+	
+	this.getValues = function()
+	{
+		return values.slice();
+	};
+	
+	this.getKeysByValue = function( value )
+	{
+		var match = [];
+		var count = values.length;
+		var v;
+		for( var i = 0; i < count; i++ )
+		{				
+			v = values[ i ];
+			if( v === value )
+			{
+				match.push( keys[ i ] );
+			}
+		}
+		return match;
+	};
+	
+	this.getCount = function()
+	{
+		return keys.length;
+	};
+	
+	this.clear = function()
+	{
+		disposeArray( keys );
+		disposeArray( values );
+	};		
+};
+
+/// Represents a general purpose map that can be used to associate a key of any kind to a value of any kind.
+/// The difference between a dictionary and map is that a key can be associated to many values.
+function Map()
+{
+	// private fields
+	var keys = [];
+	var values = [];					
+		
+	/// Retrieves the values associated to the given key as an array.
+	this.get = function( key )
+	{
+		var index = keys.indexOf( key );
+		if( index >= 0 )
+		{
+			return values[ index ].slice();
+		}
+		else
+		{
+			return [];
+		}
+	};
+	
+	this.set = function( key, value )
+	{
+		var index = keys.indexOf( key );
+		if( index >= 0 )
+		{
+			var array = values[ index ];
+			if( array.indexOf( value ) >= 0 )
+			{
+				array.push( value );
+			}
+		}
+		else
+		{
+			keys.push( key );
+			values.push( [ value ] );
+		}
+	};
+	
+	this.containsKey = function( key )
+	{
+		var hasKey = keys.indexOf( key );
+		return hasKey;
+	};
+	
+	this.containsValue = function( value )
+	{
+		var count = values.length;
+		var array;
+		for( var i = 0; i < count; i++ )
+		{
+			array = values[ i ];
+			if( array.indexOf( value ) >= 0 )
+			{
+				return true;
+			}
+		}
+		return false;
+	};
+	
+	this.getKeys = function()
+	{
+		return keys.slice();
+	};
+	
+	this.getKeysByValue = function( value )
+	{
+		var match = [];
+		var count = values.length;
+		var array;			
+		for( var i = 0; i < count; i++ )
+		{				
+			array = values[ i ];
+			if( array.indexOf( value ) >= 0 )
+			{
+				match.push( keys[ i ] );
+			}				
+		}
+		return match;
+	};
+	
+	this.getCount = function()
+	{
+		return keys.length;
+	};
+	
+	this.clear = function()
+	{
+		disposeArray( keys );
+		disposeArray( values, disposeArray );
 	};	
 };
 
