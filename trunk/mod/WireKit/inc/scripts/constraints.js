@@ -332,4 +332,4 @@ var ConstraintVisuals = new function()
 	{
 		return( field.closest( "label" ).hasClass( "constraint-fail" ) );
 	};
-}
+};
