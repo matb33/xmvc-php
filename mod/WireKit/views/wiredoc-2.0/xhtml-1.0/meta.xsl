@@ -49,7 +49,7 @@
 	</xsl:template>
 
 	<xsl:template name="meta">
-		<xsl:for-each select="//meta:*[ php:function( 'xMVC\Mod\Language\Language::XSLTLang', $lang, (ancestor-or-self::*/@xml:lang)[last()] ) ]">
+		<xsl:for-each select="//meta:*[ local-name() != 'script' and local-name() != 'link' and php:function( 'xMVC\Mod\Language\Language::XSLTLang', $lang, (ancestor-or-self::*/@xml:lang)[last()] ) ]">
 			<xsl:apply-templates select="." mode="override-meta" />
 		</xsl:for-each>
 		<xsl:call-template name="single-link-method" mode="override-meta" />
