@@ -301,16 +301,21 @@ class FileSystem
 			$meta[ "is_writable" ]		= @is_writable( $file );
 
 			$pathParts					= @pathinfo( $file );
-			$meta[ "dirname" ]			= $pathParts[ "dirname" ];
-			$meta[ "basename" ]			= $pathParts[ "basename" ];
-			$meta[ "extension" ]		= isset( $pathParts[ "extension" ] ) ? $pathParts[ "extension" ] : "";
-			$meta[ "filename" ]			= $pathParts[ "filename" ];
-			$meta[ "fullfilename" ]		= $pathParts[ "dirname" ] . "/" . $pathParts[ "basename" ];
+
+			if( $pathParts[ "basename" ] != "" && $pathParts[ "filename" ] != "" )
+			{
+				$meta[ "dirname" ]			= $pathParts[ "dirname" ];
+				$meta[ "basename" ]			= $pathParts[ "basename" ];
+				$meta[ "extension" ]		= isset( $pathParts[ "extension" ] ) ? $pathParts[ "extension" ] : "";
+				$meta[ "filename" ]			= $pathParts[ "filename" ];
+				$meta[ "fullfilename" ]		= $pathParts[ "dirname" ] . "/" . $pathParts[ "basename" ];
+			}
 
 			$meta[ "fileatime-nice" ]	= date( "Y-m-d H:i:s", $meta[ "fileatime" ] );
 			$meta[ "filectime-nice" ]	= date( "Y-m-d H:i:s", $meta[ "filectime" ] );
 			$meta[ "filemtime-nice" ]	= date( "Y-m-d H:i:s", $meta[ "filemtime" ] );
 			$meta[ "filesize-nice" ]	= number_format( $meta[ "filesize" ] );
+
 		}
 
 		return $meta;
