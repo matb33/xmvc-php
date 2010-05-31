@@ -51,7 +51,6 @@ class Combiner
 	{
 		if( !FileSystem::FileExists( $outputFilename ) )
 		{
-			// combine the files
 			$fileContents = "";
 			foreach( $filenamesArray as $file )
 			{
