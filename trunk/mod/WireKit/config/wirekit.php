@@ -30,5 +30,3 @@ $wirekitNamespaces[ "lookup" ] = "urn:wirekit:lookup";
 $wirekitNamespaces[ "wd" ] = "http://www.wiredoc.org/ns/wiredoc/2.0";
 $wirekitNamespaces[ "meta" ] = "http://www.wiredoc.org/ns/metadoc/1.0";
 $wirekitNamespaces[ "doc" ] = "http://www.docbook.org/schemas/simplified";
-
-?>
