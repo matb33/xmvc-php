@@ -370,6 +370,24 @@ function isArray( value )
 	return isValueAnArray;
 }
 
+/// Ensure that the Array type has an "indexOf" method like other languages.
+if( typeof Array.prototype.indexOf !== "function" )
+{
+	Array.prototype.indexOf = function( item, index )
+	{
+		var count = this.length;
+		index = ( isNaN( index ) || index < 0 || index >= count ) ? 0 : index;
+		for( var i = 0; i < count; i++ )
+		{
+			if( this[ i ] === value )
+			{
+				return i;
+			}
+		}
+		return -1;
+	};
+}
+
 /// Represents a hash table that has a one to many mapping between sources and targets.
 var mapTable = function()
 {	
