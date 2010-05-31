@@ -360,6 +360,86 @@ Function.method( "curry", function()
 	};
 });
 
+/// Determines if the value specified refers to an array.
+function isArray( value )
+{
+	var isValueAnArray = value && 
+						 typeof value === "object" && 
+						 typeof value.length === "number" && 
+						 !value.propertyIsEnumerable( "length" );
+	return isValueAnArray;
+}
+
+/// Represents a hash table that has a one to many mapping between sources and targets.
+var mapTable = function()
+{	
+	// private fields
+	var map = [];
+		
+	// private methods
+	var disposeArray = function( array )
+	{
+		while( array.length !== 0 )
+		{
+			array.pop();
+		}
+	};
+	
+	// public domain
+	return {
+		/// Maps each item in the given array of source values to a target value. Returns this.
+		addMapping: function( sources, target )
+		{
+			if( isArray( sources ) && sources.length !== 0 )
+			{
+				map.push(sources, target);
+			}
+			return this;
+		},
+		/// Attempts to retrieve the targets for the given source.
+		/// Returns an array of mapped targets or empty array if no mapping exists.
+		getTargets: function( source )
+		{
+			var count = map.length;
+			var mapping;
+			var targets = [];
+			var target;
+			for( var m = 0; m < count; m += 2 )
+			{
+				mapping = map[ m ];
+				if( mapping.indexOf( source ) >= 0 )
+				{
+					target = map[ m + 1 ];
+					targets.push( target );					
+				}
+			}
+			return targets;
+		},		
+		/// Retrieves all sources for the given target as an array or an empty array if no mapping exists.
+		getSources: function( target )
+		{								
+			var sources = [];
+			var index = map.indexOf( target );
+			while( index >= 0 )
+			{
+				sources = sources.concat( map[ index - 1 ] );
+				index = map.indexOf( target, index + 1 );
+			}	
+			return sources;	
+		},
+		/// Removes all mappings from the table. Returns this.
+		clear: function()
+		{
+			while( map.length != 0 )
+			{
+				map.pop();
+				disposeArray( map.pop() );
+			}			
+			return this;
+		}
+	};	
+};
+
 ////////////////////////////////////////////////////
 // php.js methods
 ////////////////////////////////////////////////////
