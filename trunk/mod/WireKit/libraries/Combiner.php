@@ -82,7 +82,7 @@ class Combiner
 
 		foreach( $combinerRewriteAdaptors as $pattern => $replacement )
 		{
-			$filename = preg_replace($pattern, $replacement, $filename);
+			$filename = preg_replace( $pattern, $replacement, $filename );
 		}
 
 		return $filename;
