@@ -48,9 +48,7 @@ class ComponentFactory extends DefaultEventDispatcher
 		$componentModel = $event->arguments[ "model" ];
 
 		ComponentUtils::RegisterNamespaces( $componentModel );
-		ComponentUtils::CreateDefinitionAttributeIfMissing( $componentModel, "name", $event->arguments[ "component" ] );
-		ComponentUtils::CreateDefinitionAttributeIfMissing( $componentModel, "instance-name", $event->arguments[ "instanceName" ] );
-		ComponentUtils::CreateDefinitionAttributeIfMissing( $componentModel, "wd:name", $event->arguments[ "component" ] . "." . $event->arguments[ "instanceName" ] );
+		ComponentUtils::CreateDefinitionAttributeIfMissing( $componentModel, Config::$data[ "wirekitNamespaces" ][ "wd" ], "wd:name", $event->arguments[ "component" ] . "." . $event->arguments[ "instanceName" ] );
 
 		$isRootModel = is_null( $this->rootModel );
 		$isInjecting = !is_null( $this->referenceNode );
@@ -78,44 +76,23 @@ class ComponentFactory extends DefaultEventDispatcher
 
 	private function ExpandNextReference()
 	{
-		$references = $this->rootModel->xPath->query( "//reference:component | //wd:reference" );
+		$references = $this->rootModel->xPath->query( "//wd:reference" );
 
 		if( $references->length > 0 )
 		{
 			$this->referenceNode = $references->item( 0 );
 
-			if( $this->referenceNode->hasAttribute( "wd:name" ) )
+			list( $component, $instanceName, $null ) = ComponentUtils::ExtractComponentNamePartsFromWiredocName( $this->referenceNode->getAttribute( "wd:name" ) );
+
+			$eventName = $this->referenceNode->getAttribute( "wd:event" );
+			$cacheMinutes = ( int )$this->referenceNode->getAttribute( "wd:cache" );
+
+			$i = 0;
+			$parameters = array();
+
+			while( $this->referenceNode->hasAttribute( "wd:param" . ( ++$i ) ) )
 			{
-				// Wiredoc 2.0
-				list( $component, $instanceName, $null ) = ComponentUtils::ExtractComponentNamePartsFromWiredocName( $this->referenceNode->getAttribute( "wd:name" ) );
-			
-				$eventName = $this->referenceNode->getAttribute( "wd:event" );
-				$cacheMinutes = ( int )$this->referenceNode->getAttribute( "wd:cache" );
-
-				$i = 0;
-				$parameters = array();
-
-				while( $this->referenceNode->hasAttribute( "wd:param" . ( ++$i ) ) )
-				{
-					$parameters[ $i - 1 ] = $this->referenceNode->getAttribute( "wd:param" . $i );
-				}
-			}
-			else
-			{
-				// Wiredoc 1.0
-				$component = $this->referenceNode->getAttribute( "name" );
-				$instanceName = $this->referenceNode->getAttribute( "instance-name" );
-
-				$eventName = $this->referenceNode->getAttribute( "event" );
-				$cacheMinutes = ( int )$this->referenceNode->getAttribute( "cache" );
-
-				$i = 0;
-				$parameters = array();
-
-				while( $this->referenceNode->hasAttribute( "param" . ( ++$i ) ) )
-				{
-					$parameters[ $i - 1 ] = $this->referenceNode->getAttribute( "param" . $i );
-				}
+				$parameters[ $i - 1 ] = $this->referenceNode->getAttribute( "wd:param" . $i );
 			}
 
 			return $this->GetComponent( $component, $instanceName, $eventName, $parameters, $cacheMinutes );
@@ -128,10 +105,10 @@ class ComponentFactory extends DefaultEventDispatcher
 	{
 		$originalNode = $this->referenceNode->cloneNode( true );
 
-		$externalNode = $this->rootModel->importNode( $componentModel->xPath->query( "//component:definition | //wd:component" )->item( 0 ), true );
+		$externalNode = $this->rootModel->importNode( $componentModel->xPath->query( "//wd:component" )->item( 0 ), true );
 		$this->referenceNode->parentNode->replaceChild( $externalNode, $this->referenceNode );
 
-		$childRefNodeList = $this->rootModel->xPath->query( "//reference:parent-children | //wd:parent-children", $this->referenceNode );
+		$childRefNodeList = $this->rootModel->xPath->query( "//wd:parent-children", $this->referenceNode );
 
 		for( $i = 0; $i < $childRefNodeList->length; $i++ )
 		{
@@ -145,31 +122,17 @@ class ComponentFactory extends DefaultEventDispatcher
 
 	private function InjectHref()
 	{
-		foreach( $this->rootModel->xPath->query( "//*[ @inject:href or @meta:inject-href ]" ) as $itemNode )
+		foreach( $this->rootModel->xPath->query( "//*[ @meta:inject-href ]" ) as $itemNode )
 		{
-			if( $itemNode->hasAttribute( "meta:inject-href" ) )
-			{
-				// Wiredoc 2.0
-				$fullyQualifiedName = $itemNode->getAttribute( "meta:inject-href" );
-				$prefix = $itemNode->hasAttribute( "meta:inject-href-prefix" ) ? $itemNode->getAttribute( "meta:inject-href-prefix" ) : "";
-				$suffix = $itemNode->hasAttribute( "meta:inject-href-suffix" ) ? $itemNode->getAttribute( "meta:inject-href-suffix" ) : "";
-				$targetLang = $itemNode->hasAttribute( "meta:inject-href-lang" ) ? $itemNode->getAttribute( "meta:inject-href-lang" ) : Language::GetLang();
+			$fullyQualifiedName = $itemNode->getAttribute( "meta:inject-href" );
+			$prefix = $itemNode->hasAttribute( "meta:inject-href-prefix" ) ? $itemNode->getAttribute( "meta:inject-href-prefix" ) : "";
+			$suffix = $itemNode->hasAttribute( "meta:inject-href-suffix" ) ? $itemNode->getAttribute( "meta:inject-href-suffix" ) : "";
+			$targetLang = $itemNode->hasAttribute( "meta:inject-href-lang" ) ? $itemNode->getAttribute( "meta:inject-href-lang" ) : Language::GetLang();
 
-				$itemNode->removeAttribute( "meta:inject-href" );
-				$itemNode->removeAttribute( "meta:inject-href-prefix" );
-				$itemNode->removeAttribute( "meta:inject-href-suffix" );
-				$itemNode->removeAttribute( "meta:inject-href-lang" );
-			}
-			else
-			{
-				// Wiredoc 1.0
-				$fullyQualifiedName = $itemNode->getAttribute( "inject:href" );
-				$prefix = $itemNode->hasAttribute( "inject:href-prefix" ) ? $itemNode->getAttribute( "inject:href-prefix" ) : "";
-				$suffix = $itemNode->hasAttribute( "inject:href-suffix" ) ? $itemNode->getAttribute( "inject:href-suffix" ) : "";
-				$targetLang = $itemNode->hasAttribute( "inject:href-lang" ) ? $itemNode->getAttribute( "inject:href-lang" ) : Language::GetLang();
-
-				$itemNode->removeAttribute( "inject:href" );
-			}
+			$itemNode->removeAttribute( "meta:inject-href" );
+			$itemNode->removeAttribute( "meta:inject-href-prefix" );
+			$itemNode->removeAttribute( "meta:inject-href-suffix" );
+			$itemNode->removeAttribute( "meta:inject-href-lang" );
 
 			if( strlen( $fullyQualifiedName ) == 0 )
 			{
@@ -188,35 +151,25 @@ class ComponentFactory extends DefaultEventDispatcher
 
 	private function InjectLang( $lang )
 	{
-		foreach( $this->rootModel->xPath->query( "//*[ @inject:lang or @meta:inject-lang or @meta:inject-lang-base or @meta:inject-lang-locale ]" ) as $itemNode )
+		foreach( $this->rootModel->xPath->query( "//*[ @meta:inject-lang or @meta:inject-lang-base or @meta:inject-lang-locale ]" ) as $itemNode )
 		{
 			if( $itemNode->hasAttribute( "meta:inject-lang" ) )
 			{
-				// Wiredoc 2.0
 				$attributeName = $itemNode->getAttribute( "meta:inject-lang" );
 				$itemNode->removeAttribute( "meta:inject-lang" );
 				$langValueToInsert = $lang;
 			}
 			elseif( $itemNode->hasAttribute( "meta:inject-lang-base" ) )
 			{
-				// Wiredoc 2.0
 				$attributeName = $itemNode->getAttribute( "meta:inject-lang-base" );
 				$itemNode->removeAttribute( "meta:inject-lang-base" );
 				$langValueToInsert = Language::GetLangBase( $lang );
 			}
 			elseif( $itemNode->hasAttribute( "meta:inject-lang-locale" ) )
 			{
-				// Wiredoc 2.0
 				$attributeName = $itemNode->getAttribute( "meta:inject-lang-locale" );
 				$itemNode->removeAttribute( "meta:inject-lang-locale" );
 				$langValueToInsert = Language::GetLangLocale( $lang );
-			}
-			else
-			{
-				// Wiredoc 1.0
-				$attributeName = $itemNode->getAttribute( "inject:lang" );
-				$itemNode->removeAttribute( "inject:lang" );
-				$langValueToInsert = $lang;
 			}
 
 			$langNode = $this->rootModel->createAttribute( $attributeName );

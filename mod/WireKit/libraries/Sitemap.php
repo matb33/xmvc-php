@@ -19,22 +19,7 @@ class Sitemap extends Singleton
 		$pathOnlyOriginal = Routing::GetPathOnlyOriginal();
 		$currentPath = "/" . ( strlen( $pathOnlyOriginal ) > 0 ? $pathOnlyOriginal . "/" : "" );
 
-		return $this->GetFullyQualifiedNameByPath( $currentPath );
-	}
-
-	public function GetFullyQualifiedNameByPath( $path )
-	{
-		$lookupModel = ComponentLookup::getInstance()->Get();
-
-		foreach( $lookupModel->xPath->query( "//lookup:entry/lookup:href[ lookup:uri = '" . $path . "' ]" ) as $entryNode )
-		{
-			$fullyQualifiedNameNodeList = $lookupModel->xPath->query( "../lookup:fully-qualified-name", $entryNode );
-			$fullyQualifiedName = $fullyQualifiedNameNodeList->length > 0 ? $fullyQualifiedNameNodeList->item( 0 )->nodeValue : "";
-
-			return $fullyQualifiedName;
-		}
-
-		return false;
+		return ComponentLookup::getInstance()->GetFullyQualifiedNameByPath( $currentPath );
 	}
 
 	public function Output( $lang = null )
@@ -91,7 +76,7 @@ class Sitemap extends Singleton
 		{
 			foreach( array_keys( Config::$data[ $routeGroup ] ) as $pattern )
 			{
-				preg_match_all( "/#([A-Za-z0-9-_\\\\]+)#/", $pattern, $matches );
+				preg_match_all( "|#([A-Za-z0-9-_/.]+)#|", $pattern, $matches );
 
 				if( count( $matches[ 0 ] ) )
 				{

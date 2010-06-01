@@ -67,9 +67,11 @@ class Processor
 		}
 	}
 
-	public function RenderComponent( $fullyQualifiedName, $eventName = null, $parameters = array(), $delegate = null, $cacheMinutes = 0 )
+	public function RenderComponent( $wiredocName, $eventName = null, $parameters = array(), $delegate = null, $cacheMinutes = 0 )
 	{
-		if( ( $componentData = ComponentLookup::getInstance()->GetComponentDataByFullyQualifiedName( $fullyQualifiedName ) ) !== false )
+		$fullyQualifiedWiredocName = ComponentUtils::FullyQualifyWiredocName( $wiredocName );
+
+		if( ( $componentData = ComponentLookup::getInstance()->GetComponentDataByFullyQualifiedName( $fullyQualifiedWiredocName ) ) !== false )
 		{
 			$componentData[ "eventName" ] = $eventName;
 			$componentData[ "parameters" ] = $parameters;
@@ -79,7 +81,7 @@ class Processor
 		}
 		else
 		{
-			$this->Invoke404( $fullyQualifiedName );
+			$this->Invoke404( $fullyQualifiedWiredocName );
 		}
 	}
 
@@ -123,7 +125,7 @@ class Processor
 
 	public function RenderPageWithModel( $model, $component, $instanceName )
 	{
-		$viewNameNodeList = $model->xPath->query( "//meta:view" );
+		$viewNameNodeList = $model->xPath->query( "//meta:view[ last() ]" );
 		$viewName = $viewNameNodeList->length > 0 ? $viewNameNodeList->item( 0 )->nodeValue : "";
 		$viewName = ComponentUtils::FallbackViewNameIfNecessary( $viewName );
 

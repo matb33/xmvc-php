@@ -1,5 +1,5 @@
 <xsl:stylesheet version="1.0"
-	exclude-result-prefixes="php"
+	exclude-result-prefixes="wd meta xmvc doc php"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 	xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:wd="http://www.wiredoc.org/ns/wiredoc/2.0"

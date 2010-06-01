@@ -51,7 +51,7 @@ class ComponentLookup extends Singleton
 
 	public function GetMetaData( $model, $file = null, $metaDataCollection = array() )
 	{
-		foreach( $model->xPath->query( "//component:definition | //wd:component" ) as $componentNode )
+		foreach( $model->xPath->query( "//wd:component" ) as $componentNode )
 		{
 			$hrefList = array();
 
@@ -73,18 +73,7 @@ class ComponentLookup extends Singleton
 
 			if( is_null( $file ) )
 			{
-				if( $componentNode->hasAttribute( "wd:name" ) )
-				{
-					// Wiredoc 2.0
-					list( $component, $instanceName, $fullyQualifiedName ) = ComponentUtils::ExtractComponentNamePartsFromWiredocName( $componentNode->getAttribute( "wd:name" ) );
-				}
-				else
-				{
-					// Wiredoc 1.0
-					$component = $componentNode->hasAttribute( "name" ) ? $componentNode->getAttribute( "name" ) : "";
-					$instanceName = $componentNode->hasAttribute( "instance-name" ) ? $componentNode->getAttribute( "instance-name" ) : "";
-					$fullyQualifiedName = $component . ( strlen( $instanceName ) > 0 ? "\\" . $instanceName : "" );
-				}
+				list( $component, $instanceName, $fullyQualifiedName ) = ComponentUtils::ExtractComponentNamePartsFromWiredocName( $componentNode->getAttribute( "wd:name" ) );
 			}
 			else
 			{
@@ -359,6 +348,21 @@ class ComponentLookup extends Singleton
 		$data[ "matchingLang" ] = $matchingLang->length == 1 ? $matchingLang->item( 0 )->nodeValue : "";
 
 		return $data;
+	}
+
+	public function GetFullyQualifiedNameByPath( $path )
+	{
+		$lookupModel = $this->Get();
+
+		foreach( $lookupModel->xPath->query( "//lookup:entry/lookup:href[ lookup:uri = '" . $path . "' ]" ) as $entryNode )
+		{
+			$fullyQualifiedNameNodeList = $lookupModel->xPath->query( "../lookup:fully-qualified-name", $entryNode );
+			$fullyQualifiedName = $fullyQualifiedNameNodeList->length > 0 ? $fullyQualifiedNameNodeList->item( 0 )->nodeValue : "";
+
+			return $fullyQualifiedName;
+		}
+
+		return false;
 	}
 
 	public function EnsureInstanceInLookup( $model )
