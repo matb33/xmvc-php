@@ -184,17 +184,10 @@ abstract class Component extends DefaultEventDispatcher
 		{
 			if( !is_null( $result->documentElement ) )
 			{
-				if( !$result->documentElement->hasAttribute( "name" ) )
+				if( !$result->documentElement->hasAttribute( "wd:name" ) )
 				{
-					$nameAttribute = $result->createAttribute( "name" );
-					$nameAttribute->value = $component;
-					$result->documentElement->appendChild( $nameAttribute );
-				}
-
-				if( !$result->documentElement->hasAttribute( "instance-name" ) )
-				{
-					$nameAttribute = $result->createAttribute( "instance-name" );
-					$nameAttribute->value = $instanceName;
+					$nameAttribute = $result->createAttributeNS( Config::$data[ "wirekitNamespaces" ][ "wd" ], "wd:name" );
+					$nameAttribute->value = $component . "." . $instanceName;
 					$result->documentElement->appendChild( $nameAttribute );
 				}
 			}

@@ -88,7 +88,7 @@ class Authenticator
 
 	public function GetStateFromModel( $model )
 	{
-		$stateNodeList = $model->xPath->query( "//component:definition/@state" );
+		$stateNodeList = $model->xPath->query( "//wd:component/@state" );
 		$state = $stateNodeList->length > 0 ? $stateNodeList->item( 0 )->nodeValue : "neutral";
 
 		return $state;

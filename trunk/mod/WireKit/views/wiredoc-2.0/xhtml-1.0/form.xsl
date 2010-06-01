@@ -1,6 +1,8 @@
 <xsl:stylesheet version="1.0"
+	exclude-result-prefixes="xmvc wd php"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:xmvc="http://www.xmvc.org/ns/xmvc/1.0"
 	xmlns:wd="http://www.wiredoc.org/ns/wiredoc/2.0"
 	xmlns:php="http://php.net/xsl">
 

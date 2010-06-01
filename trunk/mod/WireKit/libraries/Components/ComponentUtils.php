@@ -22,7 +22,7 @@ class ComponentUtils
 		list( $component, $null, $null ) = self::ExtractComponentNamePartsFromWiredocName( $wiredocComponentName . "." );
 
 		$componentClass = str_replace( "/", "\\", $component );
-		
+
 		if( strpos( $componentClass, "\\" ) !== false )
 		{
 			$componentClass = $componentClass . strrchr( $componentClass, "\\" );
@@ -75,42 +75,30 @@ class ComponentUtils
 
 	public static function GetHrefContextComponentAndInstanceName( $model )
 	{
-		// Href Context refers to the component that holds the meta:href matchig the current URI
-
+		// Href Context refers to the component that holds the meta:href matching the current URI
 		$hrefContextComponent = "";
 		$hrefContextInstanceName = "";
 
 		$currentHref = Normalize::StripQueryInURI( Routing::URI() );
-		$hrefNodeList = $model->xPath->query( "//meta:href[ .= '" . $currentHref . "' ]" );
+		$hrefNodeList = $model->xPath->query( "//meta:href[ text() = '" . $currentHref . "' ]" );
 
 		if( $hrefNodeList->length > 0 )
 		{
-			$componentDefinitionNodeList = $model->xPath->query( "ancestor::component:definition[1] | ancestor::wd:component[1]", $hrefNodeList->item( $hrefNodeList->length - 1 ) );
+			$componentDefinitionNameNodeList = $model->xPath->query( "ancestor::wd:component[ 1 ]/@wd:name", $hrefNodeList->item( 0 ) );
 
-			if( $componentDefinitionNodeList->length > 0 )
+			if( $componentDefinitionNameNodeList->length > 0 )
 			{
-				$componentDefinitionNode = $componentDefinitionNodeList->item( 0 );
-
-				if( $componentDefinitionNode->hasAttribute( "name" ) )
-				{
-					// Wiredoc 1.0
-					$hrefContextComponent = $componentDefinitionNode->hasAttribute( "name" ) ? $componentDefinitionNode->getAttribute( "name" ) : "";
-					$hrefContextInstanceName = $componentDefinitionNode->hasAttribute( "instance-name" ) ? $componentDefinitionNode->getAttribute( "instance-name" ) : "";
-				}
-				else
-				{
-					// Wiredoc 2.0
-					list( $hrefContextComponent, $hrefContextInstanceName, $hrefContextFullyQualifiedName ) = ComponentUtils::ExtractComponentNamePartsFromWiredocName( $componentDefinitionNode->nodeValue );
-				}
+				$wiredocName = $componentDefinitionNameNodeList->item( 0 )->nodeValue;
+				list( $hrefContextComponent, $hrefContextInstanceName, $hrefContextFullyQualifiedName ) = ComponentUtils::ExtractComponentNamePartsFromWiredocName( $wiredocName );
 			}
 		}
 
 		return array( $hrefContextComponent, $hrefContextInstanceName );
 	}
 
-	public static function CreateDefinitionAttributeIfMissing( $model, $name, $value )
+	public static function CreateDefinitionAttributeIfMissing( $model, $namespace, $name, $value )
 	{
-		$definitionNodeList = $model->xPath->query( "//component:definition | //wd:component" );
+		$definitionNodeList = $model->xPath->query( "//wd:component" );
 
 		if( $definitionNodeList->length > 0 )
 		{
@@ -118,7 +106,7 @@ class ComponentUtils
 
 			if( !$definitionNode->hasAttribute( $name ) )
 			{
-				$attribute = $model->createAttribute( $name );
+				$attribute = $model->createAttributeNS( $namespace, $name );
 				$attribute->value = $value;
 				$definitionNode->appendChild( $attribute );
 			}
@@ -133,13 +121,24 @@ class ComponentUtils
 		return str_replace( "\\", "/", $componentName );
 	}
 
-	public static function ExtractComponentNamePartsFromWiredocName( $fullyQualifiedNameWiredocName )
+	public static function ExtractComponentNamePartsFromWiredocName( $wiredocName )
 	{
-		$component = substr( $fullyQualifiedNameWiredocName, 0, strrpos( $fullyQualifiedNameWiredocName, "." ) );
-		$instanceName = substr( strrchr( $fullyQualifiedNameWiredocName, "." ), 1 );
+		$fullyQualifiedWiredocName = self::FullyQualifyWiredocName( $wiredocName );
+		$component = substr( $fullyQualifiedWiredocName, 0, strrpos( $fullyQualifiedWiredocName, "." ) );
+		$instanceName = substr( strrchr( $fullyQualifiedWiredocName, "." ), 1 );
 
-		$fullyQualifiedName = $fullyQualifiedNameWiredocName;
+		$fullyQualifiedName = $fullyQualifiedWiredocName;
 
 		return array( $component, $instanceName, $fullyQualifiedName );
+	}
+
+	public static function FullyQualifyWiredocName( $wiredocName )
+	{
+		if( strrpos( $wiredocName, "." ) === false )
+		{
+			$wiredocName .= ".null";
+		}
+
+		return $wiredocName;
 	}
 }
