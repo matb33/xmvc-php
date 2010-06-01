@@ -193,9 +193,12 @@
 
 	<xsl:template match="wd:*[ starts-with( local-name(), 'form' ) ]" priority="0">
 		<form>
-			<xsl:if test="@href">
-				<xsl:attribute name="action"><xsl:value-of select="@href" /></xsl:attribute>
-			</xsl:if>
+			<xsl:attribute name="action">
+				<xsl:choose>
+					<xsl:when test="@href"><xsl:value-of select="@href" /></xsl:when>
+					<xsl:otherwise>./</xsl:otherwise>
+				</xsl:choose>
+			</xsl:attribute>
 			<xsl:attribute name="method">
 				<xsl:choose>
 					<xsl:when test="@method"><xsl:value-of select="@method" /></xsl:when>
