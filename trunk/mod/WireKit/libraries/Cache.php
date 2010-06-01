@@ -46,7 +46,7 @@ class Cache
 	{
 		if( $this->PrepCacheFolder( $this->filename, $this->purgeCache ) )
 		{
-			return file_put_contents( $this->filename, $this->Serialize( $data ), FILE_TEXT );
+			return file_put_contents( $this->filename, $this->Serialize( $data ), FILE_TEXT | LOCK_EX );
 		}
 
 		return false;
