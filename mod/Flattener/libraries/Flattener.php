@@ -66,7 +66,7 @@ class Flattener
 	{
 		echo( "<i>Writing contents to " . $folder . $this->indexFilename . "</i><br />\n" );
 
-		file_put_contents( $folder . $this->indexFilename, $contents );
+		file_put_contents( $folder . $this->indexFilename, $contents, FILE_TEXT | LOCK_EX );
 	}
 }
 
