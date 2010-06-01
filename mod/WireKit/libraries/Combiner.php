@@ -58,7 +58,7 @@ class Combiner
 			}
 
 			$realOutputFile = Config::$data[ "rootPath" ] . "/" . $outputFilename;
-			FileSystem::FilePutContents( $realOutputFile, $fileContents );
+			FileSystem::FilePutContents( $realOutputFile, $fileContents, LOCK_EX );
 		}
 	}
 
