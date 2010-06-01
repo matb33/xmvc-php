@@ -113,7 +113,7 @@ class ImageProcessor
 		}
 		else
 		{
-			file_put_contents( $filename, file_get_contents( $image, FILE_BINARY ), FILE_BINARY );
+			file_put_contents( $filename, file_get_contents( $image, FILE_BINARY ), FILE_BINARY | LOCK_EX );
 		}
 	}
 
