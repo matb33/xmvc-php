@@ -150,7 +150,7 @@
 		</option>
 	</xsl:template>
 
-	<xsl:template match="wd:form//wd:field//wd:group" priority="0">
+	<xsl:template match="wd:form//wd:field//wd:option-group" priority="0">
 		<optgroup>
 			<xsl:if test="wd:label[ php:function( 'xMVC\Mod\Language\Language::XSLTLang', $lang, (ancestor-or-self::*/@xml:lang)[last()] ) ]">
 				<xsl:attribute name="label"><xsl:value-of select="wd:label[ php:function( 'xMVC\Mod\Language\Language::XSLTLang', $lang, (ancestor-or-self::*/@xml:lang)[last()] ) ]" /></xsl:attribute>

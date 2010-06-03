@@ -2,6 +2,8 @@
 
 namespace xMVC\Mod\WireKit\FieldConstraints;
 
+use xMVC\Sys\Config;
+
 class Constraint
 {
 	public $type;
@@ -80,6 +82,9 @@ class Constraint
 			case "range":
 				$success = $this->Range();
 			break;
+			case "email":
+				$success = $this->Email();
+			break;
 			default:
 				return new ConstraintResult( $this, false, "Invalid constraint type." );
 		}
@@ -92,6 +97,11 @@ class Constraint
 		{
 			return new ConstraintResult( $this, false, $this->constraintMessages->GetFailMessage() );
 		}
+	}
+
+	private function Email()
+	{
+		return preg_match( "/" . Config::$data[ "validationEmailRegExp"] . "/", $this->targetField->value, $matches ) > 0;
 	}
 
 	private function RegExp()

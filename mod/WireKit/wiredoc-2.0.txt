@@ -3,7 +3,12 @@ WIREDOC 2.0
 xmlns:wd="http://www.wiredoc.org/ns/wiredoc/2.0"
 ##############################################################################
 
+Author:
 Mathieu Bouchard
+
+Modified by: 
+June 03, 2010 by Peter El-Khouri
+  * added email type to field constraints
 
 ================================
 component
@@ -130,7 +135,7 @@ form
 			<wd:label />
 			<wd:value />
 			<wd:info />
-			<wd:constraint type="regexp|match|match-field|match-field-md5|selected-count|range" against="[AGAINST]" min="[MIN]" max="[MAX]">
+			<wd:constraint type="regexp|match|match-field|match-field-md5|selected-count|range|email" against="[AGAINST]" min="[MIN]" max="[MAX]">
 				<wd:message type="pass" />
 				<wd:message type="fail" />
 			</wd:constraint>
