@@ -506,7 +506,7 @@ function Dictionary()
 		disposeArray( keys );
 		disposeArray( values );
 	};		
-};
+}
 
 /// Represents a general purpose map that can be used to associate a key of any kind to a value of any kind.
 /// The difference between a dictionary and map is that a key can be associated to many values.
@@ -600,7 +600,7 @@ function Map()
 		disposeArray( keys );
 		disposeArray( values, disposeArray );
 	};	
-};
+}
 
 ////////////////////////////////////////////////////
 // php.js methods
@@ -828,35 +828,7 @@ jQuery( document ).ready( function()
 
 var ARIMODAL = function()
 {
-	var modalCollection = function()
-	{
-		// private fields
-		var table = [];
-
-		// private methods
-		var addToTable = function( instance, href )
-		{
-			table[ href ] = instance;
-		};
-
-		var getFromTableByHref = function( href )
-		{
-			return table[ href ];
-		};
-
-		// public domain
-		return {
-			add: function( instance, href )
-			{
-				addToTable( instance, href );
-				return this;
-			},
-			get: function( href )
-			{
-				return getFromTableByHref( href );
-			}
-		};
-	}();
+	var modalCollection = new Dictionary();	
 
 	var innerModal = function()
 	{
@@ -881,7 +853,7 @@ var ARIMODAL = function()
 		};
 
 		var getMyInstance = function()
-		{
+		{						
 			return top.ARIMODAL.getModalCollection().get( window.location.pathname );
 		};
 
@@ -927,7 +899,7 @@ var ARIMODAL = function()
 			{
 				initialized = true;
 				modalHref = href;
-				modalCollection.add( that, href );
+				modalCollection.set( href, that );				
 				initializeModalContainer( containerID );
 			}
 		};
