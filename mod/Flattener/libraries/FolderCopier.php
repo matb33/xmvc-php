@@ -30,5 +30,3 @@ class FolderCopier
 		return "xcopy \"" . str_replace( "/", "\\", $inputPath ) . "*.*\" \"" . str_replace( "/", "\\", $outputPath ) . "\" /d /e /c /i /g /r /y";
 	}
 }
-
-?>
