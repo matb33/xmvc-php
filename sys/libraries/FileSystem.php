@@ -48,6 +48,14 @@ class FileSystem
 		}
 	}
 
+	public static function DeleteFolder( $dirname, $force = false )
+	{
+		if( $force )
+			self::EmptyFolder( $dirname );
+
+		return rmdir( $dirname );
+	}
+
 	public static function EmptyFolder( $folder, $ignore = array() )
 	{
 		if( self::PathExists( $folder ) )
@@ -79,6 +87,11 @@ class FileSystem
 		{
 			return false;
 		}
+	}
+
+	public static function Move( $oldname, $newname )
+	{
+		return rename( $oldname, $newname );
 	}
 
 	public static function PathExists( $path )
