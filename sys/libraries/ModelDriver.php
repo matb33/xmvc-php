@@ -8,6 +8,7 @@ abstract class ModelDriver extends \DOMDocument
 {
 	public $xPath;
 	protected $rootElement;
+	private $modelDebugInformation = array();
 
 	public function __construct()
 	{
@@ -20,7 +21,10 @@ abstract class ModelDriver extends \DOMDocument
 	public function loadXML( $source, $options = 0 )
 	{
 		// DOMDocument method override
-		parent::loadXML( $source, $options );
+		if( parent::loadXML( $source, $options ) === false )
+		{
+			$this->dumpDebugInformation();
+		}
 
 		$this->RefreshXPath( $source );
 	}
@@ -146,5 +150,17 @@ abstract class ModelDriver extends \DOMDocument
 		{
 			exit();
 		}
+	}
+
+	public function dumpDebugInformation( $exit = false, $height = "300" )
+	{
+		echo( "<fieldset style=\"padding:5px 10px 10px 10px;width:960px;background-color:#666;\"><legend style=\"font-weight:bold;background-color:#666;color:#fff;padding:5px 10px 0px 10px;\">Model debug information:</legend>" );
+		echo( "<textarea wrap=\"off\" style=\"font:12px Courier New;width:960px;height:" . $height . "px;background-color:#fff;\">" . print_r( $this->modelDebugInformation, true ) . "</textarea>" );
+		echo( "</fieldset>" );
+	}
+
+	public function pushDebugInformation( $key, $value )
+	{
+		$this->modelDebugInformation[ $key ] = print_r( $value, true );
 	}
 }

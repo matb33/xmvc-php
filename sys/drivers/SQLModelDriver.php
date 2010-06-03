@@ -12,6 +12,10 @@ class SQLModelDriver extends ModelDriver implements IModelDriver
 	{
 		parent::__construct();
 
+		$this->pushDebugInformation( "xmlModelName", $xmlModelName );
+		$this->pushDebugInformation( "namespace", $namespace );
+		$this->pushDebugInformation( "data", $data );
+
 		$this->rootElement = $this->createElementNS( Core::namespaceXML, "xmvc:database" );
 		$this->appendChild( $this->rootElement );
 

@@ -8,6 +8,10 @@ class XMLModelDriver extends ModelDriver implements IModelDriver
 	{
 		parent::__construct();
 
+		$this->pushDebugInformation( "parameter", $parameter );
+		$this->pushDebugInformation( "namespace", $namespace );
+		$this->pushDebugInformation( "data", $data );
+
 		$this->TransformForeignToXML( $parameter, $namespace, $data );
 	}
 
@@ -16,8 +20,6 @@ class XMLModelDriver extends ModelDriver implements IModelDriver
 		$parameter = func_get_arg( 0 );
 		$parameter2 = func_get_arg( 1 );
 		$parameter3 = func_get_arg( 2 );
-
-		//echo "<pre>";var_dump(func_get_args());
 
 		if( is_null( $parameter ) )
 		{
@@ -61,6 +63,8 @@ class XMLModelDriver extends ModelDriver implements IModelDriver
 				}
 			}
 		}
+
+		$this->pushDebugInformation( "xmlData", htmlentities( $xmlData ) );
 
 		$this->SetXML( $xmlData );
 
