@@ -77,5 +77,3 @@ class Image
 		ImageProcessor::OutputImage( $image, $mimeType );
 	}
 }
-
-?>
