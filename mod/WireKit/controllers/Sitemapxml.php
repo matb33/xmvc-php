@@ -9,5 +9,3 @@ class Sitemapxml
 		Sitemap::getInstance()->Output( $lang );
 	}
 }
-
-?>

@@ -176,5 +176,3 @@ class Constraint
 		}
 	}
 }
-
-?>

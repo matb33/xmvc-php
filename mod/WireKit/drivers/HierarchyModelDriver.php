@@ -77,5 +77,3 @@ class HierarchyModelDriver extends ModelDriver implements IModelDriver
 		}
 	}
 }
-
-?>

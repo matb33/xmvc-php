@@ -16,5 +16,3 @@ class DependencyFields extends ArrayObject
 		parent::append( $field );
 	}
 }
-
-?>

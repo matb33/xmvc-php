@@ -233,10 +233,3 @@ abstract class Component extends DefaultEventDispatcher
 		trigger_error( "There was an unspecified error while tranforming the model above using the XSL component also displayed above. Finally displayed is the resulting XML causing this error", E_USER_ERROR );
 	}
 }
-
-interface IComponent
-{
-	public function __construct( $componentClass = null, $instanceName = null, $eventName = null, $parameters = array(), $cacheMinutes = 0 );
-}
-
-?>

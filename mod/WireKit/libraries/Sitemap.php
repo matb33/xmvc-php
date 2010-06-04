@@ -95,5 +95,3 @@ class Sitemap extends Singleton
 		}
 	}
 }
-
-?>

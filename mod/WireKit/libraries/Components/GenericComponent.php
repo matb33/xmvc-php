@@ -12,5 +12,3 @@ class GenericComponent extends Component implements IComponent
 		parent::__construct( is_null( $componentClass ) ? __CLASS__ : $componentClass, $instanceName, $eventName, $parameters, $cacheMinutes );
 	}
 }
-
-?>

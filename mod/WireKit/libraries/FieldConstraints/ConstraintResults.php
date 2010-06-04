@@ -42,5 +42,3 @@ class ConstraintResults extends ArrayObject
 		return $resultSet;
 	}
 }
-
-?>
