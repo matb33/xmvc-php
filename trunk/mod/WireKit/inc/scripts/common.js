@@ -967,13 +967,13 @@ var ARIMODAL = function()
 			height = height > maxHeight ? maxHeight : height;
 			width = width > maxWidth ? maxWidth : width;
 
-			width += 17;	// scrollbar fix (except IE6)!
+			//width += 17;	// scrollbar fix (except IE6)!
 
 			var left = ( jQuery( window ).width() - width ) / 2;
 			var top = ( jQuery( window ).height() - height ) / 2;
 
-			modalIframe.andSelf().animate( { height: height, width: width }, { duration: 250, queue: false } );
-			modalContainer.animate( { left: left, top: top }, { duration: 250, queue: false } );
+			modalIframe.animate( { height: height, width: width }, { duration: 250, queue: false } );
+			modalContainer.animate( {  height: height, width: width, left: left, top: top }, { duration: 250, queue: false } );
 		};
 
 		var closeModal = function()
