@@ -137,5 +137,3 @@ class ErrorHandler
 		return true;
 	}
 }
-
-?>

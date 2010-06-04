@@ -102,5 +102,3 @@ class Delegate
         return $this->functionName == $delegate->functionName && $this->thisObject === $delegate->thisObject;
     }
 }
-
-?>

@@ -29,5 +29,3 @@ class Event
         return "type: " . $this->type . "  arguments: " . print_r( $this->arguments, true );
     }
 }
-
-?>

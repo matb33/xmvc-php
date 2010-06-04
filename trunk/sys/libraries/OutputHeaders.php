@@ -50,5 +50,3 @@ class OutputHeaders
 		header( "Pragma: no-cache" );										// HTTP 1.0
 	}
 }
-
-?>

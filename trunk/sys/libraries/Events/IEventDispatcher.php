@@ -34,5 +34,3 @@ interface IEventDispatcher
 	 */
 	public function dispatchEvent( Event $event );
 }
-
-?>

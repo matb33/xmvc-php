@@ -159,5 +159,3 @@ class XMLModelDriver extends ModelDriver implements IModelDriver
 		return Loader::Resolve( Loader::modelFolder, $modelName, $extension ) !== false;
 	}
 }
-
-?>

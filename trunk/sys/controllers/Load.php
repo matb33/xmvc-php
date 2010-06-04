@@ -49,5 +49,3 @@ class Load
 		unset( $tmpView );
 	}
 }
-
-?>

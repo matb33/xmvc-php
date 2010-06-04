@@ -369,5 +369,3 @@ class View
 		return isset( $_GET[ Config::$data[ "sourceViewKey" ] ] ) && Config::$data[ "sourceViewEnabled" ];
 	}
 }
-
-?>

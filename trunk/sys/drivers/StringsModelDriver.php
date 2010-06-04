@@ -38,5 +38,3 @@ class StringsModelDriver extends ModelDriver implements IModelDriver
 		parent::TransformForeignToXML();
 	}
 }
-
-?>
