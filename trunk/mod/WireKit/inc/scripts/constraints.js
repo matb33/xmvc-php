@@ -176,13 +176,14 @@ function Constraints( ajaxURL, context )
 
 	this.GetFieldCollection = function( field )
 	{
+                var fieldCollection = null;
 		if( field.is( ":submit" ) || field.is( "form" ) )
 		{
-			var fieldCollection = $( "input[ type != 'hidden' ], form textarea, form select", this.context );
+			fieldCollection = $( "input[ type != 'hidden' ], form textarea, form select", this.context );
 		}
 		else
 		{
-			var fieldCollection = $( "*[ name='" + this.EscapeName( field.attr( "name" ) ) + "' ]", this.context );
+			fieldCollection = $( "*[ name='" + this.EscapeName( field.attr( "name" ) ) + "' ]", this.context );
 		}
 
 		return( fieldCollection );
@@ -202,36 +203,36 @@ function Constraints( ajaxURL, context )
 
 	this.GetValue = function( field )
 	{
+                var val = "NULL";
 		if( field.is( ":radio" ) || field.is( ":checkbox" ) )
 		{
 			var checkedFields = $( "input[ name='" + this.EscapeName( field.attr( "name" ) ) + "' ]:checked", this.context );
 
 			if( checkedFields.length > 0 )
 			{
-				var val = checkedFields.map( function() { return( $( this ).val() ); }).get();
+				val = checkedFields.map( function() { return( $( this ).val() ); }).get();
 			}
 			else
-			{
-				var val = "NULL";
-			}
-		}
-		else if( field.is( "select[ multiple='true' ]" ) )
-		{
-			var val = field.val();
-
-			if( val == null || val == undefined )
 			{
 				val = "NULL";
 			}
 		}
+		else if( field.is( "select[ multiple='true' ]" ) )
+		{
+                    val = field.val();
+                    if( val == null || val == undefined )
+                    {
+			val = "NULL";
+                    }
+		}
 		else
 		{
-			var val = field.val();
+                    val = field.val();
 		}
 
 		if( val == null || val == undefined )
 		{
-			val = "";
+                    val = "";
 		}
 
 		return( val );
@@ -302,30 +303,31 @@ var ConstraintVisuals = new function()
 
 	this.OnFieldConstraintResult = function( field, valid, failMessages, passMessages )
 	{
-		var closestLabel = field.closest( "label" );
+            var closestLabel = field.closest( "label" );
+            var key = null;
+            var box = null;
+            closestLabel.removeClass( "constraint-loading" );
+            closestLabel.addClass( valid ? "constraint-success" : "constraint-fail" );
 
-		closestLabel.removeClass( "constraint-loading" );
-		closestLabel.addClass( valid ? "constraint-success" : "constraint-fail" );
+            for( key in failMessages )
+            {
+                    if( $( "input[ value=" + failMessages[ key ].replace( "\"", "\\\"" ) + " ]", closestLabel ).length == 0 )
+                    {
+                            box = $( "<input class='fail' type='hidden' />" );
+                            box.val( failMessages[ key ] );
+                            closestLabel.append( box );
+                    }
+            }
 
-		for( var key in failMessages )
-		{
-			if( $( "input[ value=" + failMessages[ key ].replace( "\"", "\\\"" ) + " ]", closestLabel ).length == 0 )
-			{
-				var box = $( "<input class='fail' type='hidden' />" );
-				box.val( failMessages[ key ] );
-				closestLabel.append( box );
-			}
-		}
-
-		for( var key in passMessages )
-		{
-			if( $( "input[ value=" + passMessages[ key ].replace( "\"", "\\\"" ) + " ]", closestLabel ).length == 0 )
-			{
-				var box = $( "<input class='pass' type='hidden' />" );
-				box.val( passMessages[ key ] );
-				closestLabel.append( box );
-			}
-		}
+            for( key in passMessages )
+            {
+                    if( $( "input[ value=" + passMessages[ key ].replace( "\"", "\\\"" ) + " ]", closestLabel ).length == 0 )
+                    {
+                            box = $( "<input class='pass' type='hidden' />" );
+                            box.val( passMessages[ key ] );
+                            closestLabel.append( box );
+                    }
+            }
 	};
 
 	this.IsAngry = function( field )
