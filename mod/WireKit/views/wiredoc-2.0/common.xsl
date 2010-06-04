@@ -18,7 +18,7 @@
 		<xsl:apply-templates select="wd:component" mode="lang-check" />
 	</xsl:template>
 
-	<xsl:template match="*" mode="lang-check">
+	<xsl:template match="node()" mode="lang-check">
 		<xsl:if test="php:function( 'xMVC\Mod\Language\Language::XSLTLang', $lang, (ancestor-or-self::*/@xml:lang)[last()] )">
 			<xsl:apply-templates select="." mode="override">
 				<xsl:with-param name="position" select="position()" />
@@ -27,7 +27,7 @@
 		</xsl:if>
 	</xsl:template>
 
-	<xsl:template match="*" mode="override">
+	<xsl:template match="node()" mode="override">
 		<xsl:param name="position" select="position()" />
 		<xsl:param name="last" select="last()" />
 		<xsl:apply-templates select=".">

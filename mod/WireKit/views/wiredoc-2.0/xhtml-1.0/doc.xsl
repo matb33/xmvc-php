@@ -391,6 +391,38 @@
 		</q>
 	</xsl:template>
 
+	<xsl:template match="doc:blockquote">
+		<blockquote>
+			<xsl:if test="@id">
+				<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
+			</xsl:if>
+			<xsl:if test="@wd:name">
+				<xsl:attribute name="class"><xsl:value-of select="@wd:name" /></xsl:attribute>
+			</xsl:if>
+			<xsl:apply-templates select="*[ name() != 'doc:attribution' ]" mode="lang-check" />
+			<xsl:apply-templates select="doc:attribution" mode="lang-check" />
+		</blockquote>
+	</xsl:template>
+
+	<xsl:template match="doc:blockquote//doc:para/text()|doc:quote/text()">
+		“<xsl:value-of select="." />”
+	</xsl:template>
+
+	<xsl:template match="doc:blockquote/doc:attribution">
+		<p>
+			<xsl:if test="@id">
+				<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
+			</xsl:if>
+			<xsl:attribute name="class">
+				<xsl:value-of select="local-name()" />
+				<xsl:if test="@wd:name">
+					<xsl:text> </xsl:text><xsl:value-of select="@wd:name" />
+				</xsl:if>
+			</xsl:attribute>
+			<xsl:text>— </xsl:text><xsl:apply-templates mode="lang-check" />
+		</p>
+	</xsl:template>
+
 	<xsl:template match="doc:linebreak">
 		<br>
 			<xsl:if test="@id">
