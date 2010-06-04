@@ -227,5 +227,3 @@ class Language
 		return false;
 	}
 }
-
-?>
