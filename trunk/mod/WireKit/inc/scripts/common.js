@@ -1094,8 +1094,8 @@ jQuery.fn.compare = function( against )
 {
 	if( $( this ).length == 1 && against.length == 1 )
 	{
-		var html1 = $( this ).html().replace( /[\s]/g, "" );
-		var html2 = against.html().replace( /[\s]/g, "" );
+		var html1 = $( this ).html().replace( /\s/g, "" );
+		var html2 = against.html().replace( /\s/g, "" );
 
 		return( html1 === html2 );
 	}
