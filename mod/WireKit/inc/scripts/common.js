@@ -1037,3 +1037,66 @@ var ARIMODAL = function()
 		}
 	};
 }();
+
+////////////////////////////////////////////////////
+// jQuery plug-in
+// Remove all attributes
+////////////////////////////////////////////////////
+
+jQuery.fn.removeAttributes = function()
+{
+	return this.each( function()
+	{
+		var attributes = jQuery.map( this.attributes, function( item )
+		{
+			return item.name;
+		});
+
+		var obj = $( this );
+
+		jQuery.each( attributes, function( i, item )
+		{
+			obj.removeAttr( item );
+		});
+	});
+};
+
+////////////////////////////////////////////////////
+// jQuery plug-in
+// Find element using a selector and remove an
+// attribute on it, but without changing scope
+// to found element, retaining original scope.
+// Written by Mathieu Bouchard (c) 2010
+////////////////////////////////////////////////////
+
+jQuery.fn.findAndRemoveAttribute = function( findSelector, attributeToRemove )
+{
+	this.find( findSelector ).each( function()
+	{
+		$( this ).removeAttr( attributeToRemove );
+	});
+
+	return this;
+};
+
+////////////////////////////////////////////////////
+// jQuery plug-in
+// Compare two DOM nodes for same HTML, which has
+// the benefit of being able to compare two DOM
+// nodes from different documents.
+// Caveat: regexp was simplified to remove ALL
+// spaces, therefore changes in spaces only will not
+// be detected.
+// Written by Mathieu Bouchard (c) 2010
+////////////////////////////////////////////////////
+
+jQuery.fn.compare = function( against )
+{
+	if( $( this ).length == 1 && against.length == 1 )
+	{
+		var html1 = $( this ).html().replace( /[\s]/g, "" );
+		var html2 = against.html().replace( /[\s]/g, "" );
+
+		return( html1 === html2 );
+	}
+}
