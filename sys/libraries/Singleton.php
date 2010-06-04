@@ -47,5 +47,3 @@ abstract class Singleton
 		return $instance ?: $instance = new static;
 	}
 }
-
-?>

@@ -6,5 +6,3 @@ interface IModelDriver
 {
 	public function TransformForeignToXML();
 }
-
-?>

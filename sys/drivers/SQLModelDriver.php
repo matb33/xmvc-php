@@ -136,5 +136,3 @@ class SQLModelDriver extends ModelDriver implements IModelDriver
 		}
 	}
 }
-
-?>

@@ -55,5 +55,3 @@ class Object implements IteratorAggregate
         return new ArrayIterator( $this->properties );
     }
 }
-
-?>

@@ -14,5 +14,3 @@ class Error
 		ErrorHandler::InvokeHTTPError( array( "errorCode" => $errorCode, "controllerFile" => "N/A", "method" => "N/A" ) );
 	}
 }
-
-?>

@@ -67,5 +67,3 @@ class Config
 		return $existingVariables;
 	}
 }
-
-?>

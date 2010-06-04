@@ -117,5 +117,3 @@ class DefaultEventDispatcher implements IEventDispatcher
         }
     }
 }
-
-?>
