@@ -14,8 +14,8 @@ abstract class ModelDriver extends \DOMDocument
 	{
 		parent::__construct( "1.0", "UTF-8" );
 
-		$this->preserveWhiteSpace = true;
-		$this->formatOutput = true;
+		$this->preserveWhiteSpace = Config::$data[ "modelDriverPreserveWhiteSpace" ];
+		$this->formatOutput = Config::$data[ "modelDriverFormatOutput" ];
 	}
 
 	public function loadXML( $source, $options = 0 )

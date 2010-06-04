@@ -45,6 +45,12 @@ class XSL
 
 			self::$XMLDocument = new \DOMDocument( "1.0", "UTF-8" );
 			self::$XSLDocument = new \DOMDocument( "1.0", "UTF-8" );
+
+			self::$XMLDocument->preserveWhiteSpace = Config::$data[ "modelDriverPreserveWhiteSpace" ];
+			self::$XSLDocument->preserveWhiteSpace = Config::$data[ "modelDriverPreserveWhiteSpace" ];
+
+			self::$XMLDocument->formatOutput = Config::$data[ "modelDriverFormatOutput" ];
+			self::$XSLDocument->formatOutput = Config::$data[ "modelDriverFormatOutput" ];
 		}
 
 		return( self::$processor );
