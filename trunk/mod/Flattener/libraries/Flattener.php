@@ -69,5 +69,3 @@ class Flattener
 		file_put_contents( $folder . $this->indexFilename, $contents, FILE_TEXT | LOCK_EX );
 	}
 }
-
-?>
