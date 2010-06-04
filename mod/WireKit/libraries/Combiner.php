@@ -66,11 +66,20 @@ class Combiner
 	{
 		if( $node->hasAttribute( "href" ) )
 		{
-			$realPath = realpath( Config::$data[ "rootPath" ]  . "/" . self::GetPhysicalPath( $node->getAttribute( "href" ) ) );
-			$meta = FileSystem::GetMeta( $realPath );
+			$filename = Config::$data[ "rootPath" ]  . "/" . self::GetPhysicalPath( $node->getAttribute( "href" ) );
+			$realPath = realpath( $filename );
 
-			$filenames = $meta[ "fullfilename" ];
-			$fileIDs = $meta[ "basename" ] . $meta[ "filemtime" ];
+			if( $realPath !== false )
+			{
+				$meta = FileSystem::GetMeta( $realPath );
+
+				$filenames = $meta[ "fullfilename" ];
+				$fileIDs = $meta[ "basename" ] . $meta[ "filemtime" ];
+			}
+			else
+			{
+				trigger_error( "Combiner could not find file: [" . $filename . "]", E_USER_WARNING );
+			}
 		}
 
 		return array( $fileIDs, $filenames );
