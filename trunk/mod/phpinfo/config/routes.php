@@ -6,5 +6,3 @@ if( !Config::$data[ "isProduction" ] )
 {
 	$routes[ "/^\/phpinfo/" ] = "xMVC\\Mod\\Phpinfo\\Phpinfo";
 }
-
-?>
