@@ -84,5 +84,3 @@ class ConstraintResultsModelDriver extends ModelDriver implements IModelDriver
 		parent::TransformForeignToXML();
 	}
 }
-
-?>

@@ -56,5 +56,3 @@ class AuthenticationModelDriver extends ModelDriver implements IModelDriver
 		parent::TransformForeignToXML();
 	}
 }
-
-?>

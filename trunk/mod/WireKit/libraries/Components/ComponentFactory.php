@@ -184,5 +184,3 @@ class ComponentFactory extends DefaultEventDispatcher
 		$this->referenceModel = null;
 	}
 }
-
-?>

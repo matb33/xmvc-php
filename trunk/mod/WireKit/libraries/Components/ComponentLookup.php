@@ -398,5 +398,3 @@ class ComponentLookup extends Singleton
 		$this->CacheLookupModel();
 	}
 }
-
-?>
