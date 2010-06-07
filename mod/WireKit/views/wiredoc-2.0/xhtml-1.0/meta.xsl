@@ -13,6 +13,10 @@
 		<xsl:call-template name="meta" />
 	</xsl:template>
 
+	<xsl:template name="override-head">
+		<xsl:call-template name="head" />
+	</xsl:template>
+
 	<xsl:template name="title">
 		<xsl:variable name="default-glue" select="' | '" />
 		<xsl:variable name="default-sort-order" select="'ascending'" />

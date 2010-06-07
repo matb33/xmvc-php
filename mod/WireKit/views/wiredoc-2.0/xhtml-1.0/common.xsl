@@ -30,7 +30,7 @@
 	<xsl:template match="wd:component[ not( ancestor::wd:component ) ]">
 		<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="{ $lang }" lang="{ $lang }">
 			<head>
-				<xsl:call-template name="head" />
+				<xsl:call-template name="override-head" />
 			</head>
 			<body>
 				<xsl:apply-templates mode="lang-check" />

@@ -30,7 +30,7 @@ class HierarchyModelDriver extends ModelDriver implements IModelDriver
 		$component = func_get_arg( 0 );
 		$instanceName = func_get_arg( 1 );
 
-		$nodeList = $this->lookupModel->xPath->query( "//lookup:entry[ lookup:component = '" . $component . "' and lookup:instance-name = '" . $instanceName . "' ]" );
+		$nodeList = $this->lookupModel->xPath->query( "//lookup:entry[ lookup:component = '" . $component . "' and ( lookup:instance-name = '" . $instanceName . "' or lookup:instance-name = 'null' ) ]" );
 
 		if( $nodeList->length > 0 )
 		{
