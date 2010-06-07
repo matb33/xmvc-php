@@ -68,8 +68,8 @@ class ComponentLookup extends Singleton
 			$parentNodeList = $model->xPath->query( "//meta:parent", $componentNode );
 			$parent = $parentNodeList->length > 0 ? $parentNodeList->item( 0 )->nodeValue : "";
 
-			$viewNodeList = $model->xPath->query( "//meta:view", $componentNode );
-			$view = $viewNodeList->length > 0 ? $viewNodeList->item( 0 )->nodeValue : "";
+			//$viewNodeList = $model->xPath->query( "//meta:view", $componentNode );
+			$view = ""; //TODO: finish removing view from lookup $viewNodeList->length > 0 ? $viewNodeList->item( 0 )->nodeValue : "";
 
 			if( is_null( $file ) )
 			{
