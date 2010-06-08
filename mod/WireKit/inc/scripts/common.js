@@ -396,7 +396,7 @@ if( typeof Array.prototype.indexOf !== "function" )
 		index = ( isNaN( index ) || index < 0 || index >= count ) ? 0 : index;
 		for( var i = 0; i < count; i++ )
 		{
-			if( this[ i ] === value )
+			if( this[ i ] === item )
 			{
 				return i;
 			}
@@ -414,7 +414,7 @@ if( typeof Array.prototype.lastIndexOf !== "function" )
 		index = ( isNaN( index ) || index < 0 || index >= count ) ? count - 1 : index;		
 		for( var i = 0; i < count; i-- )
 		{
-			if( this[ i ] === value )
+			if( this[ i ] === item )
 			{
 				return i;
 			}
