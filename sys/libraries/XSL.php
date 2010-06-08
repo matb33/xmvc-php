@@ -168,9 +168,12 @@ class XSL
 		// first having this class loaded won't work, despite autoloading mechanisms being in place.
 		foreach( Config::$data[ "restrictXSLTPHPFunctions" ] as $functionName )
 		{
-			$functionName = strstr( $functionName, '::', true );
-			$tempInstance = new $functionName;
-			unset( $tempInstance, $functionName );
+			if( !function_exists( $functionName ) )
+			{
+				$functionName = strstr( $functionName, '::', true );
+				$tempInstance = new $functionName;
+				unset( $tempInstance, $functionName );
+			}
 		}
 	}
 }
