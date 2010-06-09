@@ -110,6 +110,9 @@
 		<xsl:variable name="name" select="ancestor::wd:field[1]/@name" />
 		<xsl:variable name="type" select="ancestor::wd:field[1]/@type" />
 		<option>
+			<xsl:if test="@title">
+				<xsl:attribute name="title"><xsl:value-of select="@title" /></xsl:attribute>
+			</xsl:if>
 			<xsl:attribute name="class">
 				<xsl:choose>
 					<xsl:when test="last() = 1">first-child last-child</xsl:when>
