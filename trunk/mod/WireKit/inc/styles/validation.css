@@ -1,0 +1,37 @@
+/* Core styles, should not need to be changed */
+
+form label span
+{
+	display: inline-block;
+}
+
+form label.validation-loading span,
+form label.validation-fail span,
+form label.validation-pass span
+{
+	background-color: transparent;
+	background-repeat: no-repeat;
+	background-position: right center;
+}
+
+form label span.constraint
+{
+	display: none;
+}
+
+/* Application-specific styles. Override by copying these to your application CSS and change as needed */
+
+form label span
+{
+	padding-right: 22px;
+}
+
+form label.validation-loading span
+{
+	background-image: url( /WireKit/inc/images/validation/validation-loading.gif );
+}
+
+form label.validation-fail span
+{
+	background-image: url( /WireKit/inc/images/validation/validation-fail.gif );
+}

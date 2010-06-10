@@ -54,7 +54,7 @@ class Combiner
 			$fileContents = "";
 			foreach( $filenamesArray as $file )
 			{
-				$fileContents .= FileSystem::FileGetContentsUTF8( $file );
+				$fileContents .= FileSystem::FileGetContentsUTF8( $file ) . "\n";
 			}
 
 			$realOutputFile = Config::$data[ "rootPath" ] . "/" . $outputFilename;

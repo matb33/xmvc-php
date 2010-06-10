@@ -724,22 +724,15 @@ String.method( "utf8_encode", function()
 // Written by Mathieu Bouchard (c) 2010
 ////////////////////////////////////////////////////
 
-jQuery( document ).ready( function()
-{
-	jQuery.data( document.body, "originalVal", jQuery.fn.val );
-});
+var originalVal = jQuery.fn.val;
 
 jQuery.fn.realval = function()
 {
-	var jQueryVal = jQuery.data( document.body, "originalVal" );
-	
-	return jQueryVal.apply( this, arguments );
+	return originalVal.apply( this, arguments );
 };
 
 jQuery.fn.val = function()
 {
-	var jQueryVal = jQuery.data( document.body, "originalVal" );
-
 	if( jQuery( this ).length > 0 )
 	{
 		if( arguments.length == 0 )
@@ -751,7 +744,7 @@ jQuery.fn.val = function()
 		}
 	}
 
-	return jQueryVal.apply( this, arguments );
+	return originalVal.apply( this, arguments );
 };
 
 jQuery.fn.innerMessage = function()
@@ -1100,3 +1093,26 @@ jQuery.fn.compare = function( against )
 		return( html1 === html2 );
 	}
 }
+
+////////////////////////////////////////////////////
+// strips brackets from input names
+////////////////////////////////////////////////////
+
+String.method( "stripBrackets", function()
+{
+    return this.replace( "[", "" ).replace( "]", "" ).replace( "\\[", "" ).replace( "\\]", "" );
+});
+
+////////////////////////////////////////////////////
+// escapes names from input fields
+////////////////////////////////////////////////////
+
+String.method( "escapeName", function()
+{
+    if( ! jQuery.browser.msie )
+	{
+		return this.replace( "[", "\\[" ).replace( "]", "\\]" );
+	}
+
+	return this;
+});
