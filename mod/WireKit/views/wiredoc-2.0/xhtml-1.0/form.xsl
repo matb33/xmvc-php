@@ -33,7 +33,7 @@
 		<xsl:variable name="name" select="@name" />
 		<label for="{ @name }" class="{ @name } { @type }">
 			<xsl:apply-templates select="wd:label[ not( @position ) or @position = 'before' ]" mode="lang-check" />
-			<textarea id="{ @name }" name="{ @name }" class="{ @name } { @type }"><xsl:choose>
+			<textarea id="{ @name }" name="{ @name }" class="{ @name } { @type }" rows="{ @rows }" cols="{ @cols }"><xsl:choose>
 				<xsl:when test="//xmvc:strings/xmvc:*[ @key = $name ]"><xsl:value-of select="//xmvc:strings/xmvc:*[ @key = $name ]" /></xsl:when>
 				<xsl:when test="wd:value"><xsl:value-of select="wd:value[ php:function( 'xMVC\Mod\Language\Language::XSLTLang', $lang, (ancestor-or-self::*/@xml:lang)[last()] ) ]" /></xsl:when>
 			</xsl:choose></textarea>
@@ -59,11 +59,13 @@
 	</xsl:template>
 
 	<xsl:template match="wd:form//wd:field//wd:option[ ancestor::wd:field[1]/@type = 'checkbox' or ancestor::wd:field[1]/@type = 'radio' ]" priority="0">
+		<xsl:param name="position" select="position()" />
+		<xsl:param name="last" select="last()" />
 		<xsl:variable name="name" select="ancestor::wd:field[1]/@name" />
 		<xsl:variable name="type" select="ancestor::wd:field[1]/@type" />
-		<label for="{ $name }-{ position() }" class="{ $name } { $type }">
+		<label for="{ $name }-{ $position }" class="{ $name } { $type }">
 			<xsl:apply-templates select="wd:label[ @position = 'before' ]" mode="lang-check" />
-			<input type="{ $type }" id="{ $name }-{ position() }" name="{ $name }[]" class="{ $name } { $type }">
+			<input type="{ $type }" id="{ $name }-{ $position }" name="{ $name }[]" class="{ $name } { $type }">
 				<xsl:if test="wd:value">
 					<xsl:attribute name="value"><xsl:value-of select="wd:value[ php:function( 'xMVC\Mod\Language\Language::XSLTLang', $lang, (ancestor-or-self::*/@xml:lang)[last()] ) ]" /></xsl:attribute>
 					<xsl:choose>
@@ -107,6 +109,8 @@
 	</xsl:template>
 
 	<xsl:template match="wd:form//wd:field//wd:option[ ancestor::wd:field[1]/@type = 'select' or ancestor::wd:field[1]/@type = 'multi-select' ]" priority="0">
+		<xsl:param name="position" select="position()" />
+		<xsl:param name="last" select="last()" />
 		<xsl:variable name="name" select="ancestor::wd:field[1]/@name" />
 		<xsl:variable name="type" select="ancestor::wd:field[1]/@type" />
 		<option>
@@ -115,15 +119,15 @@
 			</xsl:if>
 			<xsl:attribute name="class">
 				<xsl:choose>
-					<xsl:when test="last() = 1">first-child last-child</xsl:when>
-					<xsl:when test="position() = 1">first-child</xsl:when>
-					<xsl:when test="position() = last()">last-child</xsl:when>
+					<xsl:when test="$last = 1">first-child last-child</xsl:when>
+					<xsl:when test="$position = 1">first-child</xsl:when>
+					<xsl:when test="$position = $last">last-child</xsl:when>
 					<xsl:otherwise>middle-child</xsl:otherwise>
 				</xsl:choose>
-				<xsl:text> item-</xsl:text><xsl:value-of select="position()" />
+				<xsl:text> item-</xsl:text><xsl:value-of select="$position" />
 				<xsl:text> </xsl:text>
 				<xsl:choose>
-					<xsl:when test="position() mod 2 = 1">even</xsl:when>
+					<xsl:when test="$position mod 2 = 1">even</xsl:when>
 					<xsl:otherwise>odd</xsl:otherwise>
 				</xsl:choose>
 			</xsl:attribute>
@@ -162,7 +166,7 @@
 		</optgroup>
 	</xsl:template>
 
-	<xsl:template match="wd:form//wd:field[ @type = 'checkbox' ]//wd:option/wd:label" priority="3">
+	<xsl:template match="wd:form//wd:field[ @type = 'checkbox' or @type = 'radio' ]//wd:option/wd:label" priority="3">
 		<span><xsl:apply-templates mode="lang-check" /></span>
 	</xsl:template>
 
