@@ -23,7 +23,7 @@ abstract class Component extends DefaultEventDispatcher
 	private $parameters = array();
 	private $methodName = null;
 	private $methodArgs = array();
-	private $builtComponentModel = null;
+	private $builtComponentModels = null;
 	private $cacheMinutes = 0;
 	private $cacheID = null;
 	private $cache = null;
@@ -100,14 +100,14 @@ abstract class Component extends DefaultEventDispatcher
 		$this->addEventListener( $eventName, $delegate );
 	}
 
-	protected function Talk( $builtComponentModel )
+	protected function Talk()
 	{
-		$this->dispatchEvent( new Event( "ontalk.components", array( "builtComponentModel" => $builtComponentModel ) ) );
+		$this->dispatchEvent( new Event( "ontalk.components", array( "builtComponentModels" => func_get_args() ) ) );
 	}
 
 	public function OnTalk( Event $event )
 	{
-		$this->builtComponentModel = $event->arguments[ "builtComponentModel" ];
+		$this->builtComponentModels = $event->arguments[ "builtComponentModels" ];
 		$this->SendResultModelForProcessing( $this->ObtainResultModel() );
 	}
 
@@ -165,7 +165,7 @@ abstract class Component extends DefaultEventDispatcher
 	{
 		$component = $this->component;
 		$instanceName = $this->instanceName;
-		$builtComponentModel = $this->builtComponentModel;
+		$builtComponentModels = $this->builtComponentModels;
 
 		$componentClass = ComponentUtils::GetComponentClassNameFromWiredocComponentName( $component );
 		$namespacedComponentClass = ComponentUtils::DefaultNamespaceIfNecessary( $componentClass );
@@ -175,7 +175,10 @@ abstract class Component extends DefaultEventDispatcher
 		$view = new View();
 		$xslData = $view->ImportXSL( null, $xslFile );
 		$view->SetXSLData( $xslData );
-		$view->PushModel( $builtComponentModel );
+		foreach( $builtComponentModels as $model )
+		{
+			$view->PushModel( $model );
+		}
 		$result = new \DOMDocument();
 		$resultXML = $view->ProcessAsXML();
 		$result->loadXML( $resultXML );
