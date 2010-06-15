@@ -620,6 +620,41 @@ function Map()
 	};	
 }
 
+var CONSTRUCTORS = function()
+{
+	var constructors = {};
+
+	var set = function( n, c )
+	{
+		if( !constructors[ n ] )
+		{
+			constructors[ n ] = c;
+		}
+	};
+
+	var get = function( n )
+	{
+		if( constructors[ n ] )
+		{
+			return constructors[ n ];
+		}
+
+		return error( "Constructor " + n + " not defined" );
+	};
+
+	var error = function( message )
+	{
+		alert( message );
+		throw( message );
+		return false;
+	};
+
+	return {
+		set: function( n, c ) { set( n, c ); },
+		get: function( n ) { return get( n ); }
+	};
+};
+
 ////////////////////////////////////////////////////
 // php.js methods
 ////////////////////////////////////////////////////
@@ -1134,3 +1169,37 @@ String.method( "escapeName", function()
 
 	return this;
 });
+
+////////////////////////////////////////////////////
+// iterates through an object and alerts contents
+////////////////////////////////////////////////////
+
+function inspect( obj )
+{
+	if( !obj )
+	{
+		ret = prompt ("Enter object", "document");
+		obj = eval(ret);
+	}
+
+	var list = new Array();
+	for( x in obj )
+	{
+		list[ list.length ] = x + ": " + obj[ x ];
+	}
+
+	list.sort();
+
+	var temp = "";
+	for( x in list )
+	{
+		temp += list[ x ] + '\n';
+		if( temp.length > 700 )
+		{
+			alert( temp );
+			temp = '';
+		}
+	}
+
+	alert( temp );
+}
