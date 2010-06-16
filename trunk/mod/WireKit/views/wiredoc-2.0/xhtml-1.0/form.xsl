@@ -199,6 +199,8 @@
 		<xsl:apply-templates mode="lang-check" />
 	</xsl:template>
 
+	<xsl:template match="wd:constraint//wd:message" priority="0" />
+
 	<xsl:template match="wd:*[ starts-with( local-name(), 'form' ) ]" priority="0">
 		<form>
 			<xsl:attribute name="action">

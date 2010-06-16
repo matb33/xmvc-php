@@ -11,6 +11,7 @@
 		var settings = $.extend(
 		{
 			ajaxURL: null,
+			callback: null,
 			inputKeyUpDelay: 750
 
 		}, options );
@@ -28,7 +29,7 @@
 				window.clearTimeout( $.data( document.body, "timeout" ) );
 				$.data( document.body, "timeout", window.setTimeout( function()
 				{
-					validate( $( field ) );
+					validate( $( field ), settings.callback );
 				}, settings.inputKeyUpDelay ) );
 
 				if( visuals.isAngry( field ) )
@@ -41,13 +42,13 @@
 			$( ":checkbox, :radio", context ).click( function()
 			{
 				window.clearTimeout( $.data( document.body, "timeout" ) );
-				validate( $( this ) );
+				validate( $( this ), settings.callback );
 			});
 
 			$( context ).submit( function()
 			{
 				window.clearTimeout( $.data( document.body, "timeout" ) );
-				return validate( $( this ) );
+				return validate( $( this ), settings.callback );
 			});
 		};
 
@@ -175,9 +176,11 @@
 
 		var processSubmit = function( submitCallback, fullSuccess, eventField )
 		{
-			if( submitCallback )
+			var isSubmittingFromForm = eventField.is( "form" );
+
+			if( submitCallback !== null )
 			{
-				return submitCallback( fullSuccess );
+				return submitCallback( fullSuccess, isSubmittingFromForm );
 			}
 			else
 			{
@@ -185,7 +188,7 @@
 				{
 					return fullSuccess;
 				}
-				else if( eventField.is( "form" ) && fullSuccess )
+				else if( isSubmittingFromForm && fullSuccess )
 				{
 					eventField.unbind( "submit" );
 					eventField.trigger( "submit" );
