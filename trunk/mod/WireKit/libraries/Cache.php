@@ -104,7 +104,7 @@ class Cache
 	{
 		if( $data instanceof XMLModelDriver )
 		{
-			return Normalize::StripRootTag( $data->saveXML() );
+			return $this->ManuallyFormatXMLOutput( Normalize::StripRootTag( $data->saveXML() ) );
 		}
 		else
 		{
@@ -122,5 +122,17 @@ class Cache
 		{
 			return unserialize( $data );
 		}
+	}
+
+	private function ManuallyFormatXMLOutput( $input )
+	{
+		// Hack to get XML formatted, despite formatOutput being set in ModelDriver
+		
+		$xml = new \DOMDocument( "1.0", "UTF-8" );
+		$xml->preserveWhiteSpace = false;
+		$xml->formatOutput = true;
+		$xml->loadXML( $input );
+
+		return $xml->saveXML();
 	}
 }
