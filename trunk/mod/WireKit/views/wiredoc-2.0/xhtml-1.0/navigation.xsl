@@ -5,15 +5,12 @@
 	xmlns:wd="http://www.wiredoc.org/ns/wiredoc/2.0"
 	xmlns:sitemap="urn:wirekit:sitemap">
 
-	<xsl:template match="wd:*[ starts-with( local-name(), 'navigation' ) ]">
+	<xsl:template match="wd:navigation">
 		<ul>
 			<xsl:attribute name="class">
 				<xsl:choose>
 					<xsl:when test="@wd:name">
 						<xsl:value-of select="@wd:name" /><xsl:text> </xsl:text>
-					</xsl:when>
-					<xsl:when test="starts-with( local-name(), 'navigation.' )">
-						<xsl:value-of select="substring( local-name(), 12 )" /><xsl:text> </xsl:text>
 					</xsl:when>
 					<xsl:otherwise />
 				</xsl:choose>
@@ -26,7 +23,7 @@
 		</ul>
 	</xsl:template>
 
-	<xsl:template match="wd:*[ starts-with( local-name(), 'container' ) and parent::wd:*[ starts-with( local-name(), 'navigation' ) ] ]">
+	<xsl:template match="wd:container[ parent::wd:navigation ]">
 		<xsl:param name="position" select="position()" />
 		<xsl:param name="last" select="last()" />
 		<xsl:variable name="this-uri" select=".//@href" />
@@ -35,9 +32,6 @@
 				<xsl:choose>
 					<xsl:when test="@wd:name">
 						<xsl:value-of select="@wd:name" /><xsl:text> </xsl:text>
-					</xsl:when>
-					<xsl:when test="starts-with( local-name(), 'container.' )">
-						<xsl:value-of select="substring( local-name(), 11 )" /><xsl:text> </xsl:text>
 					</xsl:when>
 					<xsl:otherwise />
 				</xsl:choose>
