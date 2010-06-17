@@ -1,8 +1,9 @@
 <xsl:stylesheet version="1.0"
-	exclude-result-prefixes="xhtml xmvc"
-	xmlns:xhtml="http://www.w3.org/1999/xhtml"
+	exclude-result-prefixes="xmvc"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-	xmlns:xmvc="http://www.xmvc.org/ns/xmvc/1.0">
+	xmlns:xmvc="http://www.xmvc.org/ns/xmvc/1.0"
+	xmlns:xhtml="http://www.w3.org/1999/xhtml"
+	xmlns="http://www.w3.org/1999/xhtml">
 
 	<xsl:include href="../../../sys/views/error.xsl" />
 
@@ -10,21 +11,17 @@
 
 	<xsl:template match="xmvc:*" />
 
-	<!-- Strip namespaces from XHTML using an identity template -->
+	<!-- Copy XHTML as is, if any. Note that xhtml namespace declarations for both "xhtml" and "" (blank) prefixes is necessary -->
 
-	<xsl:template match="*[ ./xhtml:* ]">
-		<xsl:apply-templates select="node()" />
-	</xsl:template>
-
-	<xsl:template match="*[ child::xhtml:* ]//xhtml:*">
+	<xsl:template match="xhtml:*">
 		<xsl:element name="{ local-name() }">
-			<xsl:apply-templates select="@* | node()" />
+			<xsl:apply-templates select="node()|@*" />
 		</xsl:element>
 	</xsl:template>
 
-	<xsl:template match="*[ child::xhtml:* ]//@*">
-		<xsl:attribute name="{ local-name() }">
-			<xsl:apply-templates />
+	<xsl:template match="@*[ parent::xhtml:* ]">
+		<xsl:attribute name="{ name() }">
+			<xsl:value-of select="." />
 		</xsl:attribute>
 	</xsl:template>
 

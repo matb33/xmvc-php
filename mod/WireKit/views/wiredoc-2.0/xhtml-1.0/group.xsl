@@ -4,15 +4,12 @@
 	xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:wd="http://www.wiredoc.org/ns/wiredoc/2.0">
 
-	<xsl:template match="wd:*[ starts-with( local-name(), 'group' ) ]">
+	<xsl:template match="wd:group">
 		<ul>
 			<xsl:attribute name="class">
 				<xsl:choose>
 					<xsl:when test="@wd:name">
 						<xsl:value-of select="@wd:name" /><xsl:text> </xsl:text>
-					</xsl:when>
-					<xsl:when test="starts-with( local-name(), 'navigation.' )">
-						<xsl:value-of select="substring( local-name(), 12 )" /><xsl:text> </xsl:text>
 					</xsl:when>
 					<xsl:otherwise />
 				</xsl:choose>
@@ -25,7 +22,7 @@
 		</ul>
 	</xsl:template>
 
-	<xsl:template match="wd:*[ starts-with( local-name(), 'container' ) and parent::wd:*[ starts-with( local-name(), 'group' ) ] ]">
+	<xsl:template match="wd:container[ parent::wd:group ]">
 		<xsl:param name="position" select="position()" />
 		<xsl:param name="last" select="last()" />
 		<li>
@@ -33,9 +30,6 @@
 				<xsl:choose>
 					<xsl:when test="@wd:name">
 						<xsl:value-of select="@wd:name" /><xsl:text> </xsl:text>
-					</xsl:when>
-					<xsl:when test="starts-with( local-name(), 'container.' )">
-						<xsl:value-of select="substring( local-name(), 11 )" /><xsl:text> </xsl:text>
 					</xsl:when>
 					<xsl:otherwise />
 				</xsl:choose>

@@ -201,7 +201,7 @@
 
 	<xsl:template match="wd:constraint//wd:message" priority="0" />
 
-	<xsl:template match="wd:*[ starts-with( local-name(), 'form' ) ]" priority="0">
+	<xsl:template match="wd:form" priority="0">
 		<form>
 			<xsl:attribute name="action">
 				<xsl:choose>
@@ -221,9 +221,6 @@
 			<xsl:choose>
 				<xsl:when test="@wd:name">
 					<xsl:attribute name="class"><xsl:value-of select="@wd:name" /></xsl:attribute>
-				</xsl:when>
-				<xsl:when test="starts-with( local-name(), 'form.' )">
-					<xsl:attribute name="class"><xsl:value-of select="substring( local-name(), 6 )" /></xsl:attribute>
 				</xsl:when>
 				<xsl:otherwise />
 			</xsl:choose>
