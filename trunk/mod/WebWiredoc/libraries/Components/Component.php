@@ -11,7 +11,7 @@ use xMVC\Sys\Loader;
 use xMVC\Sys\Normalize;
 use xMVC\Sys\View;
 use xMVC\Sys\XMLModelDriver;
-use xMVC\Mod\WebWiredoc\Cache;
+use xMVC\Mod\Cache\Cache;
 use xMVC\Mod\Utils\StringUtils;
 
 abstract class Component extends DefaultEventDispatcher

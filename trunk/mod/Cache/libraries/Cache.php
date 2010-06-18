@@ -1,6 +1,6 @@
 <?php
 
-namespace xMVC\Mod\WebWiredoc;
+namespace xMVC\Mod\Cache;
 
 use xMVC\Sys\FileSystem;
 use xMVC\Sys\XMLModelDriver;

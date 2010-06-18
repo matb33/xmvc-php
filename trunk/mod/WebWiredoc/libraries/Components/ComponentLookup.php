@@ -9,7 +9,7 @@ use xMVC\Sys\Normalize;
 use xMVC\Sys\Routing;
 use xMVC\Sys\Singleton;
 use xMVC\Mod\Language\Language;
-use xMVC\Mod\WebWiredoc\Cache;
+use xMVC\Mod\Cache\Cache;
 
 class ComponentLookup extends Singleton
 {
