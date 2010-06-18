@@ -11,7 +11,6 @@
 		var settings = $.extend(
 		{
 			ajaxURL: null,
-			callback: null,
 			inputKeyUpDelay: 750
 
 		}, options );
@@ -29,7 +28,7 @@
 				window.clearTimeout( $.data( document.body, "timeout" ) );
 				$.data( document.body, "timeout", window.setTimeout( function()
 				{
-					validate( $( field ), settings.callback );
+					validate( $( field ) );
 				}, settings.inputKeyUpDelay ) );
 
 				if( visuals.isAngry( field ) )
@@ -42,13 +41,13 @@
 			$( ":checkbox, :radio", context ).click( function()
 			{
 				window.clearTimeout( $.data( document.body, "timeout" ) );
-				validate( $( this ), settings.callback );
+				validate( $( this ) );
 			});
 
 			$( context ).submit( function()
 			{
 				window.clearTimeout( $.data( document.body, "timeout" ) );
-				return validate( $( this ), settings.callback );
+				return validate( $( this ) );
 			});
 		};
 
@@ -176,11 +175,9 @@
 
 		var processSubmit = function( submitCallback, fullSuccess, eventField )
 		{
-			var isSubmittingFromForm = eventField.is( "form" );
-
-			if( submitCallback !== null )
+			if( submitCallback )
 			{
-				return submitCallback( fullSuccess, isSubmittingFromForm );
+				return submitCallback( fullSuccess );
 			}
 			else
 			{
@@ -188,7 +185,7 @@
 				{
 					return fullSuccess;
 				}
-				else if( isSubmittingFromForm && fullSuccess )
+				else if( eventField.is( "form" ) && fullSuccess )
 				{
 					eventField.unbind( "submit" );
 					eventField.trigger( "submit" );
@@ -471,17 +468,14 @@
 
 		var isValid = function()
 		{
-			for( var c in constraints )
+			var valid = true;
+
+			$.each( constraints, function( c, constraint )
 			{
-				var constraint = constraints[ c ];
+				valid = valid && constraint.isValid();
+			});
 
-				if( !constraint.isValid() )
-				{
-					return false;
-				}
-			}
-
-			return true;
+			return valid;
 		};
 
 		return {
@@ -584,7 +578,6 @@
 				$( "#validate-tooltip .validate-tooltip" ).html( getHTMLMessage( messages ) );
 				$( "#validate-tooltip" ).stop();
 				$( "#validate-tooltip" ).show();
-				$( "#validate-tooltip" ).fadeTo( "fast", 1.0 );
 				$( "#validate-tooltip" ).offset( determineTooltipPosition() );
 			}
 		};
@@ -595,10 +588,10 @@
 
 			htmlMessage = $( "<ul />" );
 
-			for( var key in messages )
+			$.each( messages, function( key, message )
 			{
-				htmlMessage.append( $( "<li />" ).html( messages[ key ] ) );
-			}
+				htmlMessage.append( $( "<li />" ).html( message ) );
+			});
 
 			return htmlMessage;
 		};
@@ -623,6 +616,11 @@
 				topOffset = -10;
 			}
 
+			if( $.browser.msie && parseInt( $.browser.version ) < 7 )
+			{
+				topOffset -= 10;
+			}
+
 			var pos = target.offset();
 
 			pos.left += ( target.outerWidth() - $( "#validate-tooltip" ).width() + leftOffset );
@@ -636,7 +634,14 @@
 			if( $( "#validate-tooltip:visible" ).length > 0 )
 			{
 				$( "#validate-tooltip" ).stop();
-				$( "#validate-tooltip" ).fadeOut();
+				if( $.browser.msie )
+				{
+					$( "#validate-tooltip" ).hide();
+				}
+				else
+				{
+					$( "#validate-tooltip" ).fadeOut();
+				}
 			}
 		};
 
@@ -751,25 +756,25 @@
 			var fail = type === "fail";
 			var pass = type === "pass";
 
-			for( var key in messages )
+			$.each( messages, function( key, message )
 			{
 				if( isClientSide() )
 				{
 					if( ( fail && !valid ) || ( pass && valid ) )
 					{
-						$( "input[value=" + messages[ key ].replace( "\"", "\\\"" ) + "]", constraintContext ).addClass( type );
+						$( "input[value=" + message.replace( "\"", "\\\"" ) + "]", constraintContext ).addClass( type );
 					}
 				}
 				else
 				{
-					if( $( "input[value=" + messages[ key ].replace( "\"", "\\\"" ) + "]", closestLabel ).length == 0 )
+					if( $( "input[value=" + message.replace( "\"", "\\\"" ) + "]", closestLabel ).length == 0 )
 					{
 						box = $( "<input class='" + type + "' type='hidden' />" );
-						box.val( messages[ key ] );
+						box.val( message );
 						closestLabel.append( box );
 					}
 				}
-			}
+			});
 		};
 
 		var isAngry = function( field )

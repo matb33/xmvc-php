@@ -55,6 +55,7 @@ form label.validate-fail span {
 		_background-image: url( images/tooltip-tray.gif );
 	width: 170px;
 	padding: 0px 15px 27px 15px;
+		_padding-bottom: 37px;
 	margin-top: 27px;
 }
 
