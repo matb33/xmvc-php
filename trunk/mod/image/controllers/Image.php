@@ -5,7 +5,7 @@ namespace xMVC\Mod\Image;
 use xMVC\Sys\Config;
 use xMVC\Sys\FileSystem;
 use xMVC\Mod\Utils\StringUtils;
-use xMVC\Mod\WireKit\Cache;
+use xMVC\Mod\Cache\Cache;
 
 class Image
 {
