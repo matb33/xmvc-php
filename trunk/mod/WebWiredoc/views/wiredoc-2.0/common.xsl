@@ -18,6 +18,12 @@
 		<xsl:apply-templates select="wd:component" mode="lang-check" />
 	</xsl:template>
 
+	<xsl:template match="wd:component">
+		<xsl:apply-templates mode="lang-check" />
+	</xsl:template>
+
+	<!-- Standard and Meta language-check override templates -->
+
 	<xsl:template match="node()" mode="lang-check">
 		<xsl:if test="php:function( 'xMVC\Mod\Language\Language::XSLTLang', $lang, (ancestor-or-self::*/@xml:lang)[last()] )">
 			<xsl:apply-templates select="." mode="override">
@@ -26,6 +32,17 @@
 			</xsl:apply-templates>
 		</xsl:if>
 	</xsl:template>
+
+	<xsl:template match="node()" mode="lang-check-meta">
+		<xsl:if test="php:function( 'xMVC\Mod\Language\Language::XSLTLang', $lang, (ancestor-or-self::*/@xml:lang)[last()] )">
+			<xsl:apply-templates select="." mode="override-meta">
+				<xsl:with-param name="position" select="position()" />
+				<xsl:with-param name="last" select="last()" />
+			</xsl:apply-templates>
+		</xsl:if>
+	</xsl:template>
+
+	<!-- Standard override template -->
 
 	<xsl:template match="node()" mode="override">
 		<xsl:param name="position" select="position()" />
@@ -36,6 +53,8 @@
 		</xsl:apply-templates>
 	</xsl:template>
 
+	<!-- Meta override templates -->
+
 	<xsl:template match="meta:*" mode="override-meta">
 		<xsl:param name="position" select="position()" />
 		<xsl:param name="last" select="last()" />
@@ -43,10 +62,6 @@
 			<xsl:with-param name="position" select="$position" />
 			<xsl:with-param name="last" select="$last" />
 		</xsl:apply-templates>
-	</xsl:template>
-
-	<xsl:template match="wd:component">
-		<xsl:apply-templates mode="lang-check" />
 	</xsl:template>
 
 </xsl:stylesheet>
