@@ -22,34 +22,26 @@
 		<xsl:variable name="default-sort-order" select="'ascending'" />
 		<xsl:variable name="doc-title-set" select="//doc:title[ php:function( 'xMVC\Mod\Language\Language::XSLTLang', $lang, (ancestor-or-self::*/@xml:lang)[last()] ) ]" />
 		<xsl:if test="$doc-title-set">
+			<xsl:variable name="sort-order">
+				<xsl:choose>
+					<xsl:when test="$doc-title-set/@meta:sort-order"><xsl:value-of select="$doc-title-set/@meta:sort-order[ 1 ]" /></xsl:when>
+					<xsl:otherwise><xsl:value-of select="$default-sort-order" /></xsl:otherwise>
+				</xsl:choose>
+			</xsl:variable>
 			<title>
 				<xsl:for-each select="$doc-title-set">
-
-					<!-- TODO These two variables aren't working... -->
-					<xsl:variable name="meta-title-glue" select="ancestor-or-self::meta:title-glue[ ( self::meta:title-glue | preceding-sibling::meta:title-glue | following-sibling::meta:title-glue ) and php:function( 'xMVC\Mod\Language\Language::XSLTLang', $lang, (ancestor-or-self::*/@xml:lang)[last()] ) ][ last() ]" />
-					<xsl:variable name="meta-title-sort-order" select="ancestor-or-self::wd:*[ ( preceding-sibling::wd:meta.title-sort-order | following-sibling::wd:meta.title-sort-order ) and ( starts-with( local-name(), 'meta' ) and ( substring( local-name(), 6 ) = 'title-sort-order' or @wd:name='title-sort-order' ) and php:function( 'xMVC\Mod\Language\Language::XSLTLang', $lang, (ancestor-or-self::*/@xml:lang)[last()] ) ) ][ last() ]" />
-
-					<xsl:variable name="glue">
-						<xsl:choose>
-							<xsl:when test="$meta-title-glue"><xsl:value-of select="$meta-title-glue" /></xsl:when>
-							<xsl:otherwise><xsl:value-of select="$default-glue" /></xsl:otherwise>
-						</xsl:choose>
-					</xsl:variable>
-					<xsl:variable name="sort-order">
-						<xsl:choose>
-							<xsl:when test="$meta-title-sort-order"><xsl:value-of select="$meta-title-sort-order" /></xsl:when>
-							<xsl:otherwise><xsl:value-of select="$default-sort-order" /></xsl:otherwise>
-						</xsl:choose>
-					</xsl:variable>
-					<!-- TODO Sort also not working -->
-					<!--<xsl:sort select="position()" data-type="number" order="{ $sort-order }" />-->
+					<xsl:sort select="position()" data-type="number" order="{ $sort-order }" />
 					<xsl:value-of select="." />
 					<xsl:if test="position() != last()">
-						<xsl:value-of select="$glue" />
+						<xsl:choose>
+							<xsl:when test="@meta:glue"><xsl:value-of select="@meta:glue" /></xsl:when>
+							<xsl:otherwise><xsl:value-of select="$default-glue" /></xsl:otherwise>
+						</xsl:choose>
 					</xsl:if>
 				</xsl:for-each>
 			</title>
 		</xsl:if>
+
 	</xsl:template>
 
 	<xsl:template name="meta">
