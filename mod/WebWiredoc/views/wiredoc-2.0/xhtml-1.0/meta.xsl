@@ -53,28 +53,25 @@
 	</xsl:template>
 
 	<xsl:template name="meta">
-		<xsl:for-each select="//meta:*[ local-name() != 'script' and local-name() != 'link' and php:function( 'xMVC\Mod\Language\Language::XSLTLang', $lang, (ancestor-or-self::*/@xml:lang)[last()] ) ]">
-			<xsl:apply-templates select="." mode="override-meta" />
-		</xsl:for-each>
-		<xsl:call-template name="single-link-method" mode="override-meta" />
-		<xsl:call-template name="single-script-method" mode="override-meta" />
+		<xsl:apply-templates select="//meta:*[ local-name() != 'script' and local-name() != 'link' ]" mode="lang-check-meta" />
+		<xsl:call-template name="override-meta-link" />
+		<xsl:call-template name="override-meta-script" />
 	</xsl:template>
 
-	<xsl:template name="single-link-method" mode="override-meta">
-		<xsl:variable name="meta-link-nodes" select="//meta:link[ @type='text/css' and php:function( 'xMVC\Mod\Language\Language::XSLTLang', $lang, (ancestor-or-self::*/@xml:lang)[last()] ) ]" />
-		<xsl:variable name="unique-medias" select="$meta-link-nodes/@media[ not( . = following::meta:link/@media ) ]" />
-		<xsl:for-each select="$unique-medias">
-			<xsl:variable name="current-media" select="." />
-			<xsl:variable name="links-by-media" select="$meta-link-nodes[ @media = $current-media ]" />
-			<xsl:variable name="link-href" select="php:function( 'xMVC\Mod\Combiner\Combiner::CombineStylesheetLinks', string( $current-media ), $links-by-media )" />
-			<link href="{ $link-href }" rel="stylesheet" type="text/css" media="{ $current-media }" />
-		</xsl:for-each>
+	<xsl:template name="override-meta-link">
+		<xsl:call-template name="meta-link" />
 	</xsl:template>
 
-	<xsl:template name="single-script-method" mode="override-meta">
-		<xsl:variable name="meta-script-nodes" select="//meta:script[ @type='text/javascript' and @href and php:function( 'xMVC\Mod\Language\Language::XSLTLang', $lang, (ancestor-or-self::*/@xml:lang)[last()] ) ]" />
-		<xsl:variable name="script-src" select="php:function( 'xMVC\Mod\Combiner\Combiner::CombineJavaScripts', $meta-script-nodes )" />
-		<script type="text/javascript" src="{ $script-src }" />
+	<xsl:template name="override-meta-script">
+		<xsl:call-template name="meta-script" />
+	</xsl:template>
+
+	<xsl:template name="meta-link">
+		<xsl:apply-templates select="//meta:link" mode="lang-check-meta" />
+	</xsl:template>
+
+	<xsl:template name="meta-script">
+		<xsl:apply-templates select="//meta:script" mode="lang-check-meta" />
 	</xsl:template>
 
 	<xsl:template match="meta:link" mode="meta">
