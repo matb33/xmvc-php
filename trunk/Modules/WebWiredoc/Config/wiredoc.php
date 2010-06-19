@@ -1,15 +1,15 @@
 <?php
 
-$applicationClass = "";		// IMPORTANT: This must be set in app/config!
-$componentNamespace = "";	// IMPORTANT: This must be set in app/config!
+$applicationClass = "";		// IMPORTANT: This must be set in Application/Config!
+$componentNamespace = "";	// IMPORTANT: This must be set in Application/Config!
 
 $defaultView = "Modules\\WebWiredoc\\Views\\wiredoc-2.0-xhtml-1.0";
 
-$componentCacheFilePattern = "app/cache/components/#type#/#name#/#hash#.txt";
-$xliffFilePattern = "app/components/#component#/xliff/#instance#.#lang#.xliff";
+$componentCacheFilePattern = "Application/Cache/components/#type#/#name#/#hash#.txt";
+$xliffFilePattern = "Application/Components/#component#/xliff/#instance#.#lang#.xliff";
 
-$componentLookupFilePattern = "app/cache/components/lookup.xml";
-$componentLookupCrawlFolder = "app/components/";
+$componentLookupFilePattern = "Application/Cache/components/lookup.xml";
+$componentLookupCrawlFolder = "Application/Components/";
 $componentLookupCrawlFolderRegExp = "/[^\.svn]/";
 $componentLookupCrawlFileRegExp = "/.*\.xml|.*\.xsl/";
 
