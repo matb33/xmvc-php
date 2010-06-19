@@ -14,7 +14,7 @@ class View
 	{
 		if( ! is_null( $xslViewName ) )
 		{
-			$this->xslViewName = Loader::AssignDefaultNamespace( $xslViewName, $namespace );
+			$this->xslViewName = Loader::AssignDefaultNamespace( $xslViewName, $namespace, Loader::viewFolder );
 		}
 	}
 
@@ -338,7 +338,7 @@ class View
 			{
 				if( ! is_null( $this->xslViewName ) )
 				{
-					$fullyQualifiedXsltViewName = str_replace( "\\", "::", Loader::AssignDefaultNamespace( $this->xslViewName ) );
+					$fullyQualifiedXsltViewName = str_replace( "\\", "::", Loader::AssignDefaultNamespace( $this->xslViewName, null, Loader::viewFolder ) );
 					$xmlHead .= "<" . "?xml-stylesheet type=\"text/xsl\" href=\"" . Routing::URIProtocol() . "://" . $_SERVER[ "HTTP_HOST" ] . "/load/view/" . $fullyQualifiedXsltViewName . $encodedData . "\" ?" . ">\n";
 				}
 			}

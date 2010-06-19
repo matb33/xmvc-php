@@ -13,12 +13,12 @@ class Loader
 	const libraryExtension = "php";
 	const configExtension = "php";
 
-	const controllerFolder = "controllers";		// Stays lowercase for legacy support reasons
-	const modelFolder = "models";
-	const viewFolder = "views";
-	const driverFolder = "drivers";
-	const libraryFolder = "libraries";
-	const configFolder = "config";
+	const controllerFolder = "Controllers";
+	const modelFolder = "Models";
+	const viewFolder = "Views";
+	const driverFolder = "Drivers";
+	const libraryFolder = "Libraries";
+	const configFolder = "Config";
 
 	public static function Resolve( $folder, $name, $extension )
 	{
@@ -60,11 +60,11 @@ class Loader
 		return false;
 	}
 
-	public static function AssignDefaultNamespace( $name, $forcedNamespace = null )
+	public static function AssignDefaultNamespace( $name, $forcedNamespace = null, $folder = null )
 	{
 		if( strpos( $name, "\\" ) === false )
 		{
-			$name = self::$defaultNamespace . "\\" . $name;
+			$name = self::$defaultNamespace . ( !is_null( $folder ) ? "\\" . $folder : "" ) . "\\" . $name;
 		}
 
 		if( ! is_null( $forcedNamespace ) )
