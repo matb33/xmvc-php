@@ -11,7 +11,7 @@ class Language
 	private static $language = null;
 	private static $data = null;
 
-	const languageConfig = "xMVC\\App\\languages";
+	const languageConfig = "Application\\Models\\languages";
 	const languageConfigDefault = "Modules\\Language\\Models\\languages.default";
 
 	public static function GetLang()
