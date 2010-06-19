@@ -44,7 +44,7 @@ abstract class ModelDriver extends \DOMDocument
 			{
 				if( isset( Config::$data[ "restrictXSLTPHPFunctions" ] ) && is_array( Config::$data[ "restrictXSLTPHPFunctions" ] ) && count( Config::$data[ "restrictXSLTPHPFunctions" ] ) )
 				{
-					XSL::XSLTPHPFunctionInvocationHack();
+					XSLT::XSLTPHPFunctionInvocationHack();
 					$this->xPath->registerPHPFunctions( Config::$data[ "restrictXSLTPHPFunctions" ] );
 				}
 				else
