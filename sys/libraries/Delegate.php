@@ -1,6 +1,6 @@
 <?php
 
-namespace xMVC\Sys;
+namespace System\Libraries;
 
 /**
  * Class that wraps a PHP callback and treats it as standard function delegate.

@@ -1,6 +1,6 @@
 <?php
 
-namespace xMVC\Sys;
+namespace System\Libraries;
 
 /**
  * Class Singleton is a generic implementation of the singleton design pattern.

@@ -1,6 +1,6 @@
 <?php
 
-namespace xMVC\Sys;
+namespace System\Libraries;
 
 /**
  * Represents a dynamic object type like in Javascript.

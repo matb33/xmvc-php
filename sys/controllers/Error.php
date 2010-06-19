@@ -1,6 +1,8 @@
 <?php
 
-namespace xMVC\Sys;
+namespace System\Controllers;
+
+use System\Libraries\ErrorHandler;
 
 class Error
 {

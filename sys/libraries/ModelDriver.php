@@ -1,6 +1,6 @@
 <?php
 
-namespace xMVC\Sys;
+namespace System\Libraries;
 
 // TO-DO: Make this an abstract class where TransformForeignToXML is abstract
 

@@ -1,6 +1,10 @@
 <?php
 
-namespace xMVC\Sys;
+namespace System\Controllers;
+
+use System\Libraries\Loader;
+use System\Libraries\View;
+use System\Libraries\OutputHeaders;
 
 class Load
 {
