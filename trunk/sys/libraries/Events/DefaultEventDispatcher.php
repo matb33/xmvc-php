@@ -1,8 +1,8 @@
 <?php
 
-namespace xMVC\Sys\Events;
+namespace System\Libraries\Events;
 
-use xMVC\Sys\Delegate;
+use System\Libraries\Delegate;
 
 /**
  * The default implementation of an event dispatcher.

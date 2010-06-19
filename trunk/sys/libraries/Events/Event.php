@@ -1,6 +1,6 @@
 <?php
 
-namespace xMVC\Sys\Events;
+namespace System\Libraries\Events;
 
 /**
  * Class that embodies the concept of an event, where each event has a type, target, and optional arguments.

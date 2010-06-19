@@ -5,7 +5,7 @@
 // the traditional xMVC\App, xMVC\Mod, xMVC\Sys, etc. namespaces, but instead namespaces that map directly to folders.  For legacy
 // compatibility reasons, the traditional regular expression technique remains functional, but is *second* in the autoload queue.
 
-namespace xMVC\Sys;
+namespace System\Libraries;
 
 class AutoLoad
 {

@@ -1,3 +1,3 @@
 <?php
 
-$priorityRoutes[ "/^\/load(.*)/" ] = "xMVC\\Sys\\load%1";
+$priorityRoutes[ "/^\/load(.*)/" ] = "System\\Controllers\\Load%1";

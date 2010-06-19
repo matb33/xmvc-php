@@ -1,8 +1,8 @@
 <?php
 
-namespace xMVC\Sys\Events;
+namespace System\Libraries\Events;
 
-use xMVC\Sys\Delegate;
+use System\Libraries\Delegate;
 
 /**
  * Represents the interface for all objects that can dispatch events.

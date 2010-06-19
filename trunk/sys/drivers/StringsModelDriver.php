@@ -1,6 +1,10 @@
 <?php
 
-namespace xMVC\Sys;
+namespace System\Drivers;
+
+use System\Libraries\ModelDriver;
+use System\Libraries\IModelDriver;
+use System\Libraries\Core;
 
 class StringsModelDriver extends ModelDriver implements IModelDriver
 {

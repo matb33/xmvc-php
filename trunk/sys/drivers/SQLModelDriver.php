@@ -1,6 +1,11 @@
 <?php
 
-namespace xMVC\Sys;
+namespace System\Drivers;
+
+use System\Libraries\ModelDriver;
+use System\Libraries\IModelDriver;
+use System\Libraries\Core;
+use System\Libraries\DB;
 
 class SQLModelDriver extends ModelDriver implements IModelDriver
 {
