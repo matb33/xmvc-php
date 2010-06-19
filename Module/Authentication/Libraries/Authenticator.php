@@ -1,6 +1,6 @@
 <?php
 
-namespace Module\Authentication;
+namespace Module\Authentication\Libraries;
 
 use System\Drivers\SQLModelDriver;
 

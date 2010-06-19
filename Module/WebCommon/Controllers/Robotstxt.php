@@ -1,11 +1,11 @@
 <?php
 
-namespace Module\WebCommon;
+namespace Module\WebCommon\Controllers;
 
 use System\Libraries\OutputHeaders;
 use System\Libraries\Config;
-use Module\Language\Language;
-use Module\WebWiredoc\Components\ComponentLookup;
+use Module\Language\Libraries\Language;
+use Module\WebWiredoc\Libraries\Components\ComponentLookup;
 
 class Robotstxt
 {

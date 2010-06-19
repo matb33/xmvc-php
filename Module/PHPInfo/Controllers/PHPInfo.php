@@ -1,6 +1,6 @@
 <?php
 
-namespace Module\PHPInfo;
+namespace Module\PHPInfo\Controllers;
 
 use System\Libraries\Config;
 

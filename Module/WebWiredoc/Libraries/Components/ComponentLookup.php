@@ -1,6 +1,6 @@
 <?php
 
-namespace Module\WebWiredoc\Components;
+namespace Module\WebWiredoc\Libraries\Components;
 
 use System\Libraries\Config;
 use System\Drivers\XMLModelDriver;
@@ -8,8 +8,8 @@ use System\Libraries\FileSystem;
 use System\Libraries\Normalize;
 use System\Libraries\Routing;
 use System\Libraries\Singleton;
-use Module\Language\Language;
-use Module\Cache\Cache;
+use Module\Language\Libraries\Language;
+use Module\Cache\Libraries\Cache;
 
 class ComponentLookup extends Singleton
 {

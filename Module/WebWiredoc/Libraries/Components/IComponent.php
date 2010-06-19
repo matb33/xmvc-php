@@ -1,6 +1,6 @@
 <?php
 
-namespace Module\WebWiredoc\Components;
+namespace Module\WebWiredoc\Libraries\Components;
 
 interface IComponent
 {

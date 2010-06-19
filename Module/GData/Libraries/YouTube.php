@@ -1,6 +1,6 @@
 <?php
 
-namespace Module\GData;
+namespace Module\GData\Libraries;
 
 use System\Drivers\XMLModelDriver;
 
