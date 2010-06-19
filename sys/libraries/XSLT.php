@@ -2,7 +2,7 @@
 
 namespace xMVC\Sys;
 
-class XSL
+class XSLT
 {
 	private static $processor = null;
 	private static $XMLDocument = null;
@@ -155,7 +155,7 @@ class XSL
 			}
 		}
 
-		echo "<h1>XSL::DumpErrors</h1><pre>";
+		echo "<h1>XSLT::DumpErrors</h1><pre>";
 		print_r( $err );
 		echo "</pre>";
 

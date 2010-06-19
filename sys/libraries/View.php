@@ -111,7 +111,7 @@ class View
 		}
 		else
 		{
-			trigger_error( "Could not find any XML data (model) and/or XSL data (view) while loading view [" . $this->xslViewName . "]", E_USER_ERROR );
+			trigger_error( "Could not find any XML data (model) and/or XSLT data (view) while loading view [" . $this->xslViewName . "]", E_USER_ERROR );
 		}
 
 		return $result;
@@ -195,11 +195,11 @@ class View
 		{
 			if( $this->xslViewName != "" )
 			{
-				trigger_error( "XSL view name [" . $this->xslViewName . "] not found", E_USER_ERROR );
+				trigger_error( "XSLT view name [" . $this->xslViewName . "] not found", E_USER_ERROR );
 			}
 			else
 			{
-				trigger_error( "XSL view file [" . $this->xslViewFile . "] not found", E_USER_ERROR );
+				trigger_error( "XSLT view file [" . $this->xslViewFile . "] not found", E_USER_ERROR );
 			}
 		}
 
@@ -269,7 +269,7 @@ class View
 
 	private function Transform()
 	{
-		$result = XSL::Transform( $this->GetXMLData(), $this->GetXSLData(), dirname( $this->xslViewFile ) );
+		$result = XSLT::Transform( $this->GetXMLData(), $this->GetXSLData(), dirname( $this->xslViewFile ) );
 
 		return $result;
 	}
