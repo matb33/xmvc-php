@@ -4,5 +4,5 @@ use System\Libraries\Config;
 
 if( !Config::$data[ "isProduction" ] )
 {
-	$routes[ "/^\/phpinfo/" ] = "xMVC\\Mod\\Phpinfo\\Phpinfo";
+	$routes[ "/^\/phpinfo/" ] = "Module\\Phpinfo\\Controllers\\Phpinfo";
 }
