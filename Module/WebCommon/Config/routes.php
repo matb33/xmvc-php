@@ -1,4 +1,4 @@
 <?php
 
-$routes[ "|^/robots\.txt$|" ] = "xMVC\\Mod\\WebCommon\\Robotstxt";
-$routes[ "|^/sitemap-([A-Za-z-]+)\.xml$|" ] = "xMVC\\Mod\\WebCommon\\Sitemapxml/View/%1";
+$routes[ "|^/robots\.txt$|" ] = "Module\\WebCommon\\Controllers\\Robotstxt";
+$routes[ "|^/sitemap-([A-Za-z-]+)\.xml$|" ] = "Module\\WebCommon\\Controllers\\Sitemapxml/View/%1";
