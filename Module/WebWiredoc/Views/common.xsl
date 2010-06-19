@@ -5,7 +5,7 @@
 	xmlns:xhtml="http://www.w3.org/1999/xhtml"
 	xmlns="http://www.w3.org/1999/xhtml">
 
-	<xsl:include href="../../../sys/views/error.xsl" />
+	<xsl:include href="../../../System/Views/error.xsl" />
 
 	<!-- Global utility templates -->
 
