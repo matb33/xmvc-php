@@ -8,7 +8,7 @@ class Favicon
 
 	public function Index()
 	{
-		$this->favIconFolder =  "./app/inc/images/";
+		$this->favIconFolder =  "./Application/inc/images/";
 		$this->Ico();
 	}
 
