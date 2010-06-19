@@ -2,8 +2,8 @@
 
 namespace xMVC\Mod\WebCommon;
 
-use System\Libraries\OutputHeaders;
-use System\Libraries\Config;
+use xMVC\Sys\OutputHeaders;
+use xMVC\Sys\Config;
 use xMVC\Mod\Language\Language;
 use xMVC\Mod\WebWiredoc\Components\ComponentLookup;
 

@@ -2,9 +2,9 @@
 
 namespace xMVC\Mod\WireKit;
 
-use System\Libraries\ModelDriver;
-use System\Libraries\IModelDriver;
-use System\Libraries\Config;
+use xMVC\Sys\ModelDriver;
+use xMVC\Sys\IModelDriver;
+use xMVC\Sys\Config;
 use xMVC\Mod\Language\Language;
 use xMVC\Mod\WireKit\Components\ComponentLookup;
 use xMVC\Mod\WireKit\Components\ComponentUtils;

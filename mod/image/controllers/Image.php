@@ -2,8 +2,8 @@
 
 namespace xMVC\Mod\Image;
 
-use System\Libraries\Config;
-use System\Libraries\FileSystem;
+use xMVC\Sys\Config;
+use xMVC\Sys\FileSystem;
 use xMVC\Mod\Utils\StringUtils;
 use xMVC\Mod\Cache\Cache;
 

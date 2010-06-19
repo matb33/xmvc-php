@@ -2,7 +2,7 @@
 
 namespace xMVC\Mod\GData;
 
-use System\Drivers\XMLModelDriver;
+use xMVC\Sys\XMLModelDriver;
 
 class YouTube
 {

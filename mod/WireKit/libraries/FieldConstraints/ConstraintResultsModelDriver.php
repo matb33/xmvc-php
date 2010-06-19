@@ -2,9 +2,9 @@
 
 namespace xMVC\Mod\WireKit\FieldConstraints;
 
-use System\Libraries\ModelDriver;
-use System\Libraries\IModelDriver;
-use System\Libraries\Config;
+use xMVC\Sys\ModelDriver;
+use xMVC\Sys\IModelDriver;
+use xMVC\Sys\Config;
 
 class ConstraintResultsModelDriver extends ModelDriver implements IModelDriver
 {

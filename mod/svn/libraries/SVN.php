@@ -2,9 +2,9 @@
 
 namespace xMVC\Mod\SVN;
 
-use System\Libraries\Config;
-use System\Libraries\FileSystem;
-use System\Libraries\Debug;
+use xMVC\Sys\Config;
+use xMVC\Sys\FileSystem;
+use xMVC\Sys\Debug;
 
 class SVN
 {

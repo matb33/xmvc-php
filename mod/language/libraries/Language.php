@@ -2,8 +2,8 @@
 
 namespace xMVC\Mod\Language;
 
-use System\Libraries\Loader;
-use System\Drivers\XMLModelDriver;
+use xMVC\Sys\Loader;
+use xMVC\Sys\XMLModelDriver;
 
 class Language
 {

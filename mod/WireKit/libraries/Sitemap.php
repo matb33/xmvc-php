@@ -2,12 +2,12 @@
 
 namespace xMVC\Mod\WireKit;
 
-use System\Libraries\Routing;
-use System\Libraries\OutputHeaders;
-use System\Drivers\XMLModelDriver;
-use System\Libraries\Config;
-use System\Libraries\Normalize;
-use System\Libraries\Singleton;
+use xMVC\Sys\Routing;
+use xMVC\Sys\OutputHeaders;
+use xMVC\Sys\XMLModelDriver;
+use xMVC\Sys\Config;
+use xMVC\Sys\Normalize;
+use xMVC\Sys\Singleton;
 use xMVC\Mod\Language\Language;
 use xMVC\Mod\Utils\StringUtils;
 use xMVC\Mod\WireKit\Components\ComponentLookup;

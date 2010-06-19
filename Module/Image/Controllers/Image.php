@@ -1,0 +1,79 @@
+<?php
+
+namespace Module\Image;
+
+use System\Libraries\Config;
+use System\Libraries\FileSystem;
+use Module\Utils\StringUtils;
+use Module\Cache\Cache;
+
+class Image
+{
+	public function Resize()
+	{
+		$args = func_get_args();
+
+		$width = array_shift( $args );
+		$height = array_shift( $args );
+		$force = false;
+
+		if( $args[ count( $args ) - 1 ] == "force" )
+		{
+			$force = true;
+			array_pop( $args );
+		}
+
+		$imagePath = implode( "/", $args );
+		$imageFile = StringUtils::ReplaceTokensInPattern( Config::$data[ "imageProcessorFolderPattern" ], array( "image" => $imagePath ) );
+
+		if( $this->VerifyResizeParameters( $width, $height, $imageFile ) )
+		{
+			$this->ResizeImage( $width, $height, $imageFile, $force );
+		}
+		else
+		{
+			trigger_error( "Incorrect parameters or invalid image file.", E_USER_ERROR );
+		}
+	}
+
+	private function VerifyResizeParameters( $width, $height, $imageFile )
+	{
+		$widthTest = ( ( int )$width > 0 || $width == "auto" );
+		$heightTest = ( ( int )$height > 0 || $height == "auto" );
+		$imageFileTest = file_exists( $imageFile );
+
+		return $widthTest && $heightTest && $imageFileTest;
+	}
+
+	private function ResizeImage( $width, $height, $imageFile, $force )
+	{
+		list( $fullSizeWidth, $fullSizeHeight, $mimeType, $lastModified, $basename, $filename, $extension ) = ImageProcessor::GetImageData( $imageFile );
+		list( $newWidth, $newHeight ) = ImageProcessor::DetermineNewWidthAndHeight( $width, $height, $fullSizeWidth, $fullSizeHeight );
+
+		$cacheID = $newWidth . "x" . $newHeight . "-" . $fullSizeWidth . "x" . $fullSizeHeight . "-" . $imageFile . "-" . $lastModified;
+		$cacheFile = StringUtils::ReplaceTokensInPattern( Config::$data[ "imageCacheFilePattern" ], array( "basename" => $basename, "filename" => $filename, "hash" => md5( $cacheID ), "extension" => $extension ) );
+
+		if( file_exists( $cacheFile ) && !$force )
+		{
+			$image = $cacheFile;
+		}
+		else
+		{
+			if( $newWidth == $fullSizeWidth && $newHeight == $fullSizeHeight )
+			{
+				$image = $imageFile;
+			}
+			else
+			{
+				$image = ImageProcessor::Resize( $width, $height, $imageFile );
+
+				if( Cache::PrepCacheFolder( $cacheFile, false ) )
+				{
+					ImageProcessor::WriteImage( $image, $mimeType, $cacheFile );
+				}
+			}
+		}
+
+		ImageProcessor::OutputImage( $image, $mimeType );
+	}
+}

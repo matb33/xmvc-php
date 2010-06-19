@@ -2,7 +2,7 @@
 
 namespace xMVC\Mod\WebWiredoc\FieldConstraints;
 
-use System\Libraries\Config;
+use xMVC\Sys\Config;
 
 class Constraint
 {
