@@ -2,8 +2,8 @@
 
 namespace xMVC\Mod\Flattener;
 
-use xMVC\Sys\Config;
-use xMVC\Sys\FileSystem;
+use System\Libraries\Config;
+use System\Libraries\FileSystem;
 
 class WGet
 {

@@ -2,9 +2,9 @@
 
 namespace xMVC\Mod\WebWiredoc\FieldConstraints;
 
-use xMVC\Sys\ModelDriver;
-use xMVC\Sys\IModelDriver;
-use xMVC\Sys\Config;
+use System\Libraries\ModelDriver;
+use System\Libraries\IModelDriver;
+use System\Libraries\Config;
 
 class ConstraintResultsModelDriver extends ModelDriver implements IModelDriver
 {

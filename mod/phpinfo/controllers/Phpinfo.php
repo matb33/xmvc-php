@@ -2,7 +2,7 @@
 
 namespace xMVC\Mod\Phpinfo;
 
-use xMVC\Sys\Config;
+use System\Libraries\Config;
 
 class Phpinfo
 {

@@ -2,10 +2,10 @@
 
 namespace xMVC\Mod\TinyAuth;
 
-use xMVC\Sys\Loader;
-use xMVC\Sys\StringsModelDriver;
-use xMVC\Sys\SQLModelDriver;
-use xMVC\Sys\View;
+use System\Libraries\Loader;
+use System\Drivers\StringsModelDriver;
+use System\Drivers\SQLModelDriver;
+use System\Libraries\View;
 
 @session_start();
 

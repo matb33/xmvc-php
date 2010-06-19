@@ -2,8 +2,8 @@
 
 namespace xMVC\Mod\WireKit;
 
-use xMVC\Sys\FileSystem;
-use xMVC\Sys\Config;
+use System\Libraries\FileSystem;
+use System\Libraries\Config;
 
 class Combiner
 {
@@ -27,7 +27,7 @@ class Combiner
 
 		return $publicFilename;
 	}
-	
+
 	public static function CombineStylesheetLinks( $media, $linkNodes )
 	{
 		$fileIDs = array();
@@ -41,12 +41,12 @@ class Combiner
 		$hash = md5( implode( " ", $fileIDs ) );
 		$outputFilename = Config::$data[ "combinerCachePhysicalFolder" ] . "link-" . $media . "-" . $hash . ".css";
 		$publicFilename = Config::$data[ "combinerCacheWebFolder" ] . "link-" . $media . "-" . $hash . ".css";
-		
+
 		self::CombineFiles( $outputFilename, $filenames );
 
 		return $publicFilename;
 	}
-	
+
 	private static function CombineFiles( $outputFilename, $filenamesArray )
 	{
 		if( !FileSystem::FileExists( $outputFilename ) )

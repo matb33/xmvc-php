@@ -2,7 +2,7 @@
 
 namespace xMVC\Mod\WireKit\FieldConstraints;
 
-use xMVC\Sys\Config;
+use System\Libraries\Config;
 
 class Constraint
 {

@@ -2,10 +2,10 @@
 
 namespace xMVC\Mod\Authentication;
 
-use xMVC\Sys\Core;
-use xMVC\Sys\ModelDriver;
-use xMVC\Sys\IModelDriver;
-use xMVC\Sys\Config;
+use System\Libraries\Core;
+use System\Libraries\ModelDriver;
+use System\Libraries\IModelDriver;
+use System\Libraries\Config;
 
 class AuthenticationModelDriver extends ModelDriver implements IModelDriver
 {

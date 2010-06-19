@@ -2,7 +2,7 @@
 
 namespace xMVC\Mod\Utils;
 
-use xMVC\Sys\Core;
+use System\Libraries\Core;
 
 class DOMUtils
 {

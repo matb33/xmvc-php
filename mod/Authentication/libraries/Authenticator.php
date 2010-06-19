@@ -2,7 +2,7 @@
 
 namespace xMVC\Mod\Authentication;
 
-use xMVC\Sys\SQLModelDriver;
+use System\Drivers\SQLModelDriver;
 
 class Authenticator
 {
