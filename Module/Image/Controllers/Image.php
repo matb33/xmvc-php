@@ -6,6 +6,7 @@ use System\Libraries\Config;
 use System\Libraries\FileSystem;
 use Module\Utils\Libraries\StringUtils;
 use Module\Cache\Libraries\Cache;
+use Module\Image\Libraries\ImageProcessor;
 
 class Image
 {
