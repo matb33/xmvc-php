@@ -1,6 +1,6 @@
 <?php
 
-namespace Module\WebCommon;
+namespace Module\WebCommon\Libraries;
 
 use System\Libraries\Routing;
 use System\Libraries\OutputHeaders;
@@ -8,9 +8,9 @@ use System\Drivers\XMLModelDriver;
 use System\Libraries\Config;
 use System\Libraries\Normalize;
 use System\Libraries\Singleton;
-use Module\Language\Language;
-use Module\Utils\StringUtils;
-use Module\WebWiredoc\Components\ComponentLookup;
+use Module\Language\Libraries\Language;
+use Module\Utils\Libraries\StringUtils;
+use Module\WebWiredoc\Libraries\Components\ComponentLookup;
 
 class Sitemap extends Singleton
 {
