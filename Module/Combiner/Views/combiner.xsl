@@ -18,8 +18,14 @@
 
 	<xsl:template name="override-meta-script">
 		<xsl:variable name="meta-script-nodes" select="//meta:script[ @type='text/javascript' and @href and php:function( 'Module\Language\Libraries\Language::XSLTLang', $lang, (ancestor-or-self::*/@xml:lang)[last()] ) ]" />
+		<xsl:variable name="meta-inlinescript-nodes" select="//meta:script[ @type='text/javascript' and text() and php:function( 'Module\Language\Libraries\Language::XSLTLang', $lang, (ancestor-or-self::*/@xml:lang)[last()] ) ]" />
 		<xsl:variable name="script-src" select="php:function( 'Module\Combiner\Libraries\Combiner::CombineJavaScripts', $meta-script-nodes )" />
 		<script type="text/javascript" src="{ $script-src }" />
+		<xsl:if test="$meta-inlinescript-nodes">
+			<script type="text/javascript"><xsl:comment>
+				<xsl:for-each select="$meta-inlinescript-nodes"><xsl:value-of select="text()" /></xsl:for-each>
+			</xsl:comment></script>
+		</xsl:if>
 	</xsl:template>
 
 </xsl:stylesheet>
