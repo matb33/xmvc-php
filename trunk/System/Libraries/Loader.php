@@ -24,27 +24,36 @@ class Loader
 	{
 		$name = self::AssignDefaultNamespace( $name );
 
-		NamespaceMap::SetName( $name );
-		NamespaceMap::SetFolder( $folder );
-		NamespaceMap::RewindIterator();
+		$directlyMappedFilename = $name . "." . $extension;
 
-		foreach( NamespaceMap::Iterate() as $mappedFile )
+		if( file_exists( $directlyMappedFilename ) )
 		{
-			$file = Normalize::Filename( $mappedFile ) . "." . $extension;
-			$file = realpath( $file );
+			return realpath( $directlyMappedFilename );
+		}
+		else
+		{
+			NamespaceMap::SetName( $name );
+			NamespaceMap::SetFolder( $folder );
+			NamespaceMap::RewindIterator();
 
-			if( $file === false )
+			foreach( NamespaceMap::Iterate() as $mappedFile )
 			{
-				$file = Normalize::Filename( $mappedFile );
+				$file = Normalize::Filename( $mappedFile ) . "." . $extension;
 				$file = realpath( $file );
-			}
 
-			if( $file !== false )
-			{
-				$dirName = Normalize::Path( dirname( $file ) );
-				$name = basename( $file );
+				if( $file === false )
+				{
+					$file = Normalize::Filename( $mappedFile );
+					$file = realpath( $file );
+				}
 
-				return $dirName . $name;
+				if( $file !== false )
+				{
+					$dirName = Normalize::Path( dirname( $file ) );
+					$name = basename( $file );
+
+					return $dirName . $name;
+				}
 			}
 		}
 

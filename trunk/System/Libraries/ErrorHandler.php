@@ -2,6 +2,9 @@
 
 namespace System\Libraries;
 
+use System\Drivers\XMLModelDriver;
+use System\Drivers\StringsModelDriver;
+
 class ErrorHandler
 {
 	private static $oldErrorHandler;
