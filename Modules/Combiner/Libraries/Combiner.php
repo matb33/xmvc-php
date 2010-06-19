@@ -1,6 +1,6 @@
 <?php
 
-namespace Module\Combiner\Libraries;
+namespace Modules\Combiner\Libraries;
 
 use System\Libraries\FileSystem;
 use System\Libraries\Config;

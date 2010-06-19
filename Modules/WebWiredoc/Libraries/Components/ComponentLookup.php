@@ -1,6 +1,6 @@
 <?php
 
-namespace Module\WebWiredoc\Libraries\Components;
+namespace Modules\WebWiredoc\Libraries\Components;
 
 use System\Libraries\Config;
 use System\Drivers\XMLModelDriver;
@@ -8,8 +8,8 @@ use System\Libraries\FileSystem;
 use System\Libraries\Normalize;
 use System\Libraries\Routing;
 use System\Libraries\Singleton;
-use Module\Language\Libraries\Language;
-use Module\Cache\Libraries\Cache;
+use Modules\Language\Libraries\Language;
+use Modules\Cache\Libraries\Cache;
 
 class ComponentLookup extends Singleton
 {
@@ -313,7 +313,7 @@ class ComponentLookup extends Singleton
 	public function GetPathByFullyQualifiedNameAndLanguage( $fullyQualifiedName, $lang, $index = 0 )
 	{
 		$lookupModel = $this->Get();
-		$URINodeList = $lookupModel->xPath->query( "//lookup:entry[ lookup:fully-qualified-name = '" . $fullyQualifiedName . "' ]/lookup:href[ php:function( 'Module\Language\Libraries\Language::XSLTLang', '" . $lang . "', (ancestor-or-self::*/@xml:lang)[last()] ) ]/lookup:uri" );
+		$URINodeList = $lookupModel->xPath->query( "//lookup:entry[ lookup:fully-qualified-name = '" . $fullyQualifiedName . "' ]/lookup:href[ php:function( 'Modules\Language\Libraries\Language::XSLTLang', '" . $lang . "', (ancestor-or-self::*/@xml:lang)[last()] ) ]/lookup:uri" );
 		$path = $URINodeList->length > 0 ? $URINodeList->item( $index )->nodeValue : "";
 
 		return $path;

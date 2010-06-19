@@ -1,3 +1,3 @@
 <?php
 
-$lowPriorityRoutes[ "|^/(.*)$|" ] = "Module\\WebWiredoc\\Controllers\\Processor/Page/%1";
+$lowPriorityRoutes[ "|^/(.*)$|" ] = "Modules\\WebWiredoc\\Controllers\\Processor/Page/%1";

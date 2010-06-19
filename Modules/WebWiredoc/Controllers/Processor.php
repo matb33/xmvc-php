@@ -1,6 +1,6 @@
 <?php
 
-namespace Module\WebWiredoc\Controllers;
+namespace Modules\WebWiredoc\Controllers;
 
 use System\Libraries\Core;
 use System\Libraries\Routing;
@@ -15,12 +15,12 @@ use System\Libraries\Delegate;
 use System\Libraries\Events\Event;
 use System\Libraries\Events\DefaultEventDispatcher;
 
-use Module\Language\Libraries\Language;
-use Module\Utils\Libraries\StringUtils;
-use Module\WebWiredoc\Libraries\Components\ComponentLookup;
-use Module\WebWiredoc\Libraries\Components\ComponentFactory;
-use Module\WebWiredoc\Libraries\Components\ComponentUtils;
-use Module\WebWiredoc\Drivers\HierarchyModelDriver;
+use Modules\Language\Libraries\Language;
+use Modules\Utils\Libraries\StringUtils;
+use Modules\WebWiredoc\Libraries\Components\ComponentLookup;
+use Modules\WebWiredoc\Libraries\Components\ComponentFactory;
+use Modules\WebWiredoc\Libraries\Components\ComponentUtils;
+use Modules\WebWiredoc\Drivers\HierarchyModelDriver;
 
 class Processor
 {

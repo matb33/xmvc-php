@@ -1,6 +1,6 @@
 <?php
 
-namespace Module\WebWiredoc\Libraries\FieldConstraints;
+namespace Modules\WebWiredoc\Libraries\FieldConstraints;
 
 use System\Libraries\Config;
 

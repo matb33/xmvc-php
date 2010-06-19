@@ -1,6 +1,6 @@
 <?php
 
-namespace Module\SVN\Libraries;
+namespace Modules\SVN\Libraries;
 
 use System\Libraries\Config;
 use System\Libraries\Debug;

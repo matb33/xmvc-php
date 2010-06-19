@@ -1,6 +1,6 @@
 <?php
 
-namespace Module\Image\Libraries;
+namespace Modules\Image\Libraries;
 
 class ImageProcessor
 {

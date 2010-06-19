@@ -1,9 +1,9 @@
 <?php
 
-namespace Module\Utils\Libraries;
+namespace Modules\Utils\Libraries;
 
 use System\Libraries\Loader;
-use Module\Language\Libraries\Language;
+use Modules\Language\Libraries\Language;
 
 class StringUtils
 {

@@ -1,11 +1,11 @@
 <?php
 
-namespace Module\Cache\Libraries;
+namespace Modules\Cache\Libraries;
 
 use System\Libraries\FileSystem;
 use System\Drivers\XMLModelDriver;
 use System\Libraries\Normalize;
-use Module\Utils\Libraries\StringUtils;
+use Modules\Utils\Libraries\StringUtils;
 
 class Cache
 {

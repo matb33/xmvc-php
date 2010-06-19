@@ -1,6 +1,6 @@
 <?php
 
-namespace Module\WebWiredoc\Libraries\Components;
+namespace Modules\WebWiredoc\Libraries\Components;
 
 use System\Libraries\Events\DefaultEventDispatcher;
 use System\Libraries\Delegate;
@@ -11,8 +11,8 @@ use System\Libraries\Loader;
 use System\Libraries\Normalize;
 use System\Libraries\View;
 use System\Drivers\XMLModelDriver;
-use Module\Cache\Libraries\Cache;
-use Module\Utils\Libraries\StringUtils;
+use Modules\Cache\Libraries\Cache;
+use Modules\Utils\Libraries\StringUtils;
 
 abstract class Component extends DefaultEventDispatcher
 {
