@@ -39,7 +39,7 @@ class Sitemap extends Singleton
 		$urlsetNode = $sitemapModel->createElementNS( Config::$data[ "sitemapNamespace" ], "urlset" );
 		$sitemapModel->xPath->query( "/xmvc:root" )->item( 0 )->appendChild( $urlsetNode );
 
-		foreach( $lookupModel->xPath->query( "//lookup:entry/lookup:href[ php:function( 'Module\Language\Language::XSLTLang', '" . $lang . "', (ancestor-or-self::*/@xml:lang)[last()] ) and lookup:private = '0' ]" ) as $hrefNode )
+		foreach( $lookupModel->xPath->query( "//lookup:entry/lookup:href[ php:function( 'Module\Language\Libraries\Language::XSLTLang', '" . $lang . "', (ancestor-or-self::*/@xml:lang)[last()] ) and lookup:private = '0' ]" ) as $hrefNode )
 		{
 			$urlNode = $sitemapModel->createElementNS( Config::$data[ "sitemapNamespace" ], "url" );
 			$urlsetNode->appendChild( $urlNode );
