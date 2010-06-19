@@ -1,6 +1,6 @@
 <?php
 
-namespace Module\WebWiredoc\Libraries\Components;
+namespace Modules\WebWiredoc\Libraries\Components;
 
 use System\Libraries\Delegate;
 use System\Libraries\Events\Event;
@@ -9,8 +9,8 @@ use System\Libraries\Config;
 use System\Libraries\Events\DefaultEventDispatcher;
 use System\Libraries\Routing;
 use System\Libraries\Normalize;
-use Module\Utils\Libraries\DOMUtils;
-use Module\Language\Libraries\Language;
+use Modules\Utils\Libraries\DOMUtils;
+use Modules\Language\Libraries\Language;
 
 class ComponentFactory extends DefaultEventDispatcher
 {

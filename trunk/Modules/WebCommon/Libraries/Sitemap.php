@@ -1,6 +1,6 @@
 <?php
 
-namespace Module\WebCommon\Libraries;
+namespace Modules\WebCommon\Libraries;
 
 use System\Libraries\Routing;
 use System\Libraries\OutputHeaders;
@@ -8,9 +8,9 @@ use System\Drivers\XMLModelDriver;
 use System\Libraries\Config;
 use System\Libraries\Normalize;
 use System\Libraries\Singleton;
-use Module\Language\Libraries\Language;
-use Module\Utils\Libraries\StringUtils;
-use Module\WebWiredoc\Libraries\Components\ComponentLookup;
+use Modules\Language\Libraries\Language;
+use Modules\Utils\Libraries\StringUtils;
+use Modules\WebWiredoc\Libraries\Components\ComponentLookup;
 
 class Sitemap extends Singleton
 {
@@ -39,7 +39,7 @@ class Sitemap extends Singleton
 		$urlsetNode = $sitemapModel->createElementNS( Config::$data[ "sitemapNamespace" ], "urlset" );
 		$sitemapModel->xPath->query( "/xmvc:root" )->item( 0 )->appendChild( $urlsetNode );
 
-		foreach( $lookupModel->xPath->query( "//lookup:entry/lookup:href[ php:function( 'Module\Language\Libraries\Language::XSLTLang', '" . $lang . "', (ancestor-or-self::*/@xml:lang)[last()] ) and lookup:private = '0' ]" ) as $hrefNode )
+		foreach( $lookupModel->xPath->query( "//lookup:entry/lookup:href[ php:function( 'Modules\Language\Libraries\Language::XSLTLang', '" . $lang . "', (ancestor-or-self::*/@xml:lang)[last()] ) and lookup:private = '0' ]" ) as $hrefNode )
 		{
 			$urlNode = $sitemapModel->createElementNS( Config::$data[ "sitemapNamespace" ], "url" );
 			$urlsetNode->appendChild( $urlNode );

@@ -1,6 +1,6 @@
 <?php
 
-namespace Module\Language\Libraries;
+namespace Modules\Language\Libraries;
 
 use System\Libraries\Loader;
 use System\Drivers\XMLModelDriver;
@@ -12,7 +12,7 @@ class Language
 	private static $data = null;
 
 	const languageConfig = "xMVC\\App\\languages";
-	const languageConfigDefault = "Module\\Language\\Models\\languages.default";
+	const languageConfigDefault = "Modules\\Language\\Models\\languages.default";
 
 	public static function GetLang()
 	{

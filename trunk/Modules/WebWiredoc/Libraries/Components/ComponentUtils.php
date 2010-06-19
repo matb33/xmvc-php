@@ -1,6 +1,6 @@
 <?php
 
-namespace Module\WebWiredoc\Libraries\Components;
+namespace Modules\WebWiredoc\Libraries\Components;
 
 use System\Libraries\Loader;
 use System\Libraries\Config;

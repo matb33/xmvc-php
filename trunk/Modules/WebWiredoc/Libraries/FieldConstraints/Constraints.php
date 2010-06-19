@@ -1,8 +1,8 @@
 <?php
 
-namespace Module\WebWiredoc\Libraries\FieldConstraints;
+namespace Modules\WebWiredoc\Libraries\FieldConstraints;
 
-use Module\Language\Libraries\Language;
+use Modules\Language\Libraries\Language;
 
 class Constraints
 {

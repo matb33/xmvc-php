@@ -1,13 +1,13 @@
 <?php
 
-namespace Module\WebWiredoc\Drivers;
+namespace Modules\WebWiredoc\Drivers;
 
 use System\Libraries\ModelDriver;
 use System\Libraries\IModelDriver;
 use System\Libraries\Config;
-use Module\Language\Libraries\Language;
-use Module\WebWiredoc\Libraries\Components\ComponentLookup;
-use Module\WebWiredoc\Libraries\Components\ComponentUtils;
+use Modules\Language\Libraries\Language;
+use Modules\WebWiredoc\Libraries\Components\ComponentLookup;
+use Modules\WebWiredoc\Libraries\Components\ComponentUtils;
 
 class HierarchyModelDriver extends ModelDriver implements IModelDriver
 {
@@ -64,7 +64,7 @@ class HierarchyModelDriver extends ModelDriver implements IModelDriver
 
 	private function AddHierarchyEntry( $node )
 	{
-		$URINodeList = $this->lookupModel->xPath->query( "lookup:href[ php:function( 'Module\Language\Libraries\Language::XSLTLang', '" . Language::GetLang() . "', (ancestor-or-self::*/@xml:lang)[last()] ) ]/lookup:uri", $node );
+		$URINodeList = $this->lookupModel->xPath->query( "lookup:href[ php:function( 'Modules\Language\Libraries\Language::XSLTLang', '" . Language::GetLang() . "', (ancestor-or-self::*/@xml:lang)[last()] ) ]/lookup:uri", $node );
 
 		if( $URINodeList->length > 0 )
 		{

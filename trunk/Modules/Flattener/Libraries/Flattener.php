@@ -1,6 +1,6 @@
 <?php
 
-namespace Module\Flattener\Libraries;
+namespace Modules\Flattener\Libraries;
 
 use System\Libraries\FileSystem;
 
