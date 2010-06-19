@@ -87,7 +87,7 @@ class Combiner
 
 	private static function GetPhysicalPath( $filename )
 	{
-		$combinerRewriteAdaptors = array( "|^[/]?(.+)/inc/(.*)|" => "./Module/$1/inc/$2", "|^[/]?inc/(.*)$|"  => "./app/inc/$1");
+		$combinerRewriteAdaptors = Config::$data[ "combinerRewriteAdaptors" ];
 
 		foreach( $combinerRewriteAdaptors as $pattern => $replacement )
 		{
