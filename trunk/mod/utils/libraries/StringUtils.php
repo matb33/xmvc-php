@@ -2,7 +2,7 @@
 
 namespace xMVC\Mod\Utils;
 
-use System\Libraries\Loader;
+use xMVC\Sys\Loader;
 use xMVC\Mod\Language\Language;
 
 class StringUtils

@@ -1,6 +1,6 @@
 <?php
 
-use System\Libraries\Config;
+use xMVC\Sys\Config;
 
 if( !Config::$data[ "isProduction" ] )
 {

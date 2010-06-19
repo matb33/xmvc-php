@@ -2,9 +2,9 @@
 
 namespace xMVC\Mod\Cache;
 
-use System\Libraries\FileSystem;
-use System\Drivers\XMLModelDriver;
-use System\Libraries\Normalize;
+use xMVC\Sys\FileSystem;
+use xMVC\Sys\XMLModelDriver;
+use xMVC\Sys\Normalize;
 use xMVC\Mod\Utils\StringUtils;
 
 class Cache

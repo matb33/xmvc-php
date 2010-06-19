@@ -2,8 +2,8 @@
 
 namespace xMVC\Mod\SVN;
 
-use System\Libraries\Config;
-use System\Libraries\Debug;
+use xMVC\Sys\Config;
+use xMVC\Sys\Debug;
 
 class SVNErrors
 {

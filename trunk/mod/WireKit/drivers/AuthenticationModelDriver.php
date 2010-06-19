@@ -2,10 +2,10 @@
 
 namespace xMVC\Mod\WireKit;
 
-use System\Libraries\Core;
-use System\Libraries\ModelDriver;
-use System\Libraries\IModelDriver;
-use System\Libraries\Config;
+use xMVC\Sys\Core;
+use xMVC\Sys\ModelDriver;
+use xMVC\Sys\IModelDriver;
+use xMVC\Sys\Config;
 use xMVC\Mod\WireKit\Authenticator;
 
 class AuthenticationModelDriver extends ModelDriver implements IModelDriver

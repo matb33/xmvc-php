@@ -2,7 +2,7 @@
 
 namespace xMVC\Mod\Flattener;
 
-use System\Libraries\FileSystem;
+use xMVC\Sys\FileSystem;
 
 class Flattener
 {

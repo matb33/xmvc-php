@@ -2,8 +2,8 @@
 
 namespace xMVC\Mod\Combiner;
 
-use System\Libraries\FileSystem;
-use System\Libraries\Config;
+use xMVC\Sys\FileSystem;
+use xMVC\Sys\Config;
 
 class Combiner
 {
