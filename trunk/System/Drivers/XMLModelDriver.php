@@ -114,7 +114,7 @@ class XMLModelDriver extends ModelDriver implements IModelDriver
 
 	private function LoadXMLFromModel( $modelName, $namespace, $data )
 	{
-		$modelName = Loader::AssignDefaultNamespace( $modelName, $namespace );
+		$modelName = Loader::AssignDefaultNamespace( $modelName, $namespace, Loader::modelFolder );
 
 		if( ( $xmlModelFile = Loader::Resolve( Loader::modelFolder, $modelName, Loader::modelExtension ) ) !== false )
 		{

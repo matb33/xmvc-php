@@ -73,7 +73,7 @@ class Core
 
 			Routing::Route( $routeAsURI . Routing::URI(), true );
 
-			self::$controllerName = Loader::AssignDefaultNamespace( self::GetRoutedController(), $originalNamespace );
+			self::$controllerName = Loader::AssignDefaultNamespace( self::GetRoutedController(), $originalNamespace, Loader::controllerFolder );
 			self::$controllerFile = Loader::Resolve( Loader::controllerFolder, self::$controllerName, Loader::controllerExtension );
 		}
 	}
@@ -151,7 +151,7 @@ class Core
 			$controller = Config::$data[ "defaultController" ];
 		}
 
-		$fullyQualifiedController = Loader::AssignDefaultNamespace( $controller );
+		$fullyQualifiedController = Loader::AssignDefaultNamespace( $controller, null, Loader::controllerFolder );
 
 		return $fullyQualifiedController;
 	}
