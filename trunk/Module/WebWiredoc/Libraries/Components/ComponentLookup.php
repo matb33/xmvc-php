@@ -313,7 +313,7 @@ class ComponentLookup extends Singleton
 	public function GetPathByFullyQualifiedNameAndLanguage( $fullyQualifiedName, $lang, $index = 0 )
 	{
 		$lookupModel = $this->Get();
-		$URINodeList = $lookupModel->xPath->query( "//lookup:entry[ lookup:fully-qualified-name = '" . $fullyQualifiedName . "' ]/lookup:href[ php:function( 'Module\Language\Language::XSLTLang', '" . $lang . "', (ancestor-or-self::*/@xml:lang)[last()] ) ]/lookup:uri" );
+		$URINodeList = $lookupModel->xPath->query( "//lookup:entry[ lookup:fully-qualified-name = '" . $fullyQualifiedName . "' ]/lookup:href[ php:function( 'Module\Language\Libraries\Language::XSLTLang', '" . $lang . "', (ancestor-or-self::*/@xml:lang)[last()] ) ]/lookup:uri" );
 		$path = $URINodeList->length > 0 ? $URINodeList->item( $index )->nodeValue : "";
 
 		return $path;
