@@ -2,9 +2,9 @@
 
 namespace xMVC\Mod\WireKit;
 
-use xMVC\Sys\FileSystem;
-use xMVC\Sys\XMLModelDriver;
-use xMVC\Sys\Normalize;
+use System\Libraries\FileSystem;
+use System\Drivers\XMLModelDriver;
+use System\Libraries\Normalize;
 use xMVC\Mod\Utils\StringUtils;
 
 class Cache
@@ -127,7 +127,7 @@ class Cache
 	private function ManuallyFormatXMLOutput( $input )
 	{
 		// Hack to get XML formatted, despite formatOutput being set in ModelDriver
-		
+
 		$xml = new \DOMDocument( "1.0", "UTF-8" );
 		$xml->preserveWhiteSpace = false;
 		$xml->formatOutput = true;

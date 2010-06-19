@@ -2,8 +2,8 @@
 
 namespace xMVC\Mod\SVN;
 
-use xMVC\Sys\Config;
-use xMVC\Sys\Debug;
+use System\Libraries\Config;
+use System\Libraries\Debug;
 
 class Svntest
 {

@@ -2,7 +2,7 @@
 
 namespace xMVC\Mod\Flattener;
 
-use xMVC\Sys\FileSystem;
+use System\Libraries\FileSystem;
 
 class FolderCopier
 {

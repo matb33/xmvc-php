@@ -2,10 +2,10 @@
 
 namespace xMVC\Mod\WireKit\Components;
 
-use xMVC\Sys\Loader;
-use xMVC\Sys\Config;
-use xMVC\Sys\Routing;
-use xMVC\Sys\Normalize;
+use System\Libraries\Loader;
+use System\Libraries\Config;
+use System\Libraries\Routing;
+use System\Libraries\Normalize;
 
 class ComponentUtils
 {

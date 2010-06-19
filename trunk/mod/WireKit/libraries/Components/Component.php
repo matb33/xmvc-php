@@ -2,15 +2,15 @@
 
 namespace xMVC\Mod\WireKit\Components;
 
-use xMVC\Sys\Events\DefaultEventDispatcher;
-use xMVC\Sys\Delegate;
-use xMVC\Sys\Events\Event;
-use xMVC\Sys\Config;
-use xMVC\Sys\Routing;
-use xMVC\Sys\Loader;
-use xMVC\Sys\Normalize;
-use xMVC\Sys\View;
-use xMVC\Sys\XMLModelDriver;
+use System\Libraries\Events\DefaultEventDispatcher;
+use System\Libraries\Delegate;
+use System\Libraries\Events\Event;
+use System\Libraries\Config;
+use System\Libraries\Routing;
+use System\Libraries\Loader;
+use System\Libraries\Normalize;
+use System\Libraries\View;
+use System\Drivers\XMLModelDriver;
 use xMVC\Mod\WireKit\Cache;
 use xMVC\Mod\Utils\StringUtils;
 

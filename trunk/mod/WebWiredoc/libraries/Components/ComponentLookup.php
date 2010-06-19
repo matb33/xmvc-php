@@ -2,12 +2,12 @@
 
 namespace xMVC\Mod\WebWiredoc\Components;
 
-use xMVC\Sys\Config;
-use xMVC\Sys\XMLModelDriver;
-use xMVC\Sys\FileSystem;
-use xMVC\Sys\Normalize;
-use xMVC\Sys\Routing;
-use xMVC\Sys\Singleton;
+use System\Libraries\Config;
+use System\Drivers\XMLModelDriver;
+use System\Libraries\FileSystem;
+use System\Libraries\Normalize;
+use System\Libraries\Routing;
+use System\Libraries\Singleton;
 use xMVC\Mod\Language\Language;
 use xMVC\Mod\Cache\Cache;
 
