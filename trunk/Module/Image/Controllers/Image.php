@@ -1,11 +1,11 @@
 <?php
 
-namespace Module\Image;
+namespace Module\Image\Controllers;
 
 use System\Libraries\Config;
 use System\Libraries\FileSystem;
-use Module\Utils\StringUtils;
-use Module\Cache\Cache;
+use Module\Utils\Libraries\StringUtils;
+use Module\Cache\Libraries\Cache;
 
 class Image
 {

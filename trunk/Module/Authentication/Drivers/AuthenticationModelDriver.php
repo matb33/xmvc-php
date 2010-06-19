@@ -1,6 +1,6 @@
 <?php
 
-namespace Module\Authentication;
+namespace Module\Authentication\Drivers;
 
 use System\Libraries\Core;
 use System\Libraries\ModelDriver;

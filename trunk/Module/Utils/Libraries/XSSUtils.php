@@ -1,6 +1,6 @@
 <?php
 
-namespace Module\Utils;
+namespace Module\Utils\Libraries;
 
 class XSSUtils
 {

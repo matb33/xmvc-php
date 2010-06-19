@@ -1,6 +1,6 @@
 <?php
 
-namespace Module\WebCommon;
+namespace Module\WebCommon\Controllers;
 
 class Sitemapxml
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Module\WebWiredoc\FieldConstraints;
+namespace Module\WebWiredoc\Libraries\FieldConstraints;
 
 use System\Libraries\ModelDriver;
 use System\Libraries\IModelDriver;

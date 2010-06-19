@@ -1,6 +1,6 @@
 <?php
 
-namespace Module\Language;
+namespace Module\Language\Libraries;
 
 use System\Libraries\Loader;
 use System\Drivers\XMLModelDriver;
