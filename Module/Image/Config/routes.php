@@ -1,3 +1,3 @@
 <?php
 
-$routes[ "/^\/image\/(.+)\/(.*)$/" ] = "xMVC\\Mod\\Image\\Image/%1/%2";
+$routes[ "/^\/image\/(.+)\/(.*)$/" ] = "Module\\Image\\Controllers\\Image/%1/%2";
