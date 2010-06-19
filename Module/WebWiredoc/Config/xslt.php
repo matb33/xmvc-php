@@ -1,3 +1,3 @@
 <?php
 
-$restrictXSLTPHPFunctions = array( "xMVC\\Mod\\Language\\Language::XSLTLang" );
+$restrictXSLTPHPFunctions = array( "Module\\Language\\Libraries\\Language::XSLTLang" );

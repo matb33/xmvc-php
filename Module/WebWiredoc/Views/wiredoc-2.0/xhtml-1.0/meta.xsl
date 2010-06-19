@@ -20,7 +20,7 @@
 	<xsl:template name="title">
 		<xsl:variable name="default-glue" select="' | '" />
 		<xsl:variable name="default-sort-order" select="'ascending'" />
-		<xsl:variable name="doc-title-set" select="//doc:title[ php:function( 'xMVC\Mod\Language\Language::XSLTLang', $lang, (ancestor-or-self::*/@xml:lang)[last()] ) ]" />
+		<xsl:variable name="doc-title-set" select="//doc:title[ php:function( 'Module\Language\Libraries\Language::XSLTLang', $lang, (ancestor-or-self::*/@xml:lang)[last()] ) ]" />
 		<xsl:if test="$doc-title-set">
 			<xsl:variable name="sort-order">
 				<xsl:choose>

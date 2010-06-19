@@ -16,7 +16,7 @@
 						<xsl:attribute name="value"><xsl:value-of select="//xmvc:strings/xmvc:*[ @key = $name ]" /></xsl:attribute>
 					</xsl:when>
 					<xsl:when test="wd:value">
-						<xsl:attribute name="value"><xsl:value-of select="wd:value[ php:function( 'xMVC\Mod\Language\Language::XSLTLang', $lang, (ancestor-or-self::*/@xml:lang)[last()] ) ]" /></xsl:attribute>
+						<xsl:attribute name="value"><xsl:value-of select="wd:value[ php:function( 'Module\Language\Libraries\Language::XSLTLang', $lang, (ancestor-or-self::*/@xml:lang)[last()] ) ]" /></xsl:attribute>
 					</xsl:when>
 				</xsl:choose>
 			</input>
@@ -35,7 +35,7 @@
 			<xsl:apply-templates select="wd:label[ not( @position ) or @position = 'before' ]" mode="lang-check" />
 			<textarea id="{ @name }" name="{ @name }" class="{ @name } { @type }" rows="{ @rows }" cols="{ @cols }"><xsl:choose>
 				<xsl:when test="//xmvc:strings/xmvc:*[ @key = $name ]"><xsl:value-of select="//xmvc:strings/xmvc:*[ @key = $name ]" /></xsl:when>
-				<xsl:when test="wd:value"><xsl:value-of select="wd:value[ php:function( 'xMVC\Mod\Language\Language::XSLTLang', $lang, (ancestor-or-self::*/@xml:lang)[last()] ) ]" /></xsl:when>
+				<xsl:when test="wd:value"><xsl:value-of select="wd:value[ php:function( 'Module\Language\Libraries\Language::XSLTLang', $lang, (ancestor-or-self::*/@xml:lang)[last()] ) ]" /></xsl:when>
 			</xsl:choose></textarea>
 			<xsl:apply-templates select="wd:label[ @position = 'after' ]" mode="lang-check" />
 			<xsl:apply-templates select="wd:info" mode="lang-check" />
@@ -45,8 +45,8 @@
 
 	<xsl:template match="wd:form//wd:field[ @type = 'submit' or @type = 'reset' or @type = 'button' ]" priority="0">
 		<input type="{ @type }" name="{ @name }" id="{ @name }" class="{ @name } { @type }">
-			<xsl:if test="wd:label[ php:function( 'xMVC\Mod\Language\Language::XSLTLang', $lang, (ancestor-or-self::*/@xml:lang)[last()] ) ]">
-				<xsl:attribute name="value"><xsl:value-of select="wd:label[ php:function( 'xMVC\Mod\Language\Language::XSLTLang', $lang, (ancestor-or-self::*/@xml:lang)[last()] ) ]" /></xsl:attribute>
+			<xsl:if test="wd:label[ php:function( 'Module\Language\Libraries\Language::XSLTLang', $lang, (ancestor-or-self::*/@xml:lang)[last()] ) ]">
+				<xsl:attribute name="value"><xsl:value-of select="wd:label[ php:function( 'Module\Language\Libraries\Language::XSLTLang', $lang, (ancestor-or-self::*/@xml:lang)[last()] ) ]" /></xsl:attribute>
 			</xsl:if>
 		</input>
 		<xsl:apply-templates select="wd:constraint" mode="lang-check" />
@@ -67,12 +67,12 @@
 			<xsl:apply-templates select="wd:label[ @position = 'before' ]" mode="lang-check" />
 			<input type="{ $type }" id="{ $name }-{ $position }" name="{ $name }[]" class="{ $name } { $type }">
 				<xsl:if test="wd:value">
-					<xsl:attribute name="value"><xsl:value-of select="wd:value[ php:function( 'xMVC\Mod\Language\Language::XSLTLang', $lang, (ancestor-or-self::*/@xml:lang)[last()] ) ]" /></xsl:attribute>
+					<xsl:attribute name="value"><xsl:value-of select="wd:value[ php:function( 'Module\Language\Libraries\Language::XSLTLang', $lang, (ancestor-or-self::*/@xml:lang)[last()] ) ]" /></xsl:attribute>
 					<xsl:choose>
 						<xsl:when test="wd:checked">
 							<xsl:attribute name="checked">checked</xsl:attribute>
 						</xsl:when>
-						<xsl:when test="contains( //xmvc:strings/xmvc:*[ @key = $name ], concat( '|', wd:value[ php:function( 'xMVC\Mod\Language\Language::XSLTLang', $lang, (ancestor-or-self::*/@xml:lang)[last()] ) ], '|' ) )">
+						<xsl:when test="contains( //xmvc:strings/xmvc:*[ @key = $name ], concat( '|', wd:value[ php:function( 'Module\Language\Libraries\Language::XSLTLang', $lang, (ancestor-or-self::*/@xml:lang)[last()] ) ], '|' ) )">
 							<xsl:attribute name="checked">checked</xsl:attribute>
 						</xsl:when>
 						<xsl:otherwise />
@@ -133,21 +133,21 @@
 			</xsl:attribute>
 			<xsl:apply-templates select="wd:label[ @position = 'before' ]" mode="lang-check" />
 			<xsl:if test="wd:value">
-				<xsl:attribute name="value"><xsl:value-of select="wd:value[ php:function( 'xMVC\Mod\Language\Language::XSLTLang', $lang, (ancestor-or-self::*/@xml:lang)[last()] ) ]" /></xsl:attribute>
+				<xsl:attribute name="value"><xsl:value-of select="wd:value[ php:function( 'Module\Language\Libraries\Language::XSLTLang', $lang, (ancestor-or-self::*/@xml:lang)[last()] ) ]" /></xsl:attribute>
 				<xsl:choose>
 					<xsl:when test="$type = 'select'">
 						<xsl:choose>
 							<xsl:when test="wd:selected">
 								<xsl:attribute name="selected">selected</xsl:attribute>
 							</xsl:when>
-							<xsl:when test="//xmvc:strings/xmvc:*[ @key = $name ] = wd:value[ php:function( 'xMVC\Mod\Language\Language::XSLTLang', $lang, (ancestor-or-self::*/@xml:lang)[last()] ) ]">
+							<xsl:when test="//xmvc:strings/xmvc:*[ @key = $name ] = wd:value[ php:function( 'Module\Language\Libraries\Language::XSLTLang', $lang, (ancestor-or-self::*/@xml:lang)[last()] ) ]">
 								<xsl:attribute name="selected">selected</xsl:attribute>
 							</xsl:when>
 							<xsl:otherwise />
 						</xsl:choose>
 					</xsl:when>
 					<xsl:otherwise>
-						<xsl:if test="contains( //xmvc:strings/xmvc:*[ @key = $name ], concat( '|', wd:value[ php:function( 'xMVC\Mod\Language\Language::XSLTLang', $lang, (ancestor-or-self::*/@xml:lang)[last()] ) ], '|' ) )">
+						<xsl:if test="contains( //xmvc:strings/xmvc:*[ @key = $name ], concat( '|', wd:value[ php:function( 'Module\Language\Libraries\Language::XSLTLang', $lang, (ancestor-or-self::*/@xml:lang)[last()] ) ], '|' ) )">
 							<xsl:attribute name="selected">selected</xsl:attribute>
 						</xsl:if>
 					</xsl:otherwise>
@@ -159,8 +159,8 @@
 
 	<xsl:template match="wd:form//wd:field//wd:option-group" priority="0">
 		<optgroup>
-			<xsl:if test="wd:label[ php:function( 'xMVC\Mod\Language\Language::XSLTLang', $lang, (ancestor-or-self::*/@xml:lang)[last()] ) ]">
-				<xsl:attribute name="label"><xsl:value-of select="wd:label[ php:function( 'xMVC\Mod\Language\Language::XSLTLang', $lang, (ancestor-or-self::*/@xml:lang)[last()] ) ]" /></xsl:attribute>
+			<xsl:if test="wd:label[ php:function( 'Module\Language\Libraries\Language::XSLTLang', $lang, (ancestor-or-self::*/@xml:lang)[last()] ) ]">
+				<xsl:attribute name="label"><xsl:value-of select="wd:label[ php:function( 'Module\Language\Libraries\Language::XSLTLang', $lang, (ancestor-or-self::*/@xml:lang)[last()] ) ]" /></xsl:attribute>
 			</xsl:if>
 			<xsl:apply-templates select="wd:*[ name() != 'wd:label' ]" mode="lang-check" />
 		</optgroup>
