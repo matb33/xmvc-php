@@ -67,7 +67,9 @@ class Cache
 		{
 			if( $purgeCache )
 			{
-				foreach( glob( $cacheFolder . $this->cacheID . "--*" ) as $filename )
+				$filenames = glob( $cacheFolder . $this->cacheID . "--*" );
+
+				foreach( $filenames as $filename )
 				{
 					unlink( $filename );
 				}
