@@ -92,7 +92,9 @@ class DefaultEventDispatcher implements IEventDispatcher
 
     public function removeAllEventListeners( $eventType = null )
     {
-        foreach( array_keys( $this->listeners ) as $key )
+		$listenerKeys = array_keys( $this->listeners );
+
+        foreach( $listenerKeys as $key )
         {
 			if( is_null( $eventType ) || $key == $eventType )
 			{

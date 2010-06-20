@@ -2,10 +2,8 @@
 
 namespace System\Libraries;
 
-class Core
+class FrontController
 {
-	const namespaceXML = "http://www.xmvc.org/ns/xmvc/1.0";
-
 	private static $controllerName;
 	private static $controllerFile;
 	private static $controllerClassName;
@@ -154,29 +152,5 @@ class Core
 		$fullyQualifiedController = Loader::AssignDefaultNamespace( $controller, null, Loader::controllerFolder );
 
 		return $fullyQualifiedController;
-	}
-
-	public static function IsClientSideXSLTSupported()
-	{
-		if( Config::$data[ "forceServerSideRendering" ] )
-		{
-			return false;
-		}
-		else if( Config::$data[ "forceClientSideRendering" ] )
-		{
-			return true;
-		}
-		else
-		{
-			foreach( Config::$data[ "xsltAgents" ] as $preg )
-			{
-				if( preg_match( $preg, $_SERVER[ "HTTP_USER_AGENT" ] ) )
-				{
-					return true;
-				}
-			}
-		}
-
-		return false;
 	}
 }

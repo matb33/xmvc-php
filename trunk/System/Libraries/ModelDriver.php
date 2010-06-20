@@ -107,7 +107,7 @@ abstract class ModelDriver extends \DOMDocument
 		return $completeXML;
 	}
 
-	public function GetXMLForStacking()
+	public function GetXMLForAggregation()
 	{
 		return $this->GetXML( true );
 	}

@@ -35,7 +35,7 @@ class XMLModelDriver extends ModelDriver implements IModelDriver
 		{
 			if( $this->IsInstanceOfModelDriver( $parameter ) )
 			{
-				$xmlData = $parameter->GetXMLForStacking();
+				$xmlData = $parameter->GetXMLForAggregation();
 			}
 			elseif( $this->IsDOMNode( $parameter ) )
 			{

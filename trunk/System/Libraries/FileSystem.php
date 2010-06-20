@@ -60,7 +60,9 @@ class FileSystem
 	{
 		if( self::PathExists( $folder ) )
 		{
-			foreach( new \DirectoryIterator( $folder ) as $fileInfo )
+			$directoryIterator = new \DirectoryIterator( $folder );
+
+			foreach( $directoryIterator as $fileInfo )
 			{
 				if( !$fileInfo->isDot() )
 				{
@@ -157,7 +159,9 @@ class FileSystem
 		{
 			if( $currentDepth < $maxDepth || is_null( $maxDepth ) )
 			{
-				foreach( array_keys( $list[ ":FOLDERS:" ] ) as $subFolder )
+				$folderKeys = array_keys( $list[ ":FOLDERS:" ] );
+
+				foreach( $folderKeys as $subFolder )
 				{
 					$subFolders = self::GetFolderListRecursively( $subFolder, $match, $getMeta, $maxDepth, $currentDepth + 1 );
 
@@ -223,7 +227,9 @@ class FileSystem
 		{
 			if( $currentDepth < $maxDepth || is_null( $maxDepth ) )
 			{
-				foreach( array_keys( $list[ ":FOLDERS:" ] ) as $subFolder )
+				$folderKeys = array_keys( $list[ ":FOLDERS:" ] );
+
+				foreach( $folderKeys as $subFolder )
 				{
 					$subFolderFiles = self::GetDirListRecursively( $subFolder, $fileMatch, $folderMatch, $getMeta, $maxDepth, $currentDepth + 1 );
 
@@ -242,7 +248,9 @@ class FileSystem
 
 		if( isset( $list[ ":FILES:" ] ) && is_array( $list[ ":FILES:" ] ) )
 		{
-			foreach( array_keys( $list[ ":FILES:" ] ) as $file )
+			$fileKeys = array_keys( $list[ ":FILES:" ] );
+
+			foreach( $fileKeys as $file )
 			{
 				$flatList[] = $file;
 			}
