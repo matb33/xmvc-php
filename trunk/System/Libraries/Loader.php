@@ -22,39 +22,12 @@ class Loader
 
 	public static function Resolve( $folder, $name, $extension )
 	{
-		$name = self::AssignDefaultNamespace( $name );
+		$name = self::AssignDefaultNamespace( $name, null, $folder );
+		$filename = $name . "." . $extension;
 
-		$directlyMappedFilename = $name . "." . $extension;
-
-		if( file_exists( $directlyMappedFilename ) )
+		if( file_exists( $filename ) )
 		{
-			return realpath( $directlyMappedFilename );
-		}
-		else
-		{
-			NamespaceMap::SetName( $name );
-			NamespaceMap::SetFolder( $folder );
-			NamespaceMap::RewindIterator();
-
-			foreach( NamespaceMap::Iterate() as $mappedFile )
-			{
-				$file = Normalize::Filename( $mappedFile ) . "." . $extension;
-				$file = realpath( $file );
-
-				if( $file === false )
-				{
-					$file = Normalize::Filename( $mappedFile );
-					$file = realpath( $file );
-				}
-
-				if( $file !== false )
-				{
-					$dirName = Normalize::Path( dirname( $file ) );
-					$name = basename( $file );
-
-					return $dirName . $name;
-				}
-			}
+			return realpath( $filename );
 		}
 
 		return false;
