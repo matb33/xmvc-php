@@ -63,7 +63,9 @@ class Authenticator
 
 		$userData = array();
 
-		foreach( $userModel->xPath->query( "//xmvc:column" ) as $node )
+		$nodeList = $userModel->xPath->query( "//xmvc:column" );
+
+		foreach( $nodeList as $node )
 		{
 			$fieldName = $node->getAttribute( "name" );
 			$fieldValue = $node->nodeValue;
