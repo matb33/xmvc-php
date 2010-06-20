@@ -28,11 +28,14 @@ class ComponentFactory extends DefaultEventDispatcher
 		$eventName = ComponentUtils::DefaultEventNameIfNecessary( $eventName );
 		$namespacedComponentClass = ComponentUtils::DefaultNamespaceIfNecessary( $componentClass );
 
-		if( class_exists( $namespacedComponentClass, true ) )
+		try
 		{
-			$instance = new $namespacedComponentClass( null, $instanceName, $eventName, $parameters, $cacheMinutes );
+			if( class_exists( $namespacedComponentClass, true ) )
+			{
+				$instance = new $namespacedComponentClass( null, $instanceName, $eventName, $parameters, $cacheMinutes );
+			}
 		}
-		else
+		catch( LogicException $e )
 		{
 			$instance = new GenericComponent( $namespacedComponentClass, $instanceName, $eventName, $parameters, $cacheMinutes );
 		}
