@@ -122,7 +122,9 @@ class ComponentFactory extends DefaultEventDispatcher
 
 	private function InjectHref()
 	{
-		foreach( $this->rootModel->xPath->query( "//*[ @meta:inject-href ]" ) as $itemNode )
+		$itemNodeList = $this->rootModel->xPath->query( "//*[ @meta:inject-href ]" );
+
+		foreach( $itemNodeList as $itemNode )
 		{
 			$fullyQualifiedName = $itemNode->getAttribute( "meta:inject-href" );
 			$prefix = $itemNode->hasAttribute( "meta:inject-href-prefix" ) ? $itemNode->getAttribute( "meta:inject-href-prefix" ) : "";
@@ -151,7 +153,9 @@ class ComponentFactory extends DefaultEventDispatcher
 
 	private function InjectLang( $lang )
 	{
-		foreach( $this->rootModel->xPath->query( "//*[ @meta:inject-lang or @meta:inject-lang-base or @meta:inject-lang-locale ]" ) as $itemNode )
+		$itemNodeList = $this->rootModel->xPath->query( "//*[ @meta:inject-lang or @meta:inject-lang-base or @meta:inject-lang-locale ]" );
+
+		foreach( $itemNodeList as $itemNode )
 		{
 			if( $itemNode->hasAttribute( "meta:inject-lang" ) )
 			{

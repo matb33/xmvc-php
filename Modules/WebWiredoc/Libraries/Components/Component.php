@@ -170,28 +170,28 @@ abstract class Component extends DefaultEventDispatcher
 		$componentClass = ComponentUtils::GetComponentClassNameFromWiredocComponentName( $component );
 		$namespacedComponentClass = ComponentUtils::DefaultNamespaceIfNecessary( $componentClass );
 
-		$xslFile = Loader::Resolve( "components", $namespacedComponentClass, "xsl" );
-
 		$view = new View();
+		$xslFile = Loader::Resolve( "components", $namespacedComponentClass, "xsl" );
 		$xslData = $view->ImportXSL( null, $xslFile );
 		$view->SetXSLData( $xslData );
+
 		foreach( $builtComponentModels as $model )
 		{
 			$view->PushModel( $model );
 		}
-		$result = new \DOMDocument();
+
 		$resultXML = $view->ProcessAsXML();
-		$result->loadXML( $resultXML );
+		$resultModel = new XMLModelDriver( $resultXML );
 
 		if( !is_null( $instanceName ) && strlen( $instanceName ) > 0 )
 		{
-			if( !is_null( $result->documentElement ) )
+			if( !is_null( $resultModel->documentElement->firstChild ) )
 			{
-				if( !$result->documentElement->hasAttribute( "wd:name" ) )
+				if( !$resultModel->documentElement->firstChild->hasAttribute( "wd:name" ) )
 				{
-					$nameAttribute = $result->createAttributeNS( Config::$data[ "wiredocNamespaces" ][ "wd" ], "wd:name" );
+					$nameAttribute = $resultModel->createAttributeNS( Config::$data[ "wiredocNamespaces" ][ "wd" ], "wd:name" );
 					$nameAttribute->value = $component . "." . $instanceName;
-					$result->documentElement->appendChild( $nameAttribute );
+					$resultModel->documentElement->firstChild->appendChild( $nameAttribute );
 				}
 			}
 			else
@@ -200,12 +200,9 @@ abstract class Component extends DefaultEventDispatcher
 			}
 		}
 
-		$injectLangAttribute = $result->createAttributeNS( Config::$data[ "wiredocNamespaces" ][ "meta" ], "meta:inject-lang" );
+		$injectLangAttribute = $resultModel->createAttributeNS( Config::$data[ "wiredocNamespaces" ][ "meta" ], "meta:inject-lang" );
 		$injectLangAttribute->value = "xml:lang";
-		$result->documentElement->appendChild( $injectLangAttribute );
-
-		$resultXML = $result->saveXML();
-		$resultModel = new XMLModelDriver( $resultXML );
+		$resultModel->documentElement->firstChild->appendChild( $injectLangAttribute );
 
 		return $resultModel;
 	}
@@ -225,7 +222,7 @@ abstract class Component extends DefaultEventDispatcher
 
 	private function OnComponentTransformationError( $view, $xslData, $xslFile, $resultXML )
 	{
-		$stackModel = new XMLModelDriver( $view->GetStackedModels() );
+		$stackModel = new XMLModelDriver( $view->GetAggregatedModels() );
 		$stackModel->dump( false, $this->component . "\\" . $this->instanceName  );
 
 		$viewModel = new XMLModelDriver( $xslData );

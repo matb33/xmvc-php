@@ -7,11 +7,11 @@ use System\Drivers\XMLModelDriver;
 use System\Libraries\FileSystem;
 use System\Libraries\Normalize;
 use System\Libraries\Routing;
-use System\Libraries\Singleton;
+use System\Libraries\OverrideableSingleton;
 use Modules\Language\Libraries\Language;
 use Modules\Cache\Libraries\Cache;
 
-class ComponentLookup extends Singleton
+class ComponentLookup extends OverrideableSingleton
 {
 	private $model = null;
 	private $cache = null;
@@ -51,11 +51,14 @@ class ComponentLookup extends Singleton
 
 	public function GetMetaData( $model, $file = null, $metaDataCollection = array() )
 	{
-		foreach( $model->xPath->query( "//wd:component" ) as $componentNode )
+		$componentNodeList = $model->xPath->query( "//wd:component" );
+
+		foreach( $componentNodeList as $componentNode )
 		{
 			$hrefList = array();
+			$hrefNodeList = $model->xPath->query( "//meta:href", $componentNode );
 
-			foreach( $model->xPath->query( "//meta:href", $componentNode ) as $hrefNode )
+			foreach( $hrefNodeList as $hrefNode )
 			{
 				$lang = $hrefNode->hasAttribute( "xml:lang" ) ? $hrefNode->getAttribute( "xml:lang" ) : Language::GetLang();
 				$private = $hrefNode->hasAttribute( "private" ) ? $hrefNode->getAttribute( "private" ) : "0";
@@ -353,8 +356,9 @@ class ComponentLookup extends Singleton
 	public function GetFullyQualifiedNameByPath( $path )
 	{
 		$lookupModel = $this->Get();
+		$entryNodeList = $lookupModel->xPath->query( "//lookup:entry/lookup:href[ lookup:uri = '" . $path . "' ]" );
 
-		foreach( $lookupModel->xPath->query( "//lookup:entry/lookup:href[ lookup:uri = '" . $path . "' ]" ) as $entryNode )
+		foreach( $entryNodeList as $entryNode )
 		{
 			$fullyQualifiedNameNodeList = $lookupModel->xPath->query( "../lookup:fully-qualified-name", $entryNode );
 			$fullyQualifiedName = $fullyQualifiedNameNodeList->length > 0 ? $fullyQualifiedNameNodeList->item( 0 )->nodeValue : "";
