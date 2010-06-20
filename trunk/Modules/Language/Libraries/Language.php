@@ -67,7 +67,9 @@ class Language
 	{
 		if( is_null( self::$data ) )
 		{
-			foreach( self::$languages->xPath->query( "//lang:languages/lang:language-list/lang:language" ) as $node )
+			$nodeList = self::$languages->xPath->query( "//lang:languages/lang:language-list/lang:language" );
+
+			foreach( $nodeList as $node )
 			{
 				$id = $node->getAttribute( "id" );
 
