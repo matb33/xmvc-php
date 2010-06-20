@@ -16,6 +16,9 @@ use Modules\Utils\Libraries\StringUtils;
 
 abstract class Component extends DefaultEventDispatcher
 {
+	const componentExtension = "xsl";
+	const componentFolder = "Components";
+
 	private $component = null;
 	private $instanceName = null;
 	private $fullyQualifiedName = null;
@@ -171,7 +174,7 @@ abstract class Component extends DefaultEventDispatcher
 		$namespacedComponentClass = ComponentUtils::DefaultNamespaceIfNecessary( $componentClass );
 
 		$view = new View();
-		$xslFile = Loader::Resolve( "components", $namespacedComponentClass, "xsl" );
+		$xslFile = Loader::Resolve( self::componentFolder, $namespacedComponentClass, self::componentExtension );
 		$xslData = $view->ImportXSL( null, $xslFile );
 		$view->SetXSLData( $xslData );
 
