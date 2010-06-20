@@ -7,12 +7,12 @@ use System\Libraries\OutputHeaders;
 use System\Drivers\XMLModelDriver;
 use System\Libraries\Config;
 use System\Libraries\Normalize;
-use System\Libraries\Singleton;
+use System\Libraries\OverrideableSingleton;
 use Modules\Language\Libraries\Language;
 use Modules\Utils\Libraries\StringUtils;
 use Modules\WebWiredoc\Libraries\Components\ComponentLookup;
 
-class Sitemap extends Singleton
+class Sitemap extends OverrideableSingleton
 {
 	public function GetCurrentFullyQualifiedPageName()
 	{
@@ -39,7 +39,9 @@ class Sitemap extends Singleton
 		$urlsetNode = $sitemapModel->createElementNS( Config::$data[ "sitemapNamespace" ], "urlset" );
 		$sitemapModel->xPath->query( "/xmvc:root" )->item( 0 )->appendChild( $urlsetNode );
 
-		foreach( $lookupModel->xPath->query( "//lookup:entry/lookup:href[ php:function( 'Modules\Language\Libraries\Language::XSLTLang', '" . $lang . "', (ancestor-or-self::*/@xml:lang)[last()] ) and lookup:private = '0' ]" ) as $hrefNode )
+		$hrefNodeList = $lookupModel->xPath->query( "//lookup:entry/lookup:href[ php:function( 'Modules\Language\Libraries\Language::XSLTLang', '" . $lang . "', (ancestor-or-self::*/@xml:lang)[last()] ) and lookup:private = '0' ]" );
+
+		foreach( $hrefNodeList as $hrefNode )
 		{
 			$urlNode = $sitemapModel->createElementNS( Config::$data[ "sitemapNamespace" ], "url" );
 			$urlsetNode->appendChild( $urlNode );
@@ -61,8 +63,9 @@ class Sitemap extends Singleton
 	public function GetSitemapXMLFilenames()
 	{
 		$filenames = array();
+		$definedLangs = Language::GetDefinedLangs();
 
-		foreach( Language::GetDefinedLangs() as $lang )
+		foreach( $definedLangs as $lang )
 		{
 			$filenames[] = StringUtils::ReplaceTokensInPattern( Config::$data[ "sitemapXMLFilePattern" ], array( "protocol" => Routing::URIProtocol(), "host" => $_SERVER[ "HTTP_HOST" ], "lang" => $lang ) );
 		}
@@ -72,9 +75,13 @@ class Sitemap extends Singleton
 
 	public static function ReplacePageNameTokensWithPath()
 	{
-		foreach( array( "routes", "priorityRoutes", "lowPriorityRoutes" ) as $routeGroup )
+		$routeGroups = array( "routes", "priorityRoutes", "lowPriorityRoutes" );
+
+		foreach( $routeGroups as $routeGroup )
 		{
-			foreach( array_keys( Config::$data[ $routeGroup ] ) as $pattern )
+			$routeGroupKeys = array_keys( Config::$data[ $routeGroup ] );
+
+			foreach( $routeGroupKeys as $pattern )
 			{
 				preg_match_all( "|#([A-Za-z0-9-_/.]+)#|", $pattern, $matches );
 

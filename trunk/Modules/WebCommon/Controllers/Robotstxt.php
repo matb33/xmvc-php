@@ -50,8 +50,9 @@ class Robotstxt
 	private function WriteSitemapDisallows()
 	{
 		$lookupModel = ComponentLookup::getInstance()->Get();
+		$hrefNodeList = $lookupModel->xPath->query( "//lookup:entry/lookup:href[ lookup:private = '1' ]" );
 
-		foreach( $lookupModel->xPath->query( "//lookup:entry/lookup:href[ lookup:private = '1' ]" ) as $hrefNode )
+		foreach( $hrefNodeList as $hrefNode )
 		{
 			$locNodeList = $lookupModel->xPath->query( "lookup:fully-qualified-uri", $hrefNode );
 			$loc = $locNodeList->length > 0 ? $locNodeList->item( 0 )->nodeValue : "";
@@ -62,7 +63,9 @@ class Robotstxt
 
 	private function WriteSitemapLines()
 	{
-		foreach( Sitemap::getInstance()->GetSitemapXMLFilenames() as $filename )
+		$filenames = Sitemap::getInstance()->GetSitemapXMLFilenames();
+
+		foreach( $filenames as $filename )
 		{
 			echo( "Sitemap: " . $filename . "\n" );
 		}
