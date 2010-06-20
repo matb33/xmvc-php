@@ -6,14 +6,24 @@ class Config
 {
 	public static $data = array();
 
-	public static function Load( $path )
+	public static function Load()
 	{
-		$path = substr( $path, -1 ) == "/" ? substr( $path, 0, -1 ) : $path;
+		// $t1 = microtime( true );		// With a moderate amount of modules, loading takes about 0.02 seconds. Though should be cached, it's a low priority
 
-		foreach( glob( $path, GLOB_ONLYDIR | GLOB_BRACE ) as $expandedPath )
+		$paths = func_get_args();
+
+		foreach( $paths as $path )
 		{
-			self::LoadByPath( $expandedPath );
+			$path = substr( $path, -1 ) == "/" ? substr( $path, 0, -1 ) : $path;
+			$expandedPaths = glob( $path, GLOB_ONLYDIR | GLOB_BRACE );
+
+			foreach( $expandedPaths as $expandedPath )
+			{
+				self::LoadByPath( $expandedPath );
+			}
 		}
+
+		// var_dump( microtime( true ) - $t1 );
 	}
 
 	private static function LoadByPath( $basePath )
@@ -28,15 +38,17 @@ class Config
 		$configFilePattern = $configPath . "*." . Loader::configExtension;
 
 		$existingVariables = get_defined_vars();
+		$configFiles = glob( $configFilePattern );
 
-		foreach( glob( $configFilePattern ) as $configFile )
+		foreach( $configFiles as $configFile )
 		{
 			include( $configFile );
 
-			$variablesToMerge = array_diff_key( get_defined_vars(), $existingVariables, array( "existingVariables" => "" ) );
+			$variablesToMerge = array_diff_key( get_defined_vars(), $existingVariables, array( "existingVariables" => "", "configFiles" => "" ) );
 			self::$data = self::MergeVariables( self::$data, $variablesToMerge );
+			$variablesToMergeKeys = array_keys( $variablesToMerge );
 
-			foreach( array_keys( $variablesToMerge ) as $variableToUnset )
+			foreach( $variablesToMergeKeys as $variableToUnset )
 			{
 				unset( $$variableToUnset );
 			}

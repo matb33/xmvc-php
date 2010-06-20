@@ -4,7 +4,7 @@ namespace System\Drivers;
 
 use System\Libraries\ModelDriver;
 use System\Libraries\IModelDriver;
-use System\Libraries\Core;
+use System\Libraries\View;
 
 class StringsModelDriver extends ModelDriver implements IModelDriver
 {
@@ -12,7 +12,7 @@ class StringsModelDriver extends ModelDriver implements IModelDriver
 	{
 		parent::__construct();
 
-		$this->rootElement = $this->createElementNS( Core::namespaceXML, "xmvc:strings" );
+		$this->rootElement = $this->createElementNS( View::namespaceXML, "xmvc:strings" );
 		$this->appendChild( $this->rootElement );
 	}
 
@@ -31,7 +31,7 @@ class StringsModelDriver extends ModelDriver implements IModelDriver
 			$value = "|" . implode( "|", $value ) . "|";
 		}
 
-		$node = $this->createElementNS( Core::namespaceXML, "xmvc:" . $key );
+		$node = $this->createElementNS( View::namespaceXML, "xmvc:" . $key );
 		$name = $this->createAttribute( "key" );
 		$name->value = $key;
 		$node->appendChild( $name );

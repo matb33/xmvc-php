@@ -4,6 +4,8 @@ namespace System\Libraries;
 
 class View
 {
+	const namespaceXML = "http://www.xmvc.org/ns/xmvc/1.0";
+
 	private $xmlData = null;
 	private $xslData = null;
 	private $xslViewName = null;
@@ -95,7 +97,7 @@ class View
 
 		if( is_null( $this->GetXMLData() ) )
 		{
-			$this->SetXMLData( $this->StackModelsForView( $data, $this->GetOmitRoot( $omitRoot ) ) );
+			$this->SetXMLData( $this->AggregateModelsForView( $data, $this->GetOmitRoot( $omitRoot ) ) );
 		}
 
 		if( is_null( $this->GetXSLData() ) )
@@ -206,10 +208,10 @@ class View
 		return $result;
 	}
 
-	private function StackModelsForView( $data, $omitRoot )
+	private function AggregateModelsForView( $data, $omitRoot )
 	{
 		$xmlHead = $this->GetXMLHead( $data, $omitRoot );
-		$xmlBody = $this->GetStackedModels();
+		$xmlBody = $this->GetAggregatedModels();
 		$xmlFoot = $this->GetXMLFoot( $omitRoot );
 
 		if( Config::$data[ "handleErrors" ] )
@@ -220,7 +222,7 @@ class View
 		return $xmlHead . $xmlBody . $xmlFoot;
 	}
 
-	public function GetStackedModels()
+	public function GetAggregatedModels()
 	{
 		$stack = "";
 
@@ -230,7 +232,7 @@ class View
 			{
 				if( $model instanceof ModelDriver )
 				{
-					$stack .= $model->GetXMLForStacking();
+					$stack .= $model->GetXMLForAggregation();
 				}
 				else
 				{
@@ -278,7 +280,7 @@ class View
 	{
 		if( $return === false )
 		{
-			if( Core::IsClientSideXSLTSupported() )
+			if( self::IsClientSideXSLTSupported() )
 			{
 				return true;
 			}
@@ -294,7 +296,7 @@ class View
 
 	public function PassThru( $data = null, $return = false, $omitRoot = true )
 	{
-		$xmlBody = $this->GetStackedModels();
+		$xmlBody = $this->GetAggregatedModels();
 
 		if( $return )
 		{
@@ -346,7 +348,7 @@ class View
 
 		if( ! $omitRoot )
 		{
-			$xmlHead .= "<xmvc:root xmlns:xmvc=\"" . Core::namespaceXML . "\"" . $sourceViewAttribute . ">\n";
+			$xmlHead .= "<xmvc:root xmlns:xmvc=\"" . self::namespaceXML . "\"" . $sourceViewAttribute . ">\n";
 		}
 
 		return $xmlHead;
@@ -367,5 +369,29 @@ class View
 	private function IsSourceViewOn()
 	{
 		return isset( $_GET[ Config::$data[ "sourceViewKey" ] ] ) && Config::$data[ "sourceViewEnabled" ];
+	}
+
+	public static function IsClientSideXSLTSupported()
+	{
+		if( Config::$data[ "forceServerSideRendering" ] )
+		{
+			return false;
+		}
+		else if( Config::$data[ "forceClientSideRendering" ] )
+		{
+			return true;
+		}
+		else
+		{
+			foreach( Config::$data[ "xsltAgents" ] as $preg )
+			{
+				if( preg_match( $preg, $_SERVER[ "HTTP_USER_AGENT" ] ) )
+				{
+					return true;
+				}
+			}
+		}
+
+		return false;
 	}
 }

@@ -4,7 +4,7 @@ namespace System\Drivers;
 
 use System\Libraries\ModelDriver;
 use System\Libraries\IModelDriver;
-use System\Libraries\Core;
+use System\Libraries\View;
 use System\Libraries\FileSystem;
 
 class FileSystemModelDriver extends ModelDriver implements IModelDriver
@@ -13,7 +13,7 @@ class FileSystemModelDriver extends ModelDriver implements IModelDriver
 	{
 		parent::__construct();
 
-		$this->rootElement = $this->createElementNS( Core::namespaceXML, "xmvc:filesystem" );
+		$this->rootElement = $this->createElementNS( View::namespaceXML, "xmvc:filesystem" );
 		$this->appendChild( $this->rootElement );
 	}
 
@@ -88,9 +88,11 @@ class FileSystemModelDriver extends ModelDriver implements IModelDriver
 
 	private function RecursiveListing( $listing )
 	{
-		foreach( array_keys( $listing ) as $folderName )
+		$listingKeys = array_keys( $listing );
+
+		foreach( $listingKeys as $folderName )
 		{
-			$folderElement = $this->createElementNS( Core::namespaceXML, "xmvc:folder" );
+			$folderElement = $this->createElementNS( View::namespaceXML, "xmvc:folder" );
 			$nameAttribute = $this->createAttribute( "name" );
 			$nameAttribute->value = $folderName;
 			$folderElement->appendChild( $nameAttribute );
@@ -100,7 +102,7 @@ class FileSystemModelDriver extends ModelDriver implements IModelDriver
 			{
 				if( $metaName != ":FOLDERS:" && $metaName != ":FILES:" )
 				{
-					$metaElement = $this->createElementNS( Core::namespaceXML, "xmvc:meta" );
+					$metaElement = $this->createElementNS( View::namespaceXML, "xmvc:meta" );
 					$nameAttribute = $this->createAttribute( "name" );
 					$valueNode = $this->createCDATASection( ( string )$metaData );
 					$nameAttribute->value = $metaName;
@@ -119,7 +121,7 @@ class FileSystemModelDriver extends ModelDriver implements IModelDriver
 			{
 				foreach( $listing[ $folderName ][ ":FILES:" ] as $filename => $meta )
 				{
-					$fileElement = $this->createElementNS( Core::namespaceXML, "xmvc:file" );
+					$fileElement = $this->createElementNS( View::namespaceXML, "xmvc:file" );
 					$nameAttribute = $this->createAttribute( "name" );
 					$nameAttribute->value = $filename;
 					$fileElement->appendChild( $nameAttribute );
@@ -127,7 +129,7 @@ class FileSystemModelDriver extends ModelDriver implements IModelDriver
 
 					foreach( $meta as $metaName => $metaData )
 					{
-						$metaElement = $this->createElementNS( Core::namespaceXML, "xmvc:meta" );
+						$metaElement = $this->createElementNS( View::namespaceXML, "xmvc:meta" );
 						$nameAttribute = $this->createAttribute( "name" );
 						$valueNode = $this->createCDATASection( ( string )$metaData );
 						$nameAttribute->value = $metaName;
