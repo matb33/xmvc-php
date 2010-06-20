@@ -8,7 +8,9 @@ class DOMUtils
 {
 	public static function ConvertStringHTMLToDOM( &$model, $xPath )
 	{
-		foreach( $model->xPath->query( $xPath ) as $node )
+		$nodeList = $model->xPath->query( $xPath );
+
+		foreach( $nodeList as $node )
 		{
 			$importDocument = new \DOMDocument();
 			$importDocument->loadXML( "<html xmlns=\"http://www.w3.org/1999/xhtml\">" . $node->nodeValue . "</html>" );
