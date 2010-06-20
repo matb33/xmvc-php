@@ -22,7 +22,9 @@ class StringUtils
 			$builtInTokenValuePairs[ "lang" ] = Language::GetLang();
 		}
 
-		foreach( array_merge( $builtInTokenValuePairs, $tokenValuePairs ) as $token => $value )
+		$pairs = array_merge( $builtInTokenValuePairs, $tokenValuePairs );
+
+		foreach( $pairs as $token => $value )
 		{
 			$pattern = str_replace( $tokenDelimiter . $token . $tokenDelimiter, $value, $pattern );
 		}
