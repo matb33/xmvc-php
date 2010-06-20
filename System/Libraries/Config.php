@@ -11,16 +11,21 @@ class Config
 		// $t1 = microtime( true );		// With a moderate amount of modules, loading takes about 0.02 seconds. Though should be cached, it's a low priority
 
 		$paths = func_get_args();
+		$aggregatedPaths = array();
 
 		foreach( $paths as $path )
 		{
 			$path = substr( $path, -1 ) == "/" ? substr( $path, 0, -1 ) : $path;
 			$expandedPaths = glob( $path, GLOB_ONLYDIR | GLOB_BRACE );
 
-			foreach( $expandedPaths as $expandedPath )
-			{
-				self::LoadByPath( $expandedPath );
-			}
+			$aggregatedPaths = array_merge( $aggregatedPaths, $expandedPaths );
+		}
+
+		$aggregatedPaths = array_unique( $aggregatedPaths );
+
+		foreach( $aggregatedPaths as $expandedPath )
+		{
+			self::LoadByPath( $expandedPath );
 		}
 
 		// var_dump( microtime( true ) - $t1 );

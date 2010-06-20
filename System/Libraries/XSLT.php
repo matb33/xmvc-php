@@ -26,7 +26,7 @@ class XSLT
 
 		if( empty( $result ) )
 		{
-			trigger_error( self::DumpErrors(), E_USER_ERROR );
+			// TODO: Exception //trigger_error( self::DumpErrors(), E_USER_ERROR );
 		}
 
 		return $result;

@@ -11,11 +11,6 @@ class FrontController
 
 	public static function Load()
 	{
-		if( Config::$data[ "handleErrors" ] )
-		{
-			ErrorHandler::HandleErrors();
-		}
-
 		Routing::Initialize();
 		self::InstantiateController();
 	}
