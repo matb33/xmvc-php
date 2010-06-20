@@ -67,7 +67,9 @@ class ComponentUtils
 
 	public static function ReplaceTokenParametersInAttributes( &$model, $parameters )
 	{
-		foreach( $model->xPath->query( "//@*[ contains( name(), 'param' ) and contains( ., '#param' ) ]" ) as $paramNode )
+		$paramNodeList = $model->xPath->query( "//@*[ contains( name(), 'param' ) and contains( ., '#param' ) ]" );
+
+		foreach( $paramNodeList as $paramNode )
 		{
 			$paramNode->nodeValue = $parameters[ substr( $paramNode->nodeValue, 6, -1 ) - 1 ];
 		}

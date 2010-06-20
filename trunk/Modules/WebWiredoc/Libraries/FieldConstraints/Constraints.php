@@ -42,8 +42,9 @@ class Constraints
 		if( $this->targetField instanceof Field )
 		{
 			$constraintResults->SetTarget( $this->targetField );
+			$constraintNodeList = $this->sourceModel->xPath->query( "//wd:field[ @name = '" . $this->targetField->name . "' ]/wd:constraint" );
 
-			foreach( $this->sourceModel->xPath->query( "//wd:field[ @name = '" . $this->targetField->name . "' ]/wd:constraint" ) as $constraintNode )
+			foreach( $constraintNodeList as $constraintNode )
 			{
 				$type = $constraintNode->getAttribute( "type" );
 				$against = $constraintNode->getAttribute( "against" );
