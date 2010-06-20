@@ -5,8 +5,75 @@ namespace System\Libraries;
 use System\Drivers\XMLModelDriver;
 use System\Drivers\StringsModelDriver;
 
+use ErrorException;
+
 class ErrorHandler
 {
+	public static function ExceptionErrorHandler( $errno, $errstr, $errfile, $errline )
+	{
+		throw new ErrorException( $errstr, 0, $errno, $errfile, $errline );
+	}
+
+	public static function UncaughtExceptionHandler( $exception )
+	{
+		$traceline = "#%s %s(%s): %s(%s)";
+		$msg = "PHP Fatal error: Uncaught exception '%s' with message '%s' in %s:%s\nStack trace:\n%s\nthrown in %s on line %s";
+
+		$trace = $exception->getTrace();
+		foreach( $trace as $key => $stackPoint )
+		{
+			$trace[ $key ][ "args" ] = array_map( "gettype", $trace[ $key ][ "args" ] );
+		}
+
+		$result = array();
+		foreach( $trace as $key => $stackPoint )
+		{
+			$file = isset( $stackPoint[ "file" ] ) ? $stackPoint[ "file" ] : "file N/A";
+			$line = isset( $stackPoint[ "line" ] ) ? $stackPoint[ "line" ] : "line N/A";
+			$function = isset( $stackPoint[ "function" ] ) ? $stackPoint[ "function" ] : "function N/A";
+			$args = isset( $stackPoint[ "args" ] ) && is_array( $stackPoint[ "args" ] ) ? $stackPoint[ "args" ] : array();
+
+			$result[] = sprintf(
+				$traceline,
+				$key,
+				$file,
+				$line,
+				$function,
+				implode( ", ", $args )
+			);
+		}
+
+		// trace always ends with {main}
+		$result[] = "#" . ++$key . " {main}";
+
+		$logMsg = sprintf(
+			$msg,
+			get_class( $exception ),
+			$exception->getMessage(),
+			$exception->getFile(),
+			$exception->getLine(),
+			implode( "\n", $result ),
+			$exception->getFile(),
+			$exception->getLine()
+		);
+
+		$echoMsg = sprintf(
+			$msg,
+			"<span style='color:red;font-weight:bold;'>" . get_class( $exception ) . "</span>",
+			"<span style='color:blue;font-weight:bold;'>" . $exception->getMessage() . "</span>",
+			"<span style='color:green;'>" . $exception->getFile() . "</span>",
+			"<b>" . $exception->getLine() . "</b>",
+			implode( "\n", $result ),
+			"<span style='color:green;'>" . $exception->getFile() . "</span>",
+			"<b>" . $exception->getLine() . "</b>"
+		);
+
+		error_log( $logMsg );
+
+		echo "<pre>" . $echoMsg . "</pre>";
+	}
+
+	/*
 	private static $oldErrorHandler;
 	private static $errorReporting;
 	private static $errorTypes;
@@ -14,7 +81,7 @@ class ErrorHandler
 
 	public static function HandleErrors()
 	{
-		self::$oldErrorHandler = set_error_handler( array( __NAMESPACE__ . "\\ErrorHandler", "ErrorHandlerPHP" ) );
+		//self::$oldErrorHandler = set_error_handler( array( __NAMESPACE__ . "\\ErrorHandler", "ErrorHandlerPHP" ) );
 		self::$errorReporting = error_reporting();
 		self::$errors = "";
 
@@ -36,6 +103,7 @@ class ErrorHandler
 
 		);
 	}
+	*/
 
 	public static function InvokeHTTPError( $data = array() )
 	{
@@ -92,6 +160,7 @@ class ErrorHandler
 		return $pattern;
 	}
 
+	/*
 	public static function ErrorHandlerXML( $errorNumber, $errorMessage, $filename, $lineNum, $vars )
 	{
 		$errorException = new \ErrorException( $errorMessage, 0, $errorNumber, $filename, $lineNum );
@@ -139,4 +208,5 @@ class ErrorHandler
 
 		return true;
 	}
+	*/
 }

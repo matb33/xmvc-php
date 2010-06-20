@@ -113,7 +113,7 @@ class View
 		}
 		else
 		{
-			trigger_error( "Could not find any XML data (model) and/or XSLT data (view) while loading view [" . $this->xslViewName . "]", E_USER_ERROR );
+			// TODO: Exception //trigger_error( "Could not find any XML data (model) and/or XSLT data (view) while loading view [" . $this->xslViewName . "]", E_USER_ERROR );
 		}
 
 		return $result;
@@ -197,11 +197,11 @@ class View
 		{
 			if( $this->xslViewName != "" )
 			{
-				trigger_error( "XSLT view name [" . $this->xslViewName . "] not found", E_USER_ERROR );
+				// TODO: Exception //trigger_error( "XSLT view name [" . $this->xslViewName . "] not found", E_USER_ERROR );
 			}
 			else
 			{
-				trigger_error( "XSLT view file [" . $this->xslViewFile . "] not found", E_USER_ERROR );
+				// TODO: Exception //trigger_error( "XSLT view file [" . $this->xslViewFile . "] not found", E_USER_ERROR );
 			}
 		}
 
@@ -210,14 +210,9 @@ class View
 
 	private function AggregateModelsForView( $data, $omitRoot )
 	{
-		$xmlHead = $this->GetXMLHead( $data, $omitRoot );
+		$xmlHead = self::GetXMLHead( $data, $omitRoot );
 		$xmlBody = $this->GetAggregatedModels();
-		$xmlFoot = $this->GetXMLFoot( $omitRoot );
-
-		if( Config::$data[ "handleErrors" ] )
-		{
-			$xmlBody .= ErrorHandler::GetErrorsAsXML();
-		}
+		$xmlFoot = self::GetXMLFoot( $omitRoot );
 
 		return $xmlHead . $xmlBody . $xmlFoot;
 	}
@@ -236,7 +231,7 @@ class View
 				}
 				else
 				{
-					trigger_error( "Invalid model was found in this view's model-stack", E_USER_ERROR );
+					// TODO: Exception //trigger_error( "Invalid model was found in this view's model-stack", E_USER_ERROR );
 				}
 			}
 		}
@@ -304,8 +299,8 @@ class View
 		}
 		else
 		{
-			$xmlHead = $this->GetXMLHead( $data, $omitRoot );
-			$xmlFoot = $this->GetXMLFoot( $omitRoot );
+			$xmlHead = self::GetXMLHead( $data, $omitRoot );
+			$xmlFoot = self::GetXMLFoot( $omitRoot );
 
 			$xmlResult = ( $xmlHead . $xmlBody . $xmlFoot );
 
@@ -317,7 +312,7 @@ class View
 		return $xmlResult;
 	}
 
-	public function GetXMLHead( $data, $omitRoot )
+	public static function GetXMLHead( $data, $omitRoot )
 	{
 		$encodedData = "";
 		$sourceViewAttribute = "";
@@ -354,7 +349,7 @@ class View
 		return $xmlHead;
 	}
 
-	public function GetXMLFoot( $omitRoot )
+	public static function GetXMLFoot( $omitRoot )
 	{
 		$xmlFoot = "";
 
@@ -366,7 +361,7 @@ class View
 		return $xmlFoot;
 	}
 
-	private function IsSourceViewOn()
+	private static function IsSourceViewOn()
 	{
 		return isset( $_GET[ Config::$data[ "sourceViewKey" ] ] ) && Config::$data[ "sourceViewEnabled" ];
 	}

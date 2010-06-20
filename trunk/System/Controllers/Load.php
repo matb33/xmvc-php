@@ -10,7 +10,7 @@ class Load
 {
 	public function Index()
 	{
-		trigger_error( "Incorrect use of load controller. Specify a type to load, such as 'view'.", E_USER_ERROR );
+		// TODO: Exception //trigger_error( "Incorrect use of load controller. Specify a type to load, such as 'view'.", E_USER_ERROR );
 	}
 
 	public function View()

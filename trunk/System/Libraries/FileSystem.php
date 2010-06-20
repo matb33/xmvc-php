@@ -106,7 +106,7 @@ class FileSystem
 		return false;
 	}
 
-	public function FileExists( $filename )
+	public static function FileExists( $filename )
 	{
 		return file_exists( $filename );
 	}
