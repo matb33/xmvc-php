@@ -9,11 +9,11 @@ class XSLT
 	private static $XSLDocument = null;
 	private static $originalWorkingFolder = null;
 
-	public static function Transform( $xmlData, $xslData, $workingFolder = null )
+	public static function transform( $xmlData, $xslData, $workingFolder = null )
 	{
-		self::$processor = self::GetProcessor();
+		self::$processor = self::getProcessor();
 
-		self::SetupWorkingFolder( $workingFolder );
+		self::setupWorkingFolder( $workingFolder );
 
 		self::$XMLDocument->loadXML( $xmlData );
 		self::$XSLDocument->loadXML( $xslData );
@@ -22,17 +22,17 @@ class XSLT
 
 		$result = self::$processor->transformToXML( self::$XMLDocument );
 
-		self::RestoreWorkingFolder();
+		self::restoreWorkingFolder();
 
 		if( empty( $result ) )
 		{
-			trigger_error( self::DumpErrors(), E_USER_ERROR );
+			trigger_error( self::dumpErrors(), E_USER_ERROR );
 		}
 
 		return $result;
 	}
 
-	private static function GetProcessor()
+	private static function getProcessor()
 	{
 		if( is_null( self::$processor ) )
 		{
@@ -40,8 +40,8 @@ class XSLT
 
 			libxml_use_internal_errors( true );
 
-			self::SetupPHPFunctions();
-			self::SetupProfiling();
+			self::setupPHPFunctions();
+			self::setupProfiling();
 
 			self::$XMLDocument = new \DOMDocument( "1.0", "UTF-8" );
 			self::$XSLDocument = new \DOMDocument( "1.0", "UTF-8" );
@@ -56,12 +56,12 @@ class XSLT
 		return( self::$processor );
 	}
 
-	public static function ResetProcessor()
+	public static function resetProcessor()
 	{
 		self::$processor = null;
 	}
 
-	private static function SetupPHPFunctions()
+	private static function setupPHPFunctions()
 	{
 		if( isset( Config::$data[ "enableXSLTPHPFunctions" ] ) )
 		{
@@ -80,7 +80,7 @@ class XSLT
 		}
 	}
 
-	private static function SetupProfiling()
+	private static function setupProfiling()
 	{
 		if( isset( Config::$data[ "enableXSLTProfiling" ] ) )
 		{
@@ -97,7 +97,7 @@ class XSLT
 		}
 	}
 
-	private static function SetupWorkingFolder( $workingFolder )
+	private static function setupWorkingFolder( $workingFolder )
 	{
 		self::$originalWorkingFolder = getcwd();
 
@@ -107,12 +107,12 @@ class XSLT
 		}
 	}
 
-	private static function RestoreWorkingFolder()
+	private static function restoreWorkingFolder()
 	{
 		chdir( self::$originalWorkingFolder );
 	}
 
-	private static function DumpErrors()
+	private static function dumpErrors()
 	{
 		// TO-DO: Clean this up
 
@@ -155,7 +155,7 @@ class XSLT
 			}
 		}
 
-		echo "<h1>XSLT::DumpErrors</h1><pre>";
+		echo "<h1>XSLT::dumpErrors</h1><pre>";
 		print_r( $err );
 		echo "</pre>";
 

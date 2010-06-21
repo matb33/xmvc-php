@@ -24,28 +24,28 @@ class SQLModelDriver extends ModelDriver implements IModelDriver
 		$this->rootElement = $this->createElementNS( View::namespaceXML, "xmvc:database" );
 		$this->appendChild( $this->rootElement );
 
-		DB::Connect();
-		DB::SelectDB();
+		DB::connect();
+		DB::selectDB();
 
-		$this->LoadSQLFromModel( $xmlModelName, $namespace, $data );
+		$this->loadSQLFromModel( $xmlModelName, $namespace, $data );
 	}
 
-	private function LoadSQLFromModel( $xmlModelName, $namespace, $data )
+	private function loadSQLFromModel( $xmlModelName, $namespace, $data )
 	{
 		$this->queriesModel = new XMLModelDriver( $xmlModelName . ".sql", $namespace, $data );
 	}
 
-	public function UseQuery( $queryName )
+	public function useQuery( $queryName )
 	{
 		$this->currentQueryName = $queryName;
 	}
 
-	public function SetParameters( $parameters = null )
+	public function setParameters( $parameters = null )
 	{
 		$this->currentParameters = $parameters;
 	}
 
-	public function AddParameter( $parameter )
+	public function addParameter( $parameter )
 	{
 		if( is_null( $this->currentParameters ) )
 		{
@@ -55,40 +55,40 @@ class SQLModelDriver extends ModelDriver implements IModelDriver
 		$this->currentParameters[] = $parameter;
 	}
 
-	public function IsSuccessful()
+	public function isSuccessful()
 	{
 		$success = $this->xPath->query( "//xmvc:query[@name='" . $this->currentQueryName . "']/xmvc:result/xmvc:success" )->item( 0 )->nodeValue == "true";
 
 		return $success;
 	}
 
-	public function GetSingleRowValue( $field )
+	public function getSingleRowValue( $field )
 	{
 		$value = $this->xPath->query( "//xmvc:query[@name='" . $this->currentQueryName . "']/xmvc:result/xmvc:row/xmvc:column[@name='" . $field . "']" )->item( 0 )->nodeValue;
 
 		return $value;
 	}
 
-	private function GetSQL()
+	private function getSQL()
 	{
 		$sql = trim( $this->queriesModel->xPath->query( "//xmvc:query[@name='" . $this->currentQueryName . "']/xmvc:sql" )->item( 0 )->nodeValue );
 
 		return $sql;
 	}
 
-	public function Execute( $parameters = null )
+	public function execute( $parameters = null )
 	{
 		if( is_null( $parameters ) )
 		{
 			$parameters = $this->currentParameters;
 		}
 
-		$rowList = DB::ExecutePreparedStatement( $this->GetSQL(), $parameters );
+		$rowList = DB::executePreparedStatement( $this->getSQL(), $parameters );
 
-		$this->TransformForeignToXML( $rowList );
+		$this->transformForeignToXML( $rowList );
 	}
 
-	public function TransformForeignToXML()
+	public function transformForeignToXML()
 	{
 		$rowList = func_get_arg( 0 );
 
@@ -133,7 +133,7 @@ class SQLModelDriver extends ModelDriver implements IModelDriver
 				}
 			}
 
-			parent::TransformForeignToXML();
+			parent::transformForeignToXML();
 		}
 		else
 		{

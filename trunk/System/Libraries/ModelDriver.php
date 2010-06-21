@@ -26,15 +26,15 @@ abstract class ModelDriver extends \DOMDocument
 			$this->dumpDebugInformation();
 		}
 
-		$this->RefreshXPath( $source );
+		$this->refreshXPath( $source );
 	}
 
-	protected function TransformForeignToXML()
+	protected function transformForeignToXML()
 	{
-		$this->RefreshXPath();
+		$this->refreshXPath();
 	}
 
-	private function RefreshXPath( $source = null )
+	private function refreshXPath( $source = null )
 	{
 		$this->xPath = new \DOMXpath( $this );
 
@@ -54,14 +54,14 @@ abstract class ModelDriver extends \DOMDocument
 			}
 		}
 
-		$this->RegisterNamespaces( $source );
+		$this->registerNamespaces( $source );
 	}
 
-	private function RegisterNamespaces( $source )
+	private function registerNamespaces( $source )
 	{
 		if( is_null( $source ) )
 		{
-			$source = $this->GetXML();
+			$source = $this->getXML();
 		}
 
 		preg_match_all( "/xmlns:(.+?)=\"(.+?)\"/", $source, $matches, PREG_SET_ORDER );
@@ -82,48 +82,48 @@ abstract class ModelDriver extends \DOMDocument
 		$this->xPath->registerNamespace( "php", "http://php.net/xpath" );
 	}
 
-	protected function LoadModelXML( $xmlModelFile, $data = null )
+	protected function loadModelXML( $xmlModelFile, $data = null )
 	{
 		if( Config::$data[ "enableInlinePHPInModels" ] )
 		{
-			$xml = Loader::ParseExternal( $xmlModelFile, $data );
+			$xml = Loader::parseExternal( $xmlModelFile, $data );
 		}
 		else
 		{
-			$xml = Loader::ReadExternal( $xmlModelFile );
+			$xml = Loader::readExternal( $xmlModelFile );
 		}
 
-		return Normalize::StripXMLRootTags( $xml );
+		return Normalize::stripXMLRootTags( $xml );
 	}
 
-	public function SetXML( $xml )
+	public function setXML( $xml )
 	{
-		$completeXML  = View::GetXMLHead( null, false );
-		$completeXML .= Normalize::StripXMLRootTags( $xml );
-		$completeXML .= View::GetXMLFoot( false );
+		$completeXML  = View::getXMLHead( null, false );
+		$completeXML .= Normalize::stripXMLRootTags( $xml );
+		$completeXML .= View::getXMLFoot( false );
 
 		$this->loadXML( $completeXML );
 
 		return $completeXML;
 	}
 
-	public function GetXMLForAggregation()
+	public function getXMLForAggregation()
 	{
-		return $this->GetXML( true );
+		return $this->getXML( true );
 	}
 
-	public function GetCompleteXML()
+	public function getCompleteXML()
 	{
-		return $this->GetXML( false );
+		return $this->getXML( false );
 	}
 
-	protected function GetXML( $stripRootTags = false )
+	protected function getXML( $stripRootTags = false )
 	{
 		$completeXML = $this->saveXML( $this->documentElement );
 
 		if( $stripRootTags )
 		{
-			return Normalize::StripXMLRootTags( $completeXML );
+			return Normalize::stripXMLRootTags( $completeXML );
 		}
 		else
 		{

@@ -16,100 +16,100 @@ class View
 	{
 		if( ! is_null( $xslViewName ) )
 		{
-			$this->xslViewName = Loader::AssignDefaultNamespace( $xslViewName, $namespace, Loader::viewFolder );
+			$this->xslViewName = Loader::assignDefaultNamespace( $xslViewName, $namespace, Loader::viewFolder );
 		}
 	}
 
-	public function AddModel( $model )
+	public function addModel( $model )
 	{
 		$this->models[]	= $model;
 	}
 
-	public function PushModel( $model )
+	public function pushModel( $model )
 	{
 		array_push( $this->models, $model );
 	}
 
-	public function UnShiftModel( $model )
+	public function unShiftModel( $model )
 	{
 		array_unshift( $this->models, $model );
 	}
 
-	public function PopModels()
+	public function popModels()
 	{
 		$model = array_pop( $this->models );
 
 		return $model;
 	}
 
-	public function ShiftModels()
+	public function shiftModels()
 	{
 		$model = array_shift( $this->models );
 
 		return $model;
 	}
 
-	public function GetModels()
+	public function getModels()
 	{
 		return $this->models;
 	}
 
-	public function PutModels( $models )
+	public function putModels( $models )
 	{
 		$this->models = $models;
 	}
 
-	public function RenderAsHTML( $data = null, $omitRoot = null )
+	public function renderAsHTML( $data = null, $omitRoot = null )
 	{
-		return $this->Render( $data, "HTML", $omitRoot );
+		return $this->render( $data, "HTML", $omitRoot );
 	}
 
-	public function RenderAsXML( $data = null, $omitRoot = null )
+	public function renderAsXML( $data = null, $omitRoot = null )
 	{
-		return $this->Render( $data, "XML", $omitRoot );
+		return $this->render( $data, "XML", $omitRoot );
 	}
 
-	public function Render( $data = null, $outputType = null, $omitRoot = null )
+	public function render( $data = null, $outputType = null, $omitRoot = null )
 	{
-		return $this->Load( $data, false, $outputType, $omitRoot );
+		return $this->load( $data, false, $outputType, $omitRoot );
 	}
 
-	public function ProcessAsHTML( $data = null, $omitRoot = null )
+	public function processAsHTML( $data = null, $omitRoot = null )
 	{
-		return $this->Process( $data, "HTML", $omitRoot );
+		return $this->process( $data, "HTML", $omitRoot );
 	}
 
 	public function ProcessAsXML( $data = null, $omitRoot = null )
 	{
-		return $this->Process( $data, "XML", $omitRoot );
+		return $this->process( $data, "XML", $omitRoot );
 	}
 
-	public function Process( $data = null, $outputType = null, $omitRoot = null )
+	public function process( $data = null, $outputType = null, $omitRoot = null )
 	{
-		return $this->Load( $data, true, $outputType, $omitRoot );
+		return $this->load( $data, true, $outputType, $omitRoot );
 	}
 
-	public function Load( $data = null, $return = null, $outputType = null, $omitRoot = null )
+	public function load( $data = null, $return = null, $outputType = null, $omitRoot = null )
 	{
-		$return = $this->GetReturn( $return );
-		$outputType = $this->GetOutputType( $outputType );
-		$omitRoot = $this->GetOmitRoot( $omitRoot );
+		$return = $this->getReturn( $return );
+		$outputType = $this->getOutputType( $outputType );
+		$omitRoot = $this->getOmitRoot( $omitRoot );
 
-		if( is_null( $this->GetXMLData() ) )
+		if( is_null( $this->getXMLData() ) )
 		{
-			$this->SetXMLData( $this->AggregateModelsForView( $data, $this->GetOmitRoot( $omitRoot ) ) );
+			$this->setXMLData( $this->aggregateModelsForView( $data, $this->getOmitRoot( $omitRoot ) ) );
 		}
 
-		if( is_null( $this->GetXSLData() ) )
+		if( is_null( $this->getXSLData() ) )
 		{
-			$this->SetXSLData( $this->ImportXSL( $data ) );
+			$this->setXSLData( $this->importXSL( $data ) );
 		}
 
 		$result = null;
 
-		if( ! is_null( $this->GetXSLData() ) && ! is_null( $this->GetXMLData() ) )
+		if( ! is_null( $this->getXSLData() ) && ! is_null( $this->getXMLData() ) )
 		{
-			$result = $this->ProcessView( $return, $outputType );
+			$result = $this->processView( $return, $outputType );
 		}
 		else
 		{
@@ -119,27 +119,27 @@ class View
 		return $result;
 	}
 
-	public function SetXSLData( $xslData )
+	public function setXSLData( $xslData )
 	{
 		$this->xslData = $xslData;
 	}
 
-	public function SetXMLData( $xmlData )
+	public function setXMLData( $xmlData )
 	{
 		$this->xmlData = $xmlData;
 	}
 
-	public function GetXSLData()
+	public function getXSLData()
 	{
 		return $this->xslData;
 	}
 
-	public function GetXMLData()
+	public function getXMLData()
 	{
 		return $this->xmlData;
 	}
 
-	private function GetReturn( $return )
+	private function getReturn( $return )
 	{
 		if( is_null( $return ) )
 		{
@@ -149,7 +149,7 @@ class View
 		return $return;
 	}
 
-	private function GetOutputType( $outputType )
+	private function getOutputType( $outputType )
 	{
 		if( is_null( $outputType ) )
 		{
@@ -159,7 +159,7 @@ class View
 		return $outputType;
 	}
 
-	private function GetOmitRoot( $omitRoot )
+	private function getOmitRoot( $omitRoot )
 	{
 		if( is_null( $omitRoot ) )
 		{
@@ -169,13 +169,13 @@ class View
 		return $omitRoot;
 	}
 
-	public function ImportXSL( $data = null, $xslViewFile = null )
+	public function importXSL( $data = null, $xslViewFile = null )
 	{
 		$result = null;
 
 		if( is_null( $xslViewFile ) )
 		{
-			$this->xslViewFile = Loader::Resolve( Loader::viewFolder, $this->xslViewName, Loader::viewExtension );
+			$this->xslViewFile = Loader::resolve( Loader::viewFolder, $this->xslViewName, Loader::viewExtension );
 		}
 		else
 		{
@@ -186,11 +186,11 @@ class View
 		{
 			if( Config::$data[ "enableInlinePHPInViews" ] )
 			{
-				$result = Loader::ParseExternal( $this->xslViewFile, $data );
+				$result = Loader::parseExternal( $this->xslViewFile, $data );
 			}
 			else
 			{
-				$result = Loader::ReadExternal( $this->xslViewFile );
+				$result = Loader::readExternal( $this->xslViewFile );
 			}
 		}
 		else
@@ -208,16 +208,16 @@ class View
 		return $result;
 	}
 
-	private function AggregateModelsForView( $data, $omitRoot )
+	private function aggregateModelsForView( $data, $omitRoot )
 	{
-		$xmlHead = self::GetXMLHead( $data, $omitRoot );
-		$xmlBody = $this->GetAggregatedModels();
-		$xmlFoot = self::GetXMLFoot( $omitRoot );
+		$xmlHead = self::getXMLHead( $data, $omitRoot );
+		$xmlBody = $this->getAggregatedModels();
+		$xmlFoot = self::getXMLFoot( $omitRoot );
 
 		return $xmlHead . $xmlBody . $xmlFoot;
 	}
 
-	public function GetAggregatedModels()
+	public function getAggregatedModels()
 	{
 		$stack = "";
 
@@ -227,7 +227,7 @@ class View
 			{
 				if( $model instanceof ModelDriver )
 				{
-					$stack .= $model->GetXMLForAggregation();
+					$stack .= $model->getXMLForAggregation();
 				}
 				else
 				{
@@ -239,23 +239,23 @@ class View
 		return $stack;
 	}
 
-	public function ProcessView( $return, $outputType )
+	public function processView( $return, $outputType )
 	{
 		$result = null;
 
-		if( self::ShouldRenderClientSide( $return ) )
+		if( self::shouldRenderClientSide( $return ) )
 		{
 			OutputHeaders::XML();
 
-			echo( $this->GetXMLData() );
+			echo( $this->getXMLData() );
 		}
 		else
 		{
-			$result = $this->Transform();
+			$result = $this->transform();
 
 			if( ! $return )
 			{
-				OutputHeaders::Specifically( $outputType );
+				OutputHeaders::specifically( $outputType );
 
 				echo( $result );
 			}
@@ -264,23 +264,23 @@ class View
 		return $result;
 	}
 
-	private function Transform()
+	private function transform()
 	{
-		$result = XSLT::Transform( $this->GetXMLData(), $this->GetXSLData(), dirname( $this->xslViewFile ) );
+		$result = XSLT::transform( $this->getXMLData(), $this->getXSLData(), dirname( $this->xslViewFile ) );
 
 		return $result;
 	}
 
-	private function ShouldRenderClientSide( $return )
+	private function shouldRenderClientSide( $return )
 	{
 		if( $return === false )
 		{
-			if( self::IsClientSideXSLTSupported() )
+			if( self::isClientSideXSLTSupported() )
 			{
 				return true;
 			}
 
-			if( self::IsSourceViewOn() )
+			if( self::isSourceViewOn() )
 			{
 				return true;
 			}
@@ -289,9 +289,9 @@ class View
 		return false;
 	}
 
-	public function PassThru( $data = null, $return = false, $omitRoot = true )
+	public function passThru( $data = null, $return = false, $omitRoot = true )
 	{
-		$xmlBody = $this->GetAggregatedModels();
+		$xmlBody = $this->getAggregatedModels();
 
 		if( $return )
 		{
@@ -299,8 +299,8 @@ class View
 		}
 		else
 		{
-			$xmlHead = self::GetXMLHead( $data, $omitRoot );
-			$xmlFoot = self::GetXMLFoot( $omitRoot );
+			$xmlHead = self::getXMLHead( $data, $omitRoot );
+			$xmlFoot = self::getXMLFoot( $omitRoot );
 
 			$xmlResult = ( $xmlHead . $xmlBody . $xmlFoot );
 
@@ -312,7 +312,7 @@ class View
 		return $xmlResult;
 	}
 
-	public static function GetXMLHead( $data, $omitRoot )
+	public static function getXMLHead( $data, $omitRoot )
 	{
 		$encodedData = "";
 		$sourceViewAttribute = "";
@@ -320,10 +320,10 @@ class View
 
 		if( ! is_null( $data ) )
 		{
-			$encodedData = Normalize::EncodeData( $data );
+			$encodedData = Normalize::encodeData( $data );
 		}
 
-		if( self::IsSourceViewOn() )
+		if( self::isSourceViewOn() )
 		{
 			$xmlHead .= "<" . "?xml-stylesheet type=\"text/xsl\" href=\"" . Routing::URIProtocol() . "://" . $_SERVER[ "HTTP_HOST" ] . "/load/view/System::Views::mcc\" ?" . ">\n";
 
@@ -335,7 +335,7 @@ class View
 			{
 				if( ! is_null( $this->xslViewName ) )
 				{
-					$fullyQualifiedXsltViewName = str_replace( "\\", "::", Loader::AssignDefaultNamespace( $this->xslViewName, null, Loader::viewFolder ) );
+					$fullyQualifiedXsltViewName = str_replace( "\\", "::", Loader::assignDefaultNamespace( $this->xslViewName, null, Loader::viewFolder ) );
 					$xmlHead .= "<" . "?xml-stylesheet type=\"text/xsl\" href=\"" . Routing::URIProtocol() . "://" . $_SERVER[ "HTTP_HOST" ] . "/load/view/" . $fullyQualifiedXsltViewName . $encodedData . "\" ?" . ">\n";
 				}
 			}
@@ -349,7 +349,7 @@ class View
 		return $xmlHead;
 	}
 
-	public static function GetXMLFoot( $omitRoot )
+	public static function getXMLFoot( $omitRoot )
 	{
 		$xmlFoot = "";
 
@@ -361,12 +361,12 @@ class View
 		return $xmlFoot;
 	}
 
-	private static function IsSourceViewOn()
+	private static function isSourceViewOn()
 	{
 		return isset( $_GET[ Config::$data[ "sourceViewKey" ] ] ) && Config::$data[ "sourceViewEnabled" ];
 	}
 
-	public static function IsClientSideXSLTSupported()
+	public static function isClientSideXSLTSupported()
 	{
 		if( Config::$data[ "forceServerSideRendering" ] )
 		{

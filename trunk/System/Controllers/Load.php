@@ -8,12 +8,12 @@ use System\Libraries\OutputHeaders;
 
 class Load
 {
-	public function Index()
+	public function index()
 	{
 		trigger_error( "Incorrect use of load controller. Specify a type to load, such as 'view'.", E_USER_ERROR );
 	}
 
-	public function View()
+	public function view()
 	{
 		$args = func_get_args();
 
@@ -41,10 +41,10 @@ class Load
 
 		$tmpView = new View( $xslViewName );
 
-		$xmlHead = $tmpView->GetXMLHead( $data, true );
-		$xmlFoot = $tmpView->GetXMLFoot( true );
+		$xmlHead = $tmpView->getXMLHead( $data, true );
+		$xmlFoot = $tmpView->getXMLFoot( true );
 
-		$xmlString = ( $xmlHead . $tmpView->ImportXSL( $data ) . $xmlFoot );
+		$xmlString = ( $xmlHead . $tmpView->importXSL( $data ) . $xmlFoot );
 
 		OutputHeaders::XML();
 

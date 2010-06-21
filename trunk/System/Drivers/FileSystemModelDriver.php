@@ -17,76 +17,76 @@ class FileSystemModelDriver extends ModelDriver implements IModelDriver
 		$this->appendChild( $this->rootElement );
 	}
 
-	public function GetFolderList( $rootFolder, $match = "/./" )
+	public function getFolderList( $rootFolder, $match = "/./" )
 	{
-		$listing = FileSystem::GetFolderList( $rootFolder, $match, false );
-		$this->TransformForeignToXML( $listing );
+		$listing = FileSystem::getFolderList( $rootFolder, $match, false );
+		$this->transformForeignToXML( $listing );
 	}
 
-	public function GetDetailedFolderList( $rootFolder, $match = "/./" )
+	public function getDetailedFolderList( $rootFolder, $match = "/./" )
 	{
-		$listing = FileSystem::GetFolderList( $rootFolder, $match, true );
-		$this->TransformForeignToXML( $listing );
+		$listing = FileSystem::getFolderList( $rootFolder, $match, true );
+		$this->transformForeignToXML( $listing );
 	}
 
-	public function GetFolderListRecursive( $rootFolder, $match = "/./", $maxDepth = null )
+	public function getFolderListRecursive( $rootFolder, $match = "/./", $maxDepth = null )
 	{
-		$listing = FileSystem::GetFolderListRecursive( $rootFolder, $match, false, $maxDepth );
-		$this->TransformForeignToXML( $listing );
+		$listing = FileSystem::getFolderListRecursive( $rootFolder, $match, false, $maxDepth );
+		$this->transformForeignToXML( $listing );
 	}
 
-	public function GetDetailedFolderListRecursive( $rootFolder, $match = "/./", $maxDepth = null )
+	public function getDetailedFolderListRecursive( $rootFolder, $match = "/./", $maxDepth = null )
 	{
-		$listing = FileSystem::GetFolderListRecursive( $rootFolder, $match, true, $maxDepth );
-		$this->TransformForeignToXML( $listing );
+		$listing = FileSystem::getFolderListRecursive( $rootFolder, $match, true, $maxDepth );
+		$this->transformForeignToXML( $listing );
 	}
 
-	public function GetFileList( $rootFolder, $match = "/./" )
+	public function getFileList( $rootFolder, $match = "/./" )
 	{
-		$listing = FileSystem::GetFileList( $rootFolder, $match, false );
-		$this->TransformForeignToXML( $listing );
+		$listing = FileSystem::getFileList( $rootFolder, $match, false );
+		$this->transformForeignToXML( $listing );
 	}
 
-	public function GetDetailedFileList( $rootFolder, $match = "/./" )
+	public function getDetailedFileList( $rootFolder, $match = "/./" )
 	{
-		$listing = FileSystem::GetFileList( $rootFolder, $match, true );
-		$this->TransformForeignToXML( $listing );
+		$listing = FileSystem::getFileList( $rootFolder, $match, true );
+		$this->transformForeignToXML( $listing );
 	}
 
-	public function GetDirList( $rootFolder, $match = "/./" )
+	public function getDirList( $rootFolder, $match = "/./" )
 	{
-		$listing = FileSystem::GetDirList( $rootFolder, $match, false );
-		$this->TransformForeignToXML( $listing );
+		$listing = FileSystem::getDirList( $rootFolder, $match, false );
+		$this->transformForeignToXML( $listing );
 	}
 
-	public function GetDetailedDirList( $rootFolder, $match = "/./" )
+	public function getDetailedDirList( $rootFolder, $match = "/./" )
 	{
-		$listing = FileSystem::GetDirList( $rootFolder, $match, true );
-		$this->TransformForeignToXML( $listing );
+		$listing = FileSystem::getDirList( $rootFolder, $match, true );
+		$this->transformForeignToXML( $listing );
 	}
 
-	public function GetDirListRecursive( $rootFolder, $match = "/./", $maxDepth = null )
+	public function getDirListRecursive( $rootFolder, $match = "/./", $maxDepth = null )
 	{
-		$listing = FileSystem::GetDirListRecursive( $rootFolder, $match, false, $maxDepth );
-		$this->TransformForeignToXML( $listing );
+		$listing = FileSystem::getDirListRecursive( $rootFolder, $match, false, $maxDepth );
+		$this->transformForeignToXML( $listing );
 	}
 
-	public function GetDetailedDirListRecursive( $rootFolder, $match = "/./", $maxDepth = null )
+	public function getDetailedDirListRecursive( $rootFolder, $match = "/./", $maxDepth = null )
 	{
-		$listing = FileSystem::GetDirListRecursive( $rootFolder, $match, true, $maxDepth );
-		$this->TransformForeignToXML( $listing );
+		$listing = FileSystem::getDirListRecursive( $rootFolder, $match, true, $maxDepth );
+		$this->transformForeignToXML( $listing );
 	}
 
-	public function TransformForeignToXML()
+	public function transformForeignToXML()
 	{
 		$listing = func_get_arg( 0 );
 
-		$this->RecursiveListing( $listing );
+		$this->recursiveListing( $listing );
 
-		parent::TransformForeignToXML();
+		parent::transformForeignToXML();
 	}
 
-	private function RecursiveListing( $listing )
+	private function recursiveListing( $listing )
 	{
 		$listingKeys = array_keys( $listing );
 
@@ -114,7 +114,7 @@ class FileSystemModelDriver extends ModelDriver implements IModelDriver
 
 			if( isset( $listing[ $folderName ][ ":FOLDERS:" ] ) && count( $listing[ $folderName ][ ":FOLDERS:" ] ) )
 			{
-				$this->RecursiveListing( $listing[ $folderName ][ ":FOLDERS:" ] );
+				$this->recursiveListing( $listing[ $folderName ][ ":FOLDERS:" ] );
 			}
 
 			if( isset( $listing[ $folderName ][ ":FILES:" ] ) && count( $listing[ $folderName ][ ":FILES:" ] ) )

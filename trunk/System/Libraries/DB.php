@@ -6,7 +6,7 @@ class DB
 {
 	private static $link = null;
 
-	public static function Connect()
+	public static function connect()
 	{
 		switch( Config::$data[ "databaseType" ] )
 		{
@@ -35,7 +35,7 @@ class DB
 		}
 	}
 
-	public static function SelectDB()
+	public static function selectDB()
 	{
 		switch( Config::$data[ "databaseType" ] )
 		{
@@ -50,7 +50,7 @@ class DB
 		}
 	}
 
-	public static function ExecutePreparedStatement( $sql, $parameters = null )
+	public static function executePreparedStatement( $sql, $parameters = null )
 	{
 		$rowList = null;
 		$returnValue = null;
@@ -61,7 +61,7 @@ class DB
 
 				$prepQueryName = "prep_query_" . substr( md5( rand( 10000, 99999 ) . date( "YmdHis" ) ), 0, 8 );
 
-				self::Query( "PREPARE " . $prepQueryName . " FROM \"" . $sql . "\"" );
+				self::query( "PREPARE " . $prepQueryName . " FROM \"" . $sql . "\"" );
 
 				if( is_array( $parameters ) )
 				{
@@ -69,23 +69,23 @@ class DB
 
 					foreach( $parameters as $key => $value )
 					{
-						self::Query( "SET @param_" . $key . " = \"" . mysql_real_escape_string( $value ) . "\"" );
+						self::query( "SET @param_" . $key . " = \"" . mysql_real_escape_string( $value ) . "\"" );
 
 						$params[] = "@param_" . $key;
 					}
 
-					$result = self::Query( "EXECUTE " . $prepQueryName . " USING " . implode( ", ", $params ) );
+					$result = self::query( "EXECUTE " . $prepQueryName . " USING " . implode( ", ", $params ) );
 				}
 				else
 				{
-					$result = self::Query( "EXECUTE " . $prepQueryName );
+					$result = self::query( "EXECUTE " . $prepQueryName );
 				}
 
 				if( is_resource( $result ) )
 				{
 					$rowList = array();
 
-					while( $row = self::FetchArray( $result, MYSQL_ASSOC ) )
+					while( $row = self::fetchArray( $result, MYSQL_ASSOC ) )
 					{
 						$rowList[] = $row;
 					}
@@ -100,7 +100,7 @@ class DB
 					}
 				}
 
-				self::Query( "DEALLOCATE PREPARE " . $prepQueryName );
+				self::query( "DEALLOCATE PREPARE " . $prepQueryName );
 
 			break;
 
@@ -201,7 +201,7 @@ class DB
 		return $returnValue;
 	}
 
-	public static function ExecuteMultiQuery( $sql )
+	public static function executeMultiQuery( $sql )
 	{
 		$rowLists = null;
 
@@ -221,7 +221,7 @@ class DB
 						{
 							$rowList = array();
 
-							while( $row = self::FetchArray( $result, MYSQLI_ASSOC ) )
+							while( $row = self::fetchArray( $result, MYSQLI_ASSOC ) )
 							{
 								$rowList[] = $row;
 							}
@@ -257,7 +257,7 @@ class DB
 		return $rowLists;
 	}
 
-	public static function Query( $sql )
+	public static function query( $sql )
 	{
 		switch( Config::$data[ "databaseType" ] )
 		{
@@ -277,7 +277,7 @@ class DB
 		return $result;
 	}
 
-	public static function FetchArray( $result, $resultType = null )
+	public static function fetchArray( $result, $resultType = null )
 	{
 		switch( Config::$data[ "databaseType" ] )
 		{
@@ -301,7 +301,7 @@ class DB
 		return $row;
 	}
 
-	public static function Close()
+	public static function close()
 	{
 		switch( Config::$data[ "databaseType" ] )
 		{

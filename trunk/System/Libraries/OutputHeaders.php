@@ -4,7 +4,7 @@ namespace System\Libraries;
 
 class OutputHeaders
 {
-	public static function Specifically( $outputType )
+	public static function specifically( $outputType )
 	{
 		switch( strtolower( $outputType ) )
 		{
@@ -17,7 +17,7 @@ class OutputHeaders
 			break;
 
 			default:
-				self::Custom( $outputType );
+				self::custom( $outputType );
 
 		}
 	}
@@ -26,22 +26,22 @@ class OutputHeaders
 	{
 		header( "Content-type: application/xml; charset=UTF-8" );
 
-		self::NoCache();
+		self::noCache();
 	}
 
 	public static function HTML()
 	{
 		header( "Content-type: text/html; charset=UTF-8" );					// ideally the Content-type would be application/xhtml+xml
 
-		self::NoCache();
+		self::noCache();
 	}
 
-	public static function Custom( $header )
+	public static function custom( $header )
 	{
 		header( $header );
 	}
 
-	private static function NoCache()
+	private static function noCache()
 	{
 		header( "Expires: Mon, 14 Oct 2002 05:00:00 GMT" );					// Date in the past
 		header( "Last-Modified: " . gmdate( "D, d M Y H:i:s" ) . " GMT" );	// Always modified

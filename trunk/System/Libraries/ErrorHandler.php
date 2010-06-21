@@ -9,12 +9,12 @@ use ErrorException;
 
 class ErrorHandler
 {
-	public static function ExceptionErrorHandler( $errno, $errstr, $errfile, $errline )
+	public static function exceptionErrorHandler( $errno, $errstr, $errfile, $errline )
 	{
 		throw new ErrorException( $errstr, 0, $errno, $errfile, $errline );
 	}
 
-	public static function UncaughtExceptionHandler( $exception )
+	public static function uncaughtExceptionHandler( $exception )
 	{
 		$traceline = "#%s %s(%s): %s(%s)";
 		$msg = "PHP Fatal error: Uncaught exception '%s' with message '%s' in %s:%s\nStack trace:\n%s\nthrown in %s on line %s";
@@ -105,47 +105,47 @@ class ErrorHandler
 	}
 	*/
 
-	public static function InvokeHTTPError( $data = array() )
+	public static function invokeHTTPError( $data = array() )
 	{
 		$headerPattern = "HTTP/1.0 #errorCode# #headerType#";
 
-		self::InvokeError( Config::$data[ "httpErrorView" ], Config::$data[ "httpErrorModel" ], $headerPattern, $data );
+		self::invokeError( Config::$data[ "httpErrorView" ], Config::$data[ "httpErrorModel" ], $headerPattern, $data );
 	}
 
-	private static function InvokeError( $viewName, $modelName, $headerPattern, $data )
+	private static function invokeError( $viewName, $modelName, $headerPattern, $data )
 	{
 		$model = new XMLModelDriver( $modelName );
 
 		$data[ "headerType" ] = $model->xPath->query( "//xmvc:error[ @code = '" . $data[ "errorCode" ] . "' ]/@type" )->item( 0 )->nodeValue;
 
-		$header = self::CreateHeaderUsingPattern( $headerPattern, $data );
+		$header = self::createHeaderUsingPattern( $headerPattern, $data );
 
 		$strings = new StringsModelDriver();
 
 		if( isset( $data[ "errorCode" ] ) )
 		{
-			$strings->Add( "error-code", $data[ "errorCode" ] );
+			$strings->add( "error-code", $data[ "errorCode" ] );
 		}
 
 		if( isset( $data[ "controllerFile" ] ) )
 		{
-			$strings->Add( "controller-file", $data[ "controllerFile" ] );
+			$strings->add( "controller-file", $data[ "controllerFile" ] );
 		}
 
 		if( isset( $data[ "method" ] ) )
 		{
-			$strings->Add( "method", is_string( $data[ "method" ] ) ? $data[ "method" ] : print_r( $data[ "method" ], true ) );
+			$strings->add( "method", is_string( $data[ "method" ] ) ? $data[ "method" ] : print_r( $data[ "method" ], true ) );
 		}
 
 		$view = new View( $viewName );
-		$view->PushModel( $model );
-		$view->PushModel( $strings );
- 		$view->Render( null, $header );
+		$view->pushModel( $model );
+		$view->pushModel( $strings );
+ 		$view->render( null, $header );
 
 		die();
 	}
 
-	private static function CreateHeaderUsingPattern( $pattern, $data )
+	private static function createHeaderUsingPattern( $pattern, $data )
 	{
 		foreach( $data as $key => $value )
 		{
