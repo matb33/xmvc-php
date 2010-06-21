@@ -122,7 +122,7 @@ class XMLModelDriver extends ModelDriver implements IModelDriver
 		}
 		else
 		{
-			// TODO: Exception //trigger_error( "XML model [" . $modelName . "] not found", E_USER_ERROR );
+			trigger_error( "XML model [" . $modelName . "] not found", E_USER_ERROR );
 		}
 
 		return $xmlData;
