@@ -6,7 +6,7 @@ use System\Libraries\Config;
 
 class PHPInfo
 {
-	public function Index()
+	public function index()
 	{
 		phpinfo();
 

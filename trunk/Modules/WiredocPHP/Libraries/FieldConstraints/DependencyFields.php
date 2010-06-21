@@ -11,7 +11,7 @@ class DependencyFields extends ArrayObject
 		parent::__construct( array() );
 	}
 
-	public function Add( Field $field )
+	public function add( Field $field )
 	{
 		parent::append( $field );
 	}

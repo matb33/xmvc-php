@@ -19,16 +19,16 @@ class ComponentFactory extends DefaultEventDispatcher
 
 	public function __construct()
 	{
-		$this->ResetFactory();
+		$this->resetFactory();
 	}
 
-	public function GetComponent( $component, $instanceName = null, $eventName = null, $parameters = array(), $cacheMinutes = 0 )
+	public function getComponent( $component, $instanceName = null, $eventName = null, $parameters = array(), $cacheMinutes = 0 )
 	{
-		$componentClass = ComponentUtils::GetComponentClassNameFromWiredocComponentName( $component );
-		$eventName = ComponentUtils::DefaultEventNameIfNecessary( $eventName );
-		$namespacedComponentClass = ComponentUtils::DefaultNamespaceIfNecessary( $componentClass );
+		$componentClass = ComponentUtils::getComponentClassNameFromWiredocComponentName( $component );
+		$eventName = ComponentUtils::defaultEventNameIfNecessary( $eventName );
+		$namespacedComponentClass = ComponentUtils::defaultNamespaceIfNecessary( $componentClass );
 
-		if( Loader::Resolve( Component::componentFolder, $namespacedComponentClass, Component::componentExtension ) )
+		if( Loader::resolve( Component::componentFolder, $namespacedComponentClass, Component::componentExtension ) )
 		{
 			$instance = new $namespacedComponentClass( null, $instanceName, $eventName, $parameters, $cacheMinutes );
 		}
@@ -37,18 +37,18 @@ class ComponentFactory extends DefaultEventDispatcher
 			$instance = new GenericComponent( $namespacedComponentClass, $instanceName, $eventName, $parameters, $cacheMinutes );
 		}
 
-		$instance->addEventListener( "onreadyforprocessing.components", new Delegate( "OnComponentReadyForExpansion", $this ) );
-		$instance->Build();
+		$instance->addEventListener( "onreadyforprocessing.components", new Delegate( "onComponentReadyForExpansion", $this ) );
+		$instance->build();
 
 		return true;
 	}
 
-	public function OnComponentReadyForExpansion( Event $event )
+	public function onComponentReadyForExpansion( Event $event )
 	{
 		$componentModel = $event->arguments[ "model" ];
 
-		ComponentUtils::RegisterNamespaces( $componentModel );
-		ComponentUtils::CreateDefinitionAttributeIfMissing( $componentModel, Config::$data[ "wiredocNamespaces" ][ "wd" ], "wd:name", $event->arguments[ "component" ] . "." . $event->arguments[ "instanceName" ] );
+		ComponentUtils::registerNamespaces( $componentModel );
+		ComponentUtils::createDefinitionAttributeIfMissing( $componentModel, Config::$data[ "wiredocNamespaces" ][ "wd" ], "wd:name", $event->arguments[ "component" ] . "." . $event->arguments[ "instanceName" ] );
 
 		$isRootModel = is_null( $this->rootModel );
 		$isInjecting = !is_null( $this->referenceNode );
@@ -60,21 +60,21 @@ class ComponentFactory extends DefaultEventDispatcher
 
 		if( $isInjecting )
 		{
-			$this->InjectComponentModel( $componentModel );
+			$this->injectComponentModel( $componentModel );
 		}
 
-		while( $this->ExpandNextReference() !== false );
+		while( $this->expandNextReference() !== false );
 
 		if( $isRootModel )
 		{
-			$this->InjectHref();
-			$this->InjectLang( Language::GetLang() );
-			$this->ResetFactory();
+			$this->injectHref();
+			$this->injectLang( Language::getLang() );
+			$this->resetFactory();
 			$this->dispatchEvent( new Event( "onreadyforrender.components", $event->arguments ) );
 		}
 	}
 
-	private function ExpandNextReference()
+	private function expandNextReference()
 	{
 		$references = $this->rootModel->xPath->query( "//wd:reference" );
 
@@ -82,7 +82,7 @@ class ComponentFactory extends DefaultEventDispatcher
 		{
 			$this->referenceNode = $references->item( 0 );
 
-			list( $component, $instanceName, $null ) = ComponentUtils::ExtractComponentNamePartsFromWiredocName( $this->referenceNode->getAttribute( "wd:name" ) );
+			list( $component, $instanceName, $null ) = ComponentUtils::extractComponentNamePartsFromWiredocName( $this->referenceNode->getAttribute( "wd:name" ) );
 
 			$eventName = $this->referenceNode->getAttribute( "wd:event" );
 			$cacheMinutes = ( int )$this->referenceNode->getAttribute( "wd:cache" );
@@ -95,13 +95,13 @@ class ComponentFactory extends DefaultEventDispatcher
 				$parameters[ $i - 1 ] = $this->referenceNode->getAttribute( "wd:param" . $i );
 			}
 
-			return $this->GetComponent( $component, $instanceName, $eventName, $parameters, $cacheMinutes );
+			return $this->getComponent( $component, $instanceName, $eventName, $parameters, $cacheMinutes );
 		}
 
 		return false;
 	}
 
-	private function InjectComponentModel( $componentModel )
+	private function injectComponentModel( $componentModel )
 	{
 		$originalNode = $this->referenceNode->cloneNode( true );
 
@@ -114,13 +114,13 @@ class ComponentFactory extends DefaultEventDispatcher
 		{
 			$childRefNode = $childRefNodeList->item( $i );
 			$importedNode = $this->rootModel->importNode( $originalNode, true );
-			DOMUtils::ReplaceNodeWithChildren( $childRefNode, $importedNode );
+			DOMUtils::replaceNodeWithChildren( $childRefNode, $importedNode );
 		}
 
 		$this->referenceNode = null;
 	}
 
-	private function InjectHref()
+	private function injectHref()
 	{
 		$itemNodeList = $this->rootModel->xPath->query( "//*[ @meta:inject-href ]" );
 
@@ -129,7 +129,7 @@ class ComponentFactory extends DefaultEventDispatcher
 			$fullyQualifiedName = $itemNode->getAttribute( "meta:inject-href" );
 			$prefix = $itemNode->hasAttribute( "meta:inject-href-prefix" ) ? $itemNode->getAttribute( "meta:inject-href-prefix" ) : "";
 			$suffix = $itemNode->hasAttribute( "meta:inject-href-suffix" ) ? $itemNode->getAttribute( "meta:inject-href-suffix" ) : "";
-			$targetLang = $itemNode->hasAttribute( "meta:inject-href-lang" ) ? $itemNode->getAttribute( "meta:inject-href-lang" ) : Language::GetLang();
+			$targetLang = $itemNode->hasAttribute( "meta:inject-href-lang" ) ? $itemNode->getAttribute( "meta:inject-href-lang" ) : Language::getLang();
 
 			$itemNode->removeAttribute( "meta:inject-href" );
 			$itemNode->removeAttribute( "meta:inject-href-prefix" );
@@ -138,11 +138,11 @@ class ComponentFactory extends DefaultEventDispatcher
 
 			if( strlen( $fullyQualifiedName ) == 0 )
 			{
-				$path = Normalize::StripQueryInURI( Routing::URI() );
+				$path = Normalize::stripQueryInURI( Routing::URI() );
 			}
 			else
 			{
-				$path = ComponentLookup::getInstance()->GetPathByFullyQualifiedNameAndLanguage( $fullyQualifiedName, $targetLang );
+				$path = ComponentLookup::getInstance()->getPathByFullyQualifiedNameAndLanguage( $fullyQualifiedName, $targetLang );
 			}
 
 			$linkNode = $this->rootModel->createAttribute( "href" );
@@ -151,7 +151,7 @@ class ComponentFactory extends DefaultEventDispatcher
 		}
 	}
 
-	private function InjectLang( $lang )
+	private function injectLang( $lang )
 	{
 		$itemNodeList = $this->rootModel->xPath->query( "//*[ @meta:inject-lang or @meta:inject-lang-base or @meta:inject-lang-locale ]" );
 
@@ -167,13 +167,13 @@ class ComponentFactory extends DefaultEventDispatcher
 			{
 				$attributeName = $itemNode->getAttribute( "meta:inject-lang-base" );
 				$itemNode->removeAttribute( "meta:inject-lang-base" );
-				$langValueToInsert = Language::GetLangBase( $lang );
+				$langValueToInsert = Language::getLangBase( $lang );
 			}
 			elseif( $itemNode->hasAttribute( "meta:inject-lang-locale" ) )
 			{
 				$attributeName = $itemNode->getAttribute( "meta:inject-lang-locale" );
 				$itemNode->removeAttribute( "meta:inject-lang-locale" );
-				$langValueToInsert = Language::GetLangLocale( $lang );
+				$langValueToInsert = Language::getLangLocale( $lang );
 			}
 
 			$langNode = $this->rootModel->createAttribute( $attributeName );
@@ -182,7 +182,7 @@ class ComponentFactory extends DefaultEventDispatcher
 		}
 	}
 
-	private function ResetFactory()
+	private function resetFactory()
 	{
 		$this->rootModel = null;
 		$this->referenceModel = null;

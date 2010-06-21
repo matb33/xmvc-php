@@ -16,10 +16,10 @@ class AuthenticationModelDriver extends ModelDriver implements IModelDriver
 		$this->rootElement = $this->createElementNS( Core::namespaceXML, "xmvc:authentication" );
 		$this->appendChild( $this->rootElement );
 
-		$this->TransformForeignToXML( $username, $password );
+		$this->transformForeignToXML( $username, $password );
 	}
 
-	public function TransformForeignToXML()
+	public function transformForeignToXML()
 	{
 		$username = func_get_arg( 0 );
 		$password = func_get_arg( 1 );
@@ -30,7 +30,7 @@ class AuthenticationModelDriver extends ModelDriver implements IModelDriver
 		}
 		else
 		{
-			$success = Authenticator::Authenticate( $username, $password );
+			$success = Authenticator::authenticate( $username, $password );
 
 			if( $success )
 			{
@@ -52,6 +52,6 @@ class AuthenticationModelDriver extends ModelDriver implements IModelDriver
 		$node->appendChild( $data );
 		$this->rootElement->appendChild( $node );
 
-		parent::TransformForeignToXML();
+		parent::transformForeignToXML();
 	}
 }

@@ -24,13 +24,13 @@ class Cache
 		$this->tokens = $tokens;
 		$this->filenamePattern = $filenamePattern;
 		$this->purgeCache = $purgeCache;
-		$this->hash = $this->GetHash();
+		$this->hash = $this->getHash();
 		$this->tokens[ "hash" ] = $this->hash;
 		$this->tokens[ "cacheID" ] = $this->cacheID;
-		$this->filename = $this->GetFilename( $this->filenamePattern );
+		$this->filename = $this->getFilename( $this->filenamePattern );
 	}
 
-	public function Read()
+	public function read()
 	{
 		if( extension_loaded( "memcache" ) && false )
 		{
@@ -38,32 +38,32 @@ class Cache
 		}
 		else
 		{
-			return $this->Unserialize( file_get_contents( $this->filename ) );
+			return $this->unserialize( file_get_contents( $this->filename ) );
 		}
 	}
 
-	public function Write( $data )
+	public function write( $data )
 	{
-		if( $this->PrepCacheFolder( $this->filename, $this->purgeCache ) )
+		if( $this->prepCacheFolder( $this->filename, $this->purgeCache ) )
 		{
-			return file_put_contents( $this->filename, $this->Serialize( $data ), FILE_TEXT | LOCK_EX );
+			return file_put_contents( $this->filename, $this->serialize( $data ), FILE_TEXT | LOCK_EX );
 		}
 
 		return false;
 	}
 
-	public function IsCached()
+	public function isCached()
 	{
 		return file_exists( $this->filename );
 	}
 
-	public function PrepCacheFolder( $filename, $purgeCache = true )
+	public function prepCacheFolder( $filename, $purgeCache = true )
 	{
 		$cacheFolder = dirname( $filename ) . "/";
 
-		FileSystem::CreateFolderStructure( $cacheFolder );
+		FileSystem::createFolderStructure( $cacheFolder );
 
-		if( FileSystem::TestPermissions( $cacheFolder, FileSystem::FS_PERM_WRITE ) )
+		if( FileSystem::testPermissions( $cacheFolder, FileSystem::FS_PERM_WRITE ) )
 		{
 			if( $purgeCache )
 			{
@@ -85,12 +85,12 @@ class Cache
 		return false;
 	}
 
-	private function GetFilename( $filenamePattern )
+	private function getFilename( $filenamePattern )
 	{
-		return StringUtils::ReplaceTokensInPattern( $filenamePattern, $this->tokens );
+		return StringUtils::replaceTokensInPattern( $filenamePattern, $this->tokens );
 	}
 
-	private function GetHash()
+	private function getHash()
 	{
 		$hash = $this->cacheID;
 
@@ -102,11 +102,11 @@ class Cache
 		return $hash;
 	}
 
-	private function Serialize( $data )
+	private function serialize( $data )
 	{
 		if( $data instanceof XMLModelDriver )
 		{
-			return $this->ManuallyFormatXMLOutput( Normalize::StripRootTag( $data->saveXML() ) );
+			return $this->manuallyFormatXMLOutput( Normalize::stripRootTag( $data->saveXML() ) );
 		}
 		else
 		{
@@ -114,7 +114,7 @@ class Cache
 		}
 	}
 
-	private function Unserialize( $data )
+	private function unserialize( $data )
 	{
 		if( strpos( $data, "<?xml" ) !== false )
 		{
@@ -126,7 +126,7 @@ class Cache
 		}
 	}
 
-	private function ManuallyFormatXMLOutput( $input )
+	private function manuallyFormatXMLOutput( $input )
 	{
 		// Hack to get XML formatted, despite formatOutput being set in ModelDriver
 

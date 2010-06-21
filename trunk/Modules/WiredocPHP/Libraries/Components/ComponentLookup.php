@@ -21,35 +21,35 @@ class ComponentLookup extends OverrideableSingleton
 		$this->cache = new Cache( Config::$data[ "componentLookupFilePattern" ], array(), "", false, 0 );
 	}
 
-	public function Generate()
+	public function generate()
 	{
-		$this->GenerateLookupModel();
-		$this->CacheLookupModel();
+		$this->generateLookupModel();
+		$this->cacheLookupModel();
 	}
 
-	private function GenerateLookupModel()
+	private function generateLookupModel()
 	{
-		$this->model = $this->GenerateComponentModel( $this->GetMetaDataCollectionFromModels() );
+		$this->model = $this->generateComponentModel( $this->getMetaDataCollectionFromModels() );
 	}
 
-	private function GetMetaDataCollectionFromModels()
+	private function getMetaDataCollectionFromModels()
 	{
-		$list = FileSystem::GetDirListRecursive( Config::$data[ "componentLookupCrawlFolder" ], Config::$data[ "componentLookupCrawlFileRegExp" ], Config::$data[ "componentLookupCrawlFolderRegExp" ], false );
-		$flatList = FileSystem::FlattenDirListIntoFileList( $list[ Config::$data[ "componentLookupCrawlFolder" ] ] );
+		$list = FileSystem::getDirListRecursive( Config::$data[ "componentLookupCrawlFolder" ], Config::$data[ "componentLookupCrawlFileRegExp" ], Config::$data[ "componentLookupCrawlFolderRegExp" ], false );
+		$flatList = FileSystem::flattenDirListIntoFileList( $list[ Config::$data[ "componentLookupCrawlFolder" ] ] );
 
 		$metaDataCollection = array();
 
 		foreach( $flatList as $file )
 		{
 			$model = new XMLModelDriver( $file );
-			ComponentUtils::RegisterNamespaces( $model );
-			$metaDataCollection = $this->GetMetaData( $model, $file, $metaDataCollection );
+			ComponentUtils::registerNamespaces( $model );
+			$metaDataCollection = $this->getMetaData( $model, $file, $metaDataCollection );
 		}
 
 		return $metaDataCollection;
 	}
 
-	public function GetMetaData( $model, $file = null, $metaDataCollection = array() )
+	public function getMetaData( $model, $file = null, $metaDataCollection = array() )
 	{
 		$componentNodeList = $model->xPath->query( "//wd:component" );
 
@@ -60,7 +60,7 @@ class ComponentLookup extends OverrideableSingleton
 
 			foreach( $hrefNodeList as $hrefNode )
 			{
-				$lang = $hrefNode->hasAttribute( "xml:lang" ) ? $hrefNode->getAttribute( "xml:lang" ) : Language::GetLang();
+				$lang = $hrefNode->hasAttribute( "xml:lang" ) ? $hrefNode->getAttribute( "xml:lang" ) : Language::getLang();
 				$private = $hrefNode->hasAttribute( "private" ) ? $hrefNode->getAttribute( "private" ) : "0";
 				$private = ( $private == "true" || $private == 1 ? 1 : 0 );
 				$path = Normalize::URI( $hrefNode->nodeValue );
@@ -76,11 +76,11 @@ class ComponentLookup extends OverrideableSingleton
 
 			if( is_null( $file ) )
 			{
-				list( $component, $instanceName, $fullyQualifiedName ) = ComponentUtils::ExtractComponentNamePartsFromWiredocName( $componentNode->getAttribute( "wd:name" ) );
+				list( $component, $instanceName, $fullyQualifiedName ) = ComponentUtils::extractComponentNamePartsFromWiredocName( $componentNode->getAttribute( "wd:name" ) );
 			}
 			else
 			{
-				list( $component, $instanceName, $fullyQualifiedName ) = $this->ExtractComponentNamingFromFile( $file );
+				list( $component, $instanceName, $fullyQualifiedName ) = $this->extractComponentNamingFromFile( $file );
 			}
 
 			$metaDataCollection[] = array(
@@ -97,7 +97,7 @@ class ComponentLookup extends OverrideableSingleton
 		return $metaDataCollection;
 	}
 
-	private function GenerateComponentModel( $metaDataCollection )
+	private function generateComponentModel( $metaDataCollection )
 	{
 		$lookupModel = new XMLModelDriver();
 		$lookupModel->xPath->registerNamespace( "lookup", Config::$data[ "wiredocNamespaces" ][ "lookup" ] );
@@ -109,13 +109,13 @@ class ComponentLookup extends OverrideableSingleton
 
 		foreach( $metaDataCollection as $metaData )
 		{
-			$this->AppendEntry( $metaData, $lookupModel );
+			$this->appendEntry( $metaData, $lookupModel );
 		}
 
 		return $lookupModel;
 	}
 
-	private function AppendEntry( $metaData, $lookupModel )
+	private function appendEntry( $metaData, $lookupModel )
 	{
 		$hrefList = $metaData[ "hrefList" ];
 		$component = $metaData[ "component" ];
@@ -192,32 +192,32 @@ class ComponentLookup extends OverrideableSingleton
 		}
 	}
 
-	private function CacheLookupModel()
+	private function cacheLookupModel()
 	{
-		return $this->cache->Write( $this->model );
+		return $this->cache->write( $this->model );
 	}
 
-	private function Load()
+	private function load()
 	{
 		if( is_null( $this->model ) )
 		{
 			// Sitemap isn't available in local memory, check the cache
-			if( ! $this->cache->IsCached() )
+			if( ! $this->cache->isCached() )
 			{
 				// Nothing is cached, load into local memory and attempt to cache
-				$this->Generate();
+				$this->generate();
 			}
 
-			if( $this->cache->IsCached() )
+			if( $this->cache->isCached() )
 			{
 				// Available in cache, grab it from there and store in local memory
-				$this->model = $this->cache->Read();
+				$this->model = $this->cache->read();
 			}
 			else
 			{
 				// Still unable to grab from cache, might be a write permission problem etc.
 				// Ignore cache, load to local memory and continue
-				$this->GenerateSitemapModels();
+				$this->generateSitemapModels();
 			}
 		}
 
@@ -233,9 +233,9 @@ class ComponentLookup extends OverrideableSingleton
 		}
 	}
 
-	private function ExtractComponentNamingFromFile( $file )
+	private function extractComponentNamingFromFile( $file )
 	{
-		$componentString = str_replace( "\\", "/", str_replace( Normalize::Path( realpath( Config::$data[ "componentLookupCrawlFolder" ] ) ), "", $file ) );
+		$componentString = str_replace( "\\", "/", str_replace( Normalize::path( realpath( Config::$data[ "componentLookupCrawlFolder" ] ) ), "", $file ) );
 
 		if( strpos( $componentString, ".xsl" ) !== false )
 		{
@@ -248,33 +248,33 @@ class ComponentLookup extends OverrideableSingleton
 			$componentWiredocName = substr( $componentWiredocName, 0, strrpos( $componentWiredocName, "/" ) ) . "." . substr( strrchr( $componentWiredocName, "/" ), 1 );
 		}
 
-		return ComponentUtils::ExtractComponentNamePartsFromWiredocName( $componentWiredocName );
+		return ComponentUtils::extractComponentNamePartsFromWiredocName( $componentWiredocName );
 	}
 
-	public function Get()
+	public function get()
 	{
 		if( is_null( $this->model ) )
 		{
-			$this->Load();
+			$this->load();
 		}
 
 		return $this->model;
 	}
 
-	public function Refresh()
+	public function refresh()
 	{
 		$this->model = null;
-		$this->Load();
+		$this->load();
 	}
 
-	public function HostsDontMatch( $host = null )
+	public function hostsDontMatch( $host = null )
 	{
 		if( is_null( $host ) )
 		{
 			$host = $_SERVER[ "HTTP_HOST" ];
 		}
 
-		$lookupModel = $this->Get();
+		$lookupModel = $this->get();
 
 		$URINodeList = $lookupModel->xPath->query( "//lookup:entry/lookup:href/lookup:uri" );
 
@@ -287,57 +287,57 @@ class ComponentLookup extends OverrideableSingleton
 		return false;
 	}
 
-	public function GetComponentDataByPath( $path, $index = 0 )
+	public function getComponentDataByPath( $path, $index = 0 )
 	{
-		$lookupModel = $this->Get();
+		$lookupModel = $this->get();
 		$entryNodeList = $lookupModel->xPath->query( "//lookup:entry[ lookup:instance-name != '' and lookup:instance-name != 'null' and lookup:href/lookup:uri = '" . $path . "' ]" );
 
 		if( $entryNodeList->length > 0 )
 		{
-			return $this->GetComponentData( $entryNodeList->item( $index ), $path );
+			return $this->getComponentData( $entryNodeList->item( $index ), $path );
 		}
 
 		return false;
 	}
 
-	public function GetComponentDataByFullyQualifiedName( $fullyQualifiedName, $index = 0 )
+	public function getComponentDataByFullyQualifiedName( $fullyQualifiedName, $index = 0 )
 	{
-		$lookupModel = $this->Get();
+		$lookupModel = $this->get();
 		$entryNodeList = $lookupModel->xPath->query( "//lookup:entry[ lookup:fully-qualified-name = '" . $fullyQualifiedName . "' ]" );
 
 		if( $entryNodeList->length > 0 )
 		{
-			return $this->GetComponentData( $entryNodeList->item( $index ) );
+			return $this->getComponentData( $entryNodeList->item( $index ) );
 		}
 
 		return false;
 	}
 
-	public function GetPathByFullyQualifiedNameAndLanguage( $fullyQualifiedName, $lang, $index = 0 )
+	public function getPathByFullyQualifiedNameAndLanguage( $fullyQualifiedName, $lang, $index = 0 )
 	{
-		$lookupModel = $this->Get();
+		$lookupModel = $this->get();
 		$URINodeList = $lookupModel->xPath->query( "//lookup:entry[ lookup:fully-qualified-name = '" . $fullyQualifiedName . "' ]/lookup:href[ php:function( 'Modules\Language\Libraries\Language::XSLTLang', '" . $lang . "', (ancestor-or-self::*/@xml:lang)[last()] ) ]/lookup:uri" );
 		$path = $URINodeList->length > 0 ? $URINodeList->item( $index )->nodeValue : "";
 
 		return $path;
 	}
 
-	public function GetComponentDataByComponentName( $component, $index = 0 )
+	public function getComponentDataByComponentName( $component, $index = 0 )
 	{
-		$lookupModel = $this->Get();
+		$lookupModel = $this->get();
 		$entryNodeList = $lookupModel->xPath->query( "//lookup:entry[ lookup:component = '" . $component . "' ]" );
 
 		if( $entryNodeList->length > 0 )
 		{
-			return $this->GetComponentData( $entryNodeList->item( $index ) );
+			return $this->getComponentData( $entryNodeList->item( $index ) );
 		}
 
 		return false;
 	}
 
-	private function GetComponentData( $entryNode, $path = "" )
+	private function getComponentData( $entryNode, $path = "" )
 	{
-		$lookupModel = $this->Get();
+		$lookupModel = $this->get();
 
 		$componentNodeList = $lookupModel->xPath->query( "lookup:component", $entryNode );
 		$instanceNameNodeList = $lookupModel->xPath->query( "lookup:instance-name", $entryNode );
@@ -353,9 +353,9 @@ class ComponentLookup extends OverrideableSingleton
 		return $data;
 	}
 
-	public function GetFullyQualifiedNameByPath( $path )
+	public function getFullyQualifiedNameByPath( $path )
 	{
-		$lookupModel = $this->Get();
+		$lookupModel = $this->get();
 		$entryNodeList = $lookupModel->xPath->query( "//lookup:entry/lookup:href[ lookup:uri = '" . $path . "' ]" );
 
 		foreach( $entryNodeList as $entryNode )
@@ -369,20 +369,20 @@ class ComponentLookup extends OverrideableSingleton
 		return false;
 	}
 
-	public function EnsureInstanceInLookup( $model )
+	public function ensureInstanceInLookup( $model )
 	{
 		if( $model->xPath->query( "//meta:href" )->length > 0 )
 		{
-			$metaDataCollection = $this->GetMetaData( $model );
+			$metaDataCollection = $this->getMetaData( $model );
 
-			if( !$this->MetaDataAlreadyPresent( $metaDataCollection ) )
+			if( !$this->metaDataAlreadyPresent( $metaDataCollection ) )
 			{
-				$this->AddMetaDataCollectionToComponentLookup( $metaDataCollection );
+				$this->addMetaDataCollectionToComponentLookup( $metaDataCollection );
 			}
 		}
 	}
 
-	public function MetaDataAlreadyPresent( $metaDataCollection )
+	public function metaDataAlreadyPresent( $metaDataCollection )
 	{
 		if( !is_null( $this->model ) )
 		{
@@ -410,11 +410,11 @@ class ComponentLookup extends OverrideableSingleton
 		return false;
 	}
 
-	public function AddMetaDataCollectionToComponentLookup( $metaDataCollection )
+	public function addMetaDataCollectionToComponentLookup( $metaDataCollection )
 	{
 		$metaData = current( $metaDataCollection );
 
-		$this->AppendEntry( $metaData, $this->Get() );
-		$this->CacheLookupModel();
+		$this->appendEntry( $metaData, $this->get() );
+		$this->cacheLookupModel();
 	}
 }

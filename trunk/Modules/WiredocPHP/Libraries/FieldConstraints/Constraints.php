@@ -17,7 +17,7 @@ class Constraints
 		$this->sourceModel = $sourceModel;
 	}
 
-	public static function Apply( $postFields, $sourceModel )
+	public static function apply( $postFields, $sourceModel )
 	{
 		self::$postFields = $postFields;
 
@@ -27,7 +27,7 @@ class Constraints
 		{
 			$constraints = new Constraints( $name, $value, $sourceModel );
 
-			$constraintResultsList[] = $constraints->GetConstraintResults();
+			$constraintResultsList[] = $constraints->getConstraintResults();
 		}
 
 		$resultsModel = new ConstraintResultsModelDriver( $constraintResultsList );
@@ -35,13 +35,13 @@ class Constraints
 		return $resultsModel;
 	}
 
-	public function GetConstraintResults()
+	public function getConstraintResults()
 	{
 		$constraintResults = new ConstraintResults();
 
 		if( $this->targetField instanceof Field )
 		{
-			$constraintResults->SetTarget( $this->targetField );
+			$constraintResults->setTarget( $this->targetField );
 			$constraintNodeList = $this->sourceModel->xPath->query( "//wd:field[ @name = '" . $this->targetField->name . "' ]/wd:constraint" );
 
 			foreach( $constraintNodeList as $constraintNode )
@@ -53,42 +53,42 @@ class Constraints
 
 				$constraint = new Constraint( $type, $this->targetField );
 
-				$constraint->SetAgainst( $against );
-				$constraint->SetMin( $min );
-				$constraint->SetMax( $max );
+				$constraint->setAgainst( $against );
+				$constraint->setMin( $min );
+				$constraint->setMax( $max );
 
-				$this->LookForDependencyFields( $constraint, $type, $against );
-				$this->LookForMessages( $constraint, $constraintNode );
+				$this->lookForDependencyFields( $constraint, $type, $against );
+				$this->lookForMessages( $constraint, $constraintNode );
 
-				$constraintResults->Add( $constraint->Apply() );
+				$constraintResults->add( $constraint->apply() );
 			}
 		}
 
 		return $constraintResults;
 	}
 
-	private function LookForDependencyFields( &$constraint, $type, $against )
+	private function lookForDependencyFields( &$constraint, $type, $against )
 	{
 		if( substr( $type, 0, 6 ) == "match-" )
 		{
 			$dependencyFields = new DependencyFields();
 			$value = self::$postFields[ $against ];
-			$dependencyFields->Add( new Field( $against, $value ) );
-			$constraint->SetDependencyFields( $dependencyFields );
+			$dependencyFields->add( new Field( $against, $value ) );
+			$constraint->setDependencyFields( $dependencyFields );
 		}
 	}
 
-	private function LookForMessages( &$constraint, &$constraintNode )
+	private function lookForMessages( &$constraint, &$constraintNode )
 	{
-		$messageNodeList = $this->sourceModel->xPath->query( "wd:message[ @lang = '" . Language::GetLang() . "' ]", $constraintNode );
+		$messageNodeList = $this->sourceModel->xPath->query( "wd:message[ @lang = '" . Language::getLang() . "' ]", $constraintNode );
 
 		$constraintMessages = new ConstraintMessages();
 
 		foreach( $messageNodeList as $messageNode )
 		{
-			$constraintMessages->Add( $messageNode->getAttribute( "type" ), $messageNode->nodeValue );
+			$constraintMessages->add( $messageNode->getAttribute( "type" ), $messageNode->nodeValue );
 		}
 
-		$constraint->SetConstraintMessages( $constraintMessages );
+		$constraint->setConstraintMessages( $constraintMessages );
 	}
 }

@@ -33,60 +33,60 @@ class Processor
 		$this->modelStack = array();
 		$this->application = new Config::$data[ "applicationClass" ]( $this->modelStack );
 
-		if( Config::$data[ "isLocal" ] || ComponentLookup::getInstance()->HostsDontMatch() )
+		if( Config::$data[ "isLocal" ] || ComponentLookup::getInstance()->hostsDontMatch() )
 		{
-			ComponentLookup::getInstance()->Generate();
+			ComponentLookup::getInstance()->generate();
 		}
 	}
 
-	protected function Call()
+	protected function call()
 	{
-		$pathParts = $this->GetPathParts();
+		$pathParts = $this->getPathParts();
 
 		call_user_func_array( "self::Page", $pathParts );
 	}
 
-	protected function GetPathParts()
+	protected function getPathParts()
 	{
-		$pathParts = Routing::GetPathParts();
-		$pathParts[ 0 ] = Loader::StripNamespace( $pathParts[ 0 ] );
+		$pathParts = Routing::getPathParts();
+		$pathParts[ 0 ] = Loader::stripNamespace( $pathParts[ 0 ] );
 
 		return $pathParts;
 	}
 
-	public function Page()
+	public function page()
 	{
 		$currentPath = "/" . ( func_num_args() ? implode( "/", func_get_args() ) . "/" : "" );
 
-		if( ( $componentData = ComponentLookup::getInstance()->GetComponentDataByPath( $currentPath ) ) !== false )
+		if( ( $componentData = ComponentLookup::getInstance()->getComponentDataByPath( $currentPath ) ) !== false )
 		{
-			$this->RenderPageUsingComponentData( $componentData );
+			$this->renderPageUsingComponentData( $componentData );
 		}
 		else
 		{
-			$this->Invoke404( $currentPath );
+			$this->invoke404( $currentPath );
 		}
 	}
 
-	public function RenderComponent( $wiredocName, $eventName = null, $parameters = array(), $delegate = null, $cacheMinutes = 0 )
+	public function renderComponent( $wiredocName, $eventName = null, $parameters = array(), $delegate = null, $cacheMinutes = 0 )
 	{
-		$fullyQualifiedWiredocName = ComponentUtils::FullyQualifyWiredocName( $wiredocName );
+		$fullyQualifiedWiredocName = ComponentUtils::fullyQualifyWiredocName( $wiredocName );
 
-		if( ( $componentData = ComponentLookup::getInstance()->GetComponentDataByFullyQualifiedName( $fullyQualifiedWiredocName ) ) !== false )
+		if( ( $componentData = ComponentLookup::getInstance()->getComponentDataByFullyQualifiedName( $fullyQualifiedWiredocName ) ) !== false )
 		{
 			$componentData[ "eventName" ] = $eventName;
 			$componentData[ "parameters" ] = $parameters;
 			$componentData[ "cacheMinutes" ] = $cacheMinutes;
 
-			$this->RenderPageUsingComponentData( $componentData, $delegate );
+			$this->renderPageUsingComponentData( $componentData, $delegate );
 		}
 		else
 		{
-			$this->Invoke404( $fullyQualifiedWiredocName );
+			$this->invoke404( $fullyQualifiedWiredocName );
 		}
 	}
 
-	public function RenderPageUsingComponentData( $componentData, $delegate = null )
+	public function renderPageUsingComponentData( $componentData, $delegate = null )
 	{
 		$component = $componentData[ "component" ];
 		$instanceName = isset( $componentData[ "instanceName" ] ) ? $componentData[ "instanceName" ] : null;
@@ -97,85 +97,85 @@ class Processor
 
 		if( ! is_null( $matchingLang ) )
 		{
-			Language::SetLang( $matchingLang );
+			Language::setLang( $matchingLang );
 		}
 
 		if( is_null( $delegate ) )
 		{
-			$delegate = new Delegate( "OnComponentReadyForRender", $this );
+			$delegate = new Delegate( "onComponentReadyForRender", $this );
 		}
 
 		$factory = new ComponentFactory();
 		$factory->addEventListener( "onreadyforrender.components", $delegate );
-		$factory->GetComponent( $component, $instanceName, $eventName, $parameters, $cacheMinutes );
+		$factory->getComponent( $component, $instanceName, $eventName, $parameters, $cacheMinutes );
 	}
 
-	public function OnComponentReadyForRender( Event $event )
+	public function onComponentReadyForRender( Event $event )
 	{
 		$model = $event->arguments[ "model" ];
 		$component = $event->arguments[ "component" ];
 		$instanceName = $event->arguments[ "instanceName" ];
 
-		$this->RenderPageWithModel( $model, $component, $instanceName );
+		$this->renderPageWithModel( $model, $component, $instanceName );
 	}
 
-	private function Invoke404( $path )
+	private function invoke404( $path )
 	{
-		ErrorHandler::InvokeHTTPError( array( "errorCode" => "404", "controllerFile" => __CLASS__, "method" => $path ) );
+		ErrorHandler::invokeHTTPError( array( "errorCode" => "404", "controllerFile" => __CLASS__, "method" => $path ) );
 	}
 
-	public function RenderPageWithModel( $model, $component, $instanceName )
+	public function renderPageWithModel( $model, $component, $instanceName )
 	{
 		$viewNameNodeList = $model->xPath->query( "//meta:view[ last() ]" );
 		$viewName = $viewNameNodeList->length > 0 ? $viewNameNodeList->item( 0 )->nodeValue : "";
-		$viewName = ComponentUtils::FallbackViewNameIfNecessary( $viewName );
+		$viewName = ComponentUtils::fallbackViewNameIfNecessary( $viewName );
 
 		$this->view = new View( $viewName );
-		$this->view->PushModel( $model );
+		$this->view->pushModel( $model );
 
-		list( $hrefContextComponent, $hrefContextInstanceName, $hrefContextFullyQualifiedName, $currentHref ) = ComponentUtils::GetHrefContextComponentAndInstanceName( $model );
-		$this->PushHierarchy( $hrefContextComponent, $hrefContextInstanceName, $hrefContextFullyQualifiedName, $currentHref );
-		$this->RenderPage( $component, $instanceName, $viewName );
+		list( $hrefContextComponent, $hrefContextInstanceName, $hrefContextFullyQualifiedName, $currentHref ) = ComponentUtils::getHrefContextComponentAndInstanceName( $model );
+		$this->pushHierarchy( $hrefContextComponent, $hrefContextInstanceName, $hrefContextFullyQualifiedName, $currentHref );
+		$this->renderPage( $component, $instanceName, $viewName );
 	}
 
-	private function RenderPage( $component, $instanceName, $viewName )
+	private function renderPage( $component, $instanceName, $viewName )
 	{
-		$this->PushXLIFF( $component, $instanceName );
-		$this->PushStringData( $component, $instanceName, $viewName );
-		$this->PushModelStack();
+		$this->pushXLIFF( $component, $instanceName );
+		$this->pushStringData( $component, $instanceName, $viewName );
+		$this->pushModelStack();
 
-		$this->view->RenderAsHTML();
+		$this->view->renderAsHTML();
 	}
 
-	private function PushXLIFF( $component, $instanceName )
+	private function pushXLIFF( $component, $instanceName )
 	{
-		$filename = StringUtils::ReplaceTokensInPattern( Config::$data[ "xliffFilePattern" ], array( "component" => $component, "instance" => $instanceName ) );
+		$filename = StringUtils::replaceTokensInPattern( Config::$data[ "xliffFilePattern" ], array( "component" => $component, "instance" => $instanceName ) );
 		$pathInfo = pathinfo( $filename );
 
-		if( XMLModelDriver::Exists( $pathInfo[ "dirname" ] . "/" . $pathInfo[ "filename" ], $pathInfo[ "extension" ] ) )
+		if( XMLModelDriver::exists( $pathInfo[ "dirname" ] . "/" . $pathInfo[ "filename" ], $pathInfo[ "extension" ] ) )
 		{
 			$xliffModel = new XMLModelDriver( $filename );
-			$this->view->PushModel( $xliffModel );
+			$this->view->pushModel( $xliffModel );
 		}
 	}
 
-	private function PushStringData( $component, $instanceName, $viewName )
+	private function pushStringData( $component, $instanceName, $viewName )
 	{
 		$basePath = Routing::URIProtocol() . "://" . $_SERVER[ "HTTP_HOST" ];
-		$uri = Normalize::StripQueryInURI( Routing::URI() );
+		$uri = Normalize::stripQueryInURI( Routing::URI() );
 		$link = $basePath . $uri;
 
 		$stringData = new StringsModelDriver();
-		$stringData->Add( "lang", Language::GetLang() );
-		$stringData->Add( "component", $component );
-		$stringData->Add( "instance", $instanceName );
-		$stringData->Add( "instance-file", $instanceName . "." . Loader::modelExtension );
-		$stringData->Add( "view-name", $viewName );
-		$stringData->Add( "base-path", $basePath );
-		$stringData->Add( "http-host", $_SERVER[ "HTTP_HOST" ] );
-		$stringData->Add( "uri", $uri );
-		$stringData->Add( "link", $link );
-		$stringData->Add( "link-urlencoded", urlencode( $link ) );
+		$stringData->add( "lang", Language::getLang() );
+		$stringData->add( "component", $component );
+		$stringData->add( "instance", $instanceName );
+		$stringData->add( "instance-file", $instanceName . "." . Loader::modelExtension );
+		$stringData->add( "view-name", $viewName );
+		$stringData->add( "base-path", $basePath );
+		$stringData->add( "http-host", $_SERVER[ "HTTP_HOST" ] );
+		$stringData->add( "uri", $uri );
+		$stringData->add( "link", $link );
+		$stringData->add( "link-urlencoded", urlencode( $link ) );
 
 		$slashCount = substr_count( $uri, "/" ) - 1;
 
@@ -188,30 +188,30 @@ class Processor
 			$relativePathModifier = implode( "/", array_fill( 0, $slashCount, ".." ) );
 		}
 
-		$stringData->Add( "relative-path-modifier", $relativePathModifier );
+		$stringData->add( "relative-path-modifier", $relativePathModifier );
 
 		if( isset( Config::$data[ "isProduction" ] ) && Config::$data[ "isProduction" ] )
 		{
-			$stringData->Add( "cache-buster", md5( $_SERVER[ "HTTP_HOST" ] ) );
+			$stringData->add( "cache-buster", md5( $_SERVER[ "HTTP_HOST" ] ) );
 		}
 		else
 		{
-			$stringData->Add( "cache-buster", md5( date( "Y-m-d H:i:s" ) . rand( 0, 9999 ) ) );
+			$stringData->add( "cache-buster", md5( date( "Y-m-d H:i:s" ) . rand( 0, 9999 ) ) );
 		}
 
-		$this->view->PushModel( $stringData );
+		$this->view->pushModel( $stringData );
 	}
 
-	private function PushHierarchy( $component, $instanceName, $fullyQualifiedName, $currentHref )
+	private function pushHierarchy( $component, $instanceName, $fullyQualifiedName, $currentHref )
 	{
-		$this->view->PushModel( new HierarchyModelDriver( $component, $instanceName, $fullyQualifiedName, $currentHref ) );
+		$this->view->pushModel( new HierarchyModelDriver( $component, $instanceName, $fullyQualifiedName, $currentHref ) );
 	}
 
-	private function PushModelStack()
+	private function pushModelStack()
 	{
 		foreach( $this->modelStack as $model )
 		{
-			$this->view->PushModel( $model );
+			$this->view->pushModel( $model );
 		}
 	}
 }

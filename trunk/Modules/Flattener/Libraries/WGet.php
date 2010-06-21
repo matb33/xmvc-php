@@ -16,13 +16,15 @@ class WGet
 	public function __construct( $outputFolder, $properties = array(), $verbose = true )
 	{
 		if( !is_null( $properties ) )
+		{
 			$this->properties = $properties;
+		}
 
 		$this->outputFolder = $outputFolder;
 		$this->verbose = $verbose;
 	}
 
-	public function Execute( $url, $properties = array(), $verbose = true )
+	public function execute( $url, $properties = array(), $verbose = true )
 	{
 		$this->verbose = $verbose;
 
@@ -30,7 +32,9 @@ class WGet
 
 		// overwrite properties with passed-in values
 		if( !is_null( $properties ) )
+		{
 			$properties = array_merge( $this->properties,  $properties );
+		}
 
 		// gather all parameters
 		foreach( $properties as $propertyName => $propertyValue )
@@ -53,36 +57,36 @@ class WGet
 
 		$commandParams[] = $url;
 
-		$this->SetFolder();
+		$this->setFolder();
 
 		$command = realpath( Config::$data[ "wgetExecutable" ] ) . " ";
 		$command = str_replace( "\\", "/", $command );
 
 		$oldCwd = getcwd();
-		$this->DisplayMessage( "Current Directory: " . getcwd() );
-		$this->DisplayMessage( "Changing Directory: " . $this->temporaryRoot );
+		$this->displayMessage( "Current Directory: " . getcwd() );
+		$this->displayMessage( "Changing Directory: " . $this->temporaryRoot );
 		chdir( realpath( $this->temporaryRoot ) );
 
-		$this->DisplayMessage( "Executing: " . $command . implode( $commandParams, " " ) );
+		$this->displayMessage( "Executing: " . $command . implode( $commandParams, " " ) );
 		exec( $command . implode( $commandParams, " " ), $results, $returnStatus );
 
-		$this->DisplayMessage( implode( $results, "<br />\n" ) );
-		$this->DisplayMessage( "Return Status: " . $returnStatus );
+		$this->displayMessage( implode( $results, "<br />\n" ) );
+		$this->displayMessage( "Return Status: " . $returnStatus );
 
 		chdir( $oldCwd );
 	}
 
 	public function CleanUp()
 	{
-		$this->DisplayMessage( "Temporary Root realpath: " . realpath( $this->temporaryRoot ) );
-		$this->DisplayMessage( "Temporary Path realpath: " . realpath( $this->temporaryPath ) );
+		$this->displayMessage( "Temporary Root realpath: " . realpath( $this->temporaryRoot ) );
+		$this->displayMessage( "Temporary Path realpath: " . realpath( $this->temporaryPath ) );
 
-		FileSystem::Move( realpath( $this->temporaryPath ), $this->outputFolder );
+		FileSystem::move( realpath( $this->temporaryPath ), $this->outputFolder );
 
-		$this->DisplayMessage( "Output Folder realpath: " . realpath( $this->outputFolder ) );
+		$this->displayMessage( "Output Folder realpath: " . realpath( $this->outputFolder ) );
 	}
 
-	private function SetFolder()
+	private function setFolder()
 	{
 		// remove the last / in the path
 		$splitPath = explode( "/", $this->outputFolder, -1 );
@@ -96,7 +100,7 @@ class WGet
 		$this->temporaryPath = implode( "/", $splitPath );
 	}
 
-	private function DisplayMessage( $msg )
+	private function displayMessage( $msg )
 	{
 		if( $this->verbose !== false )
 		{

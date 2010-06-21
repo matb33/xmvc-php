@@ -15,17 +15,17 @@ class Flattener
 		$this->indexFilename = $indexFilename;
 	}
 
-	public function FlattenURL( $url )
+	public function flattenURL( $url )
 	{
 		$completeURL = "http://" . $_SERVER[ "HTTP_HOST" ] . $url;
 
 		echo( "Flattening: " . $completeURL . "<br />\n" );
 
-		$contents = $this->GetContentsAtURL( $completeURL );
+		$contents = $this->getContentsAtURL( $completeURL );
 
 		if( $contents !== false )
 		{
-			$this->WriteContents( $url, $contents );
+			$this->writeContents( $url, $contents );
 		}
 		else
 		{
@@ -35,20 +35,20 @@ class Flattener
 		echo "<br />\n";
 	}
 
-	private function GetContentsAtURL( $url )
+	private function getContentsAtURL( $url )
 	{
 		return file_get_contents( $url );
 	}
 
-	private function WriteContents( $url, $contents )
+	private function writeContents( $url, $contents )
 	{
-		$destinationFolder = $this->ConvertURLToFolderStructure( $url );
+		$destinationFolder = $this->convertURLToFolderStructure( $url );
 
-		FileSystem::CreateFolderStructure( $destinationFolder );
-		$this->WriteContentsToDestinationFolder( $contents, $destinationFolder );
+		FileSystem::createFolderStructure( $destinationFolder );
+		$this->writeContentsToDestinationFolder( $contents, $destinationFolder );
 	}
 
-	private function ConvertURLToFolderStructure( $url )
+	private function convertURLToFolderStructure( $url )
 	{
 		$path = str_replace( "\\", "/", $this->outputPath );
 
@@ -62,7 +62,7 @@ class Flattener
 		return $path;
 	}
 
-	private function WriteContentsToDestinationFolder( $contents, $folder )
+	private function writeContentsToDestinationFolder( $contents, $folder )
 	{
 		echo( "<i>Writing contents to " . $folder . $this->indexFilename . "</i><br />\n" );
 

@@ -7,7 +7,7 @@ use Modules\Language\Libraries\Language;
 
 class StringUtils
 {
-	public static function ReplaceTokensInPattern( $pattern, $tokenValuePairs, $tokenDelimiter = "#" )
+	public static function replaceTokensInPattern( $pattern, $tokenValuePairs, $tokenDelimiter = "#" )
 	{
 		$builtInTokenValuePairs = array();
 		$builtInTokenValuePairs[ "controllerFolder" ] = Loader::controllerFolder;
@@ -19,7 +19,7 @@ class StringUtils
 
 		if( !isset( $tokenValuePairs[ "lang" ] ) )
 		{
-			$builtInTokenValuePairs[ "lang" ] = Language::GetLang();
+			$builtInTokenValuePairs[ "lang" ] = Language::getLang();
 		}
 
 		$pairs = array_merge( $builtInTokenValuePairs, $tokenValuePairs );

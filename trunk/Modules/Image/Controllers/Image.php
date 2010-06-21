@@ -10,7 +10,7 @@ use Modules\Image\Libraries\ImageProcessor;
 
 class Image
 {
-	public function Resize()
+	public function resize()
 	{
 		$args = func_get_args();
 
@@ -25,11 +25,11 @@ class Image
 		}
 
 		$imagePath = implode( "/", $args );
-		$imageFile = StringUtils::ReplaceTokensInPattern( Config::$data[ "imageProcessorFolderPattern" ], array( "image" => $imagePath ) );
+		$imageFile = StringUtils::replaceTokensInPattern( Config::$data[ "imageProcessorFolderPattern" ], array( "image" => $imagePath ) );
 
-		if( $this->VerifyResizeParameters( $width, $height, $imageFile ) )
+		if( $this->verifyResizeParameters( $width, $height, $imageFile ) )
 		{
-			$this->ResizeImage( $width, $height, $imageFile, $force );
+			$this->resizeImage( $width, $height, $imageFile, $force );
 		}
 		else
 		{
@@ -37,7 +37,7 @@ class Image
 		}
 	}
 
-	private function VerifyResizeParameters( $width, $height, $imageFile )
+	private function verifyResizeParameters( $width, $height, $imageFile )
 	{
 		$widthTest = ( ( int )$width > 0 || $width == "auto" );
 		$heightTest = ( ( int )$height > 0 || $height == "auto" );
@@ -46,13 +46,13 @@ class Image
 		return $widthTest && $heightTest && $imageFileTest;
 	}
 
-	private function ResizeImage( $width, $height, $imageFile, $force )
+	private function resizeImage( $width, $height, $imageFile, $force )
 	{
-		list( $fullSizeWidth, $fullSizeHeight, $mimeType, $lastModified, $basename, $filename, $extension ) = ImageProcessor::GetImageData( $imageFile );
-		list( $newWidth, $newHeight ) = ImageProcessor::DetermineNewWidthAndHeight( $width, $height, $fullSizeWidth, $fullSizeHeight );
+		list( $fullSizeWidth, $fullSizeHeight, $mimeType, $lastModified, $basename, $filename, $extension ) = ImageProcessor::getImageData( $imageFile );
+		list( $newWidth, $newHeight ) = ImageProcessor::determineNewWidthAndHeight( $width, $height, $fullSizeWidth, $fullSizeHeight );
 
 		$cacheID = $newWidth . "x" . $newHeight . "-" . $fullSizeWidth . "x" . $fullSizeHeight . "-" . $imageFile . "-" . $lastModified;
-		$cacheFile = StringUtils::ReplaceTokensInPattern( Config::$data[ "imageCacheFilePattern" ], array( "basename" => $basename, "filename" => $filename, "hash" => md5( $cacheID ), "extension" => $extension ) );
+		$cacheFile = StringUtils::replaceTokensInPattern( Config::$data[ "imageCacheFilePattern" ], array( "basename" => $basename, "filename" => $filename, "hash" => md5( $cacheID ), "extension" => $extension ) );
 
 		if( file_exists( $cacheFile ) && !$force )
 		{
@@ -66,15 +66,15 @@ class Image
 			}
 			else
 			{
-				$image = ImageProcessor::Resize( $width, $height, $imageFile );
+				$image = ImageProcessor::resize( $width, $height, $imageFile );
 
-				if( Cache::PrepCacheFolder( $cacheFile, false ) )
+				if( Cache::prepCacheFolder( $cacheFile, false ) )
 				{
-					ImageProcessor::WriteImage( $image, $mimeType, $cacheFile );
+					ImageProcessor::writeImage( $image, $mimeType, $cacheFile );
 				}
 			}
 		}
 
-		ImageProcessor::OutputImage( $image, $mimeType );
+		ImageProcessor::outputImage( $image, $mimeType );
 	}
 }

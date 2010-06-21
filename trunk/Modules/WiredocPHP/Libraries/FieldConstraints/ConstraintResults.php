@@ -13,17 +13,17 @@ class ConstraintResults extends ArrayObject
 		parent::__construct( array() );
 	}
 
-	public function SetTarget( Field $target )
+	public function setTarget( Field $target )
 	{
 		$this->target = $target;
 	}
 
-	public function Add( ConstraintResult $result )
+	public function add( ConstraintResult $result )
 	{
 		parent::append( $result );
 	}
 
-	public function ToArray()
+	public function toArray()
 	{
 		$resultSet = array();
 

@@ -9,7 +9,7 @@ use System\Libraries\Normalize;
 
 class ComponentUtils
 {
-	public static function RegisterNamespaces( &$model )
+	public static function registerNamespaces( &$model )
 	{
 		foreach( Config::$data[ "wiredocNamespaces" ] as $prefix => $namespace )
 		{
@@ -17,9 +17,9 @@ class ComponentUtils
 		}
 	}
 
-	public static function GetComponentClassNameFromWiredocComponentName( $wiredocComponentName )
+	public static function getComponentClassNameFromWiredocComponentName( $wiredocComponentName )
 	{
-		list( $component, $null, $null ) = self::ExtractComponentNamePartsFromWiredocName( $wiredocComponentName . "." );
+		list( $component, $null, $null ) = self::extractComponentNamePartsFromWiredocName( $wiredocComponentName . "." );
 
 		$componentClass = str_replace( "/", "\\", $component );
 
@@ -35,7 +35,7 @@ class ComponentUtils
 		return $componentClass;
 	}
 
-	public static function DefaultEventNameIfNecessary( $eventName )
+	public static function defaultEventNameIfNecessary( $eventName )
 	{
 		if( is_null( $eventName ) || strlen( $eventName ) == 0 )
 		{
@@ -45,7 +45,7 @@ class ComponentUtils
 		return $eventName;
 	}
 
-	public static function DefaultNamespaceIfNecessary( $componentClass )
+	public static function defaultNamespaceIfNecessary( $componentClass )
 	{
 		if( strpos( $componentClass, Config::$data[ "componentNamespace" ] ) === false )
 		{
@@ -55,7 +55,7 @@ class ComponentUtils
 		return $componentClass;
 	}
 
-	public static function FallbackViewNameIfNecessary( $viewName )
+	public static function fallbackViewNameIfNecessary( $viewName )
 	{
 		if( strlen( trim( $viewName ) ) == 0 )
 		{
@@ -65,7 +65,7 @@ class ComponentUtils
 		return $viewName;
 	}
 
-	public static function ReplaceTokenParametersInAttributes( &$model, $parameters )
+	public static function replaceTokenParametersInAttributes( &$model, $parameters )
 	{
 		$paramNodeList = $model->xPath->query( "//@*[ contains( name(), 'param' ) and contains( ., '#param' ) ]" );
 
@@ -75,13 +75,13 @@ class ComponentUtils
 		}
 	}
 
-	public static function GetHrefContextComponentAndInstanceName( $model )
+	public static function getHrefContextComponentAndInstanceName( $model )
 	{
 		// Href Context refers to the component that holds the meta:href matching the current URI
 		$hrefContextComponent = "";
 		$hrefContextInstanceName = "";
 
-		$currentHref = Normalize::StripQueryInURI( Routing::URI() );
+		$currentHref = Normalize::stripQueryInURI( Routing::URI() );
 		$hrefNodeList = $model->xPath->query( "//meta:href[ text() = '" . $currentHref . "' ]" );
 
 		if( $hrefNodeList->length > 0 )
@@ -91,14 +91,14 @@ class ComponentUtils
 			if( $componentDefinitionNameNodeList->length > 0 )
 			{
 				$wiredocName = $componentDefinitionNameNodeList->item( 0 )->nodeValue;
-				list( $hrefContextComponent, $hrefContextInstanceName, $hrefContextFullyQualifiedName ) = ComponentUtils::ExtractComponentNamePartsFromWiredocName( $wiredocName );
+				list( $hrefContextComponent, $hrefContextInstanceName, $hrefContextFullyQualifiedName ) = ComponentUtils::extractComponentNamePartsFromWiredocName( $wiredocName );
 			}
 		}
 
 		return array( $hrefContextComponent, $hrefContextInstanceName, $hrefContextFullyQualifiedName, $currentHref );
 	}
 
-	public static function CreateDefinitionAttributeIfMissing( $model, $namespace, $name, $value )
+	public static function createDefinitionAttributeIfMissing( $model, $namespace, $name, $value )
 	{
 		$definitionNodeList = $model->xPath->query( "//wd:component" );
 
@@ -115,7 +115,7 @@ class ComponentUtils
 		}
 	}
 
-	public static function ExtractWiredocComponentNameFromComponentClass( $componentClass )
+	public static function extractWiredocComponentNameFromComponentClass( $componentClass )
 	{
 		$nonNamespacedComponentClass = str_replace( Config::$data[ "componentNamespace" ] . "\\", "", $componentClass );
 		$componentName = substr( $nonNamespacedComponentClass, 0, strrpos( $nonNamespacedComponentClass, "\\" ) );
@@ -123,9 +123,9 @@ class ComponentUtils
 		return str_replace( "\\", "/", $componentName );
 	}
 
-	public static function ExtractComponentNamePartsFromWiredocName( $wiredocName )
+	public static function extractComponentNamePartsFromWiredocName( $wiredocName )
 	{
-		$fullyQualifiedWiredocName = self::FullyQualifyWiredocName( $wiredocName );
+		$fullyQualifiedWiredocName = self::fullyQualifyWiredocName( $wiredocName );
 		$component = substr( $fullyQualifiedWiredocName, 0, strrpos( $fullyQualifiedWiredocName, "." ) );
 		$instanceName = substr( strrchr( $fullyQualifiedWiredocName, "." ), 1 );
 
@@ -134,7 +134,7 @@ class ComponentUtils
 		return array( $component, $instanceName, $fullyQualifiedName );
 	}
 
-	public static function FullyQualifyWiredocName( $wiredocName )
+	public static function fullyQualifyWiredocName( $wiredocName )
 	{
 		if( strrpos( $wiredocName, "." ) === false )
 		{

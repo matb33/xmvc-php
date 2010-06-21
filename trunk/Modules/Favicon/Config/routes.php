@@ -1,5 +1,5 @@
 <?php
 
-$routes[ "/favicon\.ico/" ] = "Modules\\Favicon\\Controllers\\Favicon/Ico";
-$routes[ "/favicon\.gif/" ] = "Modules\\Favicon\\Controllers\\Favicon/Gif";
-$routes[ "/favicon\.png/" ] = "Modules\\Favicon\\Controllers\\Favicon/Png";
+$routes[ "/favicon\.ico/" ] = "Modules\\Favicon\\Controllers\\Favicon/ico";
+$routes[ "/favicon\.gif/" ] = "Modules\\Favicon\\Controllers\\Favicon/gif";
+$routes[ "/favicon\.png/" ] = "Modules\\Favicon\\Controllers\\Favicon/png";

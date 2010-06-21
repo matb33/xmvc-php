@@ -20,12 +20,12 @@ class HierarchyModelDriver extends ModelDriver implements IModelDriver
 		$this->rootElement = $this->createElementNS( Config::$data[ "wiredocNamespaces" ][ "sitemap" ], "sitemap:hierarchy" );
 		$this->appendChild( $this->rootElement );
 
-		$this->lookupModel = ComponentLookup::getInstance()->Get();
+		$this->lookupModel = ComponentLookup::getInstance()->get();
 
-		$this->TransformForeignToXML( $component, $instanceName, $fullyQualifiedName, $currentHref );
+		$this->transformForeignToXML( $component, $instanceName, $fullyQualifiedName, $currentHref );
 	}
 
-	public function TransformForeignToXML()
+	public function transformForeignToXML()
 	{
 		$component = func_get_arg( 0 );
 		$instanceName = func_get_arg( 1 );
@@ -37,14 +37,14 @@ class HierarchyModelDriver extends ModelDriver implements IModelDriver
 		if( $nodeList->length > 0 )
 		{
 			$node = $nodeList->item( 0 );
-			$this->AddHierarchyEntry( $node );
-			$this->CrawlSitemapFollowingParentsOf( $node );
+			$this->addHierarchyEntry( $node );
+			$this->crawlSitemapFollowingParentsOf( $node );
 		}
 
-		parent::TransformForeignToXML();
+		parent::transformForeignToXML();
 	}
 
-	private function CrawlSitemapFollowingParentsOf( $node )
+	private function crawlSitemapFollowingParentsOf( $node )
 	{
 		$parentNodeList = $this->lookupModel->xPath->query( "lookup:parent", $node );
 
@@ -57,16 +57,16 @@ class HierarchyModelDriver extends ModelDriver implements IModelDriver
 			if( $parentNodeList->length > 0 )
 			{
 				$parentNode = $parentNodeList->item( 0 );
-				$this->AddHierarchyEntry( $parentNode );
-				$this->CrawlSitemapFollowingParentsOf( $parentNode );
+				$this->addHierarchyEntry( $parentNode );
+				$this->crawlSitemapFollowingParentsOf( $parentNode );
 			}
 		}
 
 	}
 
-	private function AddHierarchyEntry( $node )
+	private function addHierarchyEntry( $node )
 	{
-		$URINodeList = $this->lookupModel->xPath->query( "lookup:href[ php:function( 'Modules\Language\Libraries\Language::XSLTLang', '" . Language::GetLang() . "', (ancestor-or-self::*/@xml:lang)[last()] ) ]/lookup:uri", $node );
+		$URINodeList = $this->lookupModel->xPath->query( "lookup:href[ php:function( 'Modules\Language\Libraries\Language::XSLTLang', '" . Language::getLang() . "', (ancestor-or-self::*/@xml:lang)[last()] ) ]/lookup:uri", $node );
 
 		if( $URINodeList->length > 0 )
 		{
