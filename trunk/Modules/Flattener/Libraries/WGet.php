@@ -76,7 +76,7 @@ class WGet
 		chdir( $oldCwd );
 	}
 
-	public function CleanUp()
+	public function cleanUp()
 	{
 		$this->displayMessage( "Temporary Root realpath: " . realpath( $this->temporaryRoot ) );
 		$this->displayMessage( "Temporary Path realpath: " . realpath( $this->temporaryPath ) );

@@ -79,7 +79,7 @@ class View
 		return $this->process( $data, "HTML", $omitRoot );
 	}
 
-	public function ProcessAsXML( $data = null, $omitRoot = null )
+	public function processAsXML( $data = null, $omitRoot = null )
 	{
 		return $this->process( $data, "XML", $omitRoot );
 	}
