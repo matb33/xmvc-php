@@ -271,7 +271,7 @@ class FileSystem
 	{
 		$list = array();
 
-		$rootFolder = Normalize::Path( $rootFolder );
+		$rootFolder = Normalize::path( $rootFolder );
 
 		$dir = dir( $rootFolder );
 

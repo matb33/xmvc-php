@@ -8,7 +8,7 @@ class Error
 {
 	public function index( $errorCode = "404" )
 	{
-		self::Display( $errorCode );
+		self::display( $errorCode );
 	}
 
 	public function display( $errorCode = "404" )

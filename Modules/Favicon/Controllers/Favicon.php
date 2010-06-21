@@ -6,7 +6,7 @@ class Favicon
 {
 	private $favIconFolder;
 
-	public function Index()
+	public function index()
 	{
 		$this->favIconFolder =  "./Application/Public/images/";
 		$this->ico();
