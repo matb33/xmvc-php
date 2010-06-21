@@ -95,7 +95,7 @@ class ComponentUtils
 			}
 		}
 
-		return array( $hrefContextComponent, $hrefContextInstanceName );
+		return array( $hrefContextComponent, $hrefContextInstanceName, $hrefContextFullyQualifiedName, $currentHref );
 	}
 
 	public static function CreateDefinitionAttributeIfMissing( $model, $namespace, $name, $value )

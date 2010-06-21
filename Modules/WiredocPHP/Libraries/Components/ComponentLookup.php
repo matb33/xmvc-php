@@ -290,7 +290,7 @@ class ComponentLookup extends OverrideableSingleton
 	public function GetComponentDataByPath( $path, $index = 0 )
 	{
 		$lookupModel = $this->Get();
-		$entryNodeList = $lookupModel->xPath->query( "//lookup:entry[ lookup:instance-name != '' and lookup:href/lookup:uri = '" . $path . "' ]" );
+		$entryNodeList = $lookupModel->xPath->query( "//lookup:entry[ lookup:instance-name != '' and lookup:instance-name != 'null' and lookup:href/lookup:uri = '" . $path . "' ]" );
 
 		if( $entryNodeList->length > 0 )
 		{
@@ -388,7 +388,23 @@ class ComponentLookup extends OverrideableSingleton
 		{
 			$metaData = current( $metaDataCollection );
 
-			return $this->model->xPath->query( "//lookup:entry[ lookup:fully-qualified-name = '" . $metaData[ "fullyQualifiedName" ] . "' ]" )->length > 0;
+			if( isset( $metaData[ "hrefList" ] ) && is_array( $metaData[ "hrefList" ] ) )
+			{
+				$pathSet = array();
+				$hrefCriteria = "";
+
+				foreach( $metaData[ "hrefList" ] as $lang => $info )
+				{
+					$pathSet[] = "lookup:uri = '" . $info[ "path" ] . "'";
+				}
+
+				if( count( $pathSet ) )
+				{
+					$hrefCriteria = " and lookup:href[ " . implode( " or ", $pathSet ) . " ]";
+				}
+
+				return $this->model->xPath->query( "//lookup:entry[ lookup:fully-qualified-name = '" . $metaData[ "fullyQualifiedName" ] . "'" . $hrefCriteria . " ]" )->length > 0;
+			}
 		}
 
 		return false;
