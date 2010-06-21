@@ -1,9 +1,9 @@
 <?php
 
-namespace Modules\WebWiredoc\Libraries\Components;
+namespace Modules\WiredocPHP\Libraries\Components;
 
-use Modules\WebWiredoc\Libraries\Components\Component;
-use Modules\WebWiredoc\Libraries\Components\IComponent;
+use Modules\WiredocPHP\Libraries\Components\Component;
+use Modules\WiredocPHP\Libraries\Components\IComponent;
 
 class GenericComponent extends Component implements IComponent
 {

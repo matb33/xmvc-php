@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\WebWiredoc\Libraries\Components;
+namespace Modules\WiredocPHP\Libraries\Components;
 
 use System\Libraries\Config;
 use System\Drivers\XMLModelDriver;

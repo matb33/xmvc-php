@@ -10,7 +10,7 @@ use System\Libraries\Normalize;
 use System\Libraries\OverrideableSingleton;
 use Modules\Language\Libraries\Language;
 use Modules\Utils\Libraries\StringUtils;
-use Modules\WebWiredoc\Libraries\Components\ComponentLookup;
+use Modules\WiredocPHP\Libraries\Components\ComponentLookup;
 
 class Sitemap extends OverrideableSingleton
 {

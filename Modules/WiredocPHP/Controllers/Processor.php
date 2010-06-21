@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\WebWiredoc\Controllers;
+namespace Modules\WiredocPHP\Controllers;
 
 use System\Libraries\Core;
 use System\Libraries\Routing;
@@ -17,10 +17,10 @@ use System\Libraries\Events\DefaultEventDispatcher;
 
 use Modules\Language\Libraries\Language;
 use Modules\Utils\Libraries\StringUtils;
-use Modules\WebWiredoc\Libraries\Components\ComponentLookup;
-use Modules\WebWiredoc\Libraries\Components\ComponentFactory;
-use Modules\WebWiredoc\Libraries\Components\ComponentUtils;
-use Modules\WebWiredoc\Drivers\HierarchyModelDriver;
+use Modules\WiredocPHP\Libraries\Components\ComponentLookup;
+use Modules\WiredocPHP\Libraries\Components\ComponentFactory;
+use Modules\WiredocPHP\Libraries\Components\ComponentUtils;
+use Modules\WiredocPHP\Drivers\HierarchyModelDriver;
 
 class Processor
 {

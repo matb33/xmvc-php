@@ -5,7 +5,7 @@ namespace Modules\WebCommon\Controllers;
 use System\Libraries\OutputHeaders;
 use System\Libraries\Config;
 use Modules\Language\Libraries\Language;
-use Modules\WebWiredoc\Libraries\Components\ComponentLookup;
+use Modules\WiredocPHP\Libraries\Components\ComponentLookup;
 
 class Robotstxt
 {

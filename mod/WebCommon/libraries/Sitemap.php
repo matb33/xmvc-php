@@ -10,7 +10,7 @@ use xMVC\Sys\Normalize;
 use xMVC\Sys\Singleton;
 use xMVC\Mod\Language\Language;
 use xMVC\Mod\Utils\StringUtils;
-use xMVC\Mod\WebWiredoc\Components\ComponentLookup;
+use xMVC\Mod\WiredocPHP\Components\ComponentLookup;
 
 class Sitemap extends Singleton
 {

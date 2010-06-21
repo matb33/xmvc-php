@@ -1,6 +1,6 @@
 <?php
 
-namespace xMVC\Mod\WebWiredoc\Components;
+namespace xMVC\Mod\WiredocPHP\Components;
 
 use xMVC\Sys\Delegate;
 use xMVC\Sys\Events\Event;

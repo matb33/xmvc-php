@@ -5,7 +5,7 @@ namespace xMVC\Mod\WebCommon;
 use xMVC\Sys\OutputHeaders;
 use xMVC\Sys\Config;
 use xMVC\Mod\Language\Language;
-use xMVC\Mod\WebWiredoc\Components\ComponentLookup;
+use xMVC\Mod\WiredocPHP\Components\ComponentLookup;
 
 class Robotstxt
 {
