@@ -17,7 +17,6 @@ class Config
 		{
 			$path = substr( $path, -1 ) == "/" ? substr( $path, 0, -1 ) : $path;
 			$expandedPaths = glob( $path, GLOB_ONLYDIR | GLOB_BRACE );
-
 			$aggregatedPaths = array_merge( $aggregatedPaths, $expandedPaths );
 		}
 
@@ -47,7 +46,7 @@ class Config
 
 		foreach( $configFiles as $configFile )
 		{
-			include( $configFile );
+			include $configFile;
 
 			$variablesToMerge = array_diff_key( get_defined_vars(), $existingVariables, array( "existingVariables" => "", "configFiles" => "" ) );
 			self::$data = self::MergeVariables( self::$data, $variablesToMerge );

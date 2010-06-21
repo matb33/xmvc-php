@@ -46,8 +46,6 @@ class FrontController
 
 		if( self::$controllerFile !== false )
 		{
-			require_once( self::$controllerFile );
-
 			self::$controllerClassName = Normalize::MethodOrClassName( self::$controllerName );
 			self::$controllerInstance = new self::$controllerClassName;
 		}
