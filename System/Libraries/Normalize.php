@@ -4,26 +4,41 @@ namespace System\Libraries;
 
 class Normalize
 {
-	public static function MethodOrClassName( $name )
+	public static function methodName( $name )
+	{
+		return self::methodOrClassName( $name, true );
+	}
+
+	public static function className( $name )
+	{
+		return self::methodOrClassName( $name, false );
+	}
+
+	private static function methodOrClassName( $name, $camelCasing )
 	{
 		$name = preg_replace( "/-|_/", " ", $name );
 		$name = str_replace( "\\", "          ", $name );
 		$name = ucwords( $name );
+
+		if( $camelCasing )
+		{
+			$name = strtolower( substr( $name, 0, 1 ) ) . substr( $name, 1 );
+		}
+
 		$name = str_replace( "          ", "\\", $name );
 		$name = preg_replace( "/ |\.|%20/", "", $name );
-		$name = str_replace( "XMVC", "xMVC", $name );
 
 		return $name;
 	}
 
-	public static function Filename( $name )
+	public static function filename( $name )
 	{
 		$name = str_replace( "\\", "/", $name );
 
 		return $name;
 	}
 
-	public static function Path( $path )
+	public static function path( $path )
 	{
 		$path = str_replace( "\\", "/", realpath( str_replace( "\\", "/", $path ) ) );
 		$path = substr( $path, -1 ) != "/" ? $path . "/" : $path;
@@ -31,25 +46,25 @@ class Normalize
 		return $path;
 	}
 
-	public static function EncodeData( $data )
+	public static function encodeData( $data )
 	{
 		return "/_enc_" . str_replace( "=", "_", base64_encode( serialize( $data ) ) );
 	}
 
-	public static function StripXMLRootTags( $xml )
+	public static function stripXMLRootTags( $xml )
 	{
-		$xml = self::StripXMLDeclaration( $xml );
-		$xml = self::StripRootTag( $xml );
+		$xml = self::stripXMLDeclaration( $xml );
+		$xml = self::stripRootTag( $xml );
 
 		return $xml;
 	}
 
-	public static function StripXMLDeclaration( $xml )
+	public static function stripXMLDeclaration( $xml )
 	{
 		return preg_replace( "|<\?xml(.+?)\?>[\n\r]?|i", "", $xml );
 	}
 
-	public static function StripRootTag( $xml )
+	public static function stripRootTag( $xml )
 	{
 		$xml = preg_replace( "|<xmvc:root(.+?)>[\n\r]?|", "", $xml );
 		$xml = preg_replace( "|<\/xmvc:root>[\n\r]?|", "", $xml );
@@ -57,7 +72,7 @@ class Normalize
 		return $xml;
 	}
 
-	public static function StripQueryInURI( $uri )
+	public static function stripQueryInURI( $uri )
 	{
 		return preg_replace( "/\?.*$/", "", $uri );
 	}

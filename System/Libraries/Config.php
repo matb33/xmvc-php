@@ -6,7 +6,7 @@ class Config
 {
 	public static $data = array();
 
-	public static function Load()
+	public static function load()
 	{
 		// $t1 = microtime( true );		// With a moderate amount of modules, loading takes about 0.02 seconds. Though should be cached, it's a low priority
 
@@ -24,13 +24,13 @@ class Config
 
 		foreach( $aggregatedPaths as $expandedPath )
 		{
-			self::LoadByPath( $expandedPath );
+			self::loadByPath( $expandedPath );
 		}
 
 		// var_dump( microtime( true ) - $t1 );
 	}
 
-	private static function LoadByPath( $basePath )
+	private static function loadByPath( $basePath )
 	{
 		$variable = null;
 		$value = null;
@@ -49,7 +49,7 @@ class Config
 			include $configFile;
 
 			$variablesToMerge = array_diff_key( get_defined_vars(), $existingVariables, array( "existingVariables" => "", "configFiles" => "", "variablesToMergeKeys" => "" ) );
-			self::$data = self::MergeVariables( self::$data, $variablesToMerge );
+			self::$data = self::mergeVariables( self::$data, $variablesToMerge );
 			$variablesToMergeKeys = array_keys( $variablesToMerge );
 
 			foreach( $variablesToMergeKeys as $variableToUnset )
@@ -59,7 +59,7 @@ class Config
 		}
 	}
 
-	private static function MergeVariables( $existingVariables, $variablesToMerge )
+	private static function mergeVariables( $existingVariables, $variablesToMerge )
 	{
 		if( is_array( $existingVariables ) && is_array( $variablesToMerge ) )
 		{
@@ -67,7 +67,7 @@ class Config
 			{
 				if( isset( $existingVariables[ $k ] ) && is_array( $v ) && is_array( $existingVariables[ $k ] ) )
 				{
-					$existingVariables[ $k ] = self::MergeVariables( $existingVariables[ $k ], $v );
+					$existingVariables[ $k ] = self::mergeVariables( $existingVariables[ $k ], $v );
 				}
 				elseif( is_int( $k ) )
 				{

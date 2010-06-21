@@ -16,12 +16,12 @@ class StringsModelDriver extends ModelDriver implements IModelDriver
 		$this->appendChild( $this->rootElement );
 	}
 
-	public function Add( $key, $value )
+	public function add( $key, $value )
 	{
-		$this->TransformForeignToXML( $key, $value );
+		$this->transformForeignToXML( $key, $value );
 	}
 
-	public function TransformForeignToXML()
+	public function transformForeignToXML()
 	{
 		$key = func_get_arg( 0 );
 		$value = func_get_arg( 1 );
@@ -39,6 +39,6 @@ class StringsModelDriver extends ModelDriver implements IModelDriver
 		$node->appendChild( $data );
 		$this->rootElement->appendChild( $node );
 
-		parent::TransformForeignToXML();
+		parent::transformForeignToXML();
 	}
 }

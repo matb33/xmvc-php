@@ -10,11 +10,11 @@ class Routing
 	private static $routeMatches = null;
 	private static $routes = array();
 
-	public static function Initialize()
+	public static function initialize()
 	{
 		self::URI();
 		self::URIProtocol();
-		self::GatherRoutesFromConfigs();
+		self::gatherRoutesFromConfigs();
 	}
 
 	public static function URI()
@@ -53,7 +53,7 @@ class Routing
 			}
 
 			self::$URI = Normalize::URI( self::$URI );
-			self::$URI = Normalize::StripQueryInURI( self::$URI );
+			self::$URI = Normalize::stripQueryInURI( self::$URI );
 		}
 
 		return self::$URI;
@@ -79,7 +79,7 @@ class Routing
 		return self::$URIProtocol;
 	}
 
-	private static function GatherRoutesFromConfigs()
+	private static function gatherRoutesFromConfigs()
 	{
 		if( isset( Config::$data[ "routes" ] ) )
 		{
@@ -100,36 +100,36 @@ class Routing
 		}
 	}
 
-	public static function GetPathData()
+	public static function getPathData()
 	{
 		return self::$pathData;
 	}
 
-	public static function GetPathPartsOriginal()
+	public static function getPathPartsOriginal()
 	{
-		$pathData = self::GetPathData();
+		$pathData = self::getPathData();
 		return $pathData[ "pathPartsOriginal" ];
 	}
 
-	public static function GetPathOnlyOriginal()
+	public static function getPathOnlyOriginal()
 	{
-		$pathData = self::GetPathData();
+		$pathData = self::getPathData();
 		return $pathData[ "pathOnlyOriginal" ];
 	}
 
-	public static function GetPathParts()
+	public static function getPathParts()
 	{
-		$pathData = self::GetPathData();
+		$pathData = self::getPathData();
 		return $pathData[ "pathParts" ];
 	}
 
-	public static function GetPathOnly()
+	public static function getPathOnly()
 	{
-		$pathData = self::GetPathData();
+		$pathData = self::getPathData();
 		return $pathData[ "pathOnly" ];
 	}
 
-	public static function Route( $overrideURI = null, $resetRoutesCursor = false )
+	public static function route( $overrideURI = null, $resetRoutesCursor = false )
 	{
 		if( is_null( $overrideURI ) )
 		{
@@ -140,11 +140,11 @@ class Routing
 			$URI = $overrideURI;
 		}
 
-		$routedURI = self::ApplyRoutingRules( $URI, $resetRoutesCursor );
-		self::$pathData = self::GetPathDataFromURIs( $URI, $routedURI );
+		$routedURI = self::applyRoutingRules( $URI, $resetRoutesCursor );
+		self::$pathData = self::getPathDataFromURIs( $URI, $routedURI );
 	}
 
-	private static function ApplyRoutingRules( $URI, $resetRoutesCursor = false )
+	private static function applyRoutingRules( $URI, $resetRoutesCursor = false )
 	{
 		if( Config::$data[ "useQueryInRoutes" ] )
 		{
@@ -152,7 +152,7 @@ class Routing
 		}
 		else
 		{
-			$routedURI = Normalize::StripQueryInURI( $URI );
+			$routedURI = Normalize::stripQueryInURI( $URI );
 		}
 
 		if( is_array( self::$routes ) )
@@ -169,7 +169,7 @@ class Routing
 					if( preg_match( $preg, $routedURI, $routeMatches ) )
 					{
 						self::$routeMatches = $routeMatches;
-						$routedURI = preg_replace_callback( "/%([0-9]+)/", "self::RouteReplaceCallback", $replace );
+						$routedURI = preg_replace_callback( "/%([0-9]+)/", "self::routeReplaceCallback", $replace );
 						break;
 					}
 				}
@@ -179,17 +179,17 @@ class Routing
 		return $routedURI;
 	}
 
-	private static function RouteReplaceCallback( $matches )
+	private static function routeReplaceCallback( $matches )
 	{
 		$index = $matches[ 1 ];
 
 		return self::$routeMatches[ $index ];
 	}
 
-	private static function GetPathDataFromURIs( $URI, $routedURI )
+	private static function getPathDataFromURIs( $URI, $routedURI )
 	{
-		$pathOnlyOriginal = self::CleanURIForPathData( $URI );
-		$pathOnly = self::CleanURIForPathData( $routedURI );
+		$pathOnlyOriginal = self::cleanURIForPathData( $URI );
+		$pathOnly = self::cleanURIForPathData( $routedURI );
 
 		$pathPartsOriginal = explode( "/", $pathOnlyOriginal );
 		$pathParts = explode( "/", $pathOnly );
@@ -203,10 +203,10 @@ class Routing
 		return $pathData;
 	}
 
-	private static function CleanURIForPathData( $uri )
+	private static function cleanURIForPathData( $uri )
 	{
 		$uri = Normalize::URI( $uri );
-		$uri = Normalize::StripQueryInURI( $uri );
+		$uri = Normalize::stripQueryInURI( $uri );
 
 		if( $uri != "/" )
 		{

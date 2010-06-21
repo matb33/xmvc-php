@@ -4,5 +4,5 @@ namespace System\Libraries;
 
 interface IModelDriver
 {
-	public function TransformForeignToXML();
+	public function transformForeignToXML();
 }

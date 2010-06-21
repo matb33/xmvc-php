@@ -9,96 +9,96 @@ class FrontController
 	private static $controllerClassName;
 	private static $controllerInstance;
 
-	public static function Load()
+	public static function load()
 	{
-		Routing::Initialize();
-		self::InstantiateController();
+		Routing::initialize();
+		self::instantiateController();
 	}
 
-	public static function InstantiateController()
+	public static function instantiateController()
 	{
-		self::LoadControllerInstance();
+		self::loadControllerInstance();
 
-		if( self::IsIndex() )
+		if( self::isIndex() )
 		{
-			self::InvokeIndex();
+			self::invokeIndex();
 		}
 		else
 		{
-			self::InvokeMethod();
+			self::invokeMethod();
 		}
 	}
 
-	public static function InstantiateNextController()
+	public static function instantiateNextController()
 	{
-		self::InstantiateController();
+		self::instantiateController();
 	}
 
-	private static function LoadControllerInstance()
+	private static function loadControllerInstance()
 	{
-		self::$controllerName = self::GetRoutedController();
-		self::$controllerFile = Loader::Resolve( Loader::controllerFolder, self::$controllerName, Loader::controllerExtension );
+		self::$controllerName = self::getRoutedController();
+		self::$controllerFile = Loader::resolve( Loader::controllerFolder, self::$controllerName, Loader::controllerExtension );
 
 		if( self::$controllerFile === false )
 		{
-			self::AttemptFallbackRoute();
+			self::attemptFallbackRoute();
 		}
 
 		if( self::$controllerFile !== false )
 		{
-			self::$controllerClassName = Normalize::MethodOrClassName( self::$controllerName );
+			self::$controllerClassName = Normalize::className( self::$controllerName );
 			self::$controllerInstance = new self::$controllerClassName;
 		}
 		else
 		{
-			ErrorHandler::InvokeHTTPError( array( "errorCode" => "404", "controllerFile" => self::$controllerName, "method" => "N/A" ) );
+			ErrorHandler::invokeHTTPError( array( "errorCode" => "404", "controllerFile" => self::$controllerName, "method" => "N/A" ) );
 		}
 	}
 
-	private static function AttemptFallbackRoute()
+	private static function attemptFallbackRoute()
 	{
 		if( isset( Config::$data[ "fallbackRoute" ] ) )
 		{
-			$originalNamespace = Loader::ExtractNamespace( Config::$data[ "fallbackRoute" ] );
-			$routeAsURI = Loader::StripNamespace( Config::$data[ "fallbackRoute" ] );
+			$originalNamespace = Loader::extractNamespace( Config::$data[ "fallbackRoute" ] );
+			$routeAsURI = Loader::stripNamespace( Config::$data[ "fallbackRoute" ] );
 
-			Routing::Route( $routeAsURI . Routing::URI(), true );
+			Routing::route( $routeAsURI . Routing::URI(), true );
 
-			self::$controllerName = Loader::AssignDefaultNamespace( self::GetRoutedController(), $originalNamespace, Loader::controllerFolder );
-			self::$controllerFile = Loader::Resolve( Loader::controllerFolder, self::$controllerName, Loader::controllerExtension );
+			self::$controllerName = Loader::assignDefaultNamespace( self::getRoutedController(), $originalNamespace, Loader::controllerFolder );
+			self::$controllerFile = Loader::resolve( Loader::controllerFolder, self::$controllerName, Loader::controllerExtension );
 		}
 	}
 
-	private static function IsIndex()
+	private static function isIndex()
 	{
-		$pathParts = Routing::GetPathParts();
+		$pathParts = Routing::getPathParts();
 
 		return count( $pathParts ) <= 1;
 	}
 
-	private static function InvokeIndex()
+	private static function invokeIndex()
 	{
-		$method = self::GetMethod( "Index" );
+		$method = self::getMethod( "Index" );
 
-		self::CallMethod( $method );
+		self::callMethod( $method );
 	}
 
-	private static function InvokeMethod()
+	private static function invokeMethod()
 	{
-		$pathParts = Routing::GetPathParts();
-		$method	= self::GetMethod( Normalize::MethodOrClassName( $pathParts[ 1 ] ) );
+		$pathParts = Routing::getPathParts();
+		$method	= self::getMethod( Normalize::methodName( $pathParts[ 1 ] ) );
 
-		self::CallMethod( $method, array_slice( $pathParts, 2 ) );
+		self::callMethod( $method, array_slice( $pathParts, 2 ) );
 	}
 
-	private static function GetMethod( $methodName )
+	private static function getMethod( $methodName )
 	{
 		$controller = self::$controllerInstance;
 
 		return array( $controller, $methodName );
 	}
 
-	private static function CallMethod( $method, $parameters = array() )
+	private static function callMethod( $method, $parameters = array() )
 	{
 		if( is_callable( $method ) )
 		{
@@ -113,25 +113,25 @@ class FrontController
 		}
 		else
 		{
-			ErrorHandler::InvokeHTTPError( array( "errorCode" => "404", "controllerFile" => self::$controllerFile, "method" => $method ) );
+			ErrorHandler::invokeHTTPError( array( "errorCode" => "404", "controllerFile" => self::$controllerFile, "method" => $method ) );
 		}
 	}
 
-	private static function GetRoutedController()
+	private static function getRoutedController()
 	{
-		return self::DetermineController( true );
+		return self::determineController( true );
 	}
 
-	private static function GetOriginalController()
+	private static function getOriginalController()
 	{
-		return self::DetermineController( false );
+		return self::determineController( false );
 	}
 
-	private static function DetermineController( $useRoutes = true )
+	private static function determineController( $useRoutes = true )
 	{
-		Routing::Route();
+		Routing::route();
 
-		$pathParts = $useRoutes ? Routing::GetPathParts() : Routing::GetPathPartsOriginal();
+		$pathParts = $useRoutes ? Routing::getPathParts() : Routing::getPathPartsOriginal();
 
 		if( $pathParts[ 0 ] != "" )
 		{
@@ -142,7 +142,7 @@ class FrontController
 			$controller = Config::$data[ "defaultController" ];
 		}
 
-		$fullyQualifiedController = Loader::AssignDefaultNamespace( $controller, null, Loader::controllerFolder );
+		$fullyQualifiedController = Loader::assignDefaultNamespace( $controller, null, Loader::controllerFolder );
 
 		return $fullyQualifiedController;
 	}

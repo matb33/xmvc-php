@@ -18,10 +18,10 @@ class XMLModelDriver extends ModelDriver implements IModelDriver
 		$this->pushDebugInformation( "namespace", $namespace );
 		$this->pushDebugInformation( "data", $data );
 
-		$this->TransformForeignToXML( $parameter, $namespace, $data );
+		$this->transformForeignToXML( $parameter, $namespace, $data );
 	}
 
-	public function TransformForeignToXML()
+	public function transformForeignToXML()
 	{
 		$parameter = func_get_arg( 0 );
 		$parameter2 = func_get_arg( 1 );
@@ -33,92 +33,92 @@ class XMLModelDriver extends ModelDriver implements IModelDriver
 		}
 		else
 		{
-			if( $this->IsInstanceOfModelDriver( $parameter ) )
+			if( $this->isInstanceOfModelDriver( $parameter ) )
 			{
-				$xmlData = $parameter->GetXMLForAggregation();
+				$xmlData = $parameter->getXMLForAggregation();
 			}
-			elseif( $this->IsDOMNode( $parameter ) )
+			elseif( $this->isDOMNode( $parameter ) )
 			{
-				$xmlData = $this->ExportXMLFromDOMNode( $parameter );
+				$xmlData = $this->exportXMLFromDOMNode( $parameter );
 			}
 			else
 			{
-				if( $this->IsURL( $parameter ) )
+				if( $this->isURL( $parameter ) )
 				{
-					if( $this->IsPOSTRequest( $parameter2 ) )
+					if( $this->isPOSTRequest( $parameter2 ) )
 					{
 						$parameter = $this->POSTRequest( $parameter, $parameter2 );
 					}
 					else
 					{
-						$parameter = FileSystem::FileGetContentsUTF8( $parameter );
+						$parameter = FileSystem::fileGetContentsUTF8( $parameter );
 					}
 				}
-				elseif( $this->IsFileOnFileSystem( $parameter ) )
+				elseif( $this->isFileOnFileSystem( $parameter ) )
 				{
-					$parameter = FileSystem::FileGetContentsUTF8( $parameter );
+					$parameter = FileSystem::fileGetContentsUTF8( $parameter );
 				}
 
-				if( $this->IsRawXML( $parameter ) )
+				if( $this->isRawXML( $parameter ) )
 				{
-					$xmlData = Normalize::StripXMLRootTags( $parameter );
+					$xmlData = Normalize::stripXMLRootTags( $parameter );
 				}
 				else
 				{
-					$xmlData = $this->LoadXMLFromModel( $parameter, $parameter2, $parameter3 );
+					$xmlData = $this->loadXMLFromModel( $parameter, $parameter2, $parameter3 );
 				}
 			}
 		}
 
 		$this->pushDebugInformation( "xmlData", htmlentities( $xmlData ) );
 
-		$this->SetXML( $xmlData );
+		$this->setXML( $xmlData );
 
 		return $xmlData;
 	}
 
-	private function IsInstanceOfModelDriver( $parameter )
+	private function isInstanceOfModelDriver( $parameter )
 	{
 		return is_a( $parameter, "ModelDriver" );
 	}
 
-	private function IsDOMNode( $parameter )
+	private function isDOMNode( $parameter )
 	{
 		return is_a( $parameter, "DOMNode" );
 	}
 
-	private function IsRawXML( $parameter )
+	private function isRawXML( $parameter )
 	{
 		return strpos( $parameter, "</" ) !== false;
 	}
 
-	private function IsURL( $parameter )
+	private function isURL( $parameter )
 	{
 		 return preg_match( '/^(http|https|ftp):\/\/[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,6}((:[0-9]{1,5})?\/.*)?$/i', $parameter );
 	}
 
-	private function IsPOSTRequest( $parameter2 )
+	private function isPOSTRequest( $parameter2 )
 	{
 		return !is_null( $parameter2 );
 	}
 
-	private function IsFileOnFileSystem( $parameter )
+	private function isFileOnFileSystem( $parameter )
 	{
-		if( ! $this->IsRawXML( $parameter ) )
+		if( ! $this->isRawXML( $parameter ) )
 		{
-			return file_exists( Normalize::Filename( $parameter ) );
+			return file_exists( Normalize::filename( $parameter ) );
 		}
 
 		return false;
 	}
 
-	private function LoadXMLFromModel( $modelName, $namespace, $data )
+	private function loadXMLFromModel( $modelName, $namespace, $data )
 	{
-		$modelName = Loader::AssignDefaultNamespace( $modelName, $namespace, Loader::modelFolder );
+		$modelName = Loader::assignDefaultNamespace( $modelName, $namespace, Loader::modelFolder );
 
-		if( ( $xmlModelFile = Loader::Resolve( Loader::modelFolder, $modelName, Loader::modelExtension ) ) !== false )
+		if( ( $xmlModelFile = Loader::resolve( Loader::modelFolder, $modelName, Loader::modelExtension ) ) !== false )
 		{
-			$xmlData = $this->LoadModelXML( $xmlModelFile, $data );
+			$xmlData = $this->loadModelXML( $xmlModelFile, $data );
 		}
 		else
 		{
@@ -155,13 +155,13 @@ class XMLModelDriver extends ModelDriver implements IModelDriver
 		return $result;
 	}
 
-	private function ExportXMLFromDOMNode( $node )
+	private function exportXMLFromDOMNode( $node )
 	{
 		return $node->ownerDocument->saveXML( $node );
 	}
 
-	public static function Exists( $modelName, $extension = Loader::modelExtension )
+	public static function exists( $modelName, $extension = Loader::modelExtension )
 	{
-		return Loader::Resolve( Loader::modelFolder, $modelName, $extension ) !== false;
+		return Loader::resolve( Loader::modelFolder, $modelName, $extension ) !== false;
 	}
 }

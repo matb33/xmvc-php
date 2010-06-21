@@ -20,10 +20,10 @@ class Loader
 	const libraryFolder = "Libraries";
 	const configFolder = "Config";
 
-	public static function Resolve( $folder, $name, $extension )
+	public static function resolve( $folder, $name, $extension )
 	{
-		$name = self::AssignDefaultNamespace( $name, null, $folder );
-		$filename = Normalize::Filename( $name . "." . $extension );
+		$name = self::assignDefaultNamespace( $name, null, $folder );
+		$filename = Normalize::filename( $name . "." . $extension );
 
 		if( file_exists( $filename ) )
 		{
@@ -33,7 +33,7 @@ class Loader
 		return false;
 	}
 
-	public static function AssignDefaultNamespace( $name, $forcedNamespace = null, $folder = null )
+	public static function assignDefaultNamespace( $name, $forcedNamespace = null, $folder = null )
 	{
 		if( strpos( $name, "\\" ) === false )
 		{
@@ -48,7 +48,7 @@ class Loader
 		return $name;
 	}
 
-	public static function ExtractNamespace( $name )
+	public static function extractNamespace( $name )
 	{
 		$namespace = substr( $name, 0, strrpos( $name, "\\" ) );
 
@@ -62,31 +62,31 @@ class Loader
 		}
 	}
 
-	public static function StripNamespace( $name )
+	public static function stripNamespace( $name )
 	{
 		return str_replace( "\\", "", substr( $name, strrpos( $name, "\\" ) ) );
 	}
 
-	public static function SetDefaultNamespace( $namespace )
+	public static function setDefaultNamespace( $namespace )
 	{
 		self::$defaultNamespace = $namespace;
 	}
 
-	public static function GetDefaultNamespace( $namespace )
+	public static function getDefaultNamespace( $namespace )
 	{
 		return self::$defaultNamespace;
 	}
 
-	public static function ReadExternal( $filename )
+	public static function readExternal( $filename )
 	{
 		return file_get_contents( $filename );
 	}
 
-	public static function ParseExternal( $filename, $data )
+	public static function parseExternal( $filename, $data )
 	{
 		if( ! isset( $data[ "encodedData" ] ) )
 		{
-			$data[ "encodedData" ] = Normalize::EncodeData( $data );
+			$data[ "encodedData" ] = Normalize::encodeData( $data );
 		}
 
 		if( ! is_null( $data ) && is_array( $data ) )
@@ -102,7 +102,7 @@ class Loader
 		return $result;
 	}
 
-	public static function AddToIncludePath( $path )
+	public static function addToIncludePath( $path )
 	{
 		$currentPath = explode( PATH_SEPARATOR, get_include_path() );
 		array_push( $currentPath, $path );
