@@ -48,7 +48,7 @@ class Config
 		{
 			include $configFile;
 
-			$variablesToMerge = array_diff_key( get_defined_vars(), $existingVariables, array( "existingVariables" => "", "configFiles" => "" ) );
+			$variablesToMerge = array_diff_key( get_defined_vars(), $existingVariables, array( "existingVariables" => "", "configFiles" => "", "variablesToMergeKeys" => "" ) );
 			self::$data = self::MergeVariables( self::$data, $variablesToMerge );
 			$variablesToMergeKeys = array_keys( $variablesToMerge );
 
