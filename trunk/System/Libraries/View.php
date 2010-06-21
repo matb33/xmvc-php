@@ -113,7 +113,7 @@ class View
 		}
 		else
 		{
-			// TODO: Exception //trigger_error( "Could not find any XML data (model) and/or XSLT data (view) while loading view [" . $this->xslViewName . "]", E_USER_ERROR );
+			trigger_error( "Could not find any XML data (model) and/or XSLT data (view) while loading view [" . $this->xslViewName . "]", E_USER_ERROR );
 		}
 
 		return $result;
@@ -197,11 +197,11 @@ class View
 		{
 			if( $this->xslViewName != "" )
 			{
-				// TODO: Exception //trigger_error( "XSLT view name [" . $this->xslViewName . "] not found", E_USER_ERROR );
+				trigger_error( "XSLT view name [" . $this->xslViewName . "] not found", E_USER_ERROR );
 			}
 			else
 			{
-				// TODO: Exception //trigger_error( "XSLT view file [" . $this->xslViewFile . "] not found", E_USER_ERROR );
+				trigger_error( "XSLT view file [" . $this->xslViewFile . "] not found", E_USER_ERROR );
 			}
 		}
 
@@ -231,7 +231,7 @@ class View
 				}
 				else
 				{
-					// TODO: Exception //trigger_error( "Invalid model was found in this view's model-stack", E_USER_ERROR );
+					trigger_error( "Invalid model was found in this view's model-stack", E_USER_ERROR );
 				}
 			}
 		}

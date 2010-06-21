@@ -137,7 +137,7 @@ class SQLModelDriver extends ModelDriver implements IModelDriver
 		}
 		else
 		{
-			// TODO: Exception //trigger_error( "SQL query name not specified. Use the UseQuery method.", E_USER_ERROR );
+			trigger_error( "SQL query name not specified. Use the UseQuery method.", E_USER_ERROR );
 		}
 	}
 }
