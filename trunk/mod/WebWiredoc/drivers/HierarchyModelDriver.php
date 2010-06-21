@@ -1,13 +1,13 @@
 <?php
 
-namespace xMVC\Mod\WebWiredoc;
+namespace xMVC\Mod\WiredocPHP;
 
 use xMVC\Sys\ModelDriver;
 use xMVC\Sys\IModelDriver;
 use xMVC\Sys\Config;
 use xMVC\Mod\Language\Language;
-use xMVC\Mod\WebWiredoc\Components\ComponentLookup;
-use xMVC\Mod\WebWiredoc\Components\ComponentUtils;
+use xMVC\Mod\WiredocPHP\Components\ComponentLookup;
+use xMVC\Mod\WiredocPHP\Components\ComponentUtils;
 
 class HierarchyModelDriver extends ModelDriver implements IModelDriver
 {

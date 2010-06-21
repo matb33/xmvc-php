@@ -3,7 +3,7 @@
 $applicationClass = "";		// IMPORTANT: This must be set in Application/Config!
 $componentNamespace = "";	// IMPORTANT: This must be set in Application/Config!
 
-$defaultView = "Modules\\WebWiredoc\\Views\\wiredoc-2.0-xhtml-1.0";
+$defaultView = "Modules\\WiredocPHP\\Views\\wiredoc-2.0-xhtml-1.0";
 
 $componentCacheFilePattern = "Application/Cache/components/#type#/#name#/#hash#.txt";
 $xliffFilePattern = "Application/Components/#component#/xliff/#instance#.#lang#.xliff";

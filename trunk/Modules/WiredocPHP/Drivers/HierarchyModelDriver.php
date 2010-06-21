@@ -1,13 +1,13 @@
 <?php
 
-namespace Modules\WebWiredoc\Drivers;
+namespace Modules\WiredocPHP\Drivers;
 
 use System\Libraries\ModelDriver;
 use System\Libraries\IModelDriver;
 use System\Libraries\Config;
 use Modules\Language\Libraries\Language;
-use Modules\WebWiredoc\Libraries\Components\ComponentLookup;
-use Modules\WebWiredoc\Libraries\Components\ComponentUtils;
+use Modules\WiredocPHP\Libraries\Components\ComponentLookup;
+use Modules\WiredocPHP\Libraries\Components\ComponentUtils;
 
 class HierarchyModelDriver extends ModelDriver implements IModelDriver
 {

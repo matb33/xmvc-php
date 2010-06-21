@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\WebWiredoc\Libraries\FieldConstraints;
+namespace Modules\WiredocPHP\Libraries\FieldConstraints;
 
 class Field
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace xMVC\Mod\WebWiredoc\FieldConstraints;
+namespace xMVC\Mod\WiredocPHP\FieldConstraints;
 
 class ConstraintResult
 {
