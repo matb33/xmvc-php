@@ -133,8 +133,8 @@ class Processor
 		$this->view = new View( $viewName );
 		$this->view->PushModel( $model );
 
-		list( $hrefContextComponent, $hrefContextInstanceName ) = ComponentUtils::GetHrefContextComponentAndInstanceName( $model );
-		$this->PushHierarchy( $hrefContextComponent, $hrefContextInstanceName );
+		list( $hrefContextComponent, $hrefContextInstanceName, $hrefContextFullyQualifiedName, $currentHref ) = ComponentUtils::GetHrefContextComponentAndInstanceName( $model );
+		$this->PushHierarchy( $hrefContextComponent, $hrefContextInstanceName, $hrefContextFullyQualifiedName, $currentHref );
 		$this->RenderPage( $component, $instanceName, $viewName );
 	}
 
@@ -202,9 +202,9 @@ class Processor
 		$this->view->PushModel( $stringData );
 	}
 
-	private function PushHierarchy( $component, $instanceName )
+	private function PushHierarchy( $component, $instanceName, $fullyQualifiedName, $currentHref )
 	{
-		$this->view->PushModel( new HierarchyModelDriver( $component, $instanceName ) );
+		$this->view->PushModel( new HierarchyModelDriver( $component, $instanceName, $fullyQualifiedName, $currentHref ) );
 	}
 
 	private function PushModelStack()

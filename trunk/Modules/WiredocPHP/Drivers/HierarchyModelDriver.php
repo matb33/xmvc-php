@@ -13,7 +13,7 @@ class HierarchyModelDriver extends ModelDriver implements IModelDriver
 {
 	private $lookupModel;
 
-	public function __construct( $component, $instanceName )
+	public function __construct( $component, $instanceName, $fullyQualifiedName, $currentHref )
 	{
 		parent::__construct();
 
@@ -22,15 +22,17 @@ class HierarchyModelDriver extends ModelDriver implements IModelDriver
 
 		$this->lookupModel = ComponentLookup::getInstance()->Get();
 
-		$this->TransformForeignToXML( $component, $instanceName );
+		$this->TransformForeignToXML( $component, $instanceName, $fullyQualifiedName, $currentHref );
 	}
 
 	public function TransformForeignToXML()
 	{
 		$component = func_get_arg( 0 );
 		$instanceName = func_get_arg( 1 );
+		$fullyQualifiedName = func_get_arg( 2 );
+		$currentHref = func_get_arg( 3 );
 
-		$nodeList = $this->lookupModel->xPath->query( "//lookup:entry[ lookup:component = '" . $component . "' and ( lookup:instance-name = '" . $instanceName . "' or lookup:instance-name = 'null' ) ]" );
+		$nodeList = $this->lookupModel->xPath->query( "//lookup:entry[ lookup:component = '" . $component . "' and ( lookup:instance-name = '" . $instanceName . "' or lookup:instance-name = 'null' ) and lookup:href[ lookup:uri = '" . $currentHref . "' ] ]" );
 
 		if( $nodeList->length > 0 )
 		{
