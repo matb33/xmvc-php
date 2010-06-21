@@ -23,7 +23,7 @@ class Loader
 	public static function Resolve( $folder, $name, $extension )
 	{
 		$name = self::AssignDefaultNamespace( $name, null, $folder );
-		$filename = $name . "." . $extension;
+		$filename = Normalize::Filename( $name . "." . $extension );
 
 		if( file_exists( $filename ) )
 		{
@@ -95,7 +95,7 @@ class Loader
 		}
 
 		ob_start();
-		include( $filename );
+		include $filename;
 		$result = ob_get_contents();
 		ob_end_clean();
 
