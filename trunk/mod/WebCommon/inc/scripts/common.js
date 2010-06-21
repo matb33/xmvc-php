@@ -872,64 +872,65 @@ jQuery( document ).ready( function()
 // Written by Mathieu Bouchard (c) 2010
 ////////////////////////////////////////////////////
 
-var ARIMODAL = function()
+var ARIMODAL = function ()
 {
-	var modalCollection = new Dictionary();	
+	var modalCollection = new Dictionary();
 
-	var innerModal = function()
+	var innerModal = function ()
 	{
 		// private fields
 		var initialized = false;
 		var myInstance = null;
 
 		// private methods
-		var initialize = function()
+		var initialize = function ()
 		{
-			if( !initialized )
+			if (!initialized)
 			{
 				initialized = true;
 
-				if( isInnerModal() )
+				if (isInnerModal())
 				{
 					myInstance = getMyInstance();
 					myInstance.show();
-					myInstance.resize( jQuery( document ).width(), jQuery( document ).height() );
+					myInstance.resize(jQuery(document).width(), jQuery(document).height());
 				}
 			}
 		};
 
-		var getMyInstance = function()
-		{						
-			return top.ARIMODAL.getModalCollection().get( window.location.pathname );
+		var getMyInstance = function ()
+		{
+			var href = window.location.pathname + window.location.search;
+			return top.ARIMODAL.getModalCollection().get(href);
 		};
 
-		var isInnerModal = function()
+		var isInnerModal = function ()
 		{
 			return window.parent.document != document;
 		};
 
-		var closeMe = function()
+		var closeMe = function ()
 		{
 			getMyInstance().close();
 		};
 
 		// public domain
 		return {
-			initialize: function()
+			initialize: function ()
 			{
 				initialize();
 				return this;
 			},
-			closeMe: function()
+			closeMe: function ()
 			{
 				initialize();
 				closeMe();
 				return this;
 			}
 		};
-	}();
+	} ();
 
-	var modal = function()
+	var modal = function ()
 	{
 		// private fields
 		var initialized = false;
@@ -939,37 +940,37 @@ var ARIMODAL = function()
 		var modalIframe = null;
 
 		// private methods
-		var initialize = function( containerID, href, that )
+		var initialize = function (containerID, href, that)
 		{
-			if( !initialized )
+			if (!initialized)
 			{
 				initialized = true;
-				modalHref = href;
-				modalCollection.set( href, that );				
-				initializeModalContainer( containerID );
+				modalHref = href;				
+				modalCollection.set(href, that);
+				initializeModalContainer(containerID);
 			}
 		};
 
-		var launchModalWindow = function()
+		var launchModalWindow = function ()
 		{
 			modalAPI = modalContainer.overlay(
 			{
 				api: true,
-				onBeforeLoad: function( e )
+				onBeforeLoad: function (e)
 				{
 					e.stopPropagation();
 
-					modalIframe = jQuery( "<iframe frameborder='0' scrolling='auto' style='width: 100%;' />" );
-					modalContainer.append( modalIframe );
-					modalIframe.attr( "src", modalHref );
+					modalIframe = jQuery("<iframe frameborder='0' scrolling='auto' style='width: 100%;' />");
+					modalContainer.append(modalIframe);
+					modalIframe.attr("src", modalHref);
 
-					$( ".close", modalContainer ).css( {
+					$(".close", modalContainer).css({
 						position: "absolute",
 						cursor: "pointer",
 						zIndex: 10001
 					});
 				},
-				onClose: function( e )
+				onClose: function (e)
 				{
 					modalIframe.remove();
 					modalContainer.remove();
@@ -984,28 +985,28 @@ var ARIMODAL = function()
 			}).load();
 		};
 
-		var initializeModalContainer = function( containerID )
+		var initializeModalContainer = function (containerID)
 		{
-			if( jQuery( "#" + containerID ).length == 0 )
+			if (jQuery("#" + containerID).length == 0)
 			{
-				jQuery( "body" ).append( "<div id='" + containerID + "' class='modal-box' style='display: none; z-index: 10000; padding: 0px; border: 0px;' />" );
+				jQuery("body").append("<div id='" + containerID + "' class='modal-box' style='display: none; z-index: 10000; padding: 0px; border: 0px;' />");
 			}
 
-			modalContainer = jQuery( "#" + containerID );
+			modalContainer = jQuery("#" + containerID);
 		};
 
-		var showIframe = function()
+		var showIframe = function ()
 		{
 			modalIframe.show();
 			return this;
 		};
 
-		var resizeIframe = function( width, height )
+		var resizeIframe = function (width, height)
 		{
-			var maxHeight = parseInt( modalIframe.css( "max-height" ) );
-			var maxWidth = parseInt( modalIframe.css( "max-width" ) );
-			var windowHeight = jQuery( window ).height();
-			var windowWidth = jQuery( window ).width();
+			var maxHeight = parseInt(modalIframe.css("max-height"));
+			var maxWidth = parseInt(modalIframe.css("max-width"));
+			var windowHeight = jQuery(window).height();
+			var windowWidth = jQuery(window).width();
 
 			maxHeight = maxHeight > windowHeight ? windowHeight : maxHeight;
 			maxWidth = maxWidth > windowWidth ? windowWidth : maxWidth;
@@ -1015,74 +1016,74 @@ var ARIMODAL = function()
 
 			//width += 17;	// scrollbar fix (except IE6)!
 
-			var left = ( jQuery( window ).width() - width ) / 2;
-			var top = ( jQuery( window ).height() - height ) / 2;
+			var left = (jQuery(window).width() - width) / 2;
+			var top = (jQuery(window).height() - height) / 2;
 
-			modalIframe.animate( { height: height, width: width }, { duration: 250, queue: false } );
-			modalContainer.animate( {  height: height, width: width, left: left, top: top }, { duration: 250, queue: false } );
+			modalIframe.animate({ height: height, width: width }, { duration: 250, queue: false });
+			modalContainer.animate({ height: height, width: width, left: left, top: top }, { duration: 250, queue: false });
 		};
 
-		var closeModal = function()
+		var closeModal = function ()
 		{
 			modalAPI.close();
 			return this;
 		};
 
-		var showCloseIcon = function()
+		var showCloseIcon = function ()
 		{
-			jQuery( ".close", modalContainer ).show();
+			jQuery(".close", modalContainer).show();
 		};
 
 		// public domain
 		return {
-			initialize: function( containerID, href )
+			initialize: function (containerID, href)
 			{
-				initialize( containerID, href, this );
+				initialize(containerID, href, this);
 				return this;
 			},
-			launch: function()
+			launch: function ()
 			{
 				launchModalWindow();
 				return this;
 			},
-			close: function()
+			close: function ()
 			{
 				closeModal();
 				return this;
 			},
-			show: function()
+			show: function ()
 			{
 				showIframe();
 				showCloseIcon();
 				return this;
 			},
-			resize: function( width, height )
+			resize: function (width, height)
 			{
-				resizeIframe( width, height );
+				resizeIframe(width, height);
 				return this;
 			}
 		};
 	};
 
 	return {
-		initialize: function()
+		initialize: function ()
 		{
 			innerModal.initialize();
 		},
-		launch: function( containerID, href )
+		launch: function (containerID, href)
 		{
-			modal().initialize( containerID, href ).launch();
+			modal().initialize(containerID, href).launch();
 		},
-		closeMe: function()
+		closeMe: function ()
 		{
 			innerModal.closeMe();
 		},
-		getModalCollection: function()
+		getModalCollection: function ()
 		{
 			return modalCollection;
 		}
 	};
-}();
+} ();
 
 ////////////////////////////////////////////////////
 // jQuery plug-in
