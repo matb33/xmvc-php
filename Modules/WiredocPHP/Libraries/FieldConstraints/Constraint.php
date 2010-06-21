@@ -21,7 +21,7 @@ class Constraint
 		$this->targetField = $targetField;
 	}
 
-	public function SetAgainst( $against )
+	public function setAgainst( $against )
 	{
 		if( $against !== "" )
 		{
@@ -29,7 +29,7 @@ class Constraint
 		}
 	}
 
-	public function SetMin( $min )
+	public function setMin( $min )
 	{
 		if( $min !== "" )
 		{
@@ -37,7 +37,7 @@ class Constraint
 		}
 	}
 
-	public function SetMax( $max )
+	public function setMax( $max )
 	{
 		if( $max !== "" )
 		{
@@ -45,45 +45,45 @@ class Constraint
 		}
 	}
 
-	public function SetDependencyFields( DependencyFields $dependencyFields )
+	public function setDependencyFields( DependencyFields $dependencyFields )
 	{
 		$this->dependencyFields = $dependencyFields;
 	}
 
-	public function SetConstraintMessages( ConstraintMessages $constraintMessages )
+	public function setConstraintMessages( ConstraintMessages $constraintMessages )
 	{
 		$this->constraintMessages = $constraintMessages;
 	}
 
-	public function GetTargetName()
+	public function getTargetName()
 	{
 		return $this->targetField->name;
 	}
 
-	public function Apply()
+	public function apply()
 	{
 		switch( $this->type )
 		{
 			case "regexp":
-				$success = $this->RegExp();
+				$success = $this->regExp();
 			break;
 			case "match":
-				$success = $this->Match();
+				$success = $this->match();
 			break;
 			case "match-field":
-				$success = $this->MatchField();
+				$success = $this->matchField();
 			break;
 			case "match-field-md5":
-				$success = $this->MatchFieldMD5();
+				$success = $this->matchFieldMD5();
 			break;
 			case "selected-count":
-				$success = $this->SelectedCount();
+				$success = $this->selectedCount();
 			break;
 			case "range":
-				$success = $this->Range();
+				$success = $this->range();
 			break;
 			case "email":
-				$success = $this->Email();
+				$success = $this->email();
 			break;
 			default:
 				return new ConstraintResult( $this, false, "Invalid constraint type." );
@@ -91,30 +91,30 @@ class Constraint
 
 		if( $success )
 		{
-			return new ConstraintResult( $this, true, $this->constraintMessages->GetPassMessage() );
+			return new ConstraintResult( $this, true, $this->constraintMessages->getPassMessage() );
 		}
 		else
 		{
-			return new ConstraintResult( $this, false, $this->constraintMessages->GetFailMessage() );
+			return new ConstraintResult( $this, false, $this->constraintMessages->getFailMessage() );
 		}
 	}
 
-	private function Email()
+	private function email()
 	{
-		return preg_match( "/" . Config::$data[ "validationEmailRegExp"] . "/", $this->targetField->value, $matches ) > 0;
+		return preg_match( "/" . Config::$data[ "validationEmailRegExp" ] . "/", $this->targetField->value, $matches ) > 0;
 	}
 
-	private function RegExp()
+	private function regExp()
 	{
 		return preg_match( "/" . $this->against . "/", $this->targetField->value, $matches ) > 0;
 	}
 
-	private function Match()
+	private function match()
 	{
 		return $this->targetField->value == $this->against;
 	}
 
-	private function MatchField()
+	private function matchField()
 	{
 		foreach( $this->dependencyFields->getIterator() as $field )
 		{
@@ -130,7 +130,7 @@ class Constraint
 		return false;
 	}
 
-	private function MatchFieldMD5()
+	private function matchFieldMD5()
 	{
 		foreach( $this->dependencyFields->getIterator() as $field )
 		{
@@ -146,21 +146,21 @@ class Constraint
 		return false;
 	}
 
-	private function SelectedCount()
+	private function selectedCount()
 	{
 		$selectedCount = count( $this->targetField->value );
 
-		return $this->WithinRange( $selectedCount, $this->min, $this->max );
+		return $this->withinRange( $selectedCount, $this->min, $this->max );
 	}
 
-	private function Range()
+	private function range()
 	{
 		$floatValue = ( float )$this->targetField->value;
 
-		return $this->WithinRange( $floatValue, $this->min, $this->max );
+		return $this->withinRange( $floatValue, $this->min, $this->max );
 	}
 
-	private function WithinRange( $value, $min, $max )
+	private function withinRange( $value, $min, $max )
 	{
 		if( is_null( $min ) && ! is_null( $max ) )
 		{

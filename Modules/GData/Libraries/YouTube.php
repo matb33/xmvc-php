@@ -6,10 +6,10 @@ use System\Drivers\XMLModelDriver;
 
 class YouTube
 {
-	private static function InitializeZend()
+	private static function initializeZend()
 	{
 		@session_start();
-		@set_include_path( get_include_path() . PATH_SEPARATOR . "mod/youtube/libraries/" );
+		@set_include_path( get_include_path() . PATH_SEPARATOR . "Modules/YouTube/Libraries/" );
 
 		require_once( "Zend/Uri/Http.php" );
 		require_once( "Zend/Http/Client/Adapter/Socket.php" );
@@ -18,9 +18,9 @@ class YouTube
 		require_once( "Zend/Gdata/YouTube/VideoEntry.php" );
 	}
 
-	public static function TokenRequest( $username, $password, $title, $description )
+	public static function tokenRequest( $username, $password, $title, $description )
 	{
-		self::InitializeZend();
+		self::initializeZend();
 
 		try
 		{
@@ -53,7 +53,7 @@ class YouTube
 
 			// Set keywords. Please note that this must be a comma-separated string
 			// and that individual keywords cannot contain whitespace
-			$videoEntry->SetVideoTags( str_replace( " ", "_", implode( ",", Config::$data[ "youTubeVideoTagArray" ] ) ) );
+			$videoEntry->setVideoTags( str_replace( " ", "_", implode( ",", Config::$data[ "youTubeVideoTagArray" ] ) ) );
 
 			$tokenArray = $yt->getFormUploadToken( $videoEntry, "http://gdata.youtube.com/action/GetUploadToken" );
 

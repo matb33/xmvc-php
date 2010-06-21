@@ -4,8 +4,8 @@ namespace Modules\WebCommon\Controllers;
 
 class Sitemapxml
 {
-	public function View( $lang )
+	public function view( $lang )
 	{
-		Sitemap::getInstance()->Output( $lang );
+		Sitemap::getInstance()->output( $lang );
 	}
 }

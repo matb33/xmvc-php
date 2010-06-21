@@ -1,3 +1,3 @@
 <?php
 
-$restrictXSLTPHPFunctions = array( "Modules\\Combiner\\Libraries\\Combiner::CombineJavaScripts", "Modules\\Combiner\\Libraries\\Combiner::CombineStylesheetLinks" );
+$restrictXSLTPHPFunctions = array( "Modules\\Combiner\\Libraries\\Combiner::combineJavaScripts", "Modules\\Combiner\\Libraries\\Combiner::combineStylesheetLinks" );

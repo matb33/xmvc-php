@@ -13,13 +13,13 @@ class Robotstxt
 	{
 	}
 
-	public function Index()
+	public function index()
 	{
-		OutputHeaders::Custom( "Content-type: text/plain; charset=UTF-8" );
+		OutputHeaders::custom( "Content-type: text/plain; charset=UTF-8" );
 
 		echo( "User-agent: *\n" );
 
-		if( $this->DoNotSpider() )
+		if( $this->doNotSpider() )
 		{
 			echo( "Disallow: /\n" );
 		}
@@ -27,17 +27,17 @@ class Robotstxt
 		{
 			if( Config::$data[ "includeSitemapDisallows" ] )
 			{
-				$this->WriteSitemapDisallows();
+				$this->writeSitemapDisallows();
 			}
 		}
 
 		if( Config::$data[ "includeSitemaps" ] )
 		{
-			$this->WriteSitemapLines();
+			$this->writeSitemapLines();
 		}
 	}
 
-	private function DoNotSpider()
+	private function doNotSpider()
 	{
 		if( preg_match( Config::$data[ "noSpiderHostMatch" ], $_SERVER[ "HTTP_HOST" ] ) )
 		{
@@ -47,9 +47,9 @@ class Robotstxt
 		return false;
 	}
 
-	private function WriteSitemapDisallows()
+	private function writeSitemapDisallows()
 	{
-		$lookupModel = ComponentLookup::getInstance()->Get();
+		$lookupModel = ComponentLookup::getInstance()->get();
 		$hrefNodeList = $lookupModel->xPath->query( "//lookup:entry/lookup:href[ lookup:private = '1' ]" );
 
 		foreach( $hrefNodeList as $hrefNode )
@@ -61,9 +61,9 @@ class Robotstxt
 		}
 	}
 
-	private function WriteSitemapLines()
+	private function writeSitemapLines()
 	{
-		$filenames = Sitemap::getInstance()->GetSitemapXMLFilenames();
+		$filenames = Sitemap::getInstance()->getSitemapXMLFilenames();
 
 		foreach( $filenames as $filename )
 		{

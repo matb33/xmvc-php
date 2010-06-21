@@ -14,48 +14,48 @@ class Language
 	const languageConfig = "Application\\Models\\languages";
 	const languageConfigDefault = "Modules\\Language\\Models\\languages.default";
 
-	public static function GetLang()
+	public static function getLang()
 	{
-		self::LoadLanguageModel();
-		self::LoadLanguageData();
-		self::VerifyDefaultLanguage();
+		self::loadLanguageModel();
+		self::loadLanguageData();
+		self::verifyDefaultLanguage();
 
-		if( ! self::FindLanguageBasedOnGET() )
+		if( ! self::findLanguageBasedOnGET() )
 		{
-			if( ! self::FindLanguageBasedOnSession() )
+			if( ! self::findLanguageBasedOnSession() )
 			{
-				if( ! self::FindLanguageBasedOnHost() )
+				if( ! self::findLanguageBasedOnHost() )
 				{
-					self::SetLanguageToDefault();
+					self::setLanguageToDefault();
 				}
 			}
 		}
 
-		self::SetLanguageSession();
+		self::setLanguageSession();
 
 		return self::$language;
 	}
 
-	public static function SetLang( $lang )
+	public static function setLang( $lang )
 	{
 		if( in_array( $lang, array_keys( self::$data ) ) )
 		{
 			self::$language = $lang;
-			self::SetLanguageSession();
+			self::setLanguageSession();
 		}
 	}
 
-	public static function GetDefinedLangs()
+	public static function getDefinedLangs()
 	{
-		self::LoadLanguageModel();
-		self::LoadLanguageData();
+		self::loadLanguageModel();
+		self::loadLanguageData();
 
 		$definedLanguages = array_keys( self::$data );
 
 		return $definedLanguages;
 	}
 
-	private static function LoadLanguageModel()
+	private static function loadLanguageModel()
 	{
 		if( is_null( self::$languages ) )
 		{
@@ -63,7 +63,7 @@ class Language
 		}
 	}
 
-	private static function LoadLanguageData()
+	private static function loadLanguageData()
 	{
 		if( is_null( self::$data ) )
 		{
@@ -83,20 +83,20 @@ class Language
 		}
 	}
 
-	private static function VerifyDefaultLanguage()
+	private static function verifyDefaultLanguage()
 	{
-		if( ! in_array( self::GetDefaultLanguage(), array_keys( self::$data ) ) )
+		if( ! in_array( self::getDefaultLanguage(), array_keys( self::$data ) ) )
 		{
 			self::$language = self::$languages->xPath->query( "//lang:languages/lang:language-list/lang:language[ 1 ]/@lang:id" )->item( 0 )->nodeValue;
 		}
 	}
 
-	private static function GetDefaultLanguage()
+	private static function getDefaultLanguage()
 	{
 		return self::$languages->xPath->query( "//lang:languages/lang:config/lang:default" )->item( 0 )->nodeValue;
 	}
 
-	private static function FindLanguageBasedOnHost()
+	private static function findLanguageBasedOnHost()
 	{
 		foreach( self::$data as $key => $info )
 		{
@@ -114,7 +114,7 @@ class Language
 		return false;
 	}
 
-	private static function FindLanguageBasedOnGET()
+	private static function findLanguageBasedOnGET()
 	{
 		if( isset( $_GET[ "lang" ] ) )
 		{
@@ -129,7 +129,7 @@ class Language
 		return false;
 	}
 
-	private static function FindLanguageBasedOnSession()
+	private static function findLanguageBasedOnSession()
 	{
 		if( isset( $_SESSION[ "lang" ] ) )
 		{
@@ -144,32 +144,32 @@ class Language
 		return false;
 	}
 
-	private static function SetLanguageToDefault()
+	private static function setLanguageToDefault()
 	{
-		self::$language = self::GetDefaultLanguage();
+		self::$language = self::getDefaultLanguage();
 	}
 
-	private static function SetLanguageSession()
+	private static function setLanguageSession()
 	{
 		$_SESSION[ "lang" ] = self::$language;
 	}
 
-	public static function GetLangBase( $lang )
+	public static function getLangBase( $lang )
 	{
-		$parts = self::GetLangParts( $lang );
+		$parts = self::getLangParts( $lang );
 
 		return $parts[ 0 ];
 	}
 
-	public static function GetLangLocale( $lang )
+	public static function getLangLocale( $lang )
 	{
-		$parts = self::GetLangParts( $lang );
+		$parts = self::getLangParts( $lang );
 		$locale = isset( $parts[ 1 ] ) ? $parts[ 1 ] : "";
 
 		return $locale;
 	}
 
-	public static function GetLangParts( $lang )
+	public static function getLangParts( $lang )
 	{
 		$parts = explode( "-", $lang, 2 );
 
@@ -191,7 +191,7 @@ class Language
 
 			if( strlen( $scopeLang ) == 0 )
 			{
-				$scopeLang = self::GetLang();
+				$scopeLang = self::getLang();
 			}
 		}
 		else
@@ -202,17 +202,17 @@ class Language
 			}
 			else
 			{
-				$scopeLang = self::GetLang();
+				$scopeLang = self::getLang();
 			}
 		}
 
 		if( strlen( $currentLang ) == 0 )
 		{
-			$currentLang = self::GetLang();
+			$currentLang = self::getLang();
 		}
 
-		$scopeLangParts = self::GetLangParts( strtolower( $scopeLang ) );
-		$currentLangParts = self::GetLangParts( strtolower( $currentLang ) );
+		$scopeLangParts = self::getLangParts( strtolower( $scopeLang ) );
+		$currentLangParts = self::getLangParts( strtolower( $currentLang ) );
 
 		if( $scopeLangParts[ 0 ] == $currentLangParts[ 0 ] )
 		{

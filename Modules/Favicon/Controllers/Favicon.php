@@ -9,10 +9,10 @@ class Favicon
 	public function Index()
 	{
 		$this->favIconFolder =  "./Application/Public/images/";
-		$this->Ico();
+		$this->ico();
 	}
 
-	public function Ico()
+	public function ico()
 	{
 		if( file_exists( $this->favIconFolder . "favicon.ico" ) )
 		{
@@ -21,7 +21,7 @@ class Favicon
 		}
 	}
 
-	public function Gif()
+	public function gif()
 	{
 		if( file_exists( $this->favIconFolder . "favicon.gif" ) )
 		{
@@ -30,7 +30,7 @@ class Favicon
 		}
 	}
 
-	public function Png()
+	public function png()
 	{
 		if( file_exists( $this->favIconFolder . "favicon.png" ) )
 		{

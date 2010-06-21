@@ -8,17 +8,17 @@ class Authenticator
 {
 	private static $authenticated = null;
 
-	public static function Authenticate( $username, $password )
+	public static function authenticate( $username, $password )
 	{
 		$userID = null;
 		$authenticated = false;
 
-		if( ! self::IsAuthenticated() )
+		if( ! self::isAuthenticated() )
 		{
 			$authModel = new SQLModelDriver( __NAMESPACE__ . "\\authentication" );
-			$authModel->UseQuery( "IsUserPasswordValid" );
-			$authModel->SetParameters( array( ( string )$username, md5( ( string )$password ) ) );
-			$authModel->Execute();
+			$authModel->useQuery( "IsUserPasswordValid" );
+			$authModel->setParameters( array( ( string )$username, md5( ( string )$password ) ) );
+			$authModel->execute();
 
 			$userNodeList = $authModel->xPath->query( "//xmvc:column[ @name='userid' ]" );
 
@@ -31,7 +31,7 @@ class Authenticator
 
 			if( $authenticated )
 			{
-				self::SetAuthenticated( $userID );
+				self::setAuthenticated( $userID );
 			}
 		}
 		else
@@ -42,24 +42,24 @@ class Authenticator
 		return $authenticated;
 	}
 
-	public static function GetUserData( $key )
+	public static function getUserData( $key )
 	{
 		return $_SESSION[ "authUserData" ][ $key ];
 	}
 
-	public static function Logout()
+	public static function logout()
 	{
 		unset( $_SESSION[ "authUserData" ] );
 
 		self::$authenticated = false;
 	}
 
-	private static function SetAuthenticated( $userID )
+	private static function setAuthenticated( $userID )
 	{
 		$userModel = new SQLModelDriver( __NAMESPACE__ . "\\authentication" );
-		$userModel->UseQuery( "GetUserData" );
-		$userModel->SetParameters( array( ( int )$userID ) );
-		$userModel->Execute();
+		$userModel->useQuery( "GetUserData" );
+		$userModel->setParameters( array( ( int )$userID ) );
+		$userModel->execute();
 
 		$userData = array();
 
@@ -78,7 +78,7 @@ class Authenticator
 		self::$authenticated = true;
 	}
 
-	public static function IsAuthenticated()
+	public static function isAuthenticated()
 	{
 		if( is_null( self::$authenticated ) )
 		{
@@ -88,7 +88,7 @@ class Authenticator
 		return self::$authenticated;
 	}
 
-	public function GetStateFromModel( $model )
+	public function getStateFromModel( $model )
 	{
 		$stateNodeList = $model->xPath->query( "//wd:component/@state" );
 		$state = $stateNodeList->length > 0 ? $stateNodeList->item( 0 )->nodeValue : "neutral";

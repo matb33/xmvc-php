@@ -37,25 +37,25 @@ abstract class Component extends DefaultEventDispatcher
 	public function __construct( $componentClass, $instanceName = null, $eventName = null, $parameters = array(), $cacheMinutes = 0 )
 	{
 		$cacheMinutes = ( int )$cacheMinutes;
-		$eventName = ComponentUtils::DefaultEventNameIfNecessary( $eventName );
-		$wiredocComponentName = ComponentUtils::ExtractWiredocComponentNameFromComponentClass( $componentClass );
+		$eventName = ComponentUtils::defaultEventNameIfNecessary( $eventName );
+		$wiredocComponentName = ComponentUtils::extractWiredocComponentNameFromComponentClass( $componentClass );
 
-		$pathParts = Routing::GetPathParts();
-		list( $this->component, $this->instanceName, $this->fullyQualifiedName ) = ComponentUtils::ExtractComponentNamePartsFromWiredocName( $wiredocComponentName . "." . $instanceName );
+		$pathParts = Routing::getPathParts();
+		list( $this->component, $this->instanceName, $this->fullyQualifiedName ) = ComponentUtils::extractComponentNamePartsFromWiredocName( $wiredocComponentName . "." . $instanceName );
 		$this->componentClass = $componentClass;
 		$this->componentModelName = substr( $componentClass, 0, strrpos( $componentClass, "\\" ) + 1 ) . $instanceName;
 		$this->eventName = $eventName;
 		$this->parameters = $parameters;
 		$this->cacheMinutes = $cacheMinutes;
-		$this->methodName = Normalize::MethodOrClassName( $pathParts[ 1 ] );
+		$this->methodName = Normalize::methodName( $pathParts[ 1 ] );
 		$this->methodArgs = array_slice( $pathParts, 2 );
-		$this->cacheID = $this->GenerateCacheID();
+		$this->cacheID = $this->generateCacheID();
 
-		$this->addEventListener( "ontalk.components", new Delegate( "OnTalk", $this ) );
-		$this->addEventListener( "default.components", new Delegate( "OnDefault", $this ) );
+		$this->addEventListener( "ontalk.components", new Delegate( "onTalk", $this ) );
+		$this->addEventListener( "default.components", new Delegate( "onDefault", $this ) );
 	}
 
-	public function Build()
+	public function build()
 	{
 		$arguments = array();
 		$arguments[ "component" ] = $this->component;
@@ -70,10 +70,10 @@ abstract class Component extends DefaultEventDispatcher
 		$buildEvent = new Event( $this->eventName, $arguments );
 		$this->cache = new Cache( Config::$data[ "componentCacheFilePattern" ], array( "type" => "events", "name" => $this->eventName ), $this->cacheID, true, $this->cacheMinutes );
 
-		if( $this->cache->IsCached() )
+		if( $this->cache->isCached() )
 		{
-			$this->cachedResultModel = $this->cache->Read();
-			$this->Talk( null, $buildEvent );
+			$this->cachedResultModel = $this->cache->read();
+			$this->talk( null, $buildEvent );
 		}
 		else
 		{
@@ -81,7 +81,7 @@ abstract class Component extends DefaultEventDispatcher
 		}
 	}
 
-	private function GenerateCacheID()
+	private function generateCacheID()
 	{
 		$cacheID = str_replace( "\\", "_", $this->componentModelName );
 
@@ -98,37 +98,37 @@ abstract class Component extends DefaultEventDispatcher
 		return $cacheID;
 	}
 
-	protected function Listen( $eventName, Delegate $delegate )
+	protected function listen( $eventName, Delegate $delegate )
 	{
 		$this->addEventListener( $eventName, $delegate );
 	}
 
-	protected function Talk()
+	protected function talk()
 	{
 		$this->dispatchEvent( new Event( "ontalk.components", array( "builtComponentModels" => func_get_args() ) ) );
 	}
 
-	public function OnTalk( Event $event )
+	public function onTalk( Event $event )
 	{
 		$this->builtComponentModels = $event->arguments[ "builtComponentModels" ];
-		$this->SendResultModelForProcessing( $this->ObtainResultModel() );
+		$this->sendResultModelForProcessing( $this->obtainResultModel() );
 	}
 
-	public function OnDefault( Event $event )
+	public function onDefault( Event $event )
 	{
-		$this->SendResultModelForProcessing( $this->LoadComponentInstance() );
+		$this->sendResultModelForProcessing( $this->loadComponentInstance() );
 	}
 
-	private function LoadComponentInstance()
+	private function loadComponentInstance()
 	{
 		$modelName = $this->componentModelName;
 
-		$cacheID = self::GenerateCacheID();
+		$cacheID = self::generateCacheID();
 		$cache = new Cache( Config::$data[ "componentCacheFilePattern" ], array( "type" => "instances", "name" => $this->cacheID ), $this->cacheID, true, $this->cacheMinutes );
 
-		if( $cache->IsCached() )
+		if( $cache->isCached() )
 		{
-			$instanceModel = $cache->Read();
+			$instanceModel = $cache->read();
 		}
 		else
 		{
@@ -136,14 +136,14 @@ abstract class Component extends DefaultEventDispatcher
 
 			if( $this->cacheMinutes > 0 )
 			{
-				$cache->Write( $instanceModel );
+				$cache->write( $instanceModel );
 			}
 		}
 
 		return $instanceModel;
 	}
 
-	private function ObtainResultModel()
+	private function obtainResultModel()
 	{
 		if( isset( $this->cachedResultModel ) )
 		{
@@ -151,39 +151,39 @@ abstract class Component extends DefaultEventDispatcher
 		}
 		else
 		{
-			$resultModel = $this->TransformBuiltComponentToInstance();
+			$resultModel = $this->transformBuiltComponentToInstance();
 
 			if( $this->cacheMinutes > 0 )
 			{
-				$this->cache->Write( $resultModel );
+				$this->cache->write( $resultModel );
 			}
 		}
 
-		ComponentLookup::getInstance()->EnsureInstanceInLookup( $resultModel );
+		ComponentLookup::getInstance()->ensureInstanceInLookup( $resultModel );
 
 		return $resultModel;
 	}
 
-	private function TransformBuiltComponentToInstance()
+	private function transformBuiltComponentToInstance()
 	{
 		$component = $this->component;
 		$instanceName = $this->instanceName;
 		$builtComponentModels = $this->builtComponentModels;
 
-		$componentClass = ComponentUtils::GetComponentClassNameFromWiredocComponentName( $component );
-		$namespacedComponentClass = ComponentUtils::DefaultNamespaceIfNecessary( $componentClass );
+		$componentClass = ComponentUtils::getComponentClassNameFromWiredocComponentName( $component );
+		$namespacedComponentClass = ComponentUtils::defaultNamespaceIfNecessary( $componentClass );
 
 		$view = new View();
-		$xslFile = Loader::Resolve( self::componentFolder, $namespacedComponentClass, self::componentExtension );
-		$xslData = $view->ImportXSL( null, $xslFile );
-		$view->SetXSLData( $xslData );
+		$xslFile = Loader::resolve( self::componentFolder, $namespacedComponentClass, self::componentExtension );
+		$xslData = $view->importXSL( null, $xslFile );
+		$view->setXSLData( $xslData );
 
 		foreach( $builtComponentModels as $model )
 		{
-			$view->PushModel( $model );
+			$view->pushModel( $model );
 		}
 
-		$resultXML = $view->ProcessAsXML();
+		$resultXML = $view->processAsXML();
 		$resultModel = new XMLModelDriver( $resultXML );
 
 		if( !is_null( $instanceName ) && strlen( $instanceName ) > 0 )
@@ -199,7 +199,7 @@ abstract class Component extends DefaultEventDispatcher
 			}
 			else
 			{
-				$this->OnComponentTransformationError( $view, $xslData, $xslFile, $resultXML );
+				$this->onComponentTransformationError( $view, $xslData, $xslFile, $resultXML );
 			}
 		}
 
@@ -210,9 +210,9 @@ abstract class Component extends DefaultEventDispatcher
 		return $resultModel;
 	}
 
-	private function SendResultModelForProcessing( $resultModel )
+	private function sendResultModelForProcessing( $resultModel )
 	{
-		ComponentUtils::ReplaceTokenParametersInAttributes( $resultModel, $this->parameters );
+		ComponentUtils::replaceTokenParametersInAttributes( $resultModel, $this->parameters );
 
 		$arguments = array(
 			"model" => $resultModel,
@@ -223,9 +223,9 @@ abstract class Component extends DefaultEventDispatcher
 		$this->dispatchEvent( new Event( "onreadyforprocessing.components", $arguments ) );
 	}
 
-	private function OnComponentTransformationError( $view, $xslData, $xslFile, $resultXML )
+	private function onComponentTransformationError( $view, $xslData, $xslFile, $resultXML )
 	{
-		$stackModel = new XMLModelDriver( $view->GetAggregatedModels() );
+		$stackModel = new XMLModelDriver( $view->getAggregatedModels() );
 		$stackModel->dump( false, $this->component . "\\" . $this->instanceName  );
 
 		$viewModel = new XMLModelDriver( $xslData );

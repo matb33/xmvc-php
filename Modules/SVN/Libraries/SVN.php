@@ -50,23 +50,23 @@ class SVN
 		$this->repositoryPassword = $repositoryPassword;
 		$this->repositoryWorkingFolder = $repositoryWorkingFolder;
 
-		$this->VerifyWorkingFolderExists();
-		$this->VerifyWorkingFolderPermissions();
+		$this->verifyWorkingFolderExists();
+		$this->verifyWorkingFolderPermissions();
 
-		$this->VerifyConfigFolderExists();
-		$this->VerifyConfigFolderPermissions();
+		$this->verifyConfigFolderExists();
+		$this->verifyConfigFolderPermissions();
 
-		$this->VerifySVNExecutable();
+		$this->verifySVNExecutable();
 	}
 
-	public function Add( $filename )
+	public function add( $filename )
 	{
-		if( FileSystem::PathExists( $filename ) )
+		if( FileSystem::pathExists( $filename ) )
 		{
 			$parameters = array();
 			$parameters[] = $filename;
 
-			return $this->Execute( self::ADD, $parameters );
+			return $this->execute( self::ADD, $parameters );
 		}
 		else
 		{
@@ -74,9 +74,9 @@ class SVN
 		}
 	}
 
-	public function Checkout( $revision = "HEAD" )
+	public function checkout( $revision = "HEAD" )
 	{
-		$this->CleanWorkingFolder();
+		$this->cleanWorkingFolder();
 
 		$parameters = array();
 		$parameters[] = $this->repositoryURL . $this->repositoryPath;
@@ -86,22 +86,22 @@ class SVN
 		$parameters[] = "--password " . $this->repositoryPassword;
 		$parameters[] = "--non-interactive";
 
-		return $this->Execute( self::CHECKOUT, $parameters );
+		return $this->execute( self::CHECKOUT, $parameters );
 	}
 
-	public function CleanUp( $path = null )
+	public function cleanUp( $path = null )
 	{
 		if( is_null( $path ) )
 		{
 			$path = realpath( $this->repositoryWorkingFolder );
 		}
 
-		if( FileSystem::PathExists( $path ) )
+		if( FileSystem::pathExists( $path ) )
 		{
 			$parameters = array();
 			$parameters[] = $path;
 
-			return $this->Execute( self::CLEANUP, $parameters );
+			return $this->execute( self::CLEANUP, $parameters );
 		}
 		else
 		{
@@ -109,14 +109,14 @@ class SVN
 		}
 	}
 
-	public function Commit( $path = null )
+	public function commit( $path = null )
 	{
 		if( is_null( $path ) )
 		{
 			$path = realpath( $this->repositoryWorkingFolder );
 		}
 
-		if( FileSystem::PathExists( $path ) )
+		if( FileSystem::pathExists( $path ) )
 		{
 			$parameters = array();
 			$parameters[] = "--username " . $this->repositoryUsername;
@@ -124,7 +124,7 @@ class SVN
 			$parameters[] = "--non-interactive";
 			$parameters[] = $path;
 
-			return $this->Execute( self::COMMIT, $parameters );
+			return $this->execute( self::COMMIT, $parameters );
 		}
 		else
 		{
@@ -132,7 +132,7 @@ class SVN
 		}
 	}
 
-	public function Del( $pathOrUrl )
+	public function del( $pathOrUrl )
 	{
 		$parameters = array();
 		$parameters[] = "--username " . $this->repositoryUsername;
@@ -140,12 +140,12 @@ class SVN
 		$parameters[] = "--non-interactive";
 		$parameters[] = $pathOrUrl;	// maybe we should check if it's a URL or file, and add surrounding quotes accordingly
 
-		return $this->Execute( self::DEL, $parameters );
+		return $this->execute( self::DEL, $parameters );
 	}
 
-	public function Import( $path )
+	public function import( $path )
 	{
-		if( FileSystem::PathExists( $path ) )
+		if( FileSystem::pathExists( $path ) )
 		{
 			$parameters = array();
 			$parameters[] = "--username " . $this->repositoryUsername;
@@ -154,7 +154,7 @@ class SVN
 			$parameters[] = "\"" . $path . "\"";
 			$parameters[] = $this->repositoryURL . $this->repositoryPath;
 
-			return $this->Execute( self::IMPORT, $parameters );
+			return $this->execute( self::IMPORT, $parameters );
 		}
 		else
 		{
@@ -162,14 +162,14 @@ class SVN
 		}
 	}
 
-	public function Export( $revision = "HEAD", $path = null, $outputPath = null, $ignoreExternals = false )
+	public function export( $revision = "HEAD", $path = null, $outputPath = null, $ignoreExternals = false )
 	{
 		if( is_null( $path ) )
 		{
 			$path = realpath( $this->repositoryWorkingFolder );
 		}
 
-		if( FileSystem::PathExists( $path ) )
+		if( FileSystem::pathExists( $path ) )
 		{
 			$parameters = array();
 			$parameters[] = "--username " . $this->repositoryUsername;
@@ -191,7 +191,7 @@ class SVN
 
 			$parameters[] = $this->repositoryURL . $this->repositoryPath;
 
-			return $this->Execute( self::EXPORT, $parameters );
+			return $this->execute( self::EXPORT, $parameters );
 		}
 		else
 		{
@@ -199,14 +199,14 @@ class SVN
 		}
 	}
 
-	public function Update( $revision = "HEAD", $path = null )
+	public function update( $revision = "HEAD", $path = null )
 	{
 		if( is_null( $path ) )
 		{
 			$path = realpath( $this->repositoryWorkingFolder );
 		}
 
-		if( FileSystem::PathExists( $path ) )
+		if( FileSystem::pathExists( $path ) )
 		{
 			$parameters = array();
 			$parameters[] = "--username " . $this->repositoryUsername;
@@ -215,7 +215,7 @@ class SVN
 			$parameters[] = "--revision " . $revision;
 			$parameters[] = "\"" . $path . "\"";
 
-			return $this->Execute( self::UPDATE, $parameters );
+			return $this->execute( self::UPDATE, $parameters );
 		}
 		else
 		{
@@ -223,14 +223,14 @@ class SVN
 		}
 	}
 
-	public function Revert( $path )
+	public function revert( $path )
 	{
-		if( FileSystem::PathExists( $path ) )
+		if( FileSystem::pathExists( $path ) )
 		{
 			$parameters = array();
 			$parameters[] = "\"" . $path . "\"";
 
-			return $this->Execute( self::REVERT, $parameters );
+			return $this->execute( self::REVERT, $parameters );
 		}
 		else
 		{
@@ -238,7 +238,7 @@ class SVN
 		}
 	}
 
-	public function Ls( $revision = "HEAD" )
+	public function ls( $revision = "HEAD" )
 	{
 		$parameters = array();
 		$parameters[] = "--username " . $this->repositoryUsername;
@@ -246,17 +246,17 @@ class SVN
 		$parameters[] = "--non-interactive";
 		$parameters[] = "--revision " . $revision;
 
-		return $this->Execute( self::LS, $parameters );
+		return $this->execute( self::LS, $parameters );
 	}
 
-	public function Lg()
+	public function lg()
 	{
-		return $this->Execute( self::LG );
+		return $this->execute( self::LG );
 	}
 
-	public function IsCheckedOut()
+	public function isCheckedOut()
 	{
-		if( FileSystem::PathExists( $this->repositoryWorkingFolder . "/.svn" ) )
+		if( FileSystem::pathExists( $this->repositoryWorkingFolder . "/.svn" ) )
 		{
 			return true;
 		}
@@ -264,19 +264,19 @@ class SVN
 		return false;
 	}
 
-	private function CleanWorkingFolder()
+	private function cleanWorkingFolder()
 	{
 		if( Config::$data[ "isWindows" ] )
 		{
 			exec( "attrib -h -r  \"" . $this->repositoryWorkingFolder . "/*.*\" /s /d" );
 		}
 
-		return FileSystem::EmptyFolder( $this->repositoryWorkingFolder );
+		return FileSystem::emptyFolder( $this->repositoryWorkingFolder );
 	}
 
-	private function Execute( $subCommand, $parameters = array() )
+	private function execute( $subCommand, $parameters = array() )
 	{
-		$parameters = array_merge( $this->GetCommonParameters(), $parameters );
+		$parameters = array_merge( $this->getCommonParameters(), $parameters );
 
 		$command  = realpath( Config::$data[ "svnExecutable" ] ) . " ";
 		$command .= $subCommand . " ";
@@ -289,14 +289,14 @@ class SVN
 
 		$outputGlued = implode( "\n", $output );
 
-		Debug::Write( "Execute command", $command );
+		Debug::write( "Execute command", $command );
 
-		SVNErrors::Analyze( $outputGlued, $subCommand );
+		SVNErrors::analyze( $outputGlued, $subCommand );
 
 		return $outputGlued;
 	}
 
-	private function GetCommonParameters()
+	private function getCommonParameters()
 	{
 		$parameters = array();
 		$parameters[] = "--config-dir \"" . realpath( Config::$data[ "svnConfigFolder" ] ) . "\"";
@@ -304,39 +304,37 @@ class SVN
 		return $parameters;
 	}
 
-	private function VerifyWorkingFolderExists()
+	private function verifyWorkingFolderExists()
 	{
-		FileSystem::CreateFolderStructure( $this->repositoryWorkingFolder );
+		FileSystem::createFolderStructure( $this->repositoryWorkingFolder );
 	}
 
-	private function VerifyWorkingFolderPermissions()
+	private function verifyWorkingFolderPermissions()
 	{
-		if( !FileSystem::TestPermissions( $this->repositoryWorkingFolder, FileSystem::FS_PERM_READ + FileSystem::FS_PERM_WRITE ) )
+		if( !FileSystem::testPermissions( $this->repositoryWorkingFolder, FileSystem::FS_PERM_READ + FileSystem::FS_PERM_WRITE ) )
 		{
 			trigger_error( "SVN error: The SVN working folder [" . $this->repositoryWorkingFolder . "] could not be read and/or written. Read and write permissions must be enabled for the web user in order for this SVN module to function.", E_USER_ERROR );
 		}
 	}
 
-	private function VerifyConfigFolderExists()
+	private function verifyConfigFolderExists()
 	{
-		FileSystem::CreateFolderStructure( Config::$data[ "svnConfigFolder" ] );
+		FileSystem::createFolderStructure( Config::$data[ "svnConfigFolder" ] );
 	}
 
-	private function VerifyConfigFolderPermissions()
+	private function verifyConfigFolderPermissions()
 	{
-		if( !FileSystem::TestPermissions( Config::$data[ "svnConfigFolder" ], FileSystem::FS_PERM_READ + FileSystem::FS_PERM_WRITE ) )
+		if( !FileSystem::testPermissions( Config::$data[ "svnConfigFolder" ], FileSystem::FS_PERM_READ + FileSystem::FS_PERM_WRITE ) )
 		{
 			trigger_error( "SVN error: The SVN config folder [" . Config::$data[ "svnConfigFolder" ] . "] could not be read and/or written. Read and write permissions must be enabled for the web user in order for this SVN module to function.", E_USER_ERROR );
 		}
 	}
 
-	private function VerifySVNExecutable()
+	private function verifySVNExecutable()
 	{
-		if( !FileSystem::PathExists( Config::$data[ "svnExecutable" ] ) )
+		if( !FileSystem::pathExists( Config::$data[ "svnExecutable" ] ) )
 		{
 			trigger_error( "SVN error: Could not find SVN binary at [" . Config::$data[ "svnExecutable" ] . "]. Either it does not exist or the specified path is incorrect. Use the config variable \$svnExecutable to define it.", E_USER_ERROR );
 		}
 	}
 }
-
-?>

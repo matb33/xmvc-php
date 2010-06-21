@@ -7,14 +7,14 @@ use System\Libraries\Config;
 
 class Combiner
 {
-	public static function CombineJavaScripts( $scriptNodes )
+	public static function combineJavaScripts( $scriptNodes )
 	{
 		$fileIDs = array();
 		$filenames = array();
 
 		foreach( $scriptNodes as $node )
 		{
-			list( $fileIDs[], $filenames[] ) = self::PrepareFileNames( $node );
+			list( $fileIDs[], $filenames[] ) = self::prepareFileNames( $node );
 		}
 
 		sort( $fileIDs );
@@ -23,55 +23,55 @@ class Combiner
 		$outputFilename = Config::$data[ "combinerCachePhysicalFolder" ] . "script-" . $hash . ".js";
 		$publicFilename = Config::$data[ "combinerCacheWebFolder" ] . "script-" . $hash . ".js";
 
-		self::CombineFiles( $outputFilename, $filenames );
+		self::combineFiles( $outputFilename, $filenames );
 
 		return $publicFilename;
 	}
 
-	public static function CombineStylesheetLinks( $media, $linkNodes )
+	public static function combineStylesheetLinks( $media, $linkNodes )
 	{
 		$fileIDs = array();
 		$filenames = array();
 
 		foreach( $linkNodes as $node )
 		{
-			list( $fileIDs[], $filenames[] ) = self::PrepareFileNames( $node );
+			list( $fileIDs[], $filenames[] ) = self::prepareFileNames( $node );
 		}
 
 		$hash = md5( implode( " ", $fileIDs ) );
 		$outputFilename = Config::$data[ "combinerCachePhysicalFolder" ] . "link-" . $media . "-" . $hash . ".css";
 		$publicFilename = Config::$data[ "combinerCacheWebFolder" ] . "link-" . $media . "-" . $hash . ".css";
 
-		self::CombineFiles( $outputFilename, $filenames );
+		self::combineFiles( $outputFilename, $filenames );
 
 		return $publicFilename;
 	}
 
-	private static function CombineFiles( $outputFilename, $filenamesArray )
+	private static function combineFiles( $outputFilename, $filenamesArray )
 	{
-		if( !FileSystem::FileExists( $outputFilename ) )
+		if( !FileSystem::fileExists( $outputFilename ) )
 		{
 			$fileContents = "";
 			foreach( $filenamesArray as $file )
 			{
-				$fileContents .= FileSystem::FileGetContentsUTF8( $file ) . "\n";
+				$fileContents .= FileSystem::fileGetContentsUTF8( $file ) . "\n";
 			}
 
 			$realOutputFile = Config::$data[ "rootPath" ] . "/" . $outputFilename;
-			FileSystem::FilePutContents( $realOutputFile, $fileContents, LOCK_EX );
+			FileSystem::filePutContents( $realOutputFile, $fileContents, LOCK_EX );
 		}
 	}
 
-	private static function PrepareFileNames( $node )
+	private static function prepareFileNames( $node )
 	{
 		if( $node->hasAttribute( "href" ) )
 		{
-			$filename = Config::$data[ "rootPath" ]  . "/" . self::GetPhysicalPath( $node->getAttribute( "href" ) );
+			$filename = Config::$data[ "rootPath" ]  . "/" . self::getPhysicalPath( $node->getAttribute( "href" ) );
 			$realPath = realpath( $filename );
 
 			if( $realPath !== false )
 			{
-				$meta = FileSystem::GetMeta( $realPath );
+				$meta = FileSystem::getMeta( $realPath );
 
 				$filenames = $meta[ "fullfilename" ];
 				$fileIDs = $meta[ "basename" ] . $meta[ "filemtime" ];
@@ -85,7 +85,7 @@ class Combiner
 		return array( $fileIDs, $filenames );
 	}
 
-	private static function GetPhysicalPath( $filename )
+	private static function getPhysicalPath( $filename )
 	{
 		$combinerRewriteAdaptors = Config::$data[ "combinerRewriteAdaptors" ];
 

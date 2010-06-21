@@ -15,10 +15,10 @@ class ConstraintResultsModelDriver extends ModelDriver implements IModelDriver
 		$this->rootElement = $this->createElement( "constraint-results" );
 		$this->appendChild( $this->rootElement );
 
-		$this->TransformForeignToXML( $constraintResultsList );
+		$this->transformForeignToXML( $constraintResultsList );
 	}
 
-	public function TransformForeignToXML()
+	public function transformForeignToXML()
 	{
 		$constraintResultsList = func_get_arg( 0 );
 
@@ -26,7 +26,7 @@ class ConstraintResultsModelDriver extends ModelDriver implements IModelDriver
 
 		foreach( $constraintResultsList as $constraintResults )
 		{
-			$data = $constraintResults->ToArray();
+			$data = $constraintResults->toArray();
 			$fieldSuccess = true;
 
 			if( isset( $data[ "results" ] ) && is_array( $data[ "results" ] ) )
@@ -81,6 +81,6 @@ class ConstraintResultsModelDriver extends ModelDriver implements IModelDriver
 		$fullSuccessAttribute->value = $fullSuccess ? "true" : "false";
 		$this->rootElement->appendChild( $fullSuccessAttribute );
 
-		parent::TransformForeignToXML();
+		parent::transformForeignToXML();
 	}
 }

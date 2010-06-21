@@ -14,24 +14,24 @@ use Modules\WiredocPHP\Libraries\Components\ComponentLookup;
 
 class Sitemap extends OverrideableSingleton
 {
-	public function GetCurrentFullyQualifiedPageName()
+	public function getCurrentFullyQualifiedPageName()
 	{
-		$pathOnlyOriginal = Routing::GetPathOnlyOriginal();
+		$pathOnlyOriginal = Routing::getPathOnlyOriginal();
 		$currentPath = "/" . ( strlen( $pathOnlyOriginal ) > 0 ? $pathOnlyOriginal . "/" : "" );
 
-		return ComponentLookup::getInstance()->GetFullyQualifiedNameByPath( $currentPath );
+		return ComponentLookup::getInstance()->getFullyQualifiedNameByPath( $currentPath );
 	}
 
-	public function Output( $lang = null )
+	public function output( $lang = null )
 	{
 		if( is_null( $lang ) )
 		{
-			$lang = Language::GetLang();
+			$lang = Language::getLang();
 		}
 
 		OutputHeaders::XML();
 
-		$lookupModel = ComponentLookup::getInstance()->Get();
+		$lookupModel = ComponentLookup::getInstance()->get();
 
 		$sitemapModel = new XMLModelDriver();
 		$sitemapModel->xPath->registerNamespace( "s", Config::$data[ "sitemapNamespace" ] );
@@ -60,20 +60,20 @@ class Sitemap extends OverrideableSingleton
 		echo( $sitemapModel->saveXML());
 	}
 
-	public function GetSitemapXMLFilenames()
+	public function getSitemapXMLFilenames()
 	{
 		$filenames = array();
-		$definedLangs = Language::GetDefinedLangs();
+		$definedLangs = Language::getDefinedLangs();
 
 		foreach( $definedLangs as $lang )
 		{
-			$filenames[] = StringUtils::ReplaceTokensInPattern( Config::$data[ "sitemapXMLFilePattern" ], array( "protocol" => Routing::URIProtocol(), "host" => $_SERVER[ "HTTP_HOST" ], "lang" => $lang ) );
+			$filenames[] = StringUtils::replaceTokensInPattern( Config::$data[ "sitemapXMLFilePattern" ], array( "protocol" => Routing::URIProtocol(), "host" => $_SERVER[ "HTTP_HOST" ], "lang" => $lang ) );
 		}
 
 		return $filenames;
 	}
 
-	public static function ReplacePageNameTokensWithPath()
+	public static function replacePageNameTokensWithPath()
 	{
 		$routeGroups = array( "routes", "priorityRoutes", "lowPriorityRoutes" );
 
@@ -91,7 +91,7 @@ class Sitemap extends OverrideableSingleton
 
 					foreach( $matches[ 0 ] as $key => $match )
 					{
-						$path = ComponentLookup::getInstance()->GetPathByFullyQualifiedNameAndLanguage( $matches[ 1 ][ $key ], Language::GetLang() );
+						$path = ComponentLookup::getInstance()->getPathByFullyQualifiedNameAndLanguage( $matches[ 1 ][ $key ], Language::getLang() );
 						$updatedPattern = str_replace( $match, addcslashes( $path, "/" ), $updatedPattern );
 					}
 

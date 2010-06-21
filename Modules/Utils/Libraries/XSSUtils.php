@@ -4,7 +4,7 @@ namespace Modules\Utils\Libraries;
 
 class XSSUtils
 {
-	public static function RemoveXSS( $val )
+	public static function removeXSS( $val )
 	{
 		// remove all non-printable characters. CR(0a) and LF(0b) and TAB(9) are allowed
 		// this prevents some character re-spacing such as <java\0script>

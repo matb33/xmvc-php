@@ -11,12 +11,12 @@ class ConstraintMessages
 		$messages = array();
 	}
 
-	public function Add( $type, $message )
+	public function add( $type, $message )
 	{
 		$this->messages[ $type ] = $message;
 	}
 
-	public function GetFailMessage()
+	public function getFailMessage()
 	{
 		if( isset( $this->messages[ "fail" ] ) )
 		{
@@ -26,7 +26,7 @@ class ConstraintMessages
 		return "";
 	}
 
-	public function GetPassMessage()
+	public function getPassMessage()
 	{
 		if( isset( $this->messages[ "pass" ] ) )
 		{

@@ -6,7 +6,7 @@ use System\Libraries\Core;
 
 class DOMUtils
 {
-	public static function ConvertStringHTMLToDOM( &$model, $xPath )
+	public static function convertStringHTMLToDOM( &$model, $xPath )
 	{
 		$nodeList = $model->xPath->query( $xPath );
 
@@ -19,7 +19,7 @@ class DOMUtils
 		}
 	}
 
-	public static function ReplaceNodeWithChildren( &$refNode, &$node )
+	public static function replaceNodeWithChildren( &$refNode, &$node )
 	{
 		$childNodes = array();
 

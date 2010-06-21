@@ -4,12 +4,12 @@ namespace Modules\Image\Libraries;
 
 class ImageProcessor
 {
-	public static function Resize( $width, $height, $imageFile )
+	public static function resize( $width, $height, $imageFile )
 	{
-		list( $fullSizeWidth, $fullSizeHeight, $mimeType, $lastModified, $b, $f, $e ) = self::GetImageData( $imageFile );
-		list( $newWidth, $newHeight ) = self::DetermineNewWidthAndHeight( $width, $height, $fullSizeWidth, $fullSizeHeight );
+		list( $fullSizeWidth, $fullSizeHeight, $mimeType, $lastModified, $b, $f, $e ) = self::getImageData( $imageFile );
+		list( $newWidth, $newHeight ) = self::determineNewWidthAndHeight( $width, $height, $fullSizeWidth, $fullSizeHeight );
 
-		$fullSizeImage = self::GetImage( $imageFile );
+		$fullSizeImage = self::getImage( $imageFile );
 
 		$resizedImage = imagecreatetruecolor( $newWidth, $newHeight );
 		$whiteColor = imagecolorallocate( $resizedImage, 255, 255, 255 );
@@ -20,7 +20,7 @@ class ImageProcessor
 		return $resizedImage;
 	}
 
-	public static function GetImageData( $imageFile )
+	public static function getImageData( $imageFile )
 	{
 		$imageSizeData = getimagesize( $imageFile );
 		$imageFileInfo = pathinfo( $imageFile );
@@ -36,7 +36,7 @@ class ImageProcessor
 		);
 	}
 
-	public static function DetermineNewWidthAndHeight( $requestedWidth, $requestedHeight, $currentWidth, $currentHeight )
+	public static function determineNewWidthAndHeight( $requestedWidth, $requestedHeight, $currentWidth, $currentHeight )
 	{
 		if( $requestedWidth != "auto" && $requestedHeight != "auto" )
 		{
@@ -65,7 +65,7 @@ class ImageProcessor
 		return array( ( int )$newWidth, ( int )$newHeight );
 	}
 
-	public static function OutputImage( $image, $mimeType )
+	public static function outputImage( $image, $mimeType )
 	{
 		header( "Content-Type: " . $mimeType );
 
@@ -92,7 +92,7 @@ class ImageProcessor
 		}
 	}
 
-	public static function WriteImage( $image, $mimeType, $filename )
+	public static function writeImage( $image, $mimeType, $filename )
 	{
 		if( is_resource( $image ) )
 		{
@@ -117,9 +117,9 @@ class ImageProcessor
 		}
 	}
 
-	public static function GetImage( $imageFile )
+	public static function getImage( $imageFile )
 	{
-		list( $fullSizeWidth, $fullSizeHeight, $mimeType, $lastModified, $b, $f, $e ) = self::GetImageData( $imageFile );
+		list( $fullSizeWidth, $fullSizeHeight, $mimeType, $lastModified, $b, $f, $e ) = self::getImageData( $imageFile );
 
 		switch( $mimeType )
 		{

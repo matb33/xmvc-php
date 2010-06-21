@@ -20,26 +20,26 @@ class Svntest
 		$this->svn = new SVN( $repositoryURL, $repositoryPath, $repositoryUsername, $repositoryPassword, $svnWorkingFolder );
 	}
 
-	public function Index()
+	public function index()
 	{
 		phpinfo();
 
-		Debug::VarDump( Config::$data );
+		Debug::varDump( Config::$data );
 	}
 
-	public function Update()
+	public function update()
 	{
-		$this->svn->Update();
+		$this->svn->update();
 	}
 
-	public function Checkout()
+	public function checkout()
 	{
-		$this->svn->Checkout();
+		$this->svn->checkout();
 	}
 
-	public function Lg()
+	public function lg()
 	{
-		Debug::Write( "Logging", $this );
-		$this->svn->Lg();
+		Debug::write( "Logging", $this );
+		$this->svn->lg();
 	}
 }
