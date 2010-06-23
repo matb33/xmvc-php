@@ -6,10 +6,22 @@
 	xmlns:doc="http://www.docbook.org/schemas/simplified">
 
 	<xsl:template match="doc:heading">
+		<xsl:variable name="headingsWithDepth" select="ancestor::*/preceding-sibling::doc:heading[ @depth ]" />
+		<xsl:variable name="closestHeadingWithDepth" select="$headingsWithDepth[ last() ]" />
+		<xsl:variable name="myDistanceFromRoot" select="count( ancestor::*/preceding-sibling::doc:heading )" />
+		<xsl:variable name="CHWDDistanceFromRoot" select="count( $closestHeadingWithDepth/ancestor::*/preceding-sibling::doc:heading )" />
+		<xsl:variable name="distanceBetweenMeAndCHWD" select="$myDistanceFromRoot - $CHWDDistanceFromRoot" />
 		<xsl:variable name="depth">
 			<xsl:choose>
-				<xsl:when test="@depth"><xsl:value-of select="@depth" /></xsl:when>
-				<xsl:otherwise><xsl:value-of select="count( ancestor::*[ preceding-sibling::doc:heading | following-sibling::doc:heading ] ) + 1" /></xsl:otherwise>
+				<xsl:when test="@depth">
+					<xsl:value-of select="@depth" />
+				</xsl:when>
+				<xsl:when test="count( $headingsWithDepth ) = 0">
+					<xsl:value-of select="$myDistanceFromRoot + 1" />
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:value-of select="$distanceBetweenMeAndCHWD + $closestHeadingWithDepth/@depth" />
+				</xsl:otherwise>
 			</xsl:choose>
 		</xsl:variable>
 		<xsl:choose>
