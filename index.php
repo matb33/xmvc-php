@@ -1,17 +1,12 @@
 <?php
 
-namespace xMVC\Sys;
+namespace System\Libraries;
 
-require_once( "sys/bootstrap.php" );
+spl_autoload_register( function( $className ) { @require_once str_replace( "\\", "/", $className ) . ".php"; } );
 
-NamespaceMap::Register( "/^xMVC::Sys::(.*)$/", "./sys/%f/%1" );
-NamespaceMap::Register( "/^xMVC::App::(.*)$/", "./app/%f/%1" );
-NamespaceMap::Register( "/^Module::(.*?)::(.*)$/", "./mod/%1/%f/%2" );
+set_error_handler( "System\\Libraries\\ErrorHandler::ExceptionErrorHandler" );
+set_exception_handler( "System\\Libraries\\ErrorHandler::UncaughtExceptionHandler" );
 
-Config::Load( "./sys" );
-Config::Load( "./app" );
-Config::Load( "./mod/*" );
-
-Core::Load();
-
-?>
+Loader::setDefaultNamespace( "Application" );
+Config::load( "./System", "./Modules/WebCommon", "./Modules/*", "./Application" );
+FrontController::load();
