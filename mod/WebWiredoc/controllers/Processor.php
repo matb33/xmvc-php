@@ -1,6 +1,6 @@
 <?php
 
-namespace xMVC\Mod\WiredocPHP;
+namespace xMVC\Mod\WebWiredoc;
 
 use xMVC\Sys\Core;
 use xMVC\Sys\Routing;
@@ -17,9 +17,9 @@ use xMVC\Sys\Events\DefaultEventDispatcher;
 
 use xMVC\Mod\Language\Language;
 use xMVC\Mod\Utils\StringUtils;
-use xMVC\Mod\WiredocPHP\Components\ComponentLookup;
-use xMVC\Mod\WiredocPHP\Components\ComponentFactory;
-use xMVC\Mod\WiredocPHP\Components\ComponentUtils;
+use xMVC\Mod\WebWiredoc\Components\ComponentLookup;
+use xMVC\Mod\WebWiredoc\Components\ComponentFactory;
+use xMVC\Mod\WebWiredoc\Components\ComponentUtils;
 
 class Processor
 {

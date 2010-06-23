@@ -1,6 +1,6 @@
 <?php
 
-namespace xMVC\Mod\WiredocPHP\Components;
+namespace xMVC\Mod\WebWiredoc\Components;
 
 interface IComponent
 {

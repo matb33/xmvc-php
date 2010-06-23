@@ -1,6 +1,6 @@
 <?php
 
-namespace xMVC\Mod\WiredocPHP\FieldConstraints;
+namespace xMVC\Mod\WebWiredoc\FieldConstraints;
 
 use xMVC\Sys\ModelDriver;
 use xMVC\Sys\IModelDriver;

@@ -1,3 +1,3 @@
 <?php
 
-$lowPriorityRoutes[ "|^/(.*)$|" ] = "xMVC\\Mod\\WiredocPHP\\Processor/Page/%1";
+$lowPriorityRoutes[ "|^/(.*)$|" ] = "xMVC\\Mod\\WebWiredoc\\Processor/Page/%1";
