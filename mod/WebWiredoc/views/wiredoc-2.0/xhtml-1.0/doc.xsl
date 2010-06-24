@@ -24,30 +24,23 @@
 				</xsl:otherwise>
 			</xsl:choose>
 		</xsl:variable>
-		<xsl:choose>
-			<xsl:when test="$depth &gt; 6">
-				<h6>
-					<xsl:if test="@id">
-						<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
-					</xsl:if>
-					<xsl:if test="@wd:name">
-						<xsl:attribute name="class"><xsl:value-of select="@wd:name" /></xsl:attribute>
-					</xsl:if>
-					<xsl:apply-templates mode="lang-check" />
-				</h6>
-			</xsl:when>
-			<xsl:otherwise>
-				<xsl:element name="h{ $depth }">
-					<xsl:if test="@id">
-						<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
-					</xsl:if>
-					<xsl:if test="@wd:name">
-						<xsl:attribute name="class"><xsl:value-of select="@wd:name" /></xsl:attribute>
-					</xsl:if>
-					<xsl:apply-templates mode="lang-check" />
-				</xsl:element>
-			</xsl:otherwise>
-		</xsl:choose>
+		<xsl:variable name="normalized-depth">
+			<xsl:choose>
+				<xsl:when test="$depth &gt; 6">6</xsl:when>
+				<xsl:otherwise>
+					<xsl:value-of select="$depth"/>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
+		<xsl:element name="h{ $normalized-depth }">
+			<xsl:if test="@id">
+				<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
+			</xsl:if>
+			<xsl:if test="@wd:name">
+				<xsl:attribute name="class"><xsl:value-of select="@wd:name" /></xsl:attribute>
+			</xsl:if>
+			<xsl:apply-templates mode="lang-check" />
+		</xsl:element>
 	</xsl:template>
 
 	<xsl:template match="doc:heading1">
