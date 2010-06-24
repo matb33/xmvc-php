@@ -6,36 +6,41 @@
 	xmlns:doc="http://www.docbook.org/schemas/simplified">
 
 	<xsl:template match="doc:heading">
+		<xsl:variable name="headingsWithDepth" select="ancestor::*/preceding-sibling::doc:heading[ @depth ]" />
+		<xsl:variable name="closestHeadingWithDepth" select="$headingsWithDepth[ last() ]" />
+		<xsl:variable name="myDistanceFromRoot" select="count( ancestor::*/preceding-sibling::doc:heading )" />
+		<xsl:variable name="CHWDDistanceFromRoot" select="count( $closestHeadingWithDepth/ancestor::*/preceding-sibling::doc:heading )" />
+		<xsl:variable name="distanceBetweenMeAndCHWD" select="$myDistanceFromRoot - $CHWDDistanceFromRoot" />
 		<xsl:variable name="depth">
 			<xsl:choose>
-				<xsl:when test="@depth"><xsl:value-of select="@depth" /></xsl:when>
-				<xsl:otherwise><xsl:value-of select="count( ancestor::*[ preceding-sibling::doc:heading | following-sibling::doc:heading ] ) + 1" /></xsl:otherwise>
+				<xsl:when test="@depth">
+					<xsl:value-of select="@depth" />
+				</xsl:when>
+				<xsl:when test="count( $headingsWithDepth ) = 0">
+					<xsl:value-of select="$myDistanceFromRoot + 1" />
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:value-of select="$distanceBetweenMeAndCHWD + $closestHeadingWithDepth/@depth" />
+				</xsl:otherwise>
 			</xsl:choose>
 		</xsl:variable>
-		<xsl:choose>
-			<xsl:when test="$depth &gt; 6">
-				<h6>
-					<xsl:if test="@id">
-						<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
-					</xsl:if>
-					<xsl:if test="@wd:name">
-						<xsl:attribute name="class"><xsl:value-of select="@wd:name" /></xsl:attribute>
-					</xsl:if>
-					<xsl:apply-templates mode="lang-check" />
-				</h6>
-			</xsl:when>
-			<xsl:otherwise>
-				<xsl:element name="h{ $depth }">
-					<xsl:if test="@id">
-						<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
-					</xsl:if>
-					<xsl:if test="@wd:name">
-						<xsl:attribute name="class"><xsl:value-of select="@wd:name" /></xsl:attribute>
-					</xsl:if>
-					<xsl:apply-templates mode="lang-check" />
-				</xsl:element>
-			</xsl:otherwise>
-		</xsl:choose>
+		<xsl:variable name="normalized-depth">
+			<xsl:choose>
+				<xsl:when test="$depth &gt; 6">6</xsl:when>
+				<xsl:otherwise>
+					<xsl:value-of select="$depth"/>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
+		<xsl:element name="h{ $normalized-depth }">
+			<xsl:if test="@id">
+				<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
+			</xsl:if>
+			<xsl:if test="@wd:name">
+				<xsl:attribute name="class"><xsl:value-of select="@wd:name" /></xsl:attribute>
+			</xsl:if>
+			<xsl:apply-templates mode="lang-check" />
+		</xsl:element>
 	</xsl:template>
 
 	<xsl:template match="doc:heading1">
