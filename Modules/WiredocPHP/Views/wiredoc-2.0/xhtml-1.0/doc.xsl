@@ -535,7 +535,7 @@
 		<xsl:param name="last" select="last()" />
 		<xsl:variable name="cell-name">
 			<xsl:choose>
-				<xsl:when test="../../../doc:thead">th</xsl:when>
+				<xsl:when test="ancestor::doc:thead">th</xsl:when>
 				<xsl:otherwise>td</xsl:otherwise>
 			</xsl:choose>
 		</xsl:variable>

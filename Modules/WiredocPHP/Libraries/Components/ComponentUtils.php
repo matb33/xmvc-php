@@ -80,6 +80,7 @@ class ComponentUtils
 		// Href Context refers to the component that holds the meta:href matching the current URI
 		$hrefContextComponent = "";
 		$hrefContextInstanceName = "";
+		$hrefContextFullyQualifiedName = "";
 
 		$currentHref = Normalize::stripQueryInURI( Routing::URI() );
 		$hrefNodeList = $model->xPath->query( "//meta:href[ text() = '" . $currentHref . "' ]" );
