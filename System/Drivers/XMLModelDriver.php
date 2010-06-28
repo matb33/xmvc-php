@@ -89,7 +89,7 @@ class XMLModelDriver extends ModelDriver implements IModelDriver
 
 	private function isRawXML( $parameter )
 	{
-		return strpos( $parameter, "</" ) !== false;
+		return strpos( $parameter, "</" ) !== false || strpos( $parameter, "/>" ) !== false;
 	}
 
 	private function isURL( $parameter )
