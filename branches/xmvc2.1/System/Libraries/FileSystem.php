@@ -311,6 +311,7 @@ class FileSystem
 			$meta[ "fileinode" ]		= @fileinode( $file );
 			$meta[ "fileatime" ]		= @fileatime( $file );
 			$meta[ "filectime" ]		= @filectime( $file );
+			$meta[ "filectime-nice" ]	= date( "Y-m-d H:i:s", $meta[ "filectime" ] );
 			$meta[ "filemtime" ]		= @filemtime( $file );
 			$meta[ "fileowner" ]		= @fileowner( $file );
 			$meta[ "fileperms" ]		= @fileperms( $file );
@@ -335,7 +336,9 @@ class FileSystem
 			$meta[ "fileatime-nice" ]	= date( "Y-m-d H:i:s", $meta[ "fileatime" ] );
 			$meta[ "filectime-nice" ]	= date( "Y-m-d H:i:s", $meta[ "filectime" ] );
 			$meta[ "filemtime-nice" ]	= date( "Y-m-d H:i:s", $meta[ "filemtime" ] );
-			$meta[ "filesize-nice" ]	= number_format( $meta[ "filesize" ] );
+			$meta[ "filesize-nice" ]	= number_format( $meta[ "filesize" ], 3, ".", "," );
+			$meta[ "filesizekb-nice" ]	= number_format( $meta[ "filesize" ] / 1024, 3, ".", "," );
+			$meta[ "filesizemb-nice" ]	= number_format( $meta[ "filesize" ] / 1024 / 1024, 3, ".", "," );
 		}
 
 		return $meta;
