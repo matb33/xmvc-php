@@ -565,8 +565,38 @@
 
 	<xsl:template match="doc:preformatted">
 		<pre>
+			<xsl:if test="@id">
+				<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
+			</xsl:if>
+			<xsl:if test="@wd:name">
+				<xsl:attribute name="class"><xsl:value-of select="@wd:name" /></xsl:attribute>
+			</xsl:if>
 			<xsl:apply-templates mode="lang-check" />
 		</pre>
+	</xsl:template>
+
+	<xsl:template match="doc:superscript">
+		<sup>
+			<xsl:if test="@id">
+				<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
+			</xsl:if>
+			<xsl:if test="@wd:name">
+				<xsl:attribute name="class"><xsl:value-of select="@wd:name" /></xsl:attribute>
+			</xsl:if>
+			<xsl:apply-templates mode="lang-check" />
+		</sup>
+	</xsl:template>
+
+	<xsl:template match="doc:subscript">
+		<sub>
+			<xsl:if test="@id">
+				<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
+			</xsl:if>
+			<xsl:if test="@wd:name">
+				<xsl:attribute name="class"><xsl:value-of select="@wd:name" /></xsl:attribute>
+			</xsl:if>
+			<xsl:apply-templates mode="lang-check" />
+		</sub>
 	</xsl:template>
 
 </xsl:stylesheet>
