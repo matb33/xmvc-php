@@ -3,13 +3,14 @@
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 	xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:wd="http://www.wiredoc.org/ns/wiredoc/2.0"
-	xmlns:doc="http://www.docbook.org/schemas/simplified">
+	xmlns:doc="http://www.docbook.org/schemas/simplified"
+	xmlns:php="http://php.net/xsl">
 
 	<xsl:template match="doc:heading">
-		<xsl:variable name="headingsWithDepth" select="ancestor::*/preceding-sibling::doc:heading[ @depth ]" />
+		<xsl:variable name="headingsWithDepth" select="ancestor::*/preceding-sibling::doc:heading[ @depth and php:function( 'xMVC\Mod\Language\Language::XSLTLang', $lang, (ancestor-or-self::*/@xml:lang)[last()] ) ]" />
 		<xsl:variable name="closestHeadingWithDepth" select="$headingsWithDepth[ last() ]" />
-		<xsl:variable name="myDistanceFromRoot" select="count( ancestor::*/preceding-sibling::doc:heading )" />
-		<xsl:variable name="CHWDDistanceFromRoot" select="count( $closestHeadingWithDepth/ancestor::*/preceding-sibling::doc:heading )" />
+		<xsl:variable name="myDistanceFromRoot" select="count( ancestor::*/preceding-sibling::doc:heading[ php:function( 'xMVC\Mod\Language\Language::XSLTLang', $lang, (ancestor-or-self::*/@xml:lang)[last()] ) ] )" />
+		<xsl:variable name="CHWDDistanceFromRoot" select="count( $closestHeadingWithDepth/ancestor::*/preceding-sibling::doc:heading[ php:function( 'xMVC\Mod\Language\Language::XSLTLang', $lang, (ancestor-or-self::*/@xml:lang)[last()] ) ] )" />
 		<xsl:variable name="distanceBetweenMeAndCHWD" select="$myDistanceFromRoot - $CHWDDistanceFromRoot" />
 		<xsl:variable name="depth">
 			<xsl:choose>
@@ -410,7 +411,7 @@
 	</xsl:template>
 
 	<xsl:template match="doc:blockquote//doc:para/text()|doc:quote/text()">
-		“<xsl:value-of select="." />”
+		â€œ<xsl:value-of select="." />â€
 	</xsl:template>
 
 	<xsl:template match="doc:blockquote/doc:attribution">
@@ -424,7 +425,7 @@
 					<xsl:text> </xsl:text><xsl:value-of select="@wd:name" />
 				</xsl:if>
 			</xsl:attribute>
-			<xsl:text>— </xsl:text><xsl:apply-templates mode="lang-check" />
+			<xsl:text>â€” </xsl:text><xsl:apply-templates mode="lang-check" />
 		</p>
 	</xsl:template>
 
