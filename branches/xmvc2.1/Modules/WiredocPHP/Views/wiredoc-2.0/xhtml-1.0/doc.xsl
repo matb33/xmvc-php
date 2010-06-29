@@ -486,7 +486,7 @@
 			<xsl:if test="@wd:name">
 				<xsl:attribute name="class"><xsl:value-of select="@wd:name" /></xsl:attribute>
 			</xsl:if>
-			<xsl:apply-templates select="doc:row" mode="lang-check" />
+			<xsl:apply-templates select=".//doc:row" mode="lang-check" />
 		</thead>
 	</xsl:template>
 
@@ -498,7 +498,7 @@
 			<xsl:if test="@wd:name">
 				<xsl:attribute name="class"><xsl:value-of select="@wd:name" /></xsl:attribute>
 			</xsl:if>
-			<xsl:apply-templates select="doc:row" mode="lang-check" />
+			<xsl:apply-templates select=".//doc:row" mode="lang-check" />
 		</tbody>
 	</xsl:template>
 
@@ -526,11 +526,11 @@
 			<xsl:if test="@wd:name">
 				<xsl:attribute name="class"><xsl:value-of select="@wd:name" /></xsl:attribute>
 			</xsl:if>
-			<xsl:apply-templates select="doc:entry" mode="lang-check" />
+			<xsl:apply-templates select=".//doc:entry" mode="lang-check" />
 		</tr>
 	</xsl:template>
 
-	<xsl:template match="doc:row/doc:entry">
+	<xsl:template match="doc:row//doc:entry">
 		<xsl:param name="position" select="position()" />
 		<xsl:param name="last" select="last()" />
 		<xsl:variable name="cell-name">
@@ -560,6 +560,12 @@
 			</xsl:if>
 			<xsl:apply-templates mode="lang-check" />
 		</xsl:element>
+	</xsl:template>
+
+	<xsl:template match="doc:preformatted">
+		<pre>
+			<xsl:apply-templates mode="lang-check" />
+		</pre>
 	</xsl:template>
 
 </xsl:stylesheet>
