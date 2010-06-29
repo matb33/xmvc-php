@@ -53,27 +53,27 @@ class FileSystemModelDriver extends ModelDriver implements IModelDriver
 		$this->transformForeignToXML( $listing );
 	}
 
-	public function getDirList( $rootFolder, $match = "/./" )
+	public function getDirList( $rootFolder, $fileMatch = "/./", $folderMatch = "/./" )
 	{
-		$listing = FileSystem::getDirList( $rootFolder, $match, false );
+		$listing = FileSystem::getDirList( $rootFolder, $fileMatch, $folderMatch, false );
 		$this->transformForeignToXML( $listing );
 	}
 
-	public function getDetailedDirList( $rootFolder, $match = "/./" )
+	public function getDetailedDirList( $rootFolder, $fileMatch = "/./", $folderMatch = "/./" )
 	{
-		$listing = FileSystem::getDirList( $rootFolder, $match, true );
+		$listing = FileSystem::getDirList( $rootFolder, $fileMatch, $folderMatch, true );
 		$this->transformForeignToXML( $listing );
 	}
 
-	public function getDirListRecursive( $rootFolder, $match = "/./", $maxDepth = null )
+	public function getDirListRecursive( $rootFolder, $fileMatch = "/./", $folderMatch = "/./", $maxDepth = null )
 	{
-		$listing = FileSystem::getDirListRecursive( $rootFolder, $match, false, $maxDepth );
+		$listing = FileSystem::getDirListRecursive( $rootFolder, $fileMatch, $folderMatch, false, $maxDepth );
 		$this->transformForeignToXML( $listing );
 	}
 
-	public function getDetailedDirListRecursive( $rootFolder, $match = "/./", $maxDepth = null )
+	public function getDetailedDirListRecursive( $rootFolder, $fileMatch = "/./", $folderMatch = "/./", $maxDepth = null )
 	{
-		$listing = FileSystem::getDirListRecursive( $rootFolder, $match, true, $maxDepth );
+		$listing = FileSystem::getDirListRecursive( $rootFolder, $fileMatch, $folderMatch, true, $maxDepth );
 		$this->transformForeignToXML( $listing );
 	}
 
@@ -86,9 +86,14 @@ class FileSystemModelDriver extends ModelDriver implements IModelDriver
 		parent::transformForeignToXML();
 	}
 
-	private function recursiveListing( $listing )
+	private function recursiveListing( $listing, $rootElement = null )
 	{
 		$listingKeys = array_keys( $listing );
+
+		if( is_null( $rootElement ) )
+		{
+			$rootElement = $this->rootElement;
+		}
 
 		foreach( $listingKeys as $folderName )
 		{
@@ -96,7 +101,7 @@ class FileSystemModelDriver extends ModelDriver implements IModelDriver
 			$nameAttribute = $this->createAttribute( "name" );
 			$nameAttribute->value = $folderName;
 			$folderElement->appendChild( $nameAttribute );
-			$this->rootElement->appendChild( $folderElement );
+			$rootElement->appendChild( $folderElement );
 
 			foreach( $listing[ $folderName ] as $metaName => $metaData )
 			{
@@ -114,7 +119,7 @@ class FileSystemModelDriver extends ModelDriver implements IModelDriver
 
 			if( isset( $listing[ $folderName ][ ":FOLDERS:" ] ) && count( $listing[ $folderName ][ ":FOLDERS:" ] ) )
 			{
-				$this->recursiveListing( $listing[ $folderName ][ ":FOLDERS:" ] );
+				$this->recursiveListing( $listing[ $folderName ][ ":FOLDERS:" ], $folderElement );
 			}
 
 			if( isset( $listing[ $folderName ][ ":FILES:" ] ) && count( $listing[ $folderName ][ ":FILES:" ] ) )
