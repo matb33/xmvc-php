@@ -67,12 +67,7 @@ class Cache
 		{
 			if( $purgeCache )
 			{
-				$filenames = glob( $cacheFolder . $this->cacheID . "--*" );
-
-				foreach( $filenames as $filename )
-				{
-					unlink( $filename );
-				}
+				$this->purgeCache( $cacheFolder );
 			}
 
 			return true;
@@ -83,6 +78,16 @@ class Cache
 		}
 
 		return false;
+	}
+
+	public function purgeCache( $folder )
+	{
+		$filenames = glob( $folder . $this->cacheID . "--*" );
+
+		foreach( $filenames as $filename )
+		{
+			unlink( $filename );
+		}
 	}
 
 	private function getFilename( $filenamePattern )
