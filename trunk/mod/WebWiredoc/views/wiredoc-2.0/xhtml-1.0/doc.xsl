@@ -411,7 +411,7 @@
 	</xsl:template>
 
 	<xsl:template match="doc:blockquote//doc:para/text()|doc:quote/text()">
-		â€œ<xsl:value-of select="." />â€
+		“<xsl:value-of select="." />”
 	</xsl:template>
 
 	<xsl:template match="doc:blockquote/doc:attribution">
@@ -425,7 +425,7 @@
 					<xsl:text> </xsl:text><xsl:value-of select="@wd:name" />
 				</xsl:if>
 			</xsl:attribute>
-			<xsl:text>â€” </xsl:text><xsl:apply-templates mode="lang-check" />
+			<xsl:text>— </xsl:text><xsl:apply-templates mode="lang-check" />
 		</p>
 	</xsl:template>
 
