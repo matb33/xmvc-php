@@ -942,10 +942,16 @@ var ARIMODAL = function ()
 		// private methods
 		var initialize = function (containerID, href, that)
 		{
+			if (href.indexOf("http://") >= 0)
+			{
+				// IE6 fix
+				href = href.substr(href.substr(7).indexOf("/") + 7);
+			}
+
 			if (!initialized)
 			{
 				initialized = true;
-				modalHref = href;				
+				modalHref = href;
 				modalCollection.set(href, that);
 				initializeModalContainer(containerID);
 			}
