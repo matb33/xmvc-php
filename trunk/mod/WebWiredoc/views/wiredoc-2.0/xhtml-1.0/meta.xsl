@@ -31,7 +31,7 @@
 			<title>
 				<xsl:for-each select="$doc-title-set">
 					<xsl:sort select="position()" data-type="number" order="{ $sort-order }" />
-					<xsl:value-of select="." />
+					<xsl:apply-templates mode="lang-check" />
 					<xsl:if test="position() != last()">
 						<xsl:choose>
 							<xsl:when test="@meta:glue"><xsl:value-of select="@meta:glue" /></xsl:when>
