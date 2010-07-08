@@ -22,6 +22,10 @@
 		<xsl:apply-templates mode="lang-check" />
 	</xsl:template>
 
+	<xsl:template match="wd:node">
+		<xsl:apply-templates mode="lang-check" />
+	</xsl:template>
+
 	<!-- Standard and Meta language-check override templates -->
 
 	<xsl:template match="node()" mode="lang-check">
