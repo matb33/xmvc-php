@@ -15,6 +15,7 @@ use Modules\Language\Libraries\Language;
 class ComponentFactory extends DefaultEventDispatcher
 {
 	private $rootModel;
+	private $rootFullyQualifiedName;
 	private $referenceNode;
 
 	public function __construct()
@@ -56,6 +57,7 @@ class ComponentFactory extends DefaultEventDispatcher
 		if( $isRootModel )
 		{
 			$this->rootModel = $componentModel;
+			$this->rootFullyQualifiedName = $event->arguments[ "component" ] . "." . $event->arguments[ "instanceName" ];
 		}
 
 		if( $isInjecting )
@@ -138,12 +140,10 @@ class ComponentFactory extends DefaultEventDispatcher
 
 			if( strlen( $fullyQualifiedName ) == 0 )
 			{
-				$path = Normalize::stripQueryInURI( Routing::URI() );
+				$fullyQualifiedName = $this->rootFullyQualifiedName;
 			}
-			else
-			{
-				$path = ComponentLookup::getInstance()->getPathByFullyQualifiedNameAndLanguage( $fullyQualifiedName, $targetLang );
-			}
+
+			$path = ComponentLookup::getInstance()->GetPathByFullyQualifiedNameAndLanguage( $fullyQualifiedName, $targetLang );
 
 			$linkNode = $this->rootModel->createAttribute( "href" );
 			$linkNode->value = $prefix . $path . $suffix;
