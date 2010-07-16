@@ -1149,7 +1149,7 @@ jQuery.fn.compare = function( against )
 		var html1 = $( this ).html().replace( /\s|\n|\r|\t/g, "" );
 		var html2 = against.html().replace( /\s|\n|\r|\t/g, "" );
 
-		alert( html1 + "\n\n" + html2 );
+		// alert( html1 + "\n\n" + html2 );
 
 		return( html1 === html2 );
 	}
