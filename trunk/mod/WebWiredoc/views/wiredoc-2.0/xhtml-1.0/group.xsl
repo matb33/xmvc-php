@@ -22,7 +22,7 @@
 		</ul>
 	</xsl:template>
 
-	<xsl:template match="wd:container[ parent::wd:group ]">
+	<xsl:template match="wd:container[ parent::wd:group or parent::wd:component[ parent::wd:group ] ]">
 		<xsl:param name="position" select="position()" />
 		<xsl:param name="last" select="last()" />
 		<li>
