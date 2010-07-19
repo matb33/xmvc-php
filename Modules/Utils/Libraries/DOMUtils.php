@@ -35,4 +35,19 @@ class DOMUtils
 
 		$refNode->parentNode->removeChild( $refNode );
 	}
+
+	public static function tidyHTML( $html )
+	{
+		$config = array(
+			"clean" => true,
+			"output-xhtml" => true,
+			"show-body-only" => true,
+			"wrap" => 0,
+		);
+
+		$tidy = tidy_parse_string( $html, $config, "UTF8" );
+		$tidy->cleanRepair();
+
+		return $tidy;
+	}
 }
