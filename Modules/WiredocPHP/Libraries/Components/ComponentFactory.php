@@ -72,6 +72,7 @@ class ComponentFactory extends DefaultEventDispatcher
 			$this->injectHref();
 			$this->injectLang( Language::getLang() );
 			$this->resetFactory();
+
 			$this->dispatchEvent( new Event( "onreadyforrender.components", $event->arguments ) );
 		}
 	}
