@@ -1,7 +1,10 @@
 <?php
 
 srand( microtime( true ) * 2785394875 );
-define( "NEWLINE", "\r\n" );
+if( !defined( "NEWLINE" ) )
+{
+	define( "NEWLINE", "\r\n" );
+}
 
 $enableInlinePHPInModels = false;
 $enableInlinePHPInViews = false;
