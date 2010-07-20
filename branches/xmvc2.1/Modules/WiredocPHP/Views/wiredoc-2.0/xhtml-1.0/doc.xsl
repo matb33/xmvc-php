@@ -7,10 +7,10 @@
 	xmlns:php="http://php.net/xsl">
 
 	<xsl:template match="doc:heading">
-		<xsl:variable name="headingsWithDepth" select="ancestor::*/preceding-sibling::doc:heading[ @depth and php:function( 'xMVC\Mod\Language\Language::XSLTLang', $lang, (ancestor-or-self::*/@xml:lang)[last()] ) ]" />
+		<xsl:variable name="headingsWithDepth" select="ancestor::*/preceding-sibling::doc:heading[ @depth and php:function( 'Modules\Language\Libraries\Language::XSLTLang', $lang, (ancestor-or-self::*/@xml:lang)[last()] ) ]" />
 		<xsl:variable name="closestHeadingWithDepth" select="$headingsWithDepth[ last() ]" />
-		<xsl:variable name="myDistanceFromRoot" select="count( ancestor::*/preceding-sibling::doc:heading[ php:function( 'xMVC\Mod\Language\Language::XSLTLang', $lang, (ancestor-or-self::*/@xml:lang)[last()] ) ] )" />
-		<xsl:variable name="CHWDDistanceFromRoot" select="count( $closestHeadingWithDepth/ancestor::*/preceding-sibling::doc:heading[ php:function( 'xMVC\Mod\Language\Language::XSLTLang', $lang, (ancestor-or-self::*/@xml:lang)[last()] ) ] )" />
+		<xsl:variable name="myDistanceFromRoot" select="count( ancestor::*/preceding-sibling::doc:heading[ php:function( 'Modules\Language\Libraries\Language::XSLTLang', $lang, (ancestor-or-self::*/@xml:lang)[last()] ) ] )" />
+		<xsl:variable name="CHWDDistanceFromRoot" select="count( $closestHeadingWithDepth/ancestor::*/preceding-sibling::doc:heading[ php:function( 'Modules\Language\Libraries\Language::XSLTLang', $lang, (ancestor-or-self::*/@xml:lang)[last()] ) ] )" />
 		<xsl:variable name="distanceBetweenMeAndCHWD" select="$myDistanceFromRoot - $CHWDDistanceFromRoot" />
 		<xsl:variable name="depth">
 			<xsl:choose>
