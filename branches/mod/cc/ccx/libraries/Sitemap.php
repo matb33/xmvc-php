@@ -142,7 +142,7 @@ class Sitemap
 
 	public static function Get( $lang )
 	{
-		if( is_null( self::$models[ $lang ] ) )
+		if( !isset( self::$models[ $lang ] ) || is_null( self::$models[ $lang ] ) )
 		{
 			return( self::Load( $lang ) );
 		}
