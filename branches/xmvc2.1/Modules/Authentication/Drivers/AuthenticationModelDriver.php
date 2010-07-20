@@ -2,10 +2,11 @@
 
 namespace Modules\Authentication\Drivers;
 
-use System\Libraries\Core;
+use System\Libraries\View;
 use System\Libraries\ModelDriver;
 use System\Libraries\IModelDriver;
 use System\Libraries\Config;
+use Modules\Authentication\Libraries\Authenticator;
 
 class AuthenticationModelDriver extends ModelDriver implements IModelDriver
 {
@@ -13,7 +14,7 @@ class AuthenticationModelDriver extends ModelDriver implements IModelDriver
 	{
 		parent::__construct();
 
-		$this->rootElement = $this->createElementNS( Core::namespaceXML, "xmvc:authentication" );
+		$this->rootElement = $this->createElementNS( View::namespaceXML, "xmvc:authentication" );
 		$this->appendChild( $this->rootElement );
 
 		$this->transformForeignToXML( $username, $password );
@@ -42,12 +43,12 @@ class AuthenticationModelDriver extends ModelDriver implements IModelDriver
 			}
 		}
 
-		$node = $this->createElementNS( Core::namespaceXML, "xmvc:state" );
+		$node = $this->createElementNS( View::namespaceXML, "xmvc:state" );
 		$data = $this->createCDATASection( ( string )$state );
 		$node->appendChild( $data );
 		$this->rootElement->appendChild( $node );
 
-		$node = $this->createElementNS( Core::namespaceXML, "xmvc:username" );
+		$node = $this->createElementNS( View::namespaceXML, "xmvc:username" );
 		$data = $this->createCDATASection( ( string )$username );
 		$node->appendChild( $data );
 		$this->rootElement->appendChild( $node );

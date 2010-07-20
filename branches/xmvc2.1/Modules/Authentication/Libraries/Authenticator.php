@@ -15,7 +15,7 @@ class Authenticator
 
 		if( ! self::isAuthenticated() )
 		{
-			$authModel = new SQLModelDriver( __NAMESPACE__ . "\\authentication" );
+			$authModel = new SQLModelDriver( "Modules\\Authentication\\Models\\authentication" );
 			$authModel->useQuery( "IsUserPasswordValid" );
 			$authModel->setParameters( array( ( string )$username, md5( ( string )$password ) ) );
 			$authModel->execute();
@@ -56,7 +56,7 @@ class Authenticator
 
 	private static function setAuthenticated( $userID )
 	{
-		$userModel = new SQLModelDriver( __NAMESPACE__ . "\\authentication" );
+		$userModel = new SQLModelDriver( "Modules\\Authentication\\Models\\authentication" );
 		$userModel->useQuery( "GetUserData" );
 		$userModel->setParameters( array( ( int )$userID ) );
 		$userModel->execute();
@@ -88,7 +88,7 @@ class Authenticator
 		return self::$authenticated;
 	}
 
-	public function getStateFromModel( $model )
+	public static function getStateFromModel( $model )
 	{
 		$stateNodeList = $model->xPath->query( "//wd:component/@state" );
 		$state = $stateNodeList->length > 0 ? $stateNodeList->item( 0 )->nodeValue : "neutral";
