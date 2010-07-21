@@ -63,13 +63,35 @@ class WGet
 		$this->DisplayMessage( "Changing Directory: " . $this->temporaryRoot );
 		chdir( realpath( $this->temporaryRoot ) );
 
-		$this->DisplayMessage( "Executing: " . $command . implode( $commandParams, " " ) );
-		exec( $command . implode( $commandParams, " " ), $results, $returnStatus );
+		$fullCommand = $command . implode( $commandParams, " " );
 
-		$this->DisplayMessage( implode( $results, "<br />\n" ) );
-		$this->DisplayMessage( "Return Status: " . $returnStatus );
+		$this->DisplayMessage( "Executing: " . $fullCommand );
+
+		/*
+		sleep( 1 );
+		$lastLine = system( $fullCommand );
+		$successful = $lastLine !== false;
+		*/
+
+		$successful = $this->System( $fullCommand );
 
 		chdir( $oldCwd );
+
+		return $successful;
+	}
+
+	private function System( $command )
+	{
+		$fp = popen( $command . " 2>&1", "r" );
+
+		while( !feof( $fp ) )
+		{
+			echo fread( $fp, 1024 );
+		}
+
+		fclose( $fp );
+
+		return true;
 	}
 
 	public function CleanUp()
@@ -100,7 +122,7 @@ class WGet
 	{
 		if( $this->verbose !== false )
 		{
-			echo( $msg . "<br />\n" );
+			echo "### " . $msg . "\n";
 		}
 	}
 }

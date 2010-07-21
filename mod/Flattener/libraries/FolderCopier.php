@@ -18,11 +18,9 @@ class FolderCopier
 	{
 		$copyCommand = self::GetCopyCommand( $inputPath, $outputPath );
 
-		echo( "<b>" . $copyCommand . "<br />\n" );
+		echo( "###" . $copyCommand . "\n" );
 
-		echo( "<pre>" );
 		system( $copyCommand );
-		echo( "</pre>" );
 	}
 
 	private static function GetCopyCommand( $inputPath, $outputPath )
