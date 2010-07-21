@@ -34,7 +34,8 @@ class Processor
 
 		if( Config::$data[ "isLocal" ] || ComponentLookup::getInstance()->HostsDontMatch() )
 		{
-			ComponentLookup::getInstance()->Generate();
+			\xMVC\Sys\FileSystem::FileExists( "." );	// WHAT?
+			// ComponentLookup::getInstance()->Generate();
 		}
 	}
 
