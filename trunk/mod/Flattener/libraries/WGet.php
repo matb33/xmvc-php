@@ -66,6 +66,7 @@ class WGet
 		$fullCommand = $command . implode( $commandParams, " " );
 
 		$this->DisplayMessage( "Executing: " . $fullCommand );
+		exit();
 
 		/*
 		sleep( 1 );
