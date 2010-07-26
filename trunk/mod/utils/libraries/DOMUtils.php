@@ -10,7 +10,7 @@ class DOMUtils
 	{
 		foreach( $model->xPath->query( $xPath ) as $node )
 		{
-			$importDocument = new \DOMDocument();
+			$importDocument = new \DOMDocument( "1.0", "UTF-8" );
 			$importDocument->loadXML( "<html xmlns=\"http://www.w3.org/1999/xhtml\">" . $node->nodeValue . "</html>" );
 			$htmlNode = $model->importNode( $importDocument->documentElement, true );
 			$node->appendChild( $htmlNode );
