@@ -179,7 +179,7 @@ abstract class Component extends DefaultEventDispatcher
 		{
 			$view->PushModel( $model );
 		}
-		$result = new \DOMDocument();
+		$result = new \DOMDocument( "1.0", "UTF-8" );
 		$resultXML = $view->ProcessAsXML();
 		$result->loadXML( $resultXML );
 
