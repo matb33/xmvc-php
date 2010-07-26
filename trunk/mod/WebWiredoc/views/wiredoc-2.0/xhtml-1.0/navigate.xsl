@@ -30,19 +30,15 @@
 			<xsl:if test="@id">
 				<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
 			</xsl:if>
-			<xsl:choose>
-				<xsl:when test="@wd:description">
-					<xsl:attribute name="title"><xsl:value-of select="@wd:description" /></xsl:attribute>
-				</xsl:when>
-				<xsl:when test="wd:description">
-					<xsl:attribute name="title"><xsl:value-of select="wd:description" /></xsl:attribute>
-				</xsl:when>
-				<xsl:otherwise />
-			</xsl:choose>
+			<xsl:if test="@wd:description">
+				<xsl:attribute name="title"><xsl:value-of select="@wd:description" /></xsl:attribute>
+			</xsl:if>
 			<xsl:apply-templates mode="lang-check" />
 		</a>
 	</xsl:template>
 
-	<xsl:template match="wd:description" />
+	<xsl:template match="wd:navigate/wd:description">
+		<xsl:attribute name="title"><xsl:apply-templates mode="lang-check" /></xsl:attribute>
+	</xsl:template>
 
 </xsl:stylesheet>
