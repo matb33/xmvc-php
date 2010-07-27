@@ -38,7 +38,7 @@ class Sitemap
 			{
 				$name = $model->xPath->query( "ancestor::instance:*/@name", $hrefNode )->item( 0 )->nodeValue;
 				$lang = $hrefNode->getAttribute( "xml:lang" );
-				$parent = $model->xPath->query( "../meta:parent", $hrefNode )->item( 0 )->nodeValue;
+				$parent = $model->xPath->query( "../meta:parent", $hrefNode )->length > 0 ? $model->xPath->query( "../meta:parent", $hrefNode )->item( 0 )->nodeValue : "";
 				$component = $model->xPath->query( "ancestor::instance:*", $hrefNode )->item( 0 )->localName;
 				$view = $model->xPath->query( "../meta:view", $hrefNode )->item( 0 )->nodeValue;
 
