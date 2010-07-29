@@ -190,7 +190,7 @@
 						<xsl:value-of select="@alt" />
 					</xsl:when>
 					<xsl:otherwise>
-						<xsl:value-of select="." />
+						<xsl:apply-templates mode="lang-check" />
 					</xsl:otherwise>
 				</xsl:choose>
 			</xsl:attribute>
