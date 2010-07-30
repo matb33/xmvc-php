@@ -8,7 +8,7 @@ set HTTPHOST=%~4
 set TESTINGPATH=%~5
 
 REM ---------------------------------------------------------------------------
-echo PRESS ENTER 3 TIMES TO CONFIRM THAT YOU WANT TO BEGIN FLATTENING
+echo PRESS ENTER 3 TIMES AND JUMP UP AND DOWN TO CONFIRM THAT YOU WANT TO BEGIN FLATTENING
 echo.
 pause
 pause
@@ -39,12 +39,22 @@ echo.
 echo ### Executing wget on URL's found in !URLFILE!...
 echo.
 
+set LINECOUNT=0
+set NOCOUNT=0;
 for /f %%i in (!URLFILE!) do (
+	set /A LINECOUNT+=1
 	echo ### ...on URL: %%i
 	echo.
-	!WEBROOT!\mod\Flattener\bin\win32\wget-1.12.exe --level=inf --recursive --html-extension --force-directories --no-parent --reject="*vparam=*","*video=*" --verbose %%i
+	choice /m "Would you like to retrieve the following URL with wget:%%i"
+	if !ERRORLEVEL!==1 !WEBROOT!\mod\Flattener\bin\win32\wget-1.12.exe --tries=1 --level=inf --recursive --html-extension --force-directories --no-parent --reject="*vparam=*","*video=*" --verbose %%i
+	if !ERRORLEVEL!==2 ( 
+		echo Skipping URL:%%i
+		set /A NOCOUNT+=1
+	)
 	echo.
 )
+
+if %LINECOUNT%==%NOCOUNT% exit
 
 REM ---------------------------------------------------------------------------
 echo ### Renaming !HTTPHOST! to !OUTPUTPATH!
@@ -65,7 +75,7 @@ echo.
 echo ### Copying to testing server
 echo.
 
-rd /s /q !TESTINGPATH!
+REM rd /s /q !TESTINGPATH!
 xcopy "!OUTPUTPATH!\*.*" "!TESTINGPATH!" /d /e /c /i /g /r /y
 
 REM ---------------------------------------------------------------------------
