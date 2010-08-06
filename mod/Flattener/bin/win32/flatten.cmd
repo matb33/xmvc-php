@@ -75,7 +75,7 @@ echo.
 echo ### Copying to testing server
 echo.
 
-REM rd /s /q !TESTINGPATH!
+rd /s /q !TESTINGPATH!
 xcopy "!OUTPUTPATH!\*.*" "!TESTINGPATH!" /d /e /c /i /g /r /y
 
 REM ---------------------------------------------------------------------------
