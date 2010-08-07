@@ -117,6 +117,9 @@
 			<xsl:if test="@title">
 				<xsl:attribute name="title"><xsl:value-of select="@title" /></xsl:attribute>
 			</xsl:if>
+			<xsl:if test="@id">
+				<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
+			</xsl:if>
 			<xsl:attribute name="class">
 				<xsl:choose>
 					<xsl:when test="$last = 1">first-child last-child</xsl:when>
