@@ -176,7 +176,8 @@ class Sitemap
 	{
 		$sitemapModel = self::Get( $lang );
 
-		$path = $sitemapModel->xPath->query( "//s:url/cc:path[ ../cc:name = '" . $name . "' ]" )->item( 0 )->nodeValue;
+		$pathNodeList = $sitemapModel->xPath->query( "//s:url/cc:path[ ../cc:name = '" . $name . "' ]" );
+		$path = $pathNodeList->length > 0 ? $pathNodeList->item( 0 )->nodeValue : "";
 
 		return( $path );
 	}
