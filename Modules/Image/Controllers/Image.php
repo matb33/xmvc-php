@@ -51,8 +51,9 @@ class Image
 		list( $fullSizeWidth, $fullSizeHeight, $mimeType, $lastModified, $basename, $filename, $extension ) = ImageProcessor::getImageData( $imageFile );
 		list( $newWidth, $newHeight ) = ImageProcessor::determineNewWidthAndHeight( $width, $height, $fullSizeWidth, $fullSizeHeight );
 
-		$cacheID = $newWidth . "x" . $newHeight . "-" . $fullSizeWidth . "x" . $fullSizeHeight . "-" . $imageFile . "-" . $lastModified;
-		$cacheFile = StringUtils::replaceTokensInPattern( Config::$data[ "imageCacheFilePattern" ], array( "basename" => $basename, "filename" => $filename, "hash" => md5( $cacheID ), "extension" => $extension ) );
+		$cacheID = md5( $newWidth . "x" . $newHeight . "-" . $fullSizeWidth . "x" . $fullSizeHeight . "-" . $imageFile . "-" . $lastModified );
+		$cache = new Cache( Config::$data[ "imageCacheFilePattern" ], array( "basename" => $basename, "filename" => $filename, "hash" => md5( $cacheID ), "extension" => $extension ), $cacheID, false );
+		$cacheFile = $cache->filename;
 
 		if( file_exists( $cacheFile ) && !$force )
 		{
@@ -68,7 +69,7 @@ class Image
 			{
 				$image = ImageProcessor::resize( $width, $height, $imageFile );
 
-				if( Cache::prepCacheFolder( $cacheFile, false ) )
+				if( $cache->prepCacheFolder() )
 				{
 					ImageProcessor::writeImage( $image, $mimeType, $cacheFile );
 				}
