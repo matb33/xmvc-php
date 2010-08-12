@@ -44,17 +44,20 @@ class Config
 		$existingVariables = get_defined_vars();
 		$configFiles = glob( $configFilePattern );
 
-		foreach( $configFiles as $configFile )
+		if( $configFiles !== false )
 		{
-			include $configFile;
-
-			$variablesToMerge = array_diff_key( get_defined_vars(), $existingVariables, array( "existingVariables" => "", "configFiles" => "", "variablesToMergeKeys" => "" ) );
-			self::$data = self::mergeVariables( self::$data, $variablesToMerge );
-			$variablesToMergeKeys = array_keys( $variablesToMerge );
-
-			foreach( $variablesToMergeKeys as $variableToUnset )
+			foreach( $configFiles as $configFile )
 			{
-				unset( $$variableToUnset );
+				include $configFile;
+
+				$variablesToMerge = array_diff_key( get_defined_vars(), $existingVariables, array( "existingVariables" => "", "configFiles" => "", "variablesToMergeKeys" => "" ) );
+				self::$data = self::mergeVariables( self::$data, $variablesToMerge );
+				$variablesToMergeKeys = array_keys( $variablesToMerge );
+
+				foreach( $variablesToMergeKeys as $variableToUnset )
+				{
+					unset( $$variableToUnset );
+				}
 			}
 		}
 	}
