@@ -95,9 +95,12 @@ class Cache
 	{
 		$filenames = glob( $folder . $this->cacheID . "--*" );
 
-		foreach( $filenames as $filename )
+		if( $filenames !== false )
 		{
-			unlink( $filename );
+			foreach( $filenames as $filename )
+			{
+				unlink( $filename );
+			}
 		}
 	}
 
