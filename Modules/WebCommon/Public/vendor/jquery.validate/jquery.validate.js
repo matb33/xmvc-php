@@ -28,7 +28,7 @@
 				window.clearTimeout($.data(document.body, "timeout"));
 				$.data(document.body, "timeout", window.setTimeout(function ()
 				{
-					validate($(field));
+					validate($(field), settings.callback);
 				}, settings.inputKeyUpDelay));
 
 				if (visuals.isAngry(field))
@@ -41,29 +41,29 @@
 			$(":checkbox, :radio", context).click(function ()
 			{
 				window.clearTimeout($.data(document.body, "timeout"));
-				validate($(this));
+				validate($(this), settings.callback);
 			});
 
 			$(context).submit(function ()
 			{
 				window.clearTimeout($.data(document.body, "timeout"));
-				return validate($(this));
+				return validate($(this), settings.callback);
 			});
 		};
 
-		var validate = function (field, submitCallback)
+		var validate = function (field)
 		{
 			if (isClientSide())
 			{
-				return askClient(field, submitCallback);
+				return askClient(field);
 			}
 			else
 			{
-				return askServer(field, submitCallback);
+				return askServer(field);
 			}
 		};
 
-		var askServer = function (field, submitCallback)
+		var askServer = function (field)
 		{
 			var affectedFields = getFieldCollection(field);
 
@@ -77,13 +77,13 @@
 				async: true,
 				data: getParameters(getUniquelyNamedFieldCollection(field)),
 				dataType: "xml",
-				success: function (data, textStatus) { onResponseFromServer(data, textStatus, field, submitCallback); }
+				success: function (data, textStatus) { onResponseFromServer(data, textStatus, field); }
 			});
 
 			return false;
 		};
 
-		var askClient = function (eventField, submitCallback)
+		var askClient = function (eventField)
 		{
 			var fullSuccess = true;
 			var affectedFields = getUniquelyNamedFieldCollection(eventField);
@@ -130,10 +130,10 @@
 				triggerResponseEvents(field, fieldSuccess);
 			});
 
-			return processSubmit(submitCallback, fullSuccess, eventField);
+			return processSubmit(fullSuccess, eventField);
 		};
 
-		var onResponseFromServer = function (data, textStatus, eventField, submitCallback)
+		var onResponseFromServer = function (data, textStatus, eventField)
 		{
 			var receivedProperResponse = (textStatus == "success");
 
@@ -167,17 +167,17 @@
 					triggerResponseEvents(field, fieldSuccess);
 				});
 
-				return processSubmit(submitCallback, fullSuccess, eventField);
+				return processSubmit(fullSuccess, eventField);
 			}
 
 			return false;
 		};
 
-		var processSubmit = function (submitCallback, fullSuccess, eventField)
+		var processSubmit = function (fullSuccess, eventField)
 		{
-			if (submitCallback)
+			if (settings.callback)
 			{
-				return submitCallback(fullSuccess);
+				return settings.callback(fullSuccess, eventField.is("form"));
 			}
 			else
 			{
