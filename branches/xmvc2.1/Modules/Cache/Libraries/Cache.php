@@ -15,7 +15,8 @@ class Cache
 	private $filenamePattern = "";
 	private $purgeCache = true;
 	private $hash = "";
-	private $filename = "";
+	
+	public $filename = "";
 
 	public function __construct( $filenamePattern, $tokens, $cacheID = "", $purgeCache = true, $cacheMinutes = 0 )
 	{
@@ -57,8 +58,18 @@ class Cache
 		return file_exists( $this->filename );
 	}
 
-	public function prepCacheFolder( $filename, $purgeCache = true )
+	public function prepCacheFolder( $filename = null, $purgeCache = null )
 	{
+		if( is_null( $filename ) )
+		{
+			$filename = $this->filename;
+		}
+
+		if( is_null( $purgeCache ) )
+		{
+			$purgeCache = $this->purgeCache;
+		}
+
 		$cacheFolder = dirname( $filename ) . "/";
 
 		FileSystem::createFolderStructure( $cacheFolder );
