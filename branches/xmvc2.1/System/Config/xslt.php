@@ -1,5 +1,14 @@
 <?php
 
+$forceServerSideRendering = false;
+$forceClientSideRendering = false;
+
+$enableXSLTProfiling = false;
+$XSLTProfilingFilename = "";
+
+$enableXSLTPHPFunctions = true;
+$restrictXSLTPHPFunctions = array();
+
 $xsltAgents = array();
 $xsltAgents[] = "/Firefox\/[2-9]\.[0-9]+\.[0-9]+/";
 $xsltAgents[] = "/MSIE [6-9]\.[0-9]+;/";
