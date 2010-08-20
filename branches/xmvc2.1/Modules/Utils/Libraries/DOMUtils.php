@@ -13,6 +13,10 @@ class DOMUtils
 		foreach( $nodeList as $node )
 		{
 			$value = htmlspecialchars( html_entity_decode( $node->nodeValue, ENT_QUOTES, "UTF-8" ), ENT_QUOTES, "UTF-8" );
+			$value = str_replace( "&lt;", "<", $value );
+			$value = str_replace( "&gt;", ">", $value );
+			$value = str_replace( "&quot;", "\"", $value );
+			$value = str_replace( "&#039;", "'", $value );
 			
 			$importDocument = new \DOMDocument();
 			$importDocument->loadXML( "<html xmlns=\"http://www.w3.org/1999/xhtml\">" . $value . "</html>" );
