@@ -12,8 +12,10 @@ class DOMUtils
 
 		foreach( $nodeList as $node )
 		{
+			$value = htmlspecialchars( html_entity_decode( $node->nodeValue, ENT_QUOTES, "UTF-8" ), ENT_QUOTES, "UTF-8" );
+			
 			$importDocument = new \DOMDocument();
-			$importDocument->loadXML( "<html xmlns=\"http://www.w3.org/1999/xhtml\">" . $node->nodeValue . "</html>" );
+			$importDocument->loadXML( "<html xmlns=\"http://www.w3.org/1999/xhtml\">" . $value . "</html>" );
 			$htmlNode = $model->importNode( $importDocument->documentElement, true );
 			$node->appendChild( $htmlNode );
 		}
