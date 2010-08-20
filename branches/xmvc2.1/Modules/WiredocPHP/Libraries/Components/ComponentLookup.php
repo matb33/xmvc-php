@@ -276,7 +276,7 @@ class ComponentLookup extends OverrideableSingleton
 
 		$lookupModel = $this->get();
 
-		$URINodeList = $lookupModel->xPath->query( "//lookup:entry/lookup:href/lookup:uri" );
+		$URINodeList = $lookupModel->xPath->query( "//lookup:entry/lookup:href/lookup:fully-qualified-uri" );
 
 		if( $URINodeList->length > 0 )
 		{
