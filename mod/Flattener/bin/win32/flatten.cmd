@@ -45,16 +45,20 @@ for /f %%i in (!URLFILE!) do (
 	set /A LINECOUNT+=1
 	echo ### ...on URL: %%i
 	echo.
-	choice /m "Would you like to retrieve the following URL with wget:%%i"
-	if !ERRORLEVEL!==1 !WEBROOT!\mod\Flattener\bin\win32\wget-1.12.exe --tries=1 --level=inf --recursive --html-extension --force-directories --no-parent --reject="*vparam=*","*video=*" --verbose %%i
-	if !ERRORLEVEL!==2 ( 
-		echo Skipping URL:%%i
-		set /A NOCOUNT+=1
-	)
+
+	!WEBROOT!\mod\Flattener\bin\win32\wget-1.12.exe --tries=1 --level=inf --recursive --html-extension --force-directories --no-parent --reject="*vparam=*","*video=*" --verbose %%i
+
+	REM choice /m "Would you like to retrieve the following URL with wget:%%i"
+	REM if !ERRORLEVEL!==1 !WEBROOT!\mod\Flattener\bin\win32\wget-1.12.exe --tries=1 --level=inf --recursive --html-extension --force-directories --no-parent --reject="*vparam=*","*video=*" --verbose %%i
+	REM if !ERRORLEVEL!==2 ( 
+	REM 	echo Skipping URL:%%i
+	REM	set /A NOCOUNT+=1
+	REM )
+
 	echo.
 )
 
-if %LINECOUNT%==%NOCOUNT% exit
+if %LINECOUNT%==%NOCOUNT% goto :EOF
 
 REM ---------------------------------------------------------------------------
 echo ### Renaming !HTTPHOST! to !OUTPUTPATH!
