@@ -73,9 +73,9 @@ echo.
 
 xcopy "!WEBROOT!\app\inc\*.*" "!OUTPUTPATH!\onlineguide\inc\" /d /e /c /i /g /r /y
 xcopy "!WEBROOT!\mod\WebCommon\inc\*.*" "!OUTPUTPATH!\onlineguide\WebCommon\inc\" /d /e /c /i /g /r /y
-xcopy "!WEBROOT!\..\src\EdcVideoHandler\EdcVideoHandler\bin\release\*.dll" "!OUTPUTPATH!\onlineguide\bin\" /d /e /c /i /g /r /y
-xcopy "!WEBROOT!\..\src\EdcVideoHandler\EdcVideoHandler\web.config" "!OUTPUTPATH!\onlineguide\" /d /e /c /i /g /r /y
-xcopy "!WEBROOT!\..\src\EdcVideoHandler\EdcVideoHandler\web.config.iis6" "!OUTPUTPATH!\onlineguide\" /d /e /c /i /g /r /y
+xcopy "!WEBROOT!\..\src\EdcVideoHandler\EdcVideoHandler\bin\release\*.dll" "!OUTPUTPATH!\onlineguide\bin\" /d /c /i /g /r /y
+xcopy "!WEBROOT!\..\src\EdcVideoHandler\EdcVideoHandler\web.config" "!OUTPUTPATH!\onlineguide\" /d /c /i /g /r /y
+xcopy "!WEBROOT!\..\src\EdcVideoHandler\EdcVideoHandler\web.config.iis6" "!OUTPUTPATH!\onlineguide\" /d /c /i /g /r /y
 
 REM ---------------------------------------------------------------------------
 echo.
