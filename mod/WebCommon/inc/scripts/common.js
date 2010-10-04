@@ -440,6 +440,15 @@ if( typeof Array.prototype.lastIndexOf !== "function" )
 	};
 }
 
+// Gets last element of an Array
+if( typeof Array.prototype.last !== "function" )
+{
+	Array.prototype.last = function()
+	{
+		return this[ this.length - 1 ];
+	}
+}
+
 /// Represents a general purpose dictionary that can be used to associate a key of any kind to a value of any kind.
 /// A key can only be associated to a single value.
 function Dictionary()
