@@ -2,8 +2,6 @@
 
 namespace xMVC\Mod\CC\FieldConstraints;
 
-define( "VALIDATIONEMAILREGEXP", "^(([A-Za-z0-9]+_+)|([A-Za-z0-9]+\-+)|([A-Za-z0-9]+\.+)|([A-Za-z0-9]+\++))*[A-Za-z0-9]+@((\w+\-+)|(\w+\.))*\w{1,63}\.[a-zA-Z]{2,6}$" );
-
 class Constraint
 {
 	public $type;
@@ -14,6 +12,8 @@ class Constraint
 	private $targetField;
 	private $dependencyFields;
 	private $constraintMessages;
+
+	const VALIDATIONEMAILREGEXP = "^(([A-Za-z0-9]+_+)|([A-Za-z0-9]+\-+)|([A-Za-z0-9]+\.+)|([A-Za-z0-9]+\++))*[A-Za-z0-9]+@((\w+\-+)|(\w+\.))*\w{1,63}\.[a-zA-Z]{2,6}$";
 
 	public function __construct( $type, Field $targetField )
 	{
@@ -101,7 +101,7 @@ class Constraint
 
 	private function Email()
 	{
-		return preg_match( "/" . VALIDATIONEMAILREGEXP . "/", $this->targetField->value, $matches ) > 0;
+		return preg_match( "/" . self::VALIDATIONEMAILREGEXP . "/", $this->targetField->value, $matches ) > 0;
 	}
 
 	private function RegExp()
@@ -176,5 +176,3 @@ class Constraint
 		}
 	}
 }
-
-?>

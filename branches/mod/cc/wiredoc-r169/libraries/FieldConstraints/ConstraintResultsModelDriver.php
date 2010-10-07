@@ -12,7 +12,7 @@ class ConstraintResultsModelDriver extends ModelDriver implements ModelDriverInt
 	{
 		parent::__construct();
 
-		$this->rootElement = $this->createElementNS( Config::$data[ "ccNamespaces" ][ "c" ], "c:constraint-results" );
+		$this->rootElement = $this->createElement( "constraint-results" );
 		$this->appendChild( $this->rootElement );
 
 		$this->TransformForeignToXML( $constraintResultsList );
@@ -26,12 +26,12 @@ class ConstraintResultsModelDriver extends ModelDriver implements ModelDriverInt
 
 		foreach( $constraintResultsList as $constraintResults )
 		{
-			$data = $constraintResults->ToArray();
+			$data = $constraintResults->toArray();
 			$fieldSuccess = true;
 
 			if( isset( $data[ "results" ] ) && is_array( $data[ "results" ] ) )
 			{
-				$fieldElement = $this->createElementNS( Config::$data[ "ccNamespaces" ][ "c" ], "c:field" );
+				$fieldElement = $this->createElement( "field" );
 				$nameAttribute = $this->createAttribute( "name" );
 				$nameAttribute->value = $data[ "name" ];
 				$fieldElement->appendChild( $nameAttribute );
@@ -39,7 +39,7 @@ class ConstraintResultsModelDriver extends ModelDriver implements ModelDriverInt
 
 				foreach( $data[ "results" ] as $resultData )
 				{
-					$constraintElement = $this->createElementNS( Config::$data[ "ccNamespaces" ][ "c" ], "c:constraint-result" );
+					$constraintElement = $this->createElement( "constraint-result" );
 
 					$successAttribute = $this->createAttribute( "success" );
 					$successAttribute->value = $resultData[ "success" ] ? "true" : "false";
@@ -81,8 +81,6 @@ class ConstraintResultsModelDriver extends ModelDriver implements ModelDriverInt
 		$fullSuccessAttribute->value = $fullSuccess ? "true" : "false";
 		$this->rootElement->appendChild( $fullSuccessAttribute );
 
-		parent::TransformForeignToXML();
+		parent::transformForeignToXML();
 	}
 }
-
-?>
