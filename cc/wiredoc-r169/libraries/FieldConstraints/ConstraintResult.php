@@ -15,5 +15,3 @@ class ConstraintResult
 		$this->message = $message;
 	}
 }
-
-?>

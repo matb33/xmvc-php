@@ -92,5 +92,3 @@ class Constraints
 		$constraint->SetConstraintMessages( $constraintMessages );
 	}
 }
-
-?>
