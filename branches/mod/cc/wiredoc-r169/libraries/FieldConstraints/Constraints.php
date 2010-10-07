@@ -32,7 +32,7 @@ class Constraints
 
 		$resultsModel = new ConstraintResultsModelDriver( $constraintResultsList );
 
-		return( $resultsModel );
+		return $resultsModel;
 	}
 
 	public function GetConstraintResults()
@@ -42,8 +42,9 @@ class Constraints
 		if( $this->targetField instanceof Field )
 		{
 			$constraintResults->SetTarget( $this->targetField );
+			$constraintNodeList = $this->sourceModel->xPath->query( "//form:field[ @name = '" . $this->targetField->name . "' ]/form:constraint" );
 
-			foreach( $this->sourceModel->xPath->query( "//form:field[ @name = '" . $this->targetField->name . "' ]/form:constraint" ) as $constraintNode )
+			foreach( $constraintNodeList as $constraintNode )
 			{
 				$type = $constraintNode->getAttribute( "type" );
 				$against = $constraintNode->getAttribute( "against" );
@@ -63,7 +64,7 @@ class Constraints
 			}
 		}
 
-		return( $constraintResults );
+		return $constraintResults;
 	}
 
 	private function LookForDependencyFields( &$constraint, $type, $against )

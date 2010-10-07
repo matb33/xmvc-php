@@ -10,5 +10,6 @@ $ccNamespaces[ "inject" ] = "urn:cc:inject";
 $ccNamespaces[ "doc" ] = "urn:cc:doc";
 $ccNamespaces[ "sitemap" ] = "urn:cc:sitemap";
 $ccNamespaces[ "loc" ] = "urn:cc:loc";
+$ccNamespaces[ "c" ] = "urn:cc:constraint";
 
 ?>

@@ -39,7 +39,7 @@ class ConstraintResults extends ArrayObject
 			$resultSet[ "results" ][] = $results;
 		}
 
-		return( $resultSet );
+		return $resultSet;
 	}
 }
 
