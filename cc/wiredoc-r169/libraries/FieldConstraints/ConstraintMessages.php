@@ -18,12 +18,22 @@ class ConstraintMessages
 
 	public function GetFailMessage()
 	{
-		return( $this->messages[ "fail" ] );
+		if( isset( $this->messages[ "fail" ] ) )
+		{
+			return $this->messages[ "fail" ];
+		}
+
+		return "";
 	}
 
 	public function GetPassMessage()
 	{
-		return( $this->messages[ "pass" ] );
+		if( isset( $this->messages[ "pass" ] ) )
+		{
+			return $this->messages[ "pass" ];
+		}
+
+		return "";
 	}
 }
 
