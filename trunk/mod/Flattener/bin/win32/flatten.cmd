@@ -46,10 +46,10 @@ for /f %%i in (!URLFILE!) do (
 	echo ### ...on URL: %%i
 	echo.
 
-	!WEBROOT!\mod\Flattener\bin\win32\wget-1.12.exe --tries=1 --level=inf --recursive --html-extension --force-directories --no-parent --reject="*vparam=*","*video=*" --verbose %%i
+	!WEBROOT!\mod\Flattener\bin\win32\wget-1.12.exe --tries=1 --level=inf --recursive --html-extension --force-directories --no-parent --reject="*vparam=*","*video=*","*PolicyLang=*" --verbose %%i
 
 	REM choice /m "Would you like to retrieve the following URL with wget:%%i"
-	REM if !ERRORLEVEL!==1 !WEBROOT!\mod\Flattener\bin\win32\wget-1.12.exe --tries=1 --level=inf --recursive --html-extension --force-directories --no-parent --reject="*vparam=*","*video=*" --verbose %%i
+	REM if !ERRORLEVEL!==1 !WEBROOT!\mod\Flattener\bin\win32\wget-1.12.exe --tries=1 --level=inf --recursive --html-extension --force-directories --no-parent --reject="*vparam=*","*video=*","*PolicyLang=*" --verbose %%i
 	REM if !ERRORLEVEL!==2 ( 
 	REM 	echo Skipping URL:%%i
 	REM	set /A NOCOUNT+=1
@@ -73,9 +73,10 @@ echo.
 
 xcopy "!WEBROOT!\app\inc\*.*" "!OUTPUTPATH!\onlineguide\inc\" /d /e /c /i /g /r /y
 xcopy "!WEBROOT!\mod\WebCommon\inc\*.*" "!OUTPUTPATH!\onlineguide\WebCommon\inc\" /d /e /c /i /g /r /y
+xcopy "!WEBROOT!\FeedBack\*.*" "!OUTPUTPATH!\onlineguide\FeedBack\" /d /e /c /i /g /r /y
 xcopy "!WEBROOT!\..\src\EdcVideoHandler\EdcVideoHandler\bin\release\*.dll" "!OUTPUTPATH!\onlineguide\bin\" /d /c /i /g /r /y
 xcopy "!WEBROOT!\..\src\EdcVideoHandler\EdcVideoHandler\web.config" "!OUTPUTPATH!\onlineguide\" /d /c /i /g /r /y
-xcopy "!WEBROOT!\..\src\EdcVideoHandler\EdcVideoHandler\web.config.iis6" "!OUTPUTPATH!\onlineguide\" /d /c /i /g /r /y
+xcopy "!WEBROOT!\..\src\EdcVideoHandler\EdcVideoHandler\web.config*.*" "!OUTPUTPATH!\onlineguide\" /d /c /i /g /r /y
 
 REM ---------------------------------------------------------------------------
 echo.
