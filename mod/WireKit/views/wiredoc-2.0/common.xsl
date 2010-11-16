@@ -19,10 +19,12 @@
 	</xsl:template>
 
 	<xsl:template match="node()" mode="lang-check">
+		<xsl:param name="position" select="position()" />
+		<xsl:param name="last" select="last()" />
 		<xsl:if test="php:function( 'xMVC\Mod\Language\Language::XSLTLang', $lang, (ancestor-or-self::*/@xml:lang)[last()] )">
 			<xsl:apply-templates select="." mode="override">
-				<xsl:with-param name="position" select="position()" />
-				<xsl:with-param name="last" select="last()" />
+				<xsl:with-param name="position" select="$position" />
+				<xsl:with-param name="last" select="$last" />
 			</xsl:apply-templates>
 		</xsl:if>
 	</xsl:template>
@@ -31,8 +33,8 @@
 		<xsl:param name="position" select="position()" />
 		<xsl:param name="last" select="last()" />
 		<xsl:apply-templates select=".">
-			<xsl:with-param name="position" select="$position" />
-			<xsl:with-param name="last" select="$last" />
+				<xsl:with-param name="position" select="$position" />
+				<xsl:with-param name="last" select="$last" />
 		</xsl:apply-templates>
 	</xsl:template>
 
