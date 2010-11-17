@@ -23,7 +23,7 @@ if exist !OUTPUTPATH! (
 	echo Found, removing.
 	rd /s /q !OUTPUTPATH!
 ) else (
-	echo Not found, skip.
+	echo Not found, skipping.
 )
 
 REM ---------------------------------------------------------------------------
@@ -68,15 +68,10 @@ move "!HTTPHOST!" "!OUTPUTPATH!"
 
 REM ---------------------------------------------------------------------------
 echo.
-echo ### HARD-CODED Copying inc folders... abstract this somehow...
+echo ### Calling external copy script
 echo.
 
-xcopy "!WEBROOT!\app\inc\*.*" "!OUTPUTPATH!\onlineguide\inc\" /d /e /c /i /g /r /y
-xcopy "!WEBROOT!\mod\WebCommon\inc\*.*" "!OUTPUTPATH!\onlineguide\WebCommon\inc\" /d /e /c /i /g /r /y
-xcopy "!WEBROOT!\FeedBack\*.*" "!OUTPUTPATH!\onlineguide\FeedBack\" /d /e /c /i /g /r /y
-xcopy "!WEBROOT!\..\src\EdcVideoHandler\EdcVideoHandler\bin\release\*.dll" "!OUTPUTPATH!\onlineguide\bin\" /d /c /i /g /r /y
-xcopy "!WEBROOT!\..\src\EdcVideoHandler\EdcVideoHandler\web.config" "!OUTPUTPATH!\onlineguide\" /d /c /i /g /r /y
-xcopy "!WEBROOT!\..\src\EdcVideoHandler\EdcVideoHandler\web.config*.*" "!OUTPUTPATH!\onlineguide\" /d /c /i /g /r /y
+call files-to-include.cmd !URLFILE! !WEBROOT! !OUTPUTPATH! !HTTPHOST! !TESTINGPATH!
 
 REM ---------------------------------------------------------------------------
 echo.
