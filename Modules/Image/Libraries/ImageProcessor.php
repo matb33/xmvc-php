@@ -2,11 +2,15 @@
 
 namespace Modules\Image\Libraries;
 
+use System\Libraries\Config;
+use System\Libraries\OutputHeaders;
+use Modules\Utils\Libraries\StringUtils;
+
 class ImageProcessor
 {
 	public static function resize( $width, $height, $imageFile )
 	{
-		list( $fullSizeWidth, $fullSizeHeight, $mimeType, $lastModified, $b, $f, $e ) = self::getImageData( $imageFile );
+		list( $fullSizeWidth, $fullSizeHeight, $mimeType, $lastModified, $b, $f, $e, $g ) = self::getImageData( $imageFile );
 		list( $newWidth, $newHeight ) = self::determineNewWidthAndHeight( $width, $height, $fullSizeWidth, $fullSizeHeight );
 
 		$fullSizeImage = self::getImage( $imageFile );
@@ -25,6 +29,9 @@ class ImageProcessor
 		$imageSizeData = getimagesize( $imageFile );
 		$imageFileInfo = pathinfo( $imageFile );
 
+		$rootPath = StringUtils::replaceTokensInPattern( Config::$data[ "imageProcessorFolderPattern" ], array( "image" => "" ) );
+		$basePath = str_replace( $rootPath, "", $imageFileInfo[ "dirname" ] . "/" );
+
 		return array(
 			( int )$imageSizeData[ 0 ],
 			( int )$imageSizeData[ 1 ],
@@ -32,7 +39,8 @@ class ImageProcessor
 			filemtime( $imageFile ),
 			$imageFileInfo[ "basename" ],
 			$imageFileInfo[ "filename" ],
-			$imageFileInfo[ "extension" ]
+			$imageFileInfo[ "extension" ],
+			$basePath
 		);
 	}
 
@@ -67,7 +75,7 @@ class ImageProcessor
 
 	public static function outputImage( $image, $mimeType )
 	{
-		header( "Content-Type: " . $mimeType );
+		OutputHeaders::custom( "Content-Type: " . $mimeType );
 
 		if( is_resource( $image ) )
 		{
@@ -94,6 +102,9 @@ class ImageProcessor
 
 	public static function writeImage( $image, $mimeType, $filename )
 	{
+		$folder = dirname( $filename );
+		if( ! file_exists( $folder ) ) mkdir( $folder, 0777, true );
+
 		if( is_resource( $image ) )
 		{
 			switch( $mimeType )
@@ -119,7 +130,7 @@ class ImageProcessor
 
 	public static function getImage( $imageFile )
 	{
-		list( $fullSizeWidth, $fullSizeHeight, $mimeType, $lastModified, $b, $f, $e ) = self::getImageData( $imageFile );
+		list( $fullSizeWidth, $fullSizeHeight, $mimeType, $lastModified, $b, $f, $e, $g ) = self::getImageData( $imageFile );
 
 		switch( $mimeType )
 		{
