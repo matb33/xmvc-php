@@ -17,8 +17,13 @@
 	</xsl:template>
 
 	<xsl:template name="override-meta-script">
-		<xsl:variable name="meta-script-nodes" select="//meta:script[ @type='text/javascript' and @href and php:function( 'Modules\Language\Libraries\Language::XSLTLang', $lang, (ancestor-or-self::*/@xml:lang)[last()] ) ]" />
-		<xsl:variable name="meta-inlinescript-nodes" select="//meta:script[ @type='text/javascript' and text() and php:function( 'Modules\Language\Libraries\Language::XSLTLang', $lang, (ancestor-or-self::*/@xml:lang)[last()] ) ]" />
+		<xsl:variable name="meta-standalone-script-nodes" select="//meta:script[ @type='text/javascript' and @href and @standalone and php:function( 'Modules\Language\Libraries\Language::XSLTLang', $lang, (ancestor-or-self::*/@xml:lang)[last()] ) ]" />
+		<xsl:for-each select="$meta-standalone-script-nodes">
+			<script type="{ @type }" src="{ @href }" />
+		</xsl:for-each>
+
+		<xsl:variable name="meta-script-nodes" select="//meta:script[ @type='text/javascript' and @href and not( @standalone ) and php:function( 'Modules\Language\Libraries\Language::XSLTLang', $lang, (ancestor-or-self::*/@xml:lang)[last()] ) ]" />
+		<xsl:variable name="meta-inlinescript-nodes" select="//meta:script[ @type='text/javascript' and text() and not( @standalone ) and php:function( 'Modules\Language\Libraries\Language::XSLTLang', $lang, (ancestor-or-self::*/@xml:lang)[last()] ) ]" />
 		<xsl:variable name="script-src" select="php:function( 'Modules\Combiner\Libraries\Combiner::combineJavaScripts', $meta-script-nodes )" />
 		<script type="text/javascript" src="{ $script-src }" />
 		<xsl:if test="$meta-inlinescript-nodes">
