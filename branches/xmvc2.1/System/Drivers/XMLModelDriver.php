@@ -79,12 +79,12 @@ class XMLModelDriver extends ModelDriver implements IModelDriver
 
 	private function isInstanceOfModelDriver( $parameter )
 	{
-		return is_a( $parameter, "ModelDriver" );
+		return $parameter instanceof ModelDriver;
 	}
 
 	private function isDOMNode( $parameter )
 	{
-		return is_a( $parameter, "DOMNode" );
+		return $parameter instanceof DOMNode;
 	}
 
 	private function isRawXML( $parameter )
