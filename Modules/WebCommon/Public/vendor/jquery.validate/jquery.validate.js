@@ -766,12 +766,12 @@
 				{
 					if ((fail && !valid) || (pass && valid))
 					{
-						$("input[value=" + message.replace("\"", "\\\"") + "]", constraintContext).addClass(type);
+						$("input[value='" + message.replace("\"", "\\\"") + "']", constraintContext).addClass(type);
 					}
 				}
 				else
 				{
-					if ($("input[value=" + message.replace("\"", "\\\"") + "]", closestLabel).length == 0)
+					if ($("input[value='" + message.replace("\"", "\\\"") + "']", closestLabel).length == 0)
 					{
 						box = $("<input class='" + type + "' type='hidden' />");
 						box.val(message);
