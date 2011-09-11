@@ -29,7 +29,7 @@ class Sitemap extends OverrideableSingleton
 			$lang = Language::getLang();
 		}
 
-		OutputHeaders::XML();
+		OutputHeaders::XML( 3600 );
 
 		$lookupModel = ComponentLookup::getInstance()->get();
 
