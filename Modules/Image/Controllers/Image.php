@@ -4,6 +4,7 @@ namespace Modules\Image\Controllers;
 
 use System\Libraries\Config;
 use System\Libraries\FileSystem;
+use System\Libraries\OutputHeaders;
 use Modules\Utils\Libraries\StringUtils;
 use Modules\Cache\Libraries\Cache;
 use Modules\Image\Libraries\ImageProcessor;
@@ -22,6 +23,7 @@ class Image
 
 		if( $this->verifyResizeParameters( $width, $height, $imageFile ) )
 		{
+			OutputHeaders::maxAgeCache( 3600 );
 			$this->resizeImage( $width, $height, $imageFile );
 		}
 		else
@@ -56,7 +58,7 @@ class Image
 		else
 		{
 			$image = ImageProcessor::resize( $width, $height, $imageFile );
-			ImageProcessor::writeImage( $image, $mimeType, $cacheFile );
+			// ImageProcessor::writeImage( $image, $mimeType, $cacheFile );
 		}
 
 		ImageProcessor::outputImage( $image, $mimeType );
