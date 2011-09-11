@@ -21,37 +21,7 @@ class Routing
 	{
 		if( is_null( self::$URI ) )
 		{
-			if( $_SERVER[ "REQUEST_URI" ] != "" )
-			{
-				self::$URI = preg_replace( "/^https?:\/\/" . $_SERVER[ "HTTP_HOST" ] . "/i", "", $_SERVER[ "REQUEST_URI" ] );
-			}
-			else
-			{
-				if( $_SERVER[ "PATH_INFO" ] != "" )
-				{
-					self::$URI = $_SERVER[ "PATH_INFO" ];
-				}
-				else
-				{
-					if( $_SERVER[ "PHP_SELF" ] != "" )
-					{
-						self::$URI = $_SERVER[ "PHP_SELF" ];
-					}
-					else
-					{
-						if( $_SERVER[ "REDIRECT_URL" ] != "" )
-						{
-							self::$URI = $_SERVER[ "REDIRECT_URL" ];
-						}
-					}
-
-					if( $_SERVER[ "QUERY_STRING" ] != "" )
-					{
-						self::$URI .= ( "?" . $_SERVER[ "QUERY_STRING" ] );
-					}
-				}
-			}
-
+			self::$URI = $_SERVER[ "PATH_INFO" ];
 			self::$URI = Normalize::URI( self::$URI );
 			self::$URI = Normalize::stripQueryInURI( self::$URI );
 		}
