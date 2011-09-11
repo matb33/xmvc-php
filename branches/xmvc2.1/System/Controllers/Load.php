@@ -46,7 +46,7 @@ class Load
 
 		$xmlString = ( $xmlHead . $tmpView->importXSL( $data ) . $xmlFoot );
 
-		OutputHeaders::XML();
+		OutputHeaders::XML( 3600 );
 
 		echo( $xmlString );
 
