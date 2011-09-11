@@ -59,41 +59,42 @@ class View
 		$this->models = $models;
 	}
 
-	public function renderAsHTML( $data = null, $omitRoot = null )
+	public function renderAsHTML( $data = null, $omitRoot = null, $cacheTime = null )
 	{
-		return $this->render( $data, "HTML", $omitRoot );
+		return $this->render( $data, "HTML", $omitRoot, $cacheTime );
 	}
 
-	public function renderAsXML( $data = null, $omitRoot = null )
+	public function renderAsXML( $data = null, $omitRoot = null, $cacheTime = null )
 	{
-		return $this->render( $data, "XML", $omitRoot );
+		return $this->render( $data, "XML", $omitRoot, $cacheTime );
 	}
 
-	public function render( $data = null, $outputType = null, $omitRoot = null )
+	public function render( $data = null, $outputType = null, $omitRoot = null, $cacheTime = null )
 	{
-		return $this->load( $data, false, $outputType, $omitRoot );
+		return $this->load( $data, false, $outputType, $omitRoot, $cacheTime );
 	}
 
-	public function processAsHTML( $data = null, $omitRoot = null )
+	public function processAsHTML( $data = null, $omitRoot = null, $cacheTime = null )
 	{
-		return $this->process( $data, "HTML", $omitRoot );
+		return $this->process( $data, "HTML", $omitRoot, $cacheTime );
 	}
 
-	public function processAsXML( $data = null, $omitRoot = null )
+	public function processAsXML( $data = null, $omitRoot = null, $cacheTime = null )
 	{
-		return $this->process( $data, "XML", $omitRoot );
+		return $this->process( $data, "XML", $omitRoot, $cacheTime );
 	}
 
-	public function process( $data = null, $outputType = null, $omitRoot = null )
+	public function process( $data = null, $outputType = null, $omitRoot = null, $cacheTime = null )
 	{
-		return $this->load( $data, true, $outputType, $omitRoot );
+		return $this->load( $data, true, $outputType, $omitRoot, $cacheTime );
 	}
 
-	public function load( $data = null, $return = null, $outputType = null, $omitRoot = null )
+	public function load( $data = null, $return = null, $outputType = null, $omitRoot = null, $cacheTime = null )
 	{
 		$return = $this->getReturn( $return );
 		$outputType = $this->getOutputType( $outputType );
 		$omitRoot = $this->getOmitRoot( $omitRoot );
+		$cacheTime = $this->getCacheTime( $cacheTime );
 
 		if( is_null( $this->getXMLData() ) )
 		{
@@ -109,7 +110,7 @@ class View
 
 		if( ! is_null( $this->getXSLData() ) && ! is_null( $this->getXMLData() ) )
 		{
-			$result = $this->processView( $return, $outputType );
+			$result = $this->processView( $return, $outputType, $cacheTime );
 		}
 		else
 		{
@@ -167,6 +168,16 @@ class View
 		}
 
 		return $omitRoot;
+	}
+
+	private function getCacheTime( $cacheTime )
+	{
+		if( is_null( $cacheTime ) )
+		{
+			return 0;
+		}
+
+		return $cacheTime;
 	}
 
 	public function importXSL( $data = null, $xslViewFile = null )
@@ -239,13 +250,13 @@ class View
 		return $stack;
 	}
 
-	public function processView( $return, $outputType )
+	public function processView( $return, $outputType, $cacheTime )
 	{
 		$result = null;
 
 		if( self::shouldRenderClientSide( $return ) )
 		{
-			OutputHeaders::XML();
+			OutputHeaders::XML( $cacheTime );
 
 			echo( $this->getXMLData() );
 		}
@@ -255,7 +266,7 @@ class View
 
 			if( ! $return )
 			{
-				OutputHeaders::specifically( $outputType );
+				OutputHeaders::specifically( $outputType, $cacheTime );
 
 				echo( $result );
 			}
@@ -289,7 +300,7 @@ class View
 		return false;
 	}
 
-	public function passThru( $data = null, $return = false, $omitRoot = true )
+	public function passThru( $data = null, $return = false, $omitRoot = true, $cacheTime = 0 )
 	{
 		$xmlBody = $this->getAggregatedModels();
 
@@ -304,7 +315,7 @@ class View
 
 			$xmlResult = ( $xmlHead . $xmlBody . $xmlFoot );
 
-			OutputHeaders::XML();
+			OutputHeaders::XML( $cacheTime );
 
 			echo( $xmlResult );
 		}
