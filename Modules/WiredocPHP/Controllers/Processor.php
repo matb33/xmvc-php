@@ -56,7 +56,17 @@ class Processor
 
 	public function page()
 	{
-		$currentPath = "/" . ( func_num_args() ? implode( "/", func_get_args() ) . "/" : "" );
+		$args = func_get_args();
+
+		if( count( $args ) )
+		{
+			$isFile = strpos( $args[ count( $args ) - 1 ], "." ) !== false;
+			$currentPath = "/" . implode( "/", $args ) . ( $isFile ? "" : "/" );
+		}
+		else
+		{
+			$currentPath = "/";
+		}
 
 		if( ( $componentData = ComponentLookup::getInstance()->getComponentDataByPath( $currentPath ) ) !== false )
 		{
@@ -144,7 +154,7 @@ class Processor
 		$this->pushStringData( $component, $instanceName, $viewName );
 		$this->pushModelStack();
 
-		$this->view->renderAsHTML();
+		$this->view->renderAsHTML( null, null, 3600 );
 	}
 
 	private function pushXLIFF( $component, $instanceName )
