@@ -2,6 +2,8 @@
 
 namespace System\Libraries;
 
+use Exception;
+
 class FileSystem
 {
 	const FS_FILE = 1;
@@ -113,7 +115,14 @@ class FileSystem
 
 	public static function fileGetContentsUTF8( $filename )
 	{
-		$contents = file_get_contents( Normalize::filename( $filename ) );
+		try
+		{
+			$contents = @file_get_contents( Normalize::filename( $filename ) );
+		}
+		catch( Exception $e )
+		{
+			$contents = "";
+		}
 
 		return mb_convert_encoding( $contents, "UTF-8", mb_detect_encoding( $contents, "UTF-8, ISO-8859-1", true ) );
 	}
